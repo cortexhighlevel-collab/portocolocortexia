@@ -171,13 +171,13 @@ const ServicesSection = () => {
 
         {/* Bento Grid */}
         <div className="services-bento">
-          {/* Left Column - Large card on top, small on bottom */}
+          {/* Left Column */}
           <div className="services-bento-left">
             <ServiceCard service={services[0]} index={0} large />
             <ServiceCard service={services[1]} index={1} />
           </div>
           
-          {/* Right Column - Small card on top, large on bottom */}
+          {/* Right Column */}
           <div className="services-bento-right">
             <ServiceCard service={services[2]} index={2} />
             <ServiceCard service={services[3]} index={3} large />
