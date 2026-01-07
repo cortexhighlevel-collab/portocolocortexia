@@ -3,8 +3,8 @@ import { ArrowUpRight } from "lucide-react";
 import VimeoScrollVideo from "./VimeoScrollVideo";
 
 const HeroSection = () => {
-  // ID do vídeo do Vimeo - substitua pelo ID do seu vídeo
-  const vimeoVideoId = "824804225";
+  // ID do vídeo do Vimeo
+  const vimeoVideoId = "1152111785";
 
   return (
     <>
