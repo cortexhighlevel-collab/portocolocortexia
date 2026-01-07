@@ -37,13 +37,12 @@ const ProjectsSection = () => {
     offset: ["start start", "end end"],
   });
 
-  // Calculate rotation based on scroll (each full flip = 180deg)
-  // Using easeInOut curve for smoother transitions
-  const totalFlips = projects.length;
+  // Calculate rotation based on scroll
+  // Cards stay flat longer, quick flip transitions
   const rotateX = useTransform(
     scrollYProgress,
-    [0, 0.15, 0.35, 0.5, 0.65, 0.85, 1],
-    [0, 45, 135, 180, 225, 315, 360]
+    [0, 0.20, 0.30, 0.45, 0.55, 0.70, 0.80, 1],
+    [0, 0, 180, 180, 180, 360, 360, 360]
   );
 
   // Track flip count to update card contents
