@@ -711,15 +711,24 @@
     z-index: 5;
   }
 
-  .projects-3d-wrapper {
+  /* Flipper Card System */
+  .projects-flipper-wrapper {
     position: relative;
     width: 100%;
     max-width: 900px;
     height: 500px;
-    perspective: 1200px;
+    perspective: 1500px;
   }
 
-  .projects-3d-card {
+  .projects-flipper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .projects-flipper-face {
     position: absolute;
     top: 0;
     left: 0;
@@ -728,11 +737,19 @@
     border-radius: 20px;
     overflow: hidden;
     cursor: pointer;
-    transform-style: preserve-3d;
-    will-change: transform, opacity;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     box-shadow: 
       0 50px 100px -20px rgba(0, 0, 0, 0.6),
       0 30px 60px -30px rgba(0, 0, 0, 0.5);
+  }
+
+  .projects-flipper-front {
+    transform: rotateX(0deg);
+  }
+
+  .projects-flipper-back {
+    transform: rotateX(180deg);
   }
 
   .project-card-link-icon {
@@ -876,11 +893,11 @@
       font-size: 1.75rem;
     }
 
-    .projects-3d-wrapper {
+    .projects-flipper-wrapper {
       height: 350px;
     }
 
-    .projects-3d-card {
+    .projects-flipper-face {
       border-radius: 16px;
     }
 
@@ -932,7 +949,7 @@
       top: 40px;
     }
 
-    .projects-3d-wrapper {
+    .projects-flipper-wrapper {
       height: 300px;
     }
 

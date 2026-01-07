@@ -1,5 +1,5 @@
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import projectVideo from "@/assets/project-video.webm";
 import projectVideo2 from "@/assets/project-video-2.webm";
@@ -28,11 +28,47 @@ const projects = [
 
 const ProjectsSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [frontIndex, setFrontIndex] = useState(0);
+  const [backIndex, setBackIndex] = useState(1);
+  const [flipCount, setFlipCount] = useState(0);
   
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
+
+  // Calculate rotation based on scroll (each full flip = 180deg)
+  const totalFlips = projects.length;
+  const rotateX = useTransform(
+    scrollYProgress,
+    [0, 1],
+    [0, 180 * totalFlips]
+  );
+
+  // Track flip count to update card contents
+  useMotionValueEvent(rotateX, "change", (latest) => {
+    const currentFlip = Math.floor(latest / 180);
+    
+    if (currentFlip !== flipCount) {
+      setFlipCount(currentFlip);
+      
+      // Determine which face is now hidden and update it
+      const isBackVisible = currentFlip % 2 === 1;
+      
+      if (isBackVisible) {
+        // Front face is hidden, update it to next project
+        const nextFrontIndex = (currentFlip + 1) % projects.length;
+        setFrontIndex(nextFrontIndex);
+      } else {
+        // Back face is hidden, update it to next project
+        const nextBackIndex = (currentFlip + 1) % projects.length;
+        setBackIndex(nextBackIndex);
+      }
+    }
+  });
+
+  const frontProject = projects[frontIndex];
+  const backProject = projects[backIndex];
 
   return (
     <section id="projects" ref={sectionRef} className="projects-scroll-section">
@@ -49,17 +85,22 @@ const ProjectsSection = () => {
           Recent Projects
         </motion.h2>
 
-        {/* Single Card Container */}
-        <div className="projects-3d-wrapper">
-          {projects.map((project, index) => (
-            <ProjectCard 
-              key={project.id} 
-              project={project} 
-              index={index}
-              scrollProgress={scrollYProgress}
-              totalProjects={projects.length}
-            />
-          ))}
+        {/* Flipper Card Container */}
+        <div className="projects-flipper-wrapper">
+          <motion.div 
+            className="projects-flipper"
+            style={{ rotateX }}
+          >
+            {/* Front Face */}
+            <div className="projects-flipper-face projects-flipper-front">
+              <CardContent project={frontProject} />
+            </div>
+
+            {/* Back Face (rotated 180deg) */}
+            <div className="projects-flipper-face projects-flipper-back">
+              <CardContent project={backProject} />
+            </div>
+          </motion.div>
         </div>
 
         {/* Scrolling Project Names */}
@@ -77,57 +118,9 @@ const ProjectsSection = () => {
   );
 };
 
-const ProjectCard = ({ 
-  project, 
-  index, 
-  scrollProgress,
-  totalProjects 
-}: { 
-  project: typeof projects[0]; 
-  index: number;
-  scrollProgress: any;
-  totalProjects: number;
-}) => {
-  const segmentSize = 1 / totalProjects;
-  const cardStart = index * segmentSize;
-  const cardMid = cardStart + segmentSize * 0.5;
-  const cardEnd = (index + 1) * segmentSize;
-  
-  // Card enters from bottom with tilt, stays flat in middle, exits to top with opposite tilt
-  const rotateX = useTransform(
-    scrollProgress,
-    [cardStart, cardMid, cardEnd],
-    [70, 0, -70]
-  );
-  
-  const y = useTransform(
-    scrollProgress,
-    [cardStart, cardMid, cardEnd],
-    ["80%", "0%", "-80%"]
-  );
-  
-  const scale = useTransform(
-    scrollProgress,
-    [cardStart, cardMid, cardEnd],
-    [0.7, 1, 0.7]
-  );
-  
-  const opacity = useTransform(
-    scrollProgress,
-    [cardStart, cardStart + segmentSize * 0.2, cardMid, cardEnd - segmentSize * 0.2, cardEnd],
-    [0, 1, 1, 1, 0]
-  );
-
+const CardContent = ({ project }: { project: typeof projects[0] }) => {
   return (
-    <motion.div
-      className="projects-3d-card"
-      style={{
-        rotateX,
-        y,
-        scale,
-        opacity,
-      }}
-    >
+    <>
       {/* External Link Icon */}
       <div className="project-card-link-icon">
         <ExternalLink className="w-5 h-5" />
@@ -150,6 +143,7 @@ const ProjectCard = ({
       {/* Video Background */}
       <div className="project-card-video-wrapper">
         <video
+          key={project.videoUrl}
           loop
           muted
           playsInline
@@ -162,7 +156,7 @@ const ProjectCard = ({
 
       {/* Dark Bottom Overlay */}
       <div className="project-card-overlay" />
-    </motion.div>
+    </>
   );
 };
 
