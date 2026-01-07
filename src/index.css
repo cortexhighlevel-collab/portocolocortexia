@@ -725,58 +725,61 @@
   /* Background Text Flipper */
   .projects-text-flipper-wrapper {
     position: absolute;
-    inset: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200vw;
     display: flex;
     align-items: center;
     justify-content: center;
     perspective: 1500px;
     z-index: 1;
-    overflow: hidden;
+    pointer-events: none;
   }
 
   .projects-text-flipper {
     width: 100%;
+    height: 300px;
     transform-style: preserve-3d;
     will-change: transform;
+    position: relative;
   }
 
   .projects-text-face {
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
+    inset: 0;
+    display: flex;
+    align-items: center;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    overflow: hidden;
   }
 
   .projects-text-front {
-    transform: translateY(-50%) rotateX(0deg);
+    transform: rotateX(0deg);
   }
 
   .projects-text-back {
-    transform: translateY(-50%) rotateX(180deg);
+    transform: rotateX(180deg);
   }
 
   .projects-text-marquee {
     width: 100%;
     overflow: hidden;
-    mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
   }
 
   .projects-text-track {
     display: flex;
-    gap: 60px;
-    animation: projects-text-scroll 15s linear infinite;
+    gap: 80px;
+    animation: projects-text-scroll 20s linear infinite;
     width: max-content;
   }
 
   .projects-text-name {
-    font-size: clamp(100px, 18vw, 220px);
+    font-size: clamp(120px, 20vw, 280px);
     font-weight: 900;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
     line-height: 1;
     color: hsl(var(--foreground));
     text-transform: uppercase;
@@ -784,6 +787,7 @@
     user-select: none;
     pointer-events: none;
     flex-shrink: 0;
+    white-space: nowrap;
   }
 
   @keyframes projects-text-scroll {
