@@ -115,12 +115,26 @@ const ProjectsSection = () => {
             >
               {/* Front Text */}
               <div className="projects-text-face projects-text-front">
-                <span className="projects-text-name">{frontProject.name}</span>
+                <div className="projects-text-marquee">
+                  <div className="projects-text-track">
+                    <span className="projects-text-name">{frontProject.name}</span>
+                    <span className="projects-text-name">{frontProject.name}</span>
+                    <span className="projects-text-name">{frontProject.name}</span>
+                    <span className="projects-text-name">{frontProject.name}</span>
+                  </div>
+                </div>
               </div>
 
               {/* Back Text */}
               <div className="projects-text-face projects-text-back">
-                <span className="projects-text-name">{backProject.name}</span>
+                <div className="projects-text-marquee">
+                  <div className="projects-text-track">
+                    <span className="projects-text-name">{backProject.name}</span>
+                    <span className="projects-text-name">{backProject.name}</span>
+                    <span className="projects-text-name">{backProject.name}</span>
+                    <span className="projects-text-name">{backProject.name}</span>
+                  </div>
+                </div>
               </div>
             </motion.div>
           </div>
