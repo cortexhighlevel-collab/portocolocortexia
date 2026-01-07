@@ -1,5 +1,3 @@
-import { cn } from "@/lib/utils";
-
 const navLinks = [
   { label: "Services", href: "#services" },
   { label: "Projects", href: "#projects" },
@@ -9,6 +7,14 @@ const navLinks = [
 ];
 
 const Navbar = () => {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const element = document.querySelector(href);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
     <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50">
       <div className="nav-glass px-8 py-4">
@@ -17,6 +23,7 @@ const Navbar = () => {
             <a
               key={link.label}
               href={link.href}
+              onClick={(e) => handleClick(e, link.href)}
               className="nav-link text-sm font-medium tracking-wide"
             >
               {link.label}
