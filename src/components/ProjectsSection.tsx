@@ -206,12 +206,6 @@ const CardContent = ({ project }: { project: typeof projects[0] }) => {
         >
           <source src={project.videoUrl} type="video/webm" />
         </video>
-        
-        {/* Blurred Corner Overlays */}
-        <div className="project-card-blur-corner project-card-blur-top-left" />
-        <div className="project-card-blur-corner project-card-blur-top-right" />
-        <div className="project-card-blur-corner project-card-blur-bottom-left" />
-        <div className="project-card-blur-corner project-card-blur-bottom-right" />
       </div>
 
       {/* Dark Bottom Overlay */}

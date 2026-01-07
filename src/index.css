@@ -907,7 +907,6 @@
     position: absolute;
     inset: 0;
     z-index: 5;
-    overflow: hidden;
   }
 
   .project-card-video {
@@ -915,36 +914,6 @@
     height: 100%;
     object-fit: cover;
     object-position: center;
-  }
-
-  .project-card-blur-corner {
-    position: absolute;
-    width: 150px;
-    height: 150px;
-    background: radial-gradient(circle, hsla(0, 0%, 2%, 0.95) 0%, hsla(0, 0%, 2%, 0.6) 30%, transparent 70%);
-    filter: blur(25px);
-    z-index: 6;
-    pointer-events: none;
-  }
-
-  .project-card-blur-top-left {
-    top: -30px;
-    left: -30px;
-  }
-
-  .project-card-blur-top-right {
-    top: -30px;
-    right: -30px;
-  }
-
-  .project-card-blur-bottom-left {
-    bottom: -30px;
-    left: -30px;
-  }
-
-  .project-card-blur-bottom-right {
-    bottom: -30px;
-    right: -30px;
   }
 
   .project-card-overlay {
