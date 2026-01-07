@@ -12,12 +12,15 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <HeroSection />
-      <ServicesSection />
-      <ProjectsSection />
-      <ProcessSection />
-      <PricingSection />
-      <ContactSection />
-      <FooterSection />
+      {/* Main content - appears after hero scroll space */}
+      <div className="relative z-10 bg-background">
+        <ServicesSection />
+        <ProjectsSection />
+        <ProcessSection />
+        <PricingSection />
+        <ContactSection />
+        <FooterSection />
+      </div>
     </div>
   );
 };
