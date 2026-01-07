@@ -781,9 +781,9 @@
     font-weight: 900;
     letter-spacing: -0.02em;
     line-height: 1;
-    color: hsl(var(--foreground));
+    color: hsl(0, 0%, 100%);
     text-transform: uppercase;
-    opacity: 0.08;
+    opacity: 0.1;
     user-select: none;
     pointer-events: none;
     flex-shrink: 0;
