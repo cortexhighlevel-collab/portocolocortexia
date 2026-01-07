@@ -18,15 +18,19 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
   const [isReady, setIsReady] = useState(false);
   const [statusMsg, setStatusMsg] = useState("SINCRONIZANDO FRAMES...");
 
-  // Base link format requested (we immediately pause and scrub via scroll)
+  // Keep DOM ownership with React (iframe stays in React tree).
+  // This prevents the classic React error:
+  // "Failed to execute 'removeChild' on 'Node'" (usually caused by player.destroy() removing the iframe).
   const vimeoUrl = useMemo(
     () =>
-      `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=1&background=1&autopause=0&controls=0`,
+      `https://player.vimeo.com/video/${videoId}?muted=1&autoplay=0&background=1&autopause=0&controls=0&loop=0`,
     [videoId]
   );
 
   useEffect(() => {
     if (!iframeRef.current) return;
+
+    let isActive = true;
 
     setIsReady(false);
     setStatusMsg("SINCRONIZANDO FRAMES...");
@@ -35,7 +39,6 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
     playerRef.current = player;
 
     const readyTimeout = window.setTimeout(() => {
-      // Avoid black screen forever if Vimeo takes too long
       setIsReady(true);
       setStatusMsg("");
     }, 2500);
@@ -48,6 +51,8 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
 
     const startScrollSyncLoop = () => {
       const tick = () => {
+        if (!isActive) return;
+
         const p = playerRef.current;
         const container = scrollContainerRef.current;
 
@@ -57,6 +62,7 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
         }
 
         const currentScrollY = window.scrollY;
+
         if (lastScrollYRef.current !== currentScrollY && !isSeekingRef.current) {
           lastScrollYRef.current = currentScrollY;
 
@@ -88,16 +94,18 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
     player
       .ready()
       .then(async () => {
+        if (!isActive) return;
+
         window.clearTimeout(readyTimeout);
 
-        // Make sure Vimeo never keeps playing by itself
+        // Never let it play by itself
         player.on("play", stopAutoplay);
 
         await player.setMuted(true).catch(() => {
           // ignore
         });
 
-        // Let it start (autoplay param) so it buffers, then freeze at frame 0
+        // Freeze on frame 0 (autoplay=0, but we still force pause)
         await player.pause().catch(() => {
           // ignore
         });
@@ -115,7 +123,6 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
         setIsReady(true);
         setStatusMsg("");
 
-        // Sync immediately to the current scroll position
         lastScrollYRef.current = null;
         startScrollSyncLoop();
       })
@@ -127,10 +134,12 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
       });
 
     return () => {
+      isActive = false;
       window.clearTimeout(readyTimeout);
 
       if (rafIdRef.current) {
         cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
       }
 
       const current = playerRef.current;
@@ -143,9 +152,22 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
           // ignore
         }
 
-        current.destroy().catch(() => {
+        // CRITICAL: do NOT call destroy() here; it removes the iframe from the DOM and can crash React.
+        current.pause().catch(() => {
           // ignore
         });
+        current.unload?.().catch(() => {
+          // ignore
+        });
+      }
+
+      // Optional hard-stop network/activity without DOM removals
+      if (iframeRef.current) {
+        try {
+          iframeRef.current.src = "about:blank";
+        } catch {
+          // ignore
+        }
       }
     };
   }, [vimeoUrl]);
