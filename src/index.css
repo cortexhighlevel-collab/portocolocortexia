@@ -342,10 +342,11 @@
     flex-direction: column;
     gap: 20px;
     overflow: hidden;
+    height: 220px;
   }
 
   .service-card-large {
-    min-height: 400px;
+    height: 480px;
   }
 
   .service-card-content {
@@ -563,10 +564,13 @@
     .service-card {
       padding: 24px;
       border-radius: 16px;
+      height: auto;
+      min-height: 180px;
     }
 
     .service-card-large {
-      min-height: auto;
+      height: auto;
+      min-height: 350px;
     }
 
     .service-card-header {
