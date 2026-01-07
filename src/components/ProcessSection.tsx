@@ -33,27 +33,12 @@ const processSteps = [
   },
 ];
 
-const ProcessCard = ({ step, index, scrollYProgress }: { step: typeof processSteps[0]; index: number; scrollYProgress: any }) => {
+const ProcessCard = ({ step, index }: { step: typeof processSteps[0]; index: number }) => {
   const Icon = step.icon;
-  
-  // Alternate direction: even cards go right, odd cards go left
-  const direction = index % 2 === 0 ? 1 : -1;
-  const xOffset = 100 * direction;
-  
-  // Each card has slightly different scroll range for staggered effect
-  const startRange = 0.1 + index * 0.1;
-  const endRange = 0.5 + index * 0.1;
-  
-  const x = useTransform(
-    scrollYProgress,
-    [0, startRange, endRange, 1],
-    [xOffset, 0, 0, -xOffset]
-  );
   
   return (
     <motion.div
       className="process-card"
-      style={{ x }}
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
@@ -89,6 +74,9 @@ const ProcessSection = () => {
     offset: ["start end", "end start"]
   });
 
+  // All cards move left when scrolling down (progress 0->1 = x: 150 -> -150)
+  const x = useTransform(scrollYProgress, [0, 1], [150, -150]);
+
   return (
     <section id="process" className="process-section" ref={sectionRef}>
       {/* Heading */}
@@ -115,11 +103,11 @@ const ProcessSection = () => {
 
       {/* Process Cards */}
       <div className="process-cards-wrapper">
-        <div className="process-cards">
+        <motion.div className="process-cards" style={{ x }}>
           {processSteps.map((step, index) => (
-            <ProcessCard key={step.id} step={step} index={index} scrollYProgress={scrollYProgress} />
+            <ProcessCard key={step.id} step={step} index={index} />
           ))}
-        </div>
+        </motion.div>
       </div>
 
       {/* Footer Card */}
