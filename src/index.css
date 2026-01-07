@@ -6,10 +6,10 @@
 
 @layer base {
   :root {
-    --background: 0 0% 7%;
+    --background: 0 0% 0%;
     --foreground: 0 0% 98%;
 
-    --card: 0 0% 10%;
+    --card: 0 0% 5%;
     --card-foreground: 0 0% 98%;
 
     --popover: 0 0% 10%;
@@ -332,7 +332,7 @@
 
   /* Service Card */
   .service-card {
-    background-color: hsl(0, 0%, 7%);
+    background-color: hsl(0, 0%, 5%);
     border-radius: 20px;
     padding: 30px;
     box-shadow: 
@@ -468,7 +468,7 @@
     align-items: center;
     gap: 12px;
     padding: 16px 24px;
-    background-color: hsl(0, 0%, 7%);
+    background-color: hsl(0, 0%, 5%);
     border-radius: 78px;
     flex-shrink: 0;
   }
