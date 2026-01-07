@@ -705,8 +705,8 @@
   .projects-heading-fixed {
     position: absolute;
     top: 80px;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
+    right: 0;
     font-size: clamp(2rem, 5vw, 3.5rem);
     font-weight: 700;
     line-height: 1.1;
