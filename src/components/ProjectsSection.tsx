@@ -1,12 +1,13 @@
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
+import projectVideo from "@/assets/project-video.webm";
 
 const projects = [
   {
     id: 1,
     name: "RGM Partners",
     tags: ["Finance", "Design", "Development"],
-    videoUrl: "https://framerusercontent.com/assets/egimocChXD3ertWKdxQWzGuFK94.mp4",
+    videoUrl: projectVideo,
     posterUrl: "https://framerusercontent.com/images/gsEY1iGM2ZP4fiALzDP0wqsUAYQ.png",
   },
   {
