@@ -13,6 +13,16 @@ const FooterSection = () => {
     { name: "Book a Call", href: "#contact" },
   ];
 
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith("#")) {
+      e.preventDefault();
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  };
+
   return (
     <footer className="footer-section">
       {/* Footer Content */}
@@ -66,7 +76,12 @@ const FooterSection = () => {
           <span className="footer-label">(navigation)</span>
           <div className="footer-links">
             {navigation.map((item, index) => (
-              <a key={index} href={item.href} className="footer-link">
+              <a
+                key={index}
+                href={item.href}
+                onClick={(e) => handleClick(e, item.href)}
+                className="footer-link"
+              >
                 {item.name}
               </a>
             ))}
