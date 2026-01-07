@@ -30,7 +30,7 @@ const ProjectsSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [frontIndex, setFrontIndex] = useState(0);
   const [backIndex, setBackIndex] = useState(1);
-  const [flipCount, setFlipCount] = useState(0);
+  const lastFlipRef = useRef(0);
   
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -45,24 +45,40 @@ const ProjectsSection = () => {
     [0, 0, 180, 180, 180, 360, 360, 360]
   );
 
-  // Track flip count to update card contents
+  // Track flip count to update card contents - handles both directions
   useMotionValueEvent(rotateX, "change", (latest) => {
     const currentFlip = Math.floor(latest / 180);
+    const lastFlip = lastFlipRef.current;
     
-    if (currentFlip !== flipCount) {
-      setFlipCount(currentFlip);
+    if (currentFlip !== lastFlip) {
+      const isScrollingDown = currentFlip > lastFlip;
+      lastFlipRef.current = currentFlip;
       
       // Determine which face is now hidden and update it
       const isBackVisible = currentFlip % 2 === 1;
       
-      if (isBackVisible) {
-        // Front face is hidden, update it to next project
-        const nextFrontIndex = (currentFlip + 1) % projects.length;
-        setFrontIndex(nextFrontIndex);
+      if (isScrollingDown) {
+        // Scrolling down - advance to next project
+        if (isBackVisible) {
+          // Front face is hidden, update it to next project
+          const nextIndex = (currentFlip + 1) % projects.length;
+          setFrontIndex(nextIndex);
+        } else {
+          // Back face is hidden, update it to next project
+          const nextIndex = (currentFlip + 1) % projects.length;
+          setBackIndex(nextIndex);
+        }
       } else {
-        // Back face is hidden, update it to next project
-        const nextBackIndex = (currentFlip + 1) % projects.length;
-        setBackIndex(nextBackIndex);
+        // Scrolling up - go back to previous project
+        if (isBackVisible) {
+          // Front is hidden, update it to previous project
+          const prevIndex = ((currentFlip - 1) % projects.length + projects.length) % projects.length;
+          setFrontIndex(prevIndex);
+        } else {
+          // Back is hidden, update it to previous project
+          const prevIndex = ((currentFlip - 1) % projects.length + projects.length) % projects.length;
+          setBackIndex(prevIndex);
+        }
       }
     }
   });
