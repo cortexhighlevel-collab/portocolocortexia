@@ -4,6 +4,7 @@ import ServicesSection from "@/components/ServicesSection";
 import ProjectsSection from "@/components/ProjectsSection";
 import ProcessSection from "@/components/ProcessSection";
 import PricingSection from "@/components/PricingSection";
+import ContactSection from "@/components/ContactSection";
 
 const Index = () => {
   return (
@@ -14,10 +15,7 @@ const Index = () => {
       <ProjectsSection />
       <ProcessSection />
       <PricingSection />
-      
-      <section id="contact" className="min-h-screen flex items-center justify-center">
-        <h2 className="text-4xl font-bold">Contact</h2>
-      </section>
+      <ContactSection />
     </div>
   );
 };
