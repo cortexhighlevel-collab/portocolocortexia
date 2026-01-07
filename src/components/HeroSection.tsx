@@ -1,21 +1,16 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import heroBg from "@/assets/hero-bg.jpg";
+import YouTubeScrollVideo from "./YouTubeScrollVideo";
 
 const HeroSection = () => {
   return (
-    <section className="hero-section">
-      {/* Background Image */}
-      <div className="hero-bg-wrapper">
-        <img
-          src={heroBg}
-          alt="Web Designer Freelancer, Especialista Framer, Design UI/UX, Automação IA para Negócios"
-          className="hero-bg-image"
-        />
-      </div>
-
-      {/* Content */}
-      <div className="hero-content">
+    <>
+      {/* YouTube Video controlled by scroll */}
+      <YouTubeScrollVideo />
+      
+      <section className="hero-section hero-section-fixed">
+        {/* Content */}
+        <div className="hero-content">
         <div className="hero-content-inner">
           {/* Headline and CTA */}
           <div className="hero-top-content">
@@ -56,6 +51,7 @@ const HeroSection = () => {
         </div>
       </div>
     </section>
+    </>
   );
 };
 
