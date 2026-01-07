@@ -682,21 +682,8 @@
   /* Projects Section - Scroll Hijacking */
   .projects-scroll-section {
     position: relative;
-    height: 300vh; /* Extended height for scroll hijacking */
+    height: 300vh;
     background-color: hsl(var(--background));
-  }
-
-  .projects-heading-sticky {
-    position: sticky;
-    top: 100px;
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 700;
-    line-height: 1.1;
-    color: hsl(var(--foreground));
-    text-align: center;
-    margin-bottom: 60px;
-    padding-top: 100px;
-    z-index: 5;
   }
 
   .projects-sticky-container {
@@ -711,41 +698,43 @@
     overflow: hidden;
   }
 
+  .projects-heading-fixed {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    color: hsl(var(--foreground));
+    text-align: center;
+    z-index: 5;
+  }
+
   .projects-3d-wrapper {
     position: relative;
     width: 100%;
     max-width: 900px;
-    height: 550px;
-    perspective: 1500px;
-    transform-style: preserve-3d;
+    height: 500px;
+    perspective: 1200px;
   }
 
   .projects-3d-card {
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
     width: 100%;
-    height: 500px;
+    height: 100%;
     border-radius: 20px;
     overflow: hidden;
     cursor: pointer;
     transform-style: preserve-3d;
-    backface-visibility: hidden;
+    will-change: transform, opacity;
     box-shadow: 
-      0 50px 100px -20px rgba(0, 0, 0, 0.5),
-      0 30px 60px -30px rgba(0, 0, 0, 0.4);
+      0 50px 100px -20px rgba(0, 0, 0, 0.6),
+      0 30px 60px -30px rgba(0, 0, 0, 0.5);
   }
 
-  .projects-ticker-sticky {
-    position: absolute;
-    bottom: 40px;
-    left: 0;
-    right: 0;
-    z-index: 1;
-  }
-
-  /* Project Card Elements */
   .project-card-link-icon {
     position: absolute;
     top: 20px;
@@ -782,6 +771,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: space-between;
     gap: 16px;
   }
 
@@ -798,14 +788,13 @@
   }
 
   .project-card-tag {
-    padding: 6px 12px;
-    background-color: hsla(0, 0%, 9%, 0.35);
+    padding: 6px 14px;
+    background-color: hsla(0, 0%, 20%, 0.6);
     backdrop-filter: blur(50px);
     -webkit-backdrop-filter: blur(50px);
     border-radius: 6px;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
+    font-size: 13px;
+    font-weight: 500;
     color: hsl(var(--foreground));
   }
 
@@ -820,12 +809,6 @@
     height: 100%;
     object-fit: cover;
     object-position: center;
-    transform: scale(1.05);
-    transition: transform 0.5s ease;
-  }
-
-  .projects-3d-card:hover .project-card-video {
-    transform: scale(1.1);
   }
 
   .project-card-overlay {
@@ -833,36 +816,41 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 60%;
+    height: 50%;
     z-index: 10;
-    background: linear-gradient(180deg, transparent 0%, hsla(0, 0%, 2%, 0.8) 100%);
+    background: linear-gradient(180deg, transparent 0%, hsla(0, 0%, 2%, 0.9) 100%);
     pointer-events: none;
   }
 
   /* Projects Names Ticker */
   .projects-names-ticker {
-    margin-top: 60px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     overflow: hidden;
+    padding: 40px 0;
     mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+    z-index: 1;
   }
 
   .projects-names-track {
     display: flex;
-    gap: 120px;
-    animation: projects-ticker-scroll 30s linear infinite;
+    gap: 80px;
+    animation: projects-ticker-scroll 25s linear infinite;
   }
 
   .projects-name-item {
-    font-size: clamp(60px, 10vw, 126px);
-    font-weight: 700;
-    letter-spacing: 0.01em;
+    font-size: clamp(80px, 12vw, 160px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
     line-height: 1;
     color: hsl(var(--foreground));
     text-transform: uppercase;
     white-space: nowrap;
     flex-shrink: 0;
-    opacity: 0.15;
+    opacity: 0.08;
   }
 
   @keyframes projects-ticker-scroll {
@@ -879,23 +867,20 @@
       height: 250vh;
     }
 
-    .projects-heading-sticky {
-      padding-top: 60px;
-      top: 60px;
-      font-size: 1.75rem;
-      margin-bottom: 20px;
-    }
-
     .projects-sticky-container {
       padding: 0 16px;
     }
 
+    .projects-heading-fixed {
+      top: 60px;
+      font-size: 1.75rem;
+    }
+
     .projects-3d-wrapper {
-      height: 400px;
+      height: 350px;
     }
 
     .projects-3d-card {
-      height: 350px;
       border-radius: 16px;
     }
 
@@ -907,38 +892,34 @@
     }
 
     .project-card-content {
-      padding: 16px;
+      padding: 20px;
     }
 
     .project-card-row {
       flex-direction: column;
       align-items: flex-start;
-      gap: 10px;
+      gap: 12px;
     }
 
     .project-card-title {
       font-size: 1.15rem;
     }
 
-    .project-card-tags {
-      flex-wrap: wrap;
-    }
-
     .project-card-tag {
       font-size: 11px;
-      padding: 4px 8px;
+      padding: 4px 10px;
     }
 
-    .projects-ticker-sticky {
-      bottom: 20px;
+    .projects-names-ticker {
+      padding: 20px 0;
     }
 
     .projects-name-item {
-      font-size: 40px;
+      font-size: 50px;
     }
 
     .projects-names-track {
-      gap: 60px;
+      gap: 50px;
     }
   }
 
@@ -947,21 +928,12 @@
       height: 220vh;
     }
 
-    .projects-heading-sticky {
-      padding-top: 50px;
-      top: 50px;
-    }
-
-    .projects-sticky-container {
-      padding: 0 12px;
+    .projects-heading-fixed {
+      top: 40px;
     }
 
     .projects-3d-wrapper {
-      height: 320px;
-    }
-
-    .projects-3d-card {
-      height: 280px;
+      height: 300px;
     }
 
     .project-card-title {
@@ -969,7 +941,7 @@
     }
 
     .projects-name-item {
-      font-size: 32px;
+      font-size: 36px;
     }
   }
 
