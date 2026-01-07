@@ -12,7 +12,7 @@ const ContactSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          Book a Free Call
+          Agende uma Chamada Grátis
         </motion.h2>
         <motion.p
           className="contact-subtitle"
@@ -21,7 +21,7 @@ const ContactSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
-          Let's Create Something Amazing – Book a Session Now!
+          Vamos Criar Algo Incrível – Agende uma Sessão Agora!
         </motion.p>
       </div>
 
@@ -42,7 +42,7 @@ const ContactSection = () => {
             maxWidth: "100%",
             borderRadius: "16px",
           }}
-          title="Book a meeting"
+          title="Agende uma reunião"
         />
       </motion.div>
     </section>

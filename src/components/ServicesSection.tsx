@@ -21,49 +21,49 @@ const services = [
   {
     id: 1,
     icon: Globe,
-    title: "Website Design & Development",
-    description: "Get a unique website built by a hybrid designer-developer. I combine modern aesthetics with robust coding and advanced SEO to create a fast, sales-focused digital experience.",
+    title: "Design & Desenvolvimento Web",
+    description: "Tenha um site único criado por um designer-desenvolvedor híbrido. Combino estética moderna com código robusto e SEO avançado para criar uma experiência digital rápida e focada em vendas.",
     hasImage: true,
     imageUrl: "https://framerusercontent.com/images/z2UMpz1bWIGSAfsaxn5lm6e9Uw.png",
   },
   {
     id: 2,
     icon: MessageSquare,
-    title: "Strategic Consultations",
-    description: "Get clarity on your next digital move. Whether it's a website audit, a redesign roadmap, or brainstorming custom AI workflows, I provide actionable insights tailored to your goals.",
+    title: "Consultorias Estratégicas",
+    description: "Tenha clareza sobre seu próximo passo digital. Seja uma auditoria de site, um roadmap de redesign ou brainstorming de workflows de IA, forneço insights acionáveis alinhados aos seus objetivos.",
     hasImage: false,
   },
   {
     id: 3,
     icon: Palette,
-    title: "UI/UX Design",
-    description: "Elevate your user experience. I design intuitive, high-converting interfaces for web and mobile apps that strengthen your brand value.",
+    title: "Design UI/UX",
+    description: "Eleve sua experiência do usuário. Projeto interfaces intuitivas e de alta conversão para web e apps mobile que fortalecem o valor da sua marca.",
     hasImage: false,
   },
   {
     id: 4,
     icon: Bot,
-    title: "AI Automations",
-    description: "Streamline your operations. I build custom AI chatbots and smart n8n workflows to automate your marketing and repetitive tasks.",
+    title: "Automações com IA",
+    description: "Otimize suas operações. Construo chatbots de IA personalizados e workflows inteligentes com n8n para automatizar seu marketing e tarefas repetitivas.",
     hasImage: false,
     hasTicker: true,
   },
 ];
 
 const moreServicesRow1 = [
-  { icon: Workflow, label: "n8n Workflows" },
+  { icon: Workflow, label: "Workflows n8n" },
   { icon: PenTool, label: "Wireframing" },
   { icon: FileText, label: "Copywriting" },
-  { icon: Database, label: "CMS Setup" },
+  { icon: Database, label: "Configuração CMS" },
 ];
 
 const moreServicesRow2 = [
-  { icon: Code, label: "Custom Code" },
+  { icon: Code, label: "Código Personalizado" },
   { icon: Search, label: "SEO" },
-  { icon: Frame, label: "Framer Expert" },
-  { icon: MessageCircle, label: "WhatsApp Bots" },
+  { icon: Frame, label: "Especialista Framer" },
+  { icon: MessageCircle, label: "Bots WhatsApp" },
   { icon: LayoutTemplate, label: "Landing Pages" },
-  { icon: Gauge, label: "Optimization" },
+  { icon: Gauge, label: "Otimização" },
 ];
 
 const ServiceCard = ({ 
@@ -148,7 +148,7 @@ const ServicesSection = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              How I Can Help Your Business
+              Como Posso Ajudar Seu Negócio
             </motion.h2>
           </div>
           
@@ -162,7 +162,7 @@ const ServicesSection = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <span className="services-cta-text">Get in Touch</span>
+            <span className="services-cta-text">Entre em Contato</span>
             <div className="services-cta-icon">
               <ArrowUpRight className="w-5 h-5 text-primary-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </div>

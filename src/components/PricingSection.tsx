@@ -3,23 +3,23 @@ import { Check, MessageCircle, ArrowUpRight } from "lucide-react";
 
 const PricingSection = () => {
   const starterFeatures = [
-    "Premium Template Design",
-    "Up to 3 Pages",
-    "2 Rounds of Revisions",
-    "Basic SEO Setup (To get you found on Google)",
-    "Fully Responsive (Mobile, Tablet & Desktop)",
-    "Email Support"
+    "Design com Template Premium",
+    "Até 3 Páginas",
+    "2 Rodadas de Revisões",
+    "Configuração SEO Básico (Para ser encontrado no Google)",
+    "Totalmente Responsivo (Mobile, Tablet & Desktop)",
+    "Suporte por Email"
   ];
 
   const premiumFeatures = [
-    "100% Custom Design",
-    "5 Pages",
-    "3 Rounds of Revisions",
-    "Technical SEO & Speed Optimization",
-    "Fully Responsive (Mobile, Tablet & Large Screens)",
-    "Advanced Animations & Interactions",
-    "Complex Functionality (CMS, Integrations)",
-    "WhatsApp & Email Support"
+    "Design 100% Personalizado",
+    "5 Páginas",
+    "3 Rodadas de Revisões",
+    "SEO Técnico & Otimização de Velocidade",
+    "Totalmente Responsivo (Mobile, Tablet & Telas Grandes)",
+    "Animações & Interações Avançadas",
+    "Funcionalidades Complexas (CMS, Integrações)",
+    "Suporte WhatsApp & Email"
   ];
 
   return (
@@ -33,7 +33,7 @@ const PricingSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          Flexible Pricing for Every Stage
+          Preços Flexíveis para Cada Etapa
         </motion.h2>
         <motion.p
           className="pricing-subtitle"
@@ -42,7 +42,7 @@ const PricingSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
-          Whether you're launching an MVP or scaling a brand, I have a plan for you. Don't let budget stop you. Let's chat and find a solution to bring your project to life.
+          Seja lançando um MVP ou escalando uma marca, tenho um plano para você. Não deixe o orçamento te impedir. Vamos conversar e encontrar uma solução para dar vida ao seu projeto.
         </motion.p>
       </div>
 
@@ -58,16 +58,16 @@ const PricingSection = () => {
         >
           <div className="pricing-card-header">
             <div className="pricing-card-title-row">
-              <h3 className="pricing-card-name">Starter Kit</h3>
+              <h3 className="pricing-card-name">Kit Inicial</h3>
               <div className="pricing-card-badge pricing-card-badge-light">
                 <span>Popular</span>
               </div>
             </div>
             <div className="pricing-card-divider" />
             <div className="pricing-card-price-section">
-              <span className="pricing-card-price">$999</span>
+              <span className="pricing-card-price">R$ 4.999</span>
               <p className="pricing-card-description">
-                Premium templates & essential features for businesses ready to launch fast
+                Templates premium & recursos essenciais para empresas prontas para lançar rápido
               </p>
             </div>
           </div>
@@ -96,14 +96,14 @@ const PricingSection = () => {
             <div className="pricing-card-title-row">
               <h3 className="pricing-card-name pricing-card-name-dark">Premium</h3>
               <div className="pricing-card-badge pricing-card-badge-dark">
-                <span>Best Value</span>
+                <span>Melhor Valor</span>
               </div>
             </div>
             <div className="pricing-card-divider pricing-card-divider-dark" />
             <div className="pricing-card-price-section">
-              <span className="pricing-card-price pricing-card-price-dark">Starts at $2,000</span>
+              <span className="pricing-card-price pricing-card-price-dark">A partir de R$ 9.999</span>
               <p className="pricing-card-description pricing-card-description-dark">
-                Tailored design & advanced tech for businesses seeking impact.
+                Design personalizado & tecnologia avançada para empresas que buscam impacto.
               </p>
             </div>
           </div>
@@ -133,20 +133,20 @@ const PricingSection = () => {
           <div className="custom-quote-header">
             <div className="custom-quote-title-wrapper">
               <MessageCircle className="custom-quote-icon" size={24} />
-              <h4 className="custom-quote-title">Custom Quote</h4>
+              <h4 className="custom-quote-title">Orçamento Personalizado</h4>
             </div>
             <a 
               href="#contact" 
               className="custom-quote-button"
             >
-              <span>Contact Me</span>
+              <span>Fale Comigo</span>
               <div className="custom-quote-button-icon">
                 <ArrowUpRight size={16} />
               </div>
             </a>
           </div>
           <p className="custom-quote-description">
-            These prices cover Web Design & Dev projects. For AI, Apps, or other custom needs, reach out for a bespoke quote.
+            Esses preços cobrem projetos de Web Design & Dev. Para IA, Apps ou outras necessidades personalizadas, entre em contato para um orçamento sob medida.
           </p>
         </div>
       </motion.div>

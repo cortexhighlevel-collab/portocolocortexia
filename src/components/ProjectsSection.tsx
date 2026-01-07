@@ -9,19 +9,19 @@ const projects = [
   {
     id: 1,
     name: "RGM Partners",
-    tags: ["Finance", "Design", "Development"],
+    tags: ["Finanças", "Design", "Desenvolvimento"],
     videoUrl: projectVideo,
   },
   {
     id: 2,
     name: "Filmbros",
-    tags: ["Animations", "Design", "Development"],
+    tags: ["Animações", "Design", "Desenvolvimento"],
     videoUrl: projectVideo2,
   },
   {
     id: 3,
     name: "Sama Cape Town",
-    tags: ["Travel", "Design", "Development"],
+    tags: ["Viagens", "Design", "Desenvolvimento"],
     videoUrl: projectVideo3,
   },
 ];
@@ -102,7 +102,7 @@ const ProjectsSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          Recent Projects
+          Projetos Recentes
         </motion.h2>
 
         {/* Main Content Area */}
