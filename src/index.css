@@ -400,10 +400,14 @@
 
   /* More Services Ticker */
   .services-more-wrapper {
-    margin-top: 40px;
+    margin-top: 24px;
     overflow: hidden;
     mask-image: linear-gradient(to right, transparent 0%, black 12.5%, black 87.5%, transparent 100%);
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12.5%, black 87.5%, transparent 100%);
+  }
+
+  .services-more-wrapper:first-of-type {
+    margin-top: 40px;
   }
 
   .services-more-ticker {
@@ -417,7 +421,12 @@
     animation: more-ticker-scroll 30s linear infinite;
   }
 
-  .services-more-item {
+  .services-more-track-reverse {
+    animation: more-ticker-scroll-reverse 35s linear infinite;
+  }
+
+  /* Service Pill */
+  .service-pill {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -427,13 +436,14 @@
     flex-shrink: 0;
   }
 
-  .services-more-dot {
+  .service-pill-icon {
+    width: 20px;
+    height: 20px;
     color: hsl(var(--foreground));
     opacity: 0.6;
-    font-size: 8px;
   }
 
-  .services-more-text {
+  .service-pill-text {
     font-size: 14px;
     font-weight: 500;
     color: hsl(var(--foreground));
@@ -446,8 +456,30 @@
       transform: translateX(0);
     }
     100% {
-      transform: translateX(-50%);
+      transform: translateX(-33.33%);
     }
+  }
+
+  @keyframes more-ticker-scroll-reverse {
+    0% {
+      transform: translateX(-33.33%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  /* Services Border */
+  .services-border {
+    margin-top: 80px;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      hsla(var(--foreground), 0.2) 20%,
+      hsla(var(--foreground), 0.2) 80%,
+      transparent 100%
+    );
   }
 
   @media (max-width: 768px) {
@@ -476,6 +508,10 @@
 
     .service-card-large {
       min-height: 300px;
+    }
+
+    .services-border {
+      margin-top: 40px;
     }
   }
 }
