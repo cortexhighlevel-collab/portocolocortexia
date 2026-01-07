@@ -870,6 +870,30 @@
     opacity: 0.08;
   }
 
+  /* Project Indicator Dots */
+  .projects-indicator {
+    position: absolute;
+    bottom: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 20;
+  }
+
+  .projects-indicator-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: hsla(var(--foreground), 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .projects-indicator-dot.active {
+    background-color: hsl(var(--foreground));
+    transform: scale(1.2);
+  }
+
   @keyframes projects-ticker-scroll {
     0% {
       transform: translateX(0);
