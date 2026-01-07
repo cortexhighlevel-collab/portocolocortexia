@@ -682,7 +682,7 @@
   /* Projects Section - Scroll Hijacking */
   .projects-scroll-section {
     position: relative;
-    height: 400vh; /* 30% slower scroll */
+    height: 480vh; /* 20% slower */
     background-color: hsl(var(--background));
   }
 
@@ -905,7 +905,7 @@
 
   @media (max-width: 768px) {
     .projects-scroll-section {
-      height: 330vh;
+      height: 400vh;
     }
 
     .projects-sticky-container {
@@ -966,7 +966,7 @@
 
   @media (max-width: 480px) {
     .projects-scroll-section {
-      height: 290vh;
+      height: 350vh;
     }
 
     .projects-heading-fixed {
