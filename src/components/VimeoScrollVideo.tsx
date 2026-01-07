@@ -20,23 +20,38 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
   useEffect(() => {
     if (!iframeRef.current) return;
 
+    // Show video immediately while loading
+    const timeout = setTimeout(() => {
+      setIsReady(true);
+      setStatusMsg("");
+    }, 2000);
+
     const player = new Player(iframeRef.current);
     playerRef.current = player;
 
     player.ready().then(() => {
+      clearTimeout(timeout);
       player.getDuration().then((duration) => {
         videoDurationRef.current = duration;
         setIsReady(true);
         setStatusMsg("");
         startSyncLoop();
       });
+    }).catch((err) => {
+      console.log("Vimeo player error:", err);
+      clearTimeout(timeout);
+      setIsReady(true);
+      setStatusMsg("");
     });
 
     return () => {
+      clearTimeout(timeout);
       if (rafIdRef.current) {
         cancelAnimationFrame(rafIdRef.current);
       }
-      player.destroy();
+      if (playerRef.current) {
+        playerRef.current.destroy();
+      }
     };
   }, [videoId]);
 
