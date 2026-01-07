@@ -1,5 +1,6 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Phone, Palette, Code, Package, Heart } from "lucide-react";
+import { useRef } from "react";
 
 const processSteps = [
   {
@@ -32,14 +33,29 @@ const processSteps = [
   },
 ];
 
-const ProcessCard = ({ step, index }: { step: typeof processSteps[0]; index: number }) => {
+const ProcessCard = ({ step, index, scrollYProgress }: { step: typeof processSteps[0]; index: number; scrollYProgress: any }) => {
   const Icon = step.icon;
+  
+  // Alternate direction: even cards go right, odd cards go left
+  const direction = index % 2 === 0 ? 1 : -1;
+  const xOffset = 100 * direction;
+  
+  // Each card has slightly different scroll range for staggered effect
+  const startRange = 0.1 + index * 0.1;
+  const endRange = 0.5 + index * 0.1;
+  
+  const x = useTransform(
+    scrollYProgress,
+    [0, startRange, endRange, 1],
+    [xOffset, 0, 0, -xOffset]
+  );
   
   return (
     <motion.div
       className="process-card"
-      initial={{ opacity: 0, x: -50 }}
-      whileInView={{ opacity: 1, x: 0 }}
+      style={{ x }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, delay: index * 0.1 }}
     >
@@ -66,8 +82,15 @@ const ProcessCard = ({ step, index }: { step: typeof processSteps[0]; index: num
 };
 
 const ProcessSection = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
   return (
-    <section id="process" className="process-section">
+    <section id="process" className="process-section" ref={sectionRef}>
       {/* Heading */}
       <div className="process-header">
         <motion.h2
@@ -94,7 +117,7 @@ const ProcessSection = () => {
       <div className="process-cards-wrapper">
         <div className="process-cards">
           {processSteps.map((step, index) => (
-            <ProcessCard key={step.id} step={step} index={index} />
+            <ProcessCard key={step.id} step={step} index={index} scrollYProgress={scrollYProgress} />
           ))}
         </div>
       </div>
