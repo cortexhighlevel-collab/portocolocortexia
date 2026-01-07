@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Player from "@vimeo/player";
 
 interface VimeoScrollVideoProps {
@@ -6,154 +6,162 @@ interface VimeoScrollVideoProps {
 }
 
 const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
-  const playerRef = useRef<Player | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const playerRef = useRef<Player | null>(null);
+
+  const rafIdRef = useRef<number | null>(null);
+  const durationRef = useRef(0);
+  const lastScrollYRef = useRef<number | null>(null);
+  const isSeekingRef = useRef(false);
+
   const [isReady, setIsReady] = useState(false);
   const [statusMsg, setStatusMsg] = useState("SINCRONIZANDO FRAMES...");
-  
-  const videoDurationRef = useRef(0);
-  const lastScrollTime = useRef(0);
-  const lastUserScrollAtRef = useRef(0);
-  const lastTargetTimeRef = useRef(0);
 
-
-  // Base link format (no autoplay). We scrub frames via JS.
-  const vimeoUrl = `https://player.vimeo.com/video/${videoId}?autoplay=0&muted=1&background=1&autopause=0&controls=0`;
+  // Base link format requested (we immediately pause and scrub via scroll)
+  const vimeoUrl = useMemo(
+    () =>
+      `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=1&background=1&autopause=0&controls=0`,
+    [videoId]
+  );
 
   useEffect(() => {
     if (!iframeRef.current) return;
 
-    // Show video immediately while loading
-    const timeout = setTimeout(() => {
-      setIsReady(true);
-      setStatusMsg("");
-    }, 2000);
+    setIsReady(false);
+    setStatusMsg("SINCRONIZANDO FRAMES...");
 
     const player = new Player(iframeRef.current);
     playerRef.current = player;
 
-    // Ensure it doesn't start playing by itself
-    player.pause().catch(() => {
-      // ignore
-    });
-    const handlePlay = () => {
-      // Guarantee the video never plays on its own (only scrub via scroll)
+    const readyTimeout = window.setTimeout(() => {
+      // Avoid black screen forever if Vimeo takes too long
+      setIsReady(true);
+      setStatusMsg("");
+    }, 2500);
+
+    const stopAutoplay = () => {
       player.pause().catch(() => {
         // ignore
       });
     };
 
-    const handleTimeUpdate = () => {
-      // If the user isn't actively scrolling, keep it paused
-      if (Date.now() - lastUserScrollAtRef.current > 200) {
-        player.pause().catch(() => {
-          // ignore
-        });
-      }
+    const startScrollSyncLoop = () => {
+      const tick = () => {
+        const p = playerRef.current;
+        const container = scrollContainerRef.current;
+
+        if (!p || !container || !durationRef.current) {
+          rafIdRef.current = window.requestAnimationFrame(tick);
+          return;
+        }
+
+        const currentScrollY = window.scrollY;
+        if (lastScrollYRef.current !== currentScrollY && !isSeekingRef.current) {
+          lastScrollYRef.current = currentScrollY;
+
+          const startY = container.offsetTop;
+          const containerHeight = container.offsetHeight;
+          const maxScroll = Math.max(containerHeight - window.innerHeight, 1);
+          const localScroll = currentScrollY - startY;
+          const progress = Math.min(Math.max(localScroll / maxScroll, 0), 1);
+
+          const targetTime = progress * durationRef.current;
+
+          isSeekingRef.current = true;
+          p.setCurrentTime(targetTime)
+            .then(() => p.pause())
+            .catch(() => {
+              // ignore seek errors
+            })
+            .finally(() => {
+              isSeekingRef.current = false;
+            });
+        }
+
+        rafIdRef.current = window.requestAnimationFrame(tick);
+      };
+
+      rafIdRef.current = window.requestAnimationFrame(tick);
     };
 
-    player.ready().then(async () => {
-      clearTimeout(timeout);
+    player
+      .ready()
+      .then(async () => {
+        window.clearTimeout(readyTimeout);
 
-      player.on("play", handlePlay);
-      player.on("timeupdate", handleTimeUpdate);
+        // Make sure Vimeo never keeps playing by itself
+        player.on("play", stopAutoplay);
 
-      await player.setMuted(true);
-      await player.setLoop(false);
+        await player.setMuted(true).catch(() => {
+          // ignore
+        });
 
-      // Keep it strictly paused; we only scrub with setCurrentTime on scroll
-      await player.pause().catch(() => {
-        // ignore
+        // Let it start (autoplay param) so it buffers, then freeze at frame 0
+        await player.pause().catch(() => {
+          // ignore
+        });
+
+        const duration = await player.getDuration();
+        durationRef.current = duration;
+
+        await player.setCurrentTime(0).catch(() => {
+          // ignore
+        });
+        await player.pause().catch(() => {
+          // ignore
+        });
+
+        setIsReady(true);
+        setStatusMsg("");
+
+        // Sync immediately to the current scroll position
+        lastScrollYRef.current = null;
+        startScrollSyncLoop();
+      })
+      .catch((err) => {
+        console.log("Vimeo player error:", err);
+        window.clearTimeout(readyTimeout);
+        setIsReady(true);
+        setStatusMsg("");
       });
-
-      const duration = await player.getDuration();
-      videoDurationRef.current = duration;
-
-      // Start at 0 and keep paused
-      await player.setCurrentTime(0);
-      await player.pause().catch(() => {
-        // ignore
-      });
-
-      setIsReady(true);
-      setStatusMsg("");
-
-      // Sync once to current scroll position
-      window.requestAnimationFrame(() => {
-        window.dispatchEvent(new Event("scroll"));
-      });
-    }).catch((err) => {
-      console.log("Vimeo player error:", err);
-      clearTimeout(timeout);
-      setIsReady(true);
-      setStatusMsg("");
-    });
 
     return () => {
-      clearTimeout(timeout);
-      if (playerRef.current) {
+      window.clearTimeout(readyTimeout);
+
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+
+      const current = playerRef.current;
+      playerRef.current = null;
+
+      if (current) {
         try {
-          playerRef.current.off("play");
-          playerRef.current.off("timeupdate");
+          current.off("play", stopAutoplay);
         } catch {
           // ignore
         }
-        playerRef.current = null;
+
+        current.destroy().catch(() => {
+          // ignore
+        });
       }
     };
-  }, [videoId]);
-
-  // Scroll handler
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!playerRef.current || !videoDurationRef.current || !containerRef.current) return;
-
-      // Throttle to avoid too many seek calls
-      const now = Date.now();
-      if (now - lastScrollTime.current < 50) return;
-      lastScrollTime.current = now;
-      lastUserScrollAtRef.current = now;
-
-      // Calculate scroll progress based on container height
-      const containerHeight = containerRef.current.offsetHeight;
-      const startY = containerRef.current.offsetTop;
-      const scrollY = window.scrollY - startY;
-      const maxScroll = Math.max(containerHeight - window.innerHeight, 1);
-      const scrollProgress = Math.min(Math.max(scrollY / maxScroll, 0), 1);
-
-      const targetTime = scrollProgress * videoDurationRef.current;
-      lastTargetTimeRef.current = targetTime;
-
-      playerRef.current
-        .setCurrentTime(targetTime)
-        .then(() => playerRef.current?.pause())
-        .catch(() => {
-          // Ignore seek/pause errors
-        });
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
+  }, [vimeoUrl]);
 
   return (
     <>
       {/* Scroll container - creates the scroll space */}
-      <div 
-        ref={containerRef}
+      <div
+        ref={scrollContainerRef}
         className="vimeo-scroll-container"
         style={{ height: "800vh", position: "relative" }}
       />
-      
+
       {/* Status message */}
-      {statusMsg && (
-        <div className="vimeo-status-msg">
-          {statusMsg}
-        </div>
-      )}
-      
+      {statusMsg && <div className="vimeo-status-msg">{statusMsg}</div>}
+
       {/* Video background */}
       <div className={`vimeo-video-background ${isReady ? "video-ready" : ""}`}>
         <iframe
