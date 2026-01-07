@@ -93,9 +93,13 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
     return () => {
       clearTimeout(timeout);
       if (playerRef.current) {
-        playerRef.current.off("play");
-        playerRef.current.off("timeupdate");
-        playerRef.current.destroy();
+        try {
+          playerRef.current.off("play");
+          playerRef.current.off("timeupdate");
+        } catch {
+          // ignore
+        }
+        playerRef.current = null;
       }
     };
   }, [videoId]);
@@ -153,7 +157,6 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
       {/* Video background */}
       <div className={`vimeo-video-background ${isReady ? "video-ready" : ""}`}>
         <iframe
-          key={vimeoUrl}
           ref={iframeRef}
           src={vimeoUrl}
           allow="autoplay; fullscreen; picture-in-picture"
