@@ -1234,4 +1234,111 @@
       height: 800px;
     }
   }
+
+  /* Footer Section */
+  .footer-section {
+    position: relative;
+    padding: 80px 40px 40px;
+    background-color: hsl(var(--background));
+    overflow: hidden;
+  }
+
+  .footer-content {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto 80px;
+  }
+
+  .footer-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .footer-label {
+    font-size: 14px;
+    letter-spacing: -0.02em;
+    color: hsl(var(--foreground));
+    opacity: 0.5;
+    text-transform: lowercase;
+  }
+
+  .footer-email {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 600;
+    color: hsl(var(--foreground));
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .footer-email:hover {
+    opacity: 0.7;
+  }
+
+  .footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .footer-link {
+    font-size: 1rem;
+    color: hsl(var(--foreground));
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+    width: fit-content;
+  }
+
+  .footer-link:hover {
+    opacity: 0.7;
+  }
+
+  .footer-brand-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    overflow: hidden;
+  }
+
+  .footer-brand-text {
+    font-size: clamp(80px, 18vw, 220px);
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    line-height: 0.85;
+    color: hsl(var(--foreground));
+    text-transform: lowercase;
+    white-space: nowrap;
+    opacity: 0.15;
+  }
+
+  .footer-brand-text:first-child {
+    opacity: 0.05;
+  }
+
+  .footer-brand-text:nth-child(2) {
+    opacity: 0.1;
+  }
+
+  .footer-brand-text:last-child {
+    opacity: 0.2;
+  }
+
+  @media (max-width: 768px) {
+    .footer-section {
+      padding: 60px 20px 30px;
+    }
+
+    .footer-content {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      margin-bottom: 60px;
+    }
+
+    .footer-brand-text {
+      font-size: clamp(50px, 15vw, 100px);
+    }
+  }
 }
