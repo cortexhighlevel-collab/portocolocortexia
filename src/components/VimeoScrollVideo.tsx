@@ -12,8 +12,12 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
 
   const rafIdRef = useRef<number | null>(null);
   const durationRef = useRef(0);
-  const lastScrollYRef = useRef<number | null>(null);
+
+  const targetTimeRef = useRef(0);
+  const currentTimeRef = useRef(0);
+
   const isSeekingRef = useRef(false);
+  const seekSafetyTimeoutRef = useRef<number | null>(null);
 
   const [isReady, setIsReady] = useState(false);
   const [statusMsg, setStatusMsg] = useState("SINCRONIZANDO FRAMES...");
@@ -23,7 +27,7 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
   // "Failed to execute 'removeChild' on 'Node'" (usually caused by player.destroy() removing the iframe).
   const vimeoUrl = useMemo(
     () =>
-      `https://player.vimeo.com/video/${videoId}?muted=1&autoplay=0&background=1&autopause=0&controls=0&loop=0`,
+      `https://player.vimeo.com/video/${videoId}?muted=1&autoplay=1&background=1&autopause=0&controls=0&loop=0`,
     [videoId]
   );
 
@@ -32,8 +36,19 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
 
     let isActive = true;
 
+    // HMR/remount safety: if a previous cleanup blanked/unloaded the iframe,
+    // ensure we restore the correct src before re-initializing the player.
+    try {
+      iframeRef.current.src = vimeoUrl;
+    } catch {
+      // ignore
+    }
+
     setIsReady(false);
     setStatusMsg("SINCRONIZANDO FRAMES...");
+
+    targetTimeRef.current = 0;
+    currentTimeRef.current = 0;
 
     const player = new Player(iframeRef.current);
     playerRef.current = player;
@@ -43,11 +58,7 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
       setStatusMsg("");
     }, 2500);
 
-    const stopAutoplay = () => {
-      player.pause().catch(() => {
-        // ignore
-      });
-    };
+    const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);
 
     const startScrollSyncLoop = () => {
       const tick = () => {
@@ -55,32 +66,54 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
 
         const p = playerRef.current;
         const container = scrollContainerRef.current;
+        const duration = durationRef.current;
 
-        if (!p || !container || !durationRef.current) {
+        if (!p || !container || !duration) {
           rafIdRef.current = window.requestAnimationFrame(tick);
           return;
         }
 
-        const currentScrollY = window.scrollY;
+        const startY = container.offsetTop;
+        const containerHeight = container.offsetHeight;
+        const maxScroll = Math.max(containerHeight - window.innerHeight, 1);
+        const localScroll = window.scrollY - startY;
+        const progress = clamp01(localScroll / maxScroll);
 
-        if (lastScrollYRef.current !== currentScrollY && !isSeekingRef.current) {
-          lastScrollYRef.current = currentScrollY;
+        targetTimeRef.current = progress * duration;
 
-          const startY = container.offsetTop;
-          const containerHeight = container.offsetHeight;
-          const maxScroll = Math.max(containerHeight - window.innerHeight, 1);
-          const localScroll = currentScrollY - startY;
-          const progress = Math.min(Math.max(localScroll / maxScroll, 0), 1);
+        const diff = targetTimeRef.current - currentTimeRef.current;
+        const lerpFactor = 0.08;
 
-          const targetTime = progress * durationRef.current;
+        if (Math.abs(diff) > 0.0001) {
+          currentTimeRef.current += diff * lerpFactor;
+        }
 
+        if (!isSeekingRef.current && Math.abs(diff) > 0.06) {
           isSeekingRef.current = true;
-          p.setCurrentTime(targetTime)
+
+          if (seekSafetyTimeoutRef.current) {
+            window.clearTimeout(seekSafetyTimeoutRef.current);
+            seekSafetyTimeoutRef.current = null;
+          }
+
+          // Safety release in case Vimeo never resolves the promise.
+          seekSafetyTimeoutRef.current = window.setTimeout(() => {
+            isSeekingRef.current = false;
+            seekSafetyTimeoutRef.current = null;
+          }, 300);
+
+          const seekTo = Math.min(Math.max(currentTimeRef.current, 0), duration);
+
+          p.setCurrentTime(seekTo)
             .then(() => p.pause())
             .catch(() => {
               // ignore seek errors
             })
             .finally(() => {
+              if (seekSafetyTimeoutRef.current) {
+                window.clearTimeout(seekSafetyTimeoutRef.current);
+                seekSafetyTimeoutRef.current = null;
+              }
               isSeekingRef.current = false;
             });
         }
@@ -98,17 +131,18 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
 
         window.clearTimeout(readyTimeout);
 
-        // Never let it play by itself
-        player.on("play", stopAutoplay);
-
         await player.setMuted(true).catch(() => {
           // ignore
         });
 
-        // Freeze on frame 0 (autoplay=0, but we still force pause)
-        await player.pause().catch(() => {
-          // ignore
-        });
+        // Prime decoding/buffering so seeking updates frames reliably.
+        // Muted playback is typically allowed without user gesture.
+        await player
+          .play()
+          .then(() => player.pause())
+          .catch(() => {
+            // ignore
+          });
 
         const duration = await player.getDuration();
         durationRef.current = duration;
@@ -123,7 +157,6 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
         setIsReady(true);
         setStatusMsg("");
 
-        lastScrollYRef.current = null;
         startScrollSyncLoop();
       })
       .catch((err) => {
@@ -142,16 +175,15 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
         rafIdRef.current = null;
       }
 
+      if (seekSafetyTimeoutRef.current) {
+        window.clearTimeout(seekSafetyTimeoutRef.current);
+        seekSafetyTimeoutRef.current = null;
+      }
+
       const current = playerRef.current;
       playerRef.current = null;
 
       if (current) {
-        try {
-          current.off("play", stopAutoplay);
-        } catch {
-          // ignore
-        }
-
         // CRITICAL: do NOT call destroy() here; it removes the iframe from the DOM and can crash React.
         current.pause().catch(() => {
           // ignore
@@ -159,15 +191,6 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
         current.unload?.().catch(() => {
           // ignore
         });
-      }
-
-      // Optional hard-stop network/activity without DOM removals
-      if (iframeRef.current) {
-        try {
-          iframeRef.current.src = "about:blank";
-        } catch {
-          // ignore
-        }
       }
     };
   }, [vimeoUrl]);
