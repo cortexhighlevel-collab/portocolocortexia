@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import projectVideo from "@/assets/project-video.webm";
@@ -28,8 +28,11 @@ const projects = [
 
 const ProjectsSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [frontIndex, setFrontIndex] = useState(0);
-  const [backIndex, setBackIndex] = useState(1);
+  
+  // Track which project index is currently visible
+  const [currentProjectIndex, setCurrentProjectIndex] = useState(0);
+  const [frontProjectIndex, setFrontProjectIndex] = useState(0);
+  const [backProjectIndex, setBackProjectIndex] = useState(1);
   const lastFlipRef = useRef(0);
   
   const { scrollYProgress } = useScroll({
@@ -37,54 +40,63 @@ const ProjectsSection = () => {
     offset: ["start start", "end end"],
   });
 
-  // Calculate rotation based on scroll
-  // Cards stay flat longer, quick flip transitions
+  // Calculate rotation based on scroll - 3 projects = 2 flips (0->180->360)
   const rotateX = useTransform(
     scrollYProgress,
     [0, 0.20, 0.30, 0.45, 0.55, 0.70, 0.80, 1],
     [0, 0, 180, 180, 180, 360, 360, 360]
   );
 
-  // Track flip count to update card contents - handles both directions
+  // Track flips and update card contents
   useMotionValueEvent(rotateX, "change", (latest) => {
-    const currentFlip = Math.floor(latest / 180);
+    // Determine current flip (0, 1, or 2)
+    const currentFlip = Math.floor((latest + 1) / 180); // +1 to handle edge cases
+    const clampedFlip = Math.max(0, Math.min(2, currentFlip));
+    
     const lastFlip = lastFlipRef.current;
     
-    if (currentFlip !== lastFlip) {
-      const isScrollingDown = currentFlip > lastFlip;
-      lastFlipRef.current = currentFlip;
+    if (clampedFlip !== lastFlip) {
+      const isScrollingDown = clampedFlip > lastFlip;
+      lastFlipRef.current = clampedFlip;
       
-      // Determine which face is now hidden and update it
-      const isBackVisible = currentFlip % 2 === 1;
+      // The current visible project is based on flip count
+      // Flip 0 = Project 0, Flip 1 = Project 1, Flip 2 = Project 2
+      setCurrentProjectIndex(clampedFlip);
+      
+      // Update the hidden face for the NEXT potential flip
+      const isFrontVisible = clampedFlip % 2 === 0;
       
       if (isScrollingDown) {
-        // Scrolling down - advance to next project
-        if (isBackVisible) {
-          // Front face is hidden, update it to next project
-          const nextIndex = (currentFlip + 1) % projects.length;
-          setFrontIndex(nextIndex);
+        if (isFrontVisible) {
+          // Front is visible, back is hidden - prepare back for next project
+          const nextBackIndex = Math.min(clampedFlip + 1, projects.length - 1);
+          setBackProjectIndex(nextBackIndex);
+          setFrontProjectIndex(clampedFlip);
         } else {
-          // Back face is hidden, update it to next project
-          const nextIndex = (currentFlip + 1) % projects.length;
-          setBackIndex(nextIndex);
+          // Back is visible, front is hidden - prepare front for next project
+          const nextFrontIndex = Math.min(clampedFlip + 1, projects.length - 1);
+          setFrontProjectIndex(nextFrontIndex);
+          setBackProjectIndex(clampedFlip);
         }
       } else {
-        // Scrolling up - go back to previous project
-        if (isBackVisible) {
-          // Front is hidden, update it to previous project
-          const prevIndex = ((currentFlip - 1) % projects.length + projects.length) % projects.length;
-          setFrontIndex(prevIndex);
+        // Scrolling up
+        if (isFrontVisible) {
+          // Front is visible, back is hidden - prepare back for previous project
+          const prevBackIndex = Math.max(clampedFlip - 1, 0);
+          setBackProjectIndex(prevBackIndex);
+          setFrontProjectIndex(clampedFlip);
         } else {
-          // Back is hidden, update it to previous project
-          const prevIndex = ((currentFlip - 1) % projects.length + projects.length) % projects.length;
-          setBackIndex(prevIndex);
+          // Back is visible, front is hidden - prepare front for previous project
+          const prevFrontIndex = Math.max(clampedFlip - 1, 0);
+          setFrontProjectIndex(prevFrontIndex);
+          setBackProjectIndex(clampedFlip);
         }
       }
     }
   });
 
-  const frontProject = projects[frontIndex];
-  const backProject = projects[backIndex];
+  const frontProject = projects[frontProjectIndex];
+  const backProject = projects[backProjectIndex];
 
   return (
     <section id="projects" ref={sectionRef} className="projects-scroll-section">
@@ -117,6 +129,16 @@ const ProjectsSection = () => {
               <CardContent project={backProject} />
             </div>
           </motion.div>
+        </div>
+
+        {/* Project Indicator */}
+        <div className="projects-indicator">
+          {projects.map((_, index) => (
+            <div 
+              key={index} 
+              className={`projects-indicator-dot ${index === currentProjectIndex ? 'active' : ''}`}
+            />
+          ))}
         </div>
 
         {/* Scrolling Project Names */}
