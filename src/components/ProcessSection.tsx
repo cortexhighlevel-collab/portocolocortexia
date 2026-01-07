@@ -4,31 +4,31 @@ import { Phone, Palette, Code, Package, Heart } from "lucide-react";
 const processSteps = [
   {
     id: 1,
-    step: "Step 1",
+    step: "Passo 1",
     icon: Phone,
-    title: "Let's Get In Touch",
-    description: "Start by reaching out through our contact page. Fill out the form or book a call to discuss your project, goals, and ideas in even greater detail.",
+    title: "Vamos Conversar",
+    description: "Comece entrando em contato pela nossa página. Preencha o formulário ou agende uma chamada para discutir seu projeto, objetivos e ideias em detalhes.",
   },
   {
     id: 2,
-    step: "Step 2",
+    step: "Passo 2",
     icon: Palette,
-    title: "Grab Your Designs",
-    description: "Tell me your unique vision, and I'll create stunning, functional designs that perfectly align with your goals and bring your ideas to life seamlessly.",
+    title: "Receba Seus Designs",
+    description: "Conte-me sua visão única e criarei designs impressionantes e funcionais que se alinham perfeitamente com seus objetivos e dão vida às suas ideias.",
   },
   {
     id: 3,
-    step: "Step 3",
+    step: "Passo 3",
     icon: Code,
-    title: "Kickstart Development",
-    description: "I expertly transform your designs into a powerful, scalable solution, fully ready to launch and optimized for performance, usability, and growth.",
+    title: "Início do Desenvolvimento",
+    description: "Transformo seus designs em uma solução poderosa e escalável, pronta para lançar e otimizada para performance, usabilidade e crescimento.",
   },
   {
     id: 4,
-    step: "Step 4",
+    step: "Passo 4",
     icon: Package,
-    title: "And Hand Over",
-    description: "Receive a fully tested, polished, high-quality product tailored to your needs with support for seamless performance and long-term success.",
+    title: "Entrega Final",
+    description: "Receba um produto testado, polido e de alta qualidade, personalizado para suas necessidades, com suporte para performance contínua e sucesso a longo prazo.",
   },
 ];
 
@@ -77,7 +77,7 @@ const ProcessSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          Process is Everything
+          O Processo é Tudo
         </motion.h2>
         <motion.p
           className="process-subheading"
@@ -86,7 +86,7 @@ const ProcessSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
-          Simple, streamlined process is what get's you results
+          Um processo simples e organizado é o que traz resultados
         </motion.p>
       </div>
 
@@ -110,10 +110,10 @@ const ProcessSection = () => {
         <div className="process-footer-content">
           <div className="process-footer-header">
             <Heart className="process-footer-icon" />
-            <h3 className="process-footer-title">I am with you in every step</h3>
+            <h3 className="process-footer-title">Estou com você em cada etapa</h3>
           </div>
           <p className="process-footer-description">
-            alongside you at each step for seamless experience
+            ao seu lado em cada passo para uma experiência perfeita
           </p>
         </div>
       </motion.div>
