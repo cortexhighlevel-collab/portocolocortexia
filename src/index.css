@@ -115,7 +115,69 @@
     pointer-events: auto;
   }
 
-  /* YouTube Scroll Video */
+  /* Vimeo Scroll Video */
+  .vimeo-scroll-container {
+    position: relative;
+  }
+
+  .vimeo-status-msg {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.7);
+    z-index: 10;
+    text-align: center;
+    pointer-events: none;
+    font-size: 10px;
+    letter-spacing: 3px;
+  }
+
+  .vimeo-video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+    background: hsl(var(--background));
+  }
+
+  .vimeo-video-background iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100vw;
+    height: 100vh;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    will-change: transform;
+    border: none;
+  }
+
+  /* Maintain aspect ratio and cover screen */
+  @media (min-aspect-ratio: 16/9) {
+    .vimeo-video-background iframe {
+      height: 56.25vw;
+      width: 100vw;
+    }
+  }
+
+  @media (max-aspect-ratio: 16/9) {
+    .vimeo-video-background iframe {
+      width: 177.78vh;
+      height: 100vh;
+    }
+  }
+
+  .vimeo-video-background.video-ready iframe {
+    opacity: 1;
+  }
+
+  /* YouTube Scroll Video (legacy) */
   .youtube-scroll-container {
     position: relative;
   }
