@@ -8,14 +8,12 @@ interface VimeoScrollVideoProps {
 const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
   const playerRef = useRef<Player | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isReady, setIsReady] = useState(false);
   const [statusMsg, setStatusMsg] = useState("SINCRONIZANDO FRAMES...");
   
   const videoDurationRef = useRef(0);
-  const targetTimeRef = useRef(0);
-  const currentTimeRef = useRef(0);
-  const isSeekingRef = useRef(false);
-  const rafIdRef = useRef<number | null>(null);
+  const lastScrollTime = useRef(0);
 
   useEffect(() => {
     if (!iframeRef.current) return;
@@ -31,15 +29,12 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
 
     player.ready().then(async () => {
       clearTimeout(timeout);
-      // Pause video immediately - we control it via scroll
-      await player.pause();
       const duration = await player.getDuration();
       videoDurationRef.current = duration;
       // Set initial position to 0
       await player.setCurrentTime(0);
       setIsReady(true);
       setStatusMsg("");
-      startSyncLoop();
     }).catch((err) => {
       console.log("Vimeo player error:", err);
       clearTimeout(timeout);
@@ -49,59 +44,46 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
 
     return () => {
       clearTimeout(timeout);
-      if (rafIdRef.current) {
-        cancelAnimationFrame(rafIdRef.current);
-      }
       if (playerRef.current) {
         playerRef.current.destroy();
       }
     };
   }, [videoId]);
 
-  const startSyncLoop = () => {
-    const syncFrame = () => {
-      if (!playerRef.current || !videoDurationRef.current) {
-        rafIdRef.current = requestAnimationFrame(syncFrame);
-        return;
-      }
+  // Scroll handler
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!playerRef.current || !videoDurationRef.current || !containerRef.current) return;
 
-      // Calculate scroll height (800vh equivalent)
-      const scrollHeight = window.innerHeight * 8;
+      // Throttle to avoid too many seek calls
+      const now = Date.now();
+      if (now - lastScrollTime.current < 50) return;
+      lastScrollTime.current = now;
+
+      // Calculate scroll progress based on container height
+      const containerHeight = containerRef.current.offsetHeight;
       const scrollY = window.scrollY;
-      const maxScroll = scrollHeight - window.innerHeight;
+      const maxScroll = containerHeight - window.innerHeight;
       const scrollProgress = Math.min(Math.max(scrollY / maxScroll, 0), 1);
       
-      targetTimeRef.current = scrollProgress * videoDurationRef.current;
+      const targetTime = scrollProgress * videoDurationRef.current;
 
-      // Smooth interpolation
-      const diff = targetTimeRef.current - currentTimeRef.current;
-      const lerpFactor = 0.08;
-      
-      if (Math.abs(diff) > 0.01) {
-        currentTimeRef.current += diff * lerpFactor;
-        
-        if (!isSeekingRef.current && Math.abs(diff) > 0.05) {
-          isSeekingRef.current = true;
-          playerRef.current.setCurrentTime(currentTimeRef.current).then(() => {
-            isSeekingRef.current = false;
-          }).catch(() => {
-            isSeekingRef.current = false;
-          });
-        }
-      }
-
-      rafIdRef.current = requestAnimationFrame(syncFrame);
+      playerRef.current.setCurrentTime(targetTime).catch(() => {
+        // Ignore seek errors
+      });
     };
 
-    rafIdRef.current = requestAnimationFrame(syncFrame);
-  };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-  const vimeoUrl = `https://player.vimeo.com/video/${videoId}?autoplay=0&muted=1&background=1&autopause=0&controls=0`;
+  const vimeoUrl = `https://player.vimeo.com/video/${videoId}?muted=1&background=1&autopause=0&controls=0&quality=1080p`;
 
   return (
     <>
       {/* Scroll container - creates the scroll space */}
       <div 
+        ref={containerRef}
         className="vimeo-scroll-container"
         style={{ height: "800vh", position: "relative" }}
       />
