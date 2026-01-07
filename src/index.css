@@ -711,13 +711,71 @@
     z-index: 5;
   }
 
-  /* Flipper Card System */
-  .projects-flipper-wrapper {
+  /* Main Content Area */
+  .projects-main-content {
     position: relative;
     width: 100%;
     max-width: 900px;
     height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Background Text Flipper */
+  .projects-text-flipper-wrapper {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     perspective: 1500px;
+    z-index: 1;
+    overflow: visible;
+  }
+
+  .projects-text-flipper {
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .projects-text-face {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    white-space: nowrap;
+  }
+
+  .projects-text-front {
+    transform: translateX(-50%) translateY(-50%) rotateX(0deg);
+  }
+
+  .projects-text-back {
+    transform: translateX(-50%) translateY(-50%) rotateX(180deg);
+  }
+
+  .projects-text-name {
+    font-size: clamp(100px, 18vw, 220px);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: hsl(var(--foreground));
+    text-transform: uppercase;
+    opacity: 0.06;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* Flipper Card System */
+  .projects-flipper-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    perspective: 1500px;
+    z-index: 10;
   }
 
   .projects-flipper {
@@ -839,36 +897,7 @@
     pointer-events: none;
   }
 
-  /* Projects Names Ticker */
-  .projects-names-ticker {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow: hidden;
-    padding: 40px 0;
-    mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
-    z-index: 1;
-  }
-
-  .projects-names-track {
-    display: flex;
-    gap: 80px;
-    animation: projects-ticker-scroll 25s linear infinite;
-  }
-
-  .projects-name-item {
-    font-size: clamp(80px, 12vw, 160px);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1;
-    color: hsl(var(--foreground));
-    text-transform: uppercase;
-    white-space: nowrap;
-    flex-shrink: 0;
-    opacity: 0.08;
-  }
+  /* Removed old ticker - now using flipper text */
 
   /* Project Indicator Dots */
   .projects-indicator {
@@ -917,8 +946,12 @@
       font-size: 1.75rem;
     }
 
-    .projects-flipper-wrapper {
+    .projects-main-content {
       height: 350px;
+    }
+
+    .projects-text-name {
+      font-size: 60px;
     }
 
     .projects-flipper-face {
@@ -951,16 +984,8 @@
       padding: 4px 10px;
     }
 
-    .projects-names-ticker {
-      padding: 20px 0;
-    }
-
-    .projects-name-item {
-      font-size: 50px;
-    }
-
-    .projects-names-track {
-      gap: 50px;
+    .projects-indicator {
+      bottom: 80px;
     }
   }
 
@@ -973,16 +998,20 @@
       top: 40px;
     }
 
-    .projects-flipper-wrapper {
-      height: 300px;
+    .projects-main-content {
+      height: 280px;
+    }
+
+    .projects-text-name {
+      font-size: 40px;
     }
 
     .project-card-title {
       font-size: 1rem;
     }
 
-    .projects-name-item {
-      font-size: 36px;
+    .projects-indicator {
+      bottom: 60px;
     }
   }
 

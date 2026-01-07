@@ -50,7 +50,7 @@ const ProjectsSection = () => {
   // Track flips and update card contents
   useMotionValueEvent(rotateX, "change", (latest) => {
     // Determine current flip (0, 1, or 2)
-    const currentFlip = Math.floor((latest + 1) / 180); // +1 to handle edge cases
+    const currentFlip = Math.floor((latest + 1) / 180);
     const clampedFlip = Math.max(0, Math.min(2, currentFlip));
     
     const lastFlip = lastFlipRef.current;
@@ -59,34 +59,26 @@ const ProjectsSection = () => {
       const isScrollingDown = clampedFlip > lastFlip;
       lastFlipRef.current = clampedFlip;
       
-      // The current visible project is based on flip count
-      // Flip 0 = Project 0, Flip 1 = Project 1, Flip 2 = Project 2
       setCurrentProjectIndex(clampedFlip);
       
-      // Update the hidden face for the NEXT potential flip
       const isFrontVisible = clampedFlip % 2 === 0;
       
       if (isScrollingDown) {
         if (isFrontVisible) {
-          // Front is visible, back is hidden - prepare back for next project
           const nextBackIndex = Math.min(clampedFlip + 1, projects.length - 1);
           setBackProjectIndex(nextBackIndex);
           setFrontProjectIndex(clampedFlip);
         } else {
-          // Back is visible, front is hidden - prepare front for next project
           const nextFrontIndex = Math.min(clampedFlip + 1, projects.length - 1);
           setFrontProjectIndex(nextFrontIndex);
           setBackProjectIndex(clampedFlip);
         }
       } else {
-        // Scrolling up
         if (isFrontVisible) {
-          // Front is visible, back is hidden - prepare back for previous project
           const prevBackIndex = Math.max(clampedFlip - 1, 0);
           setBackProjectIndex(prevBackIndex);
           setFrontProjectIndex(clampedFlip);
         } else {
-          // Back is visible, front is hidden - prepare front for previous project
           const prevFrontIndex = Math.max(clampedFlip - 1, 0);
           setFrontProjectIndex(prevFrontIndex);
           setBackProjectIndex(clampedFlip);
@@ -113,22 +105,43 @@ const ProjectsSection = () => {
           Recent Projects
         </motion.h2>
 
-        {/* Flipper Card Container */}
-        <div className="projects-flipper-wrapper">
-          <motion.div 
-            className="projects-flipper"
-            style={{ rotateX }}
-          >
-            {/* Front Face */}
-            <div className="projects-flipper-face projects-flipper-front">
-              <CardContent project={frontProject} />
-            </div>
+        {/* Main Content Area */}
+        <div className="projects-main-content">
+          {/* Background Text Flipper */}
+          <div className="projects-text-flipper-wrapper">
+            <motion.div 
+              className="projects-text-flipper"
+              style={{ rotateX }}
+            >
+              {/* Front Text */}
+              <div className="projects-text-face projects-text-front">
+                <span className="projects-text-name">{frontProject.name}</span>
+              </div>
 
-            {/* Back Face (rotated 180deg) */}
-            <div className="projects-flipper-face projects-flipper-back">
-              <CardContent project={backProject} />
-            </div>
-          </motion.div>
+              {/* Back Text */}
+              <div className="projects-text-face projects-text-back">
+                <span className="projects-text-name">{backProject.name}</span>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Flipper Card Container */}
+          <div className="projects-flipper-wrapper">
+            <motion.div 
+              className="projects-flipper"
+              style={{ rotateX }}
+            >
+              {/* Front Face */}
+              <div className="projects-flipper-face projects-flipper-front">
+                <CardContent project={frontProject} />
+              </div>
+
+              {/* Back Face (rotated 180deg) */}
+              <div className="projects-flipper-face projects-flipper-back">
+                <CardContent project={backProject} />
+              </div>
+            </motion.div>
+          </div>
         </div>
 
         {/* Project Indicator */}
@@ -139,17 +152,6 @@ const ProjectsSection = () => {
               className={`projects-indicator-dot ${index === currentProjectIndex ? 'active' : ''}`}
             />
           ))}
-        </div>
-
-        {/* Scrolling Project Names */}
-        <div className="projects-names-ticker">
-          <div className="projects-names-track">
-            {[...projects, ...projects, ...projects].map((project, index) => (
-              <span key={index} className="projects-name-item">
-                {project.name}
-              </span>
-            ))}
-          </div>
         </div>
       </div>
     </section>
