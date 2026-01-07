@@ -1,5 +1,21 @@
 import { motion } from "framer-motion";
-import { ArrowUpRight, Globe, MessageSquare, Palette, Bot } from "lucide-react";
+import { 
+  ArrowUpRight, 
+  Globe, 
+  MessageSquare, 
+  Palette, 
+  Bot, 
+  Workflow,
+  PenTool,
+  FileText,
+  Database,
+  Code,
+  Search,
+  Frame,
+  MessageCircle,
+  LayoutTemplate,
+  Gauge
+} from "lucide-react";
 
 const services = [
   {
@@ -34,15 +50,20 @@ const services = [
   },
 ];
 
-const moreServices = [
-  "n8n Workflows",
-  "AI Chatbots",
-  "Website Redesign",
-  "Landing Pages",
-  "SEO Optimization",
-  "Framer Development",
-  "RTL Design",
-  "Brand Identity",
+const moreServicesRow1 = [
+  { icon: Workflow, label: "n8n Workflows" },
+  { icon: PenTool, label: "Wireframing" },
+  { icon: FileText, label: "Copywriting" },
+  { icon: Database, label: "CMS Setup" },
+];
+
+const moreServicesRow2 = [
+  { icon: Code, label: "Custom Code" },
+  { icon: Search, label: "SEO" },
+  { icon: Frame, label: "Framer Expert" },
+  { icon: MessageCircle, label: "WhatsApp Bots" },
+  { icon: LayoutTemplate, label: "Landing Pages" },
+  { icon: Gauge, label: "Optimization" },
 ];
 
 const ServiceCard = ({ 
@@ -106,6 +127,13 @@ const ServiceCard = ({
   );
 };
 
+const ServicePill = ({ icon: Icon, label }: { icon: React.ElementType; label: string }) => (
+  <div className="service-pill">
+    <Icon className="service-pill-icon" />
+    <span className="service-pill-text">{label}</span>
+  </div>
+);
+
 const ServicesSection = () => {
   return (
     <section id="services" className="services-section">
@@ -156,7 +184,7 @@ const ServicesSection = () => {
           </div>
         </div>
 
-        {/* More Services Ticker */}
+        {/* More Services Ticker - Row 1 */}
         <motion.div
           className="services-more-wrapper"
           initial={{ opacity: 0 }}
@@ -166,16 +194,33 @@ const ServicesSection = () => {
         >
           <div className="services-more-ticker">
             <div className="services-more-track">
-              {[...moreServices, ...moreServices].map((service, index) => (
-                <div key={index} className="services-more-item">
-                  <span className="services-more-dot">●</span>
-                  <span className="services-more-text">{service}</span>
-                </div>
+              {[...moreServicesRow1, ...moreServicesRow1, ...moreServicesRow1].map((service, index) => (
+                <ServicePill key={index} icon={service.icon} label={service.label} />
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* More Services Ticker - Row 2 */}
+        <motion.div
+          className="services-more-wrapper"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+        >
+          <div className="services-more-ticker">
+            <div className="services-more-track services-more-track-reverse">
+              {[...moreServicesRow2, ...moreServicesRow2, ...moreServicesRow2].map((service, index) => (
+                <ServicePill key={index} icon={service.icon} label={service.label} />
               ))}
             </div>
           </div>
         </motion.div>
       </div>
+      
+      {/* Bottom Border */}
+      <div className="services-border" />
     </section>
   );
 };
