@@ -29,14 +29,17 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
     const player = new Player(iframeRef.current);
     playerRef.current = player;
 
-    player.ready().then(() => {
+    player.ready().then(async () => {
       clearTimeout(timeout);
-      player.getDuration().then((duration) => {
-        videoDurationRef.current = duration;
-        setIsReady(true);
-        setStatusMsg("");
-        startSyncLoop();
-      });
+      // Pause video immediately - we control it via scroll
+      await player.pause();
+      const duration = await player.getDuration();
+      videoDurationRef.current = duration;
+      // Set initial position to 0
+      await player.setCurrentTime(0);
+      setIsReady(true);
+      setStatusMsg("");
+      startSyncLoop();
     }).catch((err) => {
       console.log("Vimeo player error:", err);
       clearTimeout(timeout);
@@ -93,7 +96,7 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
     rafIdRef.current = requestAnimationFrame(syncFrame);
   };
 
-  const vimeoUrl = `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=1&background=1&autopause=0&controls=0`;
+  const vimeoUrl = `https://player.vimeo.com/video/${videoId}?autoplay=0&muted=1&background=1&autopause=0&controls=0`;
 
   return (
     <>
