@@ -4,7 +4,7 @@ import VimeoScrollVideo from "./VimeoScrollVideo";
 
 const HeroSection = () => {
   // ID do vídeo do Vimeo
-  const vimeoVideoId = "1152111785";
+  const vimeoVideoId = "1152755935";
 
   return (
     <>
