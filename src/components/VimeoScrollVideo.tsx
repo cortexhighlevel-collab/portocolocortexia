@@ -201,7 +201,7 @@ const VimeoScrollVideo = ({ videoId }: VimeoScrollVideoProps) => {
       <div
         ref={scrollContainerRef}
         className="vimeo-scroll-container"
-        style={{ height: "400vh", position: "relative" }}
+        style={{ height: "120vh", position: "relative" }}
       />
 
       {/* Status message */}
