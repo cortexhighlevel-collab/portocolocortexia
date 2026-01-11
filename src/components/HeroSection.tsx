@@ -13,7 +13,7 @@ const HeroSection = () => {
       setIsPinned(window.scrollY < scrollEnd);
       
       // CORTEX appears after scrolling past 1.5x viewport height
-      setCortexVisible(window.scrollY > window.innerHeight * 1.5);
+      setCortexVisible(window.scrollY > window.innerHeight * 2.5);
     };
     window.addEventListener('scroll', handleScroll, {
       passive: true
