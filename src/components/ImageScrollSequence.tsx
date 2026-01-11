@@ -173,26 +173,30 @@ const ImageScrollSequence = () => {
       <div
         ref={scrollContainerRef}
         className="relative"
-        style={{ height: "100vh" }}
+        style={{ height: "200vh" }}
+      />
+
+      {/* Image sequence background - fixed to viewport */}
+      <div 
+        className="fixed inset-0 w-screen h-screen pointer-events-none"
+        style={{ 
+          zIndex: 0,
+          opacity: isReady ? 1 : 0,
+          transition: 'opacity 0.3s ease'
+        }}
       >
-        {/* Image sequence background - now inside container, not fixed */}
-        <div 
-          className={`absolute inset-0 ${isReady ? "opacity-100" : "opacity-0"}`}
-          style={{ transition: 'opacity 0.3s ease' }}
-        >
-          {frames.map((src, index) => (
-            <img
-              key={index}
-              src={src}
-              alt={`Frame ${index + 1}`}
-              className="absolute inset-0 w-full h-full object-cover"
-              style={{
-                opacity: index === currentFrame ? 1 : 0,
-                visibility: index === currentFrame ? 'visible' : 'hidden',
-              }}
-            />
-          ))}
-        </div>
+        {frames.map((src, index) => (
+          <img
+            key={index}
+            src={src}
+            alt={`Frame ${index + 1}`}
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{
+              opacity: index === currentFrame ? 1 : 0,
+              visibility: index === currentFrame ? 'visible' : 'hidden',
+            }}
+          />
+        ))}
       </div>
     </>
   );
