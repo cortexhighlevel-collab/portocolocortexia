@@ -8,7 +8,7 @@ const HeroSection = () => {
       {/* Image sequence controlled by scroll */}
       <ImageScrollSequence />
       
-      <section className="hero-section">
+      <section className="hero-section" style={{ position: 'fixed', top: 0, left: 0, zIndex: 1, pointerEvents: 'none' }}>
         <div className="hero-content">
           <div className="hero-content-inner">
             {/* Headline and CTA */}

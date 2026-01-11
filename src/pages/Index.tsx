@@ -12,8 +12,8 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <HeroSection />
-      {/* Main content */}
-      <div className="bg-background">
+      {/* Main content - z-index higher than hero to appear on top */}
+      <div className="relative z-10 bg-background">
         <ServicesSection />
         <ProjectsSection />
         <ProcessSection />
