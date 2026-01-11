@@ -356,9 +356,9 @@
     }
 
     .hero-headline {
-      font-size: 1.1rem;
-      line-height: 1.45;
-      max-width: 100%;
+      font-size: 1.05rem;
+      line-height: 1.4;
+      max-width: 280px;
     }
 
     .hero-name {
