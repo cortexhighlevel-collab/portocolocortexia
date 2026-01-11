@@ -213,14 +213,14 @@ const ImageScrollSequence = () => {
     >
       {/* Image sequence background */}
       <div 
-        className="pointer-events-none overflow-hidden"
+        className="pointer-events-none overflow-hidden bg-background"
         style={{ 
           position: isPinned ? 'fixed' : 'absolute',
-          top: isPinned ? 0 : 'auto',
+          top: 0,
           bottom: isPinned ? 'auto' : 0,
           left: 0,
           right: 0,
-          width: '100%',
+          width: '100vw',
           height: '100vh',
           opacity: isReady ? 1 : 0,
           transition: 'opacity 0.3s ease'
@@ -231,12 +231,17 @@ const ImageScrollSequence = () => {
             key={`${isMobile ? 'mobile' : 'desktop'}-${index}`}
             src={src}
             alt={`Frame ${index + 1}`}
-            className="absolute inset-0"
             style={{
-              width: '100%',
-              height: '100%',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 'auto',
+              height: 'auto',
+              minWidth: '100%',
+              minHeight: '100%',
+              maxWidth: 'none',
               objectFit: 'cover',
-              objectPosition: 'center top',
               opacity: index === currentFrame ? 1 : 0,
               visibility: index === currentFrame ? 'visible' : 'hidden',
             }}
