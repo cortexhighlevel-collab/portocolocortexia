@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
-// Import all frames
+// Import desktop frames
 import frame001 from "@/assets/hero-frames/frame-001.jpg";
 import frame002 from "@/assets/hero-frames/frame-002.jpg";
 import frame003 from "@/assets/hero-frames/frame-003.jpg";
@@ -50,55 +51,30 @@ import frame046 from "@/assets/hero-frames/frame-046.jpg";
 import frame047 from "@/assets/hero-frames/frame-047.jpg";
 import frame048 from "@/assets/hero-frames/frame-048.jpg";
 
-const frames = [
-  frame001,
-  frame002,
-  frame003,
-  frame004,
-  frame005,
-  frame006,
-  frame007,
-  frame008,
-  frame009,
-  frame010,
-  frame011,
-  frame012,
-  frame013,
-  frame014,
-  frame015,
-  frame016,
-  frame017,
-  frame018,
-  frame019,
-  frame020,
-  frame021,
-  frame022,
-  frame023,
-  frame024,
-  frame025,
-  frame026,
-  frame027,
-  frame028,
-  frame029,
-  frame030,
-  frame031,
-  frame032,
-  frame033,
-  frame034,
-  frame035,
-  frame036,
-  frame037,
-  frame038,
-  frame039,
-  frame040,
-  frame041,
-  frame042,
-  frame043,
-  frame044,
-  frame045,
-  frame046,
-  frame047,
-  frame048,
+// Import mobile frames
+import mobileFrame001 from "@/assets/hero-frames-mobile/frame-001.jpg";
+import mobileFrame002 from "@/assets/hero-frames-mobile/frame-002.jpg";
+import mobileFrame003 from "@/assets/hero-frames-mobile/frame-003.jpg";
+import mobileFrame004 from "@/assets/hero-frames-mobile/frame-004.jpg";
+import mobileFrame005 from "@/assets/hero-frames-mobile/frame-005.jpg";
+import mobileFrame006 from "@/assets/hero-frames-mobile/frame-006.jpg";
+import mobileFrame007 from "@/assets/hero-frames-mobile/frame-007.jpg";
+import mobileFrame008 from "@/assets/hero-frames-mobile/frame-008.jpg";
+import mobileFrame009 from "@/assets/hero-frames-mobile/frame-009.jpg";
+import mobileFrame010 from "@/assets/hero-frames-mobile/frame-010.jpg";
+
+const desktopFrames = [
+  frame001, frame002, frame003, frame004, frame005, frame006, frame007, frame008,
+  frame009, frame010, frame011, frame012, frame013, frame014, frame015, frame016,
+  frame017, frame018, frame019, frame020, frame021, frame022, frame023, frame024,
+  frame025, frame026, frame027, frame028, frame029, frame030, frame031, frame032,
+  frame033, frame034, frame035, frame036, frame037, frame038, frame039, frame040,
+  frame041, frame042, frame043, frame044, frame045, frame046, frame047, frame048,
+];
+
+const mobileFrames = [
+  mobileFrame001, mobileFrame002, mobileFrame003, mobileFrame004, mobileFrame005,
+  mobileFrame006, mobileFrame007, mobileFrame008, mobileFrame009, mobileFrame010,
 ];
 
 const SMOOTH_FACTOR = 0.15; // Lerp smoothing factor
@@ -110,11 +86,16 @@ const ImageScrollSequence = () => {
   const [isPinned, setIsPinned] = useState(true);
   const rafIdRef = useRef<number | null>(null);
   const currentFrameRef = useRef(0); // For smooth interpolation
+  const isMobile = useIsMobile();
+
+  // Select frames based on device
+  const frames = isMobile ? mobileFrames : desktopFrames;
 
   // Preload all images
   useEffect(() => {
     let loadedCount = 0;
     const totalImages = frames.length;
+    setIsReady(false);
 
     frames.forEach((src) => {
       const img = new Image();
@@ -126,7 +107,13 @@ const ImageScrollSequence = () => {
         }
       };
     });
-  }, []);
+  }, [frames]);
+
+  // Reset frame when switching between mobile/desktop
+  useEffect(() => {
+    currentFrameRef.current = 0;
+    setCurrentFrame(0);
+  }, [isMobile]);
 
   // Scroll sync loop with lerp interpolation
   useEffect(() => {
@@ -170,7 +157,7 @@ const ImageScrollSequence = () => {
         rafIdRef.current = null;
       }
     };
-  }, []);
+  }, [frames.length]);
 
   return (
     <div
@@ -195,7 +182,7 @@ const ImageScrollSequence = () => {
       >
         {frames.map((src, index) => (
           <img
-            key={index}
+            key={`${isMobile ? 'mobile' : 'desktop'}-${index}`}
             src={src}
             alt={`Frame ${index + 1}`}
             className="absolute top-1/2 left-1/2"
