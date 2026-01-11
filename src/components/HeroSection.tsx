@@ -1,15 +1,12 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import VimeoScrollVideo from "./VimeoScrollVideo";
+import ImageScrollSequence from "./ImageScrollSequence";
 
 const HeroSection = () => {
-  // ID do vídeo do Vimeo
-  const vimeoVideoId = "1152755935";
-
   return (
     <>
-      {/* Vimeo Video controlled by scroll */}
-      <VimeoScrollVideo videoId={vimeoVideoId} />
+      {/* Image sequence controlled by scroll */}
+      <ImageScrollSequence />
       
       <section className="hero-section hero-section-fixed">
         <div className="hero-content">
