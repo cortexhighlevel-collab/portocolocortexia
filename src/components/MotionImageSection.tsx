@@ -37,7 +37,7 @@ const MotionImageSection = () => {
           {/* Image */}
           <picture className="flex w-full h-full items-end justify-center">
             <img 
-              src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070"
+              src="https://i.postimg.cc/1ztkf4hX/moveimage.png"
               alt="Motion Effect"
               className="w-full h-full object-cover block"
               style={{ objectPosition: 'top center' }}
