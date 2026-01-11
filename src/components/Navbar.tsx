@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Menu, X, ArrowUpRight } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "Serviços", href: "#services", hasDropdown: true },
+  { label: "Serviços", href: "#services" },
   { label: "Projetos", href: "#projects" },
-  { label: "Processo", href: "#process", hasDropdown: true },
+  { label: "Processo", href: "#process" },
+  { label: "Preços", href: "#pricing" },
   { label: "Contato", href: "#contact" },
 ];
 
@@ -14,13 +14,9 @@ const Navbar = () => {
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
-    if (href === "#home") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
-      const element = document.querySelector(href);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+    const element = document.querySelector(href);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
     setIsOpen(false);
   };
@@ -28,49 +24,27 @@ const Navbar = () => {
   return (
     <>
       {/* Desktop Navbar */}
-      <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 hidden md:block w-[calc(100%-48px)] max-w-[1200px]">
-        <div className="nav-glass-new px-4 py-3 flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-foreground flex items-center justify-center">
-              <span className="text-background font-bold text-lg">R</span>
-            </div>
-          </div>
-
-          {/* Center Links */}
-          <div className="flex items-center gap-1">
+      <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 hidden md:block">
+        <div className="nav-glass px-8 py-4">
+          <div className="flex items-center gap-8">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
                 onClick={(e) => handleClick(e, link.href)}
-                className="nav-link-new text-sm font-normal px-4 py-2 rounded-full transition-colors hover:bg-white/10"
+                className="nav-link text-sm font-medium tracking-wide"
               >
                 {link.label}
-                {link.hasDropdown && (
-                  <span className="ml-1 opacity-60">▾</span>
-                )}
               </a>
             ))}
           </div>
-
-          {/* CTA Button */}
-          <a
-            href="https://tidycal.com/reemtech/30-minute-meeting"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="nav-cta-button group"
-          >
-            <ArrowUpRight className="w-4 h-4 text-background transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            <span className="text-sm font-medium">Start now</span>
-          </a>
         </div>
       </nav>
 
       {/* Mobile Hamburger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-6 right-6 z-50 md:hidden nav-glass-new p-3"
+        className="fixed top-6 right-6 z-50 md:hidden nav-glass p-3"
         aria-label="Toggle menu"
       >
         {isOpen ? (
@@ -87,27 +61,18 @@ const Navbar = () => {
             className="absolute inset-0 bg-background/80 backdrop-blur-md"
             onClick={() => setIsOpen(false)}
           />
-          <nav className="absolute top-20 left-4 right-4 nav-glass-new p-6 rounded-2xl">
-            <div className="flex flex-col gap-2">
+          <nav className="absolute top-20 left-4 right-4 nav-glass p-6 rounded-2xl">
+            <div className="flex flex-col gap-4">
               {navLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
                   onClick={(e) => handleClick(e, link.href)}
-                  className="nav-link-new text-lg font-normal py-3 px-4 rounded-xl hover:bg-white/10"
+                  className="nav-link text-lg font-medium tracking-wide py-2"
                 >
                   {link.label}
                 </a>
               ))}
-              <a
-                href="https://tidycal.com/reemtech/30-minute-meeting"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="nav-cta-button mt-4 justify-center"
-              >
-                <ArrowUpRight className="w-4 h-4 text-background" />
-                <span className="text-sm font-medium">Start now</span>
-              </a>
             </div>
           </nav>
         </div>
