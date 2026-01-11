@@ -82,6 +82,16 @@ import mobileFrame027 from "@/assets/hero-frames-mobile/frame-027.jpg";
 import mobileFrame028 from "@/assets/hero-frames-mobile/frame-028.jpg";
 import mobileFrame029 from "@/assets/hero-frames-mobile/frame-029.jpg";
 import mobileFrame030 from "@/assets/hero-frames-mobile/frame-030.jpg";
+import mobileFrame031 from "@/assets/hero-frames-mobile/frame-031.jpg";
+import mobileFrame032 from "@/assets/hero-frames-mobile/frame-032.jpg";
+import mobileFrame033 from "@/assets/hero-frames-mobile/frame-033.jpg";
+import mobileFrame034 from "@/assets/hero-frames-mobile/frame-034.jpg";
+import mobileFrame035 from "@/assets/hero-frames-mobile/frame-035.jpg";
+import mobileFrame036 from "@/assets/hero-frames-mobile/frame-036.jpg";
+import mobileFrame037 from "@/assets/hero-frames-mobile/frame-037.jpg";
+import mobileFrame038 from "@/assets/hero-frames-mobile/frame-038.jpg";
+import mobileFrame039 from "@/assets/hero-frames-mobile/frame-039.jpg";
+import mobileFrame040 from "@/assets/hero-frames-mobile/frame-040.jpg";
 
 const desktopFrames = [
   frame001, frame002, frame003, frame004, frame005, frame006, frame007, frame008,
@@ -99,6 +109,8 @@ const mobileFrames = [
   mobileFrame016, mobileFrame017, mobileFrame018, mobileFrame019, mobileFrame020,
   mobileFrame021, mobileFrame022, mobileFrame023, mobileFrame024, mobileFrame025,
   mobileFrame026, mobileFrame027, mobileFrame028, mobileFrame029, mobileFrame030,
+  mobileFrame031, mobileFrame032, mobileFrame033, mobileFrame034, mobileFrame035,
+  mobileFrame036, mobileFrame037, mobileFrame038, mobileFrame039, mobileFrame040,
 ];
 
 const SMOOTH_FACTOR = 0.15; // Lerp smoothing factor
