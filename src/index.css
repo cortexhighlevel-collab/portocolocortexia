@@ -67,68 +67,12 @@
   }
 
   html {
-    scroll-behavior: auto; /* Lenis handles smooth scroll */
-    overflow-x: hidden;
+    scroll-behavior: smooth;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    overflow-x: hidden;
-    height: 400vh; /* Extended height for scroll animation */
-  }
-
-  /* Index page layout */
-  .index-page {
-    @apply min-h-screen bg-background;
-  }
-
-  /* Hero Transition Section */
-  .hero-transition-section {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    padding: 0;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    background-color: transparent;
-    z-index: 1;
-    pointer-events: none;
-    overflow: hidden;
-  }
-
-  .image-motion {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    will-change: transform;
-    pointer-events: auto;
-  }
-
-  /* The dark gradient overlay */
-  .image-motion-gradient {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 50%;
-    background: linear-gradient(to bottom, transparent 0%, hsla(var(--background), 0.4) 50%, hsl(var(--background)) 100%);
-    z-index: 2;
-    pointer-events: none;
-  }
-
-  .main-content-wrapper {
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-    background-color: hsl(var(--background));
   }
 }
 
