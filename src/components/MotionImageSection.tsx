@@ -10,15 +10,18 @@ const MotionImageSection = () => {
   });
 
   // Image starts at 50% and moves up to 0%
-  const yPercent = useTransform(scrollYProgress, [0, 1], [50, 0]);
+  const yPercent = useTransform(scrollYProgress, [0, 0.6], [50, 0]);
   const opacity = useTransform(scrollYProgress, [0, 0.3], [0, 1]);
-  const scale = useTransform(scrollYProgress, [0, 1], [0.95, 1]);
+  const scale = useTransform(scrollYProgress, [0, 0.6], [0.95, 1]);
+  
+  // Gradient appears after image is in place (from 60% to 80% of scroll)
+  const gradientOpacity = useTransform(scrollYProgress, [0.5, 0.7], [0, 1]);
 
   return (
     <div 
       ref={sectionRef}
       className="relative"
-      style={{ height: '150vh' }}
+      style={{ height: '200vh' }}
     >
       {/* Fixed Stage for Image */}
       <section 
@@ -34,11 +37,12 @@ const MotionImageSection = () => {
             willChange: 'transform, opacity'
           }}
         >
-          {/* Dark Gradient Overlay */}
-          <div 
-            className="absolute bottom-0 left-0 w-full h-1/2 pointer-events-none z-10"
+          {/* Dark Gradient Overlay - appears after image is in place */}
+          <motion.div 
+            className="absolute bottom-0 left-0 w-full h-2/3 pointer-events-none z-10"
             style={{
-              background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 50%, black 100%)',
+              background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 40%, black 100%)',
+              opacity: gradientOpacity
             }}
           />
           
@@ -53,6 +57,9 @@ const MotionImageSection = () => {
           </picture>
         </motion.div>
       </section>
+      
+      {/* Spacer to push content down until animation completes */}
+      <div className="absolute bottom-0 left-0 w-full h-screen" />
     </div>
   );
 };
