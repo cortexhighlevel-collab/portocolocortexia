@@ -101,7 +101,7 @@ const frames = [
   frame048,
 ];
 
-const SMOOTH_FACTOR = 0.01; // Lerp smoothing factor
+const SMOOTH_FACTOR = 0.15; // Lerp smoothing factor
 
 const ImageScrollSequence = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
