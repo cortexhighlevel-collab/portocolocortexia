@@ -115,6 +115,18 @@
     pointer-events: auto;
   }
 
+  .hero-section-scroll {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .hero-section-scroll .hero-content {
+    pointer-events: auto;
+  }
+
   /* Vimeo Scroll Video */
   .vimeo-scroll-container {
     position: relative;
