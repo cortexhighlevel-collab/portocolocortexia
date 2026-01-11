@@ -296,10 +296,12 @@
   }
 
   .hero-headline {
-    font-size: clamp(1.5rem, 2.7vw, 1.8rem);
-    font-weight: 400;
-    line-height: 1.55;
-    max-width: 380px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+    font-weight: 300;
+    line-height: 1.4;
+    max-width: 420px;
     color: hsl(var(--hero-text));
   }
 
