@@ -107,6 +107,7 @@ const ImageScrollSequence = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isReady, setIsReady] = useState(false);
+  const [isPinned, setIsPinned] = useState(true);
   const rafIdRef = useRef<number | null>(null);
   const currentFrameRef = useRef(0); // For smooth interpolation
 
@@ -145,6 +146,10 @@ const ImageScrollSequence = () => {
       const localScroll = window.scrollY - startY;
       const progress = clamp(localScroll / maxScroll, 0, 1);
 
+      // Check if we've scrolled past the container
+      const scrollEnd = startY + containerHeight - window.innerHeight;
+      setIsPinned(window.scrollY < scrollEnd);
+
       // Target frame based on scroll progress
       const targetFrame = progress * (frames.length - 1);
       
@@ -168,18 +173,19 @@ const ImageScrollSequence = () => {
   }, []);
 
   return (
-    <>
-      {/* Scroll container - creates the scroll space */}
-      <div
-        ref={scrollContainerRef}
-        className="relative"
-        style={{ height: "200vh" }}
-      />
-
-      {/* Image sequence background - absolute within scroll container */}
+    <div
+      ref={scrollContainerRef}
+      className="relative"
+      style={{ height: "200vh" }}
+    >
+      {/* Image sequence background */}
       <div 
-        className="absolute inset-0 w-full h-screen pointer-events-none"
+        className="w-screen h-screen pointer-events-none"
         style={{ 
+          position: isPinned ? 'fixed' : 'absolute',
+          top: isPinned ? 0 : 'auto',
+          bottom: isPinned ? 'auto' : 0,
+          left: 0,
           opacity: isReady ? 1 : 0,
           transition: 'opacity 0.3s ease'
         }}
@@ -197,7 +203,7 @@ const ImageScrollSequence = () => {
           />
         ))}
       </div>
-    </>
+    </div>
   );
 };
 

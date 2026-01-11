@@ -1,14 +1,37 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import ImageScrollSequence from "./ImageScrollSequence";
+import { useEffect, useState } from "react";
 
 const HeroSection = () => {
+  const [isPinned, setIsPinned] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Hero stays pinned until 200vh - 100vh = 100vh of scroll
+      const scrollEnd = window.innerHeight;
+      setIsPinned(window.scrollY < scrollEnd);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <>
       {/* Image sequence controlled by scroll */}
       <ImageScrollSequence />
       
-      <section className="hero-section" style={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }}>
+      <section 
+        className="hero-section"
+        style={{ 
+          position: isPinned ? 'fixed' : 'absolute',
+          top: isPinned ? 0 : 'auto',
+          bottom: isPinned ? 'auto' : 'calc(100% - 200vh)',
+          left: 0,
+          zIndex: 1,
+        }}
+      >
         <div className="hero-content">
           <div className="hero-content-inner">
             {/* Headline and CTA */}
