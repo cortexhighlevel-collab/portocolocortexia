@@ -296,12 +296,13 @@
   }
 
   .hero-headline {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-style: normal;
+    font-size: clamp(2rem, 8vw, 8rem);
     font-weight: 300;
-    line-height: 1.4;
-    max-width: 420px;
+    line-height: 1.181;
+    letter-spacing: -0.03em;
+    max-width: 600px;
     color: hsl(var(--hero-text));
   }
 
