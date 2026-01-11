@@ -276,8 +276,8 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    padding: 0 40px 180px;
+    justify-content: flex-start;
+    padding: 120px 40px 180px;
   }
 
   .hero-content-inner {
@@ -354,6 +354,7 @@
 
   @media (max-width: 768px) {
     .hero-content {
+      justify-content: flex-end;
       padding: 0 24px 200px;
     }
 
