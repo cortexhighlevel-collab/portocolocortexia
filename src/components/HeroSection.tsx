@@ -8,7 +8,7 @@ const HeroSection = () => {
       {/* Image sequence controlled by scroll */}
       <ImageScrollSequence />
       
-      <section className="hero-section hero-section-scroll">
+      <section className="hero-section">
         <div className="hero-content">
           <div className="hero-content-inner">
             {/* Headline and CTA */}
