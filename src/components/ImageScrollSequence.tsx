@@ -231,15 +231,12 @@ const ImageScrollSequence = () => {
             key={`${isMobile ? 'mobile' : 'desktop'}-${index}`}
             src={src}
             alt={`Frame ${index + 1}`}
-            className="absolute top-1/2 left-1/2"
+            className="absolute inset-0"
             style={{
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              objectPosition: 'center',
-              transform: 'translate(-50%, -50%)',
-              minWidth: '100%',
-              minHeight: '100%',
+              objectPosition: 'center top',
               opacity: index === currentFrame ? 1 : 0,
               visibility: index === currentFrame ? 'visible' : 'hidden',
             }}
