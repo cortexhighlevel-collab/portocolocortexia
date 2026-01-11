@@ -9,8 +9,8 @@ const MotionImageSection = () => {
     offset: ["start end", "end start"]
   });
 
-  // Image starts off-screen (100%) and moves up to 0%
-  const yPercent = useTransform(scrollYProgress, [0, 1], [100, 0]);
+  // Image starts at 80% (closer to visible) and moves up to 0%
+  const yPercent = useTransform(scrollYProgress, [0, 1], [80, 0]);
   const opacity = useTransform(scrollYProgress, [0, 0.3], [0, 1]);
   const scale = useTransform(scrollYProgress, [0, 1], [0.95, 1]);
 
