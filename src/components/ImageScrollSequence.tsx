@@ -180,12 +180,15 @@ const ImageScrollSequence = () => {
     >
       {/* Image sequence background */}
       <div 
-        className="w-screen h-screen pointer-events-none"
+        className="pointer-events-none overflow-hidden"
         style={{ 
           position: isPinned ? 'fixed' : 'absolute',
           top: isPinned ? 0 : 'auto',
           bottom: isPinned ? 'auto' : 0,
           left: 0,
+          right: 0,
+          width: '100%',
+          height: '100vh',
           opacity: isReady ? 1 : 0,
           transition: 'opacity 0.3s ease'
         }}
@@ -195,8 +198,15 @@ const ImageScrollSequence = () => {
             key={index}
             src={src}
             alt={`Frame ${index + 1}`}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute top-1/2 left-1/2"
             style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center',
+              transform: 'translate(-50%, -50%)',
+              minWidth: '100%',
+              minHeight: '100%',
               opacity: index === currentFrame ? 1 : 0,
               visibility: index === currentFrame ? 'visible' : 'hidden',
             }}
