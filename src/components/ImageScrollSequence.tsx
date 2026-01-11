@@ -183,10 +183,10 @@ const ImageScrollSequence = () => {
             key={index}
             src={src}
             alt={`Frame ${index + 1}`}
-            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-100"
+            className="absolute inset-0 w-full h-full object-cover"
             style={{
               opacity: index === currentFrame ? 1 : 0,
-              zIndex: index === currentFrame ? 1 : 0,
+              visibility: index === currentFrame ? 'visible' : 'hidden',
             }}
           />
         ))}
