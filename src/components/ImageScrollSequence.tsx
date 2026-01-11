@@ -233,15 +233,16 @@ const ImageScrollSequence = () => {
             alt={`Frame ${index + 1}`}
             style={{
               position: 'absolute',
-              top: '50%',
+              top: 0,
               left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 'auto',
-              height: 'auto',
-              minWidth: '100%',
+              transform: 'translateX(-50%)',
+              width: isMobile ? '100%' : 'auto',
+              height: isMobile ? '100%' : '100%',
+              minWidth: isMobile ? 'auto' : '100%',
               minHeight: '100%',
               maxWidth: 'none',
               objectFit: 'cover',
+              objectPosition: 'center top',
               opacity: index === currentFrame ? 1 : 0,
               visibility: index === currentFrame ? 'visible' : 'hidden',
             }}
