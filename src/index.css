@@ -296,13 +296,10 @@
   }
 
   .hero-headline {
-    font-family: 'Be Vietnam Pro', sans-serif;
-    font-style: normal;
-    font-size: clamp(1.8rem, 3.2vw, 2.4rem);
-    font-weight: 300;
-    line-height: 1.181;
-    letter-spacing: -0.03em;
-    max-width: 600px;
+    font-size: clamp(1rem, 1.8vw, 1.2rem);
+    font-weight: 400;
+    line-height: 1.55;
+    max-width: 380px;
     color: hsl(var(--hero-text));
   }
 

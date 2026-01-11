@@ -38,7 +38,7 @@ const HeroSection = () => {
           <div className="hero-content-inner">
             {/* Headline and CTA */}
             <div className="hero-top-content">
-              <motion.h1 className="hero-headline font-medium" initial={{
+              <motion.h1 className="hero-headline uppercase font-medium" initial={{
               opacity: 0,
               y: 30
             }} animate={{
@@ -48,7 +48,7 @@ const HeroSection = () => {
               duration: 0.8,
               delay: 0.2
             }}>
-                Eu crio e desenvolvo sites de alta conversão e economizo seu tempo com automações de IA
+                EU CRIO E DESENVOLVO SITES DE ALTA CONVERSÃO E ECONOMIZO SEU TEMPO COM AUTOMAÇÕES DE IA
               </motion.h1>
 
               <motion.a href="https://tidycal.com/reemtech/30-minute-meeting" target="_blank" rel="noopener noreferrer" className="hero-cta-button group font-normal" initial={{
