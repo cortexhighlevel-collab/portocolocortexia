@@ -67,18 +67,6 @@ const HeroSection = () => {
               </motion.a>
             </div>
 
-            {/* Large Name - appears only after scrolling past hero */}
-            <motion.div 
-              className="hero-name-wrapper"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ 
-                opacity: cortexVisible ? 1 : 0, 
-                y: cortexVisible ? 0 : 50 
-              }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            >
-              <h1 className="hero-name">​CORTEX</h1>
-            </motion.div>
           </div>
         </div>
       </section>
