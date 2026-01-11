@@ -37,7 +37,7 @@ const HeroSection = () => {
         <div className="hero-content">
           <div className="hero-content-inner">
             {/* Headline and CTA */}
-            <div className="hero-top-content" style={{ justifyContent: 'flex-start', paddingTop: '120px' }}>
+            <div className="hero-top-content">
               <motion.h1 className="hero-headline uppercase font-medium" initial={{
               opacity: 0,
               y: 30
