@@ -18,7 +18,7 @@ const MotionImageSection = () => {
     <div 
       ref={sectionRef}
       className="relative"
-      style={{ height: '300vh' }}
+      style={{ height: '150vh' }}
     >
       {/* Fixed Stage for Image */}
       <section 
