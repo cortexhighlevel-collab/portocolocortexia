@@ -13,7 +13,7 @@ const Index = () => {
       <Navbar />
       <HeroSection />
       {/* Main content - appears after hero scroll space */}
-      <div className="relative bg-background" style={{ marginTop: '100vh' }}>
+      <div className="relative z-20 bg-background">
         <ServicesSection />
         <ProjectsSection />
         <ProcessSection />
