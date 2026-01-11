@@ -9,8 +9,9 @@ const HeroSection = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollEnd = window.innerHeight;
-      setIsPinned(window.scrollY < scrollEnd);
+      // Hero content unpins after scrolling 200vh (the full scroll container)
+      const scrollEnd = window.innerHeight * 2;
+      setIsPinned(window.scrollY < scrollEnd - window.innerHeight);
       
       // CORTEX appears after scrolling past 1.5x viewport height
       setCortexVisible(window.scrollY > window.innerHeight * 1.5);

@@ -216,7 +216,7 @@ const ImageScrollSequence = () => {
         className="pointer-events-none overflow-hidden bg-background"
         style={{ 
           position: isPinned ? 'fixed' : 'absolute',
-          top: 0,
+          top: isPinned ? 0 : 'auto',
           bottom: isPinned ? 'auto' : 0,
           left: 0,
           right: 0,
