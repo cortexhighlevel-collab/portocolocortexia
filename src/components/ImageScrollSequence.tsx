@@ -101,11 +101,14 @@ const frames = [
   frame048,
 ];
 
+const SMOOTH_FACTOR = 0.08; // Lerp smoothing factor
+
 const ImageScrollSequence = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isReady, setIsReady] = useState(false);
   const rafIdRef = useRef<number | null>(null);
+  const currentFrameRef = useRef(0); // For smooth interpolation
 
   // Preload all images
   useEffect(() => {
@@ -124,9 +127,10 @@ const ImageScrollSequence = () => {
     });
   }, []);
 
-  // Scroll sync loop
+  // Scroll sync loop with lerp interpolation
   useEffect(() => {
     const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
+    const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor;
 
     const tick = () => {
       const container = scrollContainerRef.current;
@@ -141,8 +145,13 @@ const ImageScrollSequence = () => {
       const localScroll = window.scrollY - startY;
       const progress = clamp(localScroll / maxScroll, 0, 1);
 
-      // Calculate which frame to show based on scroll progress
-      const frameIndex = Math.floor(progress * (frames.length - 1));
+      // Target frame based on scroll progress
+      const targetFrame = progress * (frames.length - 1);
+      
+      // Smooth interpolation using lerp
+      currentFrameRef.current = lerp(currentFrameRef.current, targetFrame, SMOOTH_FACTOR);
+      
+      const frameIndex = Math.round(currentFrameRef.current);
       setCurrentFrame(clamp(frameIndex, 0, frames.length - 1));
 
       rafIdRef.current = window.requestAnimationFrame(tick);
@@ -164,7 +173,7 @@ const ImageScrollSequence = () => {
       <div
         ref={scrollContainerRef}
         className="vimeo-scroll-container"
-        style={{ height: "150vh", position: "relative" }}
+        style={{ height: "200vh", position: "relative" }}
       />
 
       {/* Image sequence background */}
