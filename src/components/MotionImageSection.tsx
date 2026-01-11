@@ -16,6 +16,10 @@ const MotionImageSection = () => {
 
   // Gradient appears from 40% to 60% of scroll
   const gradientOpacity = useTransform(scrollYProgress, [0.4, 0.6], [0, 1]);
+  
+  // CORTEX text appears from 50% to 70% of scroll
+  const cortexOpacity = useTransform(scrollYProgress, [0.5, 0.7], [0, 1]);
+  const cortexY = useTransform(scrollYProgress, [0.5, 0.7], [50, 0]);
 
   return (
     <div ref={sectionRef} className="relative" style={{ height: "300vh" }}>
@@ -50,6 +54,19 @@ const MotionImageSection = () => {
               loading="lazy"
             />
           </picture>
+        </motion.div>
+        
+        {/* CORTEX Text - appears after gradient */}
+        <motion.div 
+          className="absolute bottom-20 left-0 w-full text-center z-20 pointer-events-none"
+          style={{
+            opacity: cortexOpacity,
+            y: cortexY,
+          }}
+        >
+          <h1 className="text-[15vw] font-black text-white tracking-tighter leading-none">
+            CORTEX
+          </h1>
         </motion.div>
       </section>
     </div>
