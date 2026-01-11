@@ -1,9 +1,17 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import ImageScrollSequence from "./ImageScrollSequence";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+
 const HeroSection = () => {
   const [isPinned, setIsPinned] = useState(true);
+  const nameRef = useRef<HTMLDivElement>(null);
+  
+  // Track scroll for CORTEX animation - appears after hero scroll
+  const { scrollYProgress } = useScroll();
+  const cortexOpacity = useTransform(scrollYProgress, [0.15, 0.25], [0, 1]);
+  const cortexY = useTransform(scrollYProgress, [0.15, 0.25], [50, 0]);
+
   useEffect(() => {
     const handleScroll = () => {
       // Hero stays pinned until 200vh - 100vh = 100vh of scroll
@@ -15,6 +23,7 @@ const HeroSection = () => {
     });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
   return <>
       {/* Image sequence controlled by scroll */}
       <ImageScrollSequence />
@@ -60,25 +69,21 @@ const HeroSection = () => {
               </motion.a>
             </div>
 
-            {/* Large Name */}
-            <motion.div className="hero-name-wrapper" initial={{
-            opacity: 0,
-            y: 190,
-            scale: 0.7
-          }} animate={{
-            opacity: 1,
-            y: 0,
-            scale: 1
-          }} transition={{
-            duration: 1,
-            delay: 0.6
-          }}>
-              <h1 className="hero-name">​CORTEX
-            </h1>
+            {/* Large Name - appears only after scrolling past hero */}
+            <motion.div 
+              ref={nameRef}
+              className="hero-name-wrapper"
+              style={{
+                opacity: cortexOpacity,
+                y: cortexY,
+              }}
+            >
+              <h1 className="hero-name">​CORTEX</h1>
             </motion.div>
           </div>
         </div>
       </section>
     </>;
 };
+
 export default HeroSection;
