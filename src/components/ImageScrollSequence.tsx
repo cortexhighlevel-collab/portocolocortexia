@@ -176,11 +176,10 @@ const ImageScrollSequence = () => {
         style={{ height: "200vh" }}
       />
 
-      {/* Image sequence background - fixed to viewport */}
+      {/* Image sequence background - absolute within scroll container */}
       <div 
-        className="fixed inset-0 w-screen h-screen pointer-events-none"
+        className="absolute inset-0 w-full h-screen pointer-events-none"
         style={{ 
-          zIndex: 0,
           opacity: isReady ? 1 : 0,
           transition: 'opacity 0.3s ease'
         }}
