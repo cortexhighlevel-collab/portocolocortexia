@@ -235,7 +235,7 @@ const ImageScrollSequence = () => {
               position: 'absolute',
               top: 0,
               left: '50%',
-              transform: isMobile ? 'translateX(-50%) scale(1.1)' : 'translateX(-50%)',
+              transform: isMobile ? 'translateX(-50%) scale(1.1)' : 'translateX(-50%) scale(1.1)',
               width: isMobile ? '100%' : 'auto',
               height: isMobile ? '100%' : '100%',
               minWidth: isMobile ? 'auto' : '100%',
