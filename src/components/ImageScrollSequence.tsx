@@ -31,6 +31,16 @@ import frame027 from "@/assets/hero-frames/frame-027.jpg";
 import frame028 from "@/assets/hero-frames/frame-028.jpg";
 import frame029 from "@/assets/hero-frames/frame-029.jpg";
 import frame030 from "@/assets/hero-frames/frame-030.jpg";
+import frame031 from "@/assets/hero-frames/frame-031.jpg";
+import frame032 from "@/assets/hero-frames/frame-032.jpg";
+import frame033 from "@/assets/hero-frames/frame-033.jpg";
+import frame034 from "@/assets/hero-frames/frame-034.jpg";
+import frame035 from "@/assets/hero-frames/frame-035.jpg";
+import frame036 from "@/assets/hero-frames/frame-036.jpg";
+import frame037 from "@/assets/hero-frames/frame-037.jpg";
+import frame038 from "@/assets/hero-frames/frame-038.jpg";
+import frame039 from "@/assets/hero-frames/frame-039.jpg";
+import frame040 from "@/assets/hero-frames/frame-040.jpg";
 
 const frames = [
   frame001,
@@ -63,6 +73,16 @@ const frames = [
   frame028,
   frame029,
   frame030,
+  frame031,
+  frame032,
+  frame033,
+  frame034,
+  frame035,
+  frame036,
+  frame037,
+  frame038,
+  frame039,
+  frame040,
 ];
 
 const ImageScrollSequence = () => {
