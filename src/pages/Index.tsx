@@ -12,8 +12,8 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <HeroSection />
-      {/* Main content - appears after hero scroll space */}
-      <div className="relative z-20 bg-background">
+      {/* Main content - starts after hero scroll space with no overlap transition */}
+      <div className="relative bg-background">
         <ServicesSection />
         <ProjectsSection />
         <ProcessSection />
