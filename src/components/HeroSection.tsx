@@ -1,26 +1,24 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import ImageScrollSequence from "./ImageScrollSequence";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 const HeroSection = () => {
   const [isPinned, setIsPinned] = useState(true);
-  const nameRef = useRef<HTMLDivElement>(null);
-  
-  // Track scroll for CORTEX animation - appears after hero scroll
-  const { scrollYProgress } = useScroll();
-  const cortexOpacity = useTransform(scrollYProgress, [0.15, 0.25], [0, 1]);
-  const cortexY = useTransform(scrollYProgress, [0.15, 0.25], [50, 0]);
+  const [cortexVisible, setCortexVisible] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      // Hero stays pinned until 200vh - 100vh = 100vh of scroll
       const scrollEnd = window.innerHeight;
       setIsPinned(window.scrollY < scrollEnd);
+      
+      // CORTEX appears after scrolling past 1.5x viewport height
+      setCortexVisible(window.scrollY > window.innerHeight * 1.5);
     };
     window.addEventListener('scroll', handleScroll, {
       passive: true
     });
+    handleScroll(); // Check initial state
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -71,12 +69,13 @@ const HeroSection = () => {
 
             {/* Large Name - appears only after scrolling past hero */}
             <motion.div 
-              ref={nameRef}
               className="hero-name-wrapper"
-              style={{
-                opacity: cortexOpacity,
-                y: cortexY,
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ 
+                opacity: cortexVisible ? 1 : 0, 
+                y: cortexVisible ? 0 : 50 
               }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
             >
               <h1 className="hero-name">​CORTEX</h1>
             </motion.div>
