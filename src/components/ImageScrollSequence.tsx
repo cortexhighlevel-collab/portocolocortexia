@@ -172,24 +172,27 @@ const ImageScrollSequence = () => {
       {/* Scroll container - creates the scroll space */}
       <div
         ref={scrollContainerRef}
-        className="vimeo-scroll-container"
-        style={{ height: "200vh", position: "relative" }}
-      />
-
-      {/* Image sequence background */}
-      <div className={`vimeo-video-background ${isReady ? "video-ready" : ""}`}>
-        {frames.map((src, index) => (
-          <img
-            key={index}
-            src={src}
-            alt={`Frame ${index + 1}`}
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{
-              opacity: index === currentFrame ? 1 : 0,
-              visibility: index === currentFrame ? 'visible' : 'hidden',
-            }}
-          />
-        ))}
+        className="relative"
+        style={{ height: "100vh" }}
+      >
+        {/* Image sequence background - now inside container, not fixed */}
+        <div 
+          className={`absolute inset-0 ${isReady ? "opacity-100" : "opacity-0"}`}
+          style={{ transition: 'opacity 0.3s ease' }}
+        >
+          {frames.map((src, index) => (
+            <img
+              key={index}
+              src={src}
+              alt={`Frame ${index + 1}`}
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{
+                opacity: index === currentFrame ? 1 : 0,
+                visibility: index === currentFrame ? 'visible' : 'hidden',
+              }}
+            />
+          ))}
+        </div>
       </div>
     </>
   );
