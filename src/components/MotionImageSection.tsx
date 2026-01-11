@@ -26,23 +26,14 @@ const MotionImageSection = () => {
         style={{ zIndex: 1 }}
       >
         <motion.div 
-          className="relative w-full h-full flex items-end justify-center"
+          className="w-full h-full flex items-end justify-center"
           style={{
             y: useTransform(yPercent, (v) => `${v}%`),
             opacity,
             scale,
-            willChange: 'transform'
+            willChange: 'transform, opacity'
           }}
         >
-          {/* Dark Gradient Overlay */}
-          <div 
-            className="absolute bottom-0 left-0 w-full h-1/2 pointer-events-none"
-            style={{
-              background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 50%, black 100%)',
-              zIndex: 2
-            }}
-          />
-          
           {/* Image */}
           <picture className="flex w-full h-full items-end justify-center">
             <img 
