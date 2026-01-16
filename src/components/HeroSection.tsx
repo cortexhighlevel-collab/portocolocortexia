@@ -105,8 +105,8 @@ const HeroSection = () => {
               ></div>
               
               {/* NEON ESQUERDO */}
-              <div className="h-2 flex-1 max-w-[180px] bg-gradient-to-b from-[#ffcccc] via-[#ff4444] to-[#ff2a2a] shadow-[0_0_4px_#ff0000,0_0_8px_#ff0000,0_0_16px_#ff0000,0_0_32px_#ff0000,0_0_48px_#cc0000,0_0_80px_#990000] rounded-full relative z-10">
-                <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/80 via-white/30 to-transparent rounded-full"></div>
+              <div className="h-2 flex-1 max-w-[180px] bg-gradient-to-b from-[#ffe0e0] via-[#ff5555] to-[#ff3333] shadow-[0_0_4px_#fff,0_0_8px_#ff6666,0_0_16px_#ff0000,0_0_32px_#ff0000,0_0_48px_#cc0000,0_0_80px_#990000] rounded-full relative z-10">
+                <div className="absolute inset-x-0 top-0 h-2/3 bg-gradient-to-b from-white/90 via-white/40 to-transparent rounded-full"></div>
               </div>
               
               {/* CONTEÚDO */}
@@ -118,8 +118,8 @@ const HeroSection = () => {
               </div>
               
               {/* NEON DIREITO */}
-              <div className="h-2 flex-1 max-w-[180px] bg-gradient-to-b from-[#ffcccc] via-[#ff4444] to-[#ff2a2a] shadow-[0_0_4px_#ff0000,0_0_8px_#ff0000,0_0_16px_#ff0000,0_0_32px_#ff0000,0_0_48px_#cc0000,0_0_80px_#990000] rounded-full relative z-10">
-                <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/80 via-white/30 to-transparent rounded-full"></div>
+              <div className="h-2 flex-1 max-w-[180px] bg-gradient-to-b from-[#ffe0e0] via-[#ff5555] to-[#ff3333] shadow-[0_0_4px_#fff,0_0_8px_#ff6666,0_0_16px_#ff0000,0_0_32px_#ff0000,0_0_48px_#cc0000,0_0_80px_#990000] rounded-full relative z-10">
+                <div className="absolute inset-x-0 top-0 h-2/3 bg-gradient-to-b from-white/90 via-white/40 to-transparent rounded-full"></div>
               </div>
               
               {/* REFLEXO SUPERIOR */}
