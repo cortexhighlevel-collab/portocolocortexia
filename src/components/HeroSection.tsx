@@ -81,12 +81,22 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <div className="cyberpunk-cta-button group">
-            <span className="cyberpunk-cta-text">INICIAR SEU PROJETO</span>
-            <div className="cyberpunk-cta-icon">
+          <div className="relative flex items-center gap-3 px-7 py-3.5 bg-transparent border border-white/15 rounded cursor-pointer overflow-hidden transition-all duration-400 ease-out group hover:border-white/35 hover:shadow-[0_0_20px_rgba(255,255,255,0.08),inset_0_0_20px_rgba(255,255,255,0.02)]">
+            {/* Gradient background on hover */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-white/[0.01] to-white/[0.03] opacity-0 transition-opacity duration-400 group-hover:opacity-100"></div>
+            
+            {/* Text */}
+            <span className="font-['Inter'] text-[11px] font-light tracking-[0.25em] text-white/85 uppercase transition-all duration-400 group-hover:text-white group-hover:tracking-[0.3em]">
+              INICIAR SEU PROJETO
+            </span>
+            
+            {/* Icon container */}
+            <div className="flex items-center justify-center w-6 h-6 border border-white/20 rounded-sm text-white/70 transition-all duration-400 group-hover:border-white/50 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
               <ArrowUpRight className="w-4 h-4" />
             </div>
-            <div className="cyberpunk-shine"></div>
+            
+            {/* Shine effect */}
+            <div className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/[0.06] to-transparent animate-[shine_4s_ease-in-out_infinite]"></div>
           </div>
         </motion.a>
       </section>
