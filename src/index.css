@@ -388,8 +388,9 @@
 
     .cyberpunk-cta-wrapper {
       display: block;
-      top: 72%;
-      transform: translate(-50%, -50%) scale(0.28);
+      top: 70%;
+      translate: -50% -50%;
+      scale: 0.25;
       transform-origin: center;
     }
   }
@@ -398,8 +399,9 @@
   .cyberpunk-cta-wrapper {
     position: fixed;
     left: 50%;
-    top: 70%;
-    transform: translate(-50%, -50%) scale(0.5);
+    top: 62%;
+    translate: -50% -50%;
+    scale: 0.5;
     transform-origin: center;
     z-index: 50;
     pointer-events: auto;
