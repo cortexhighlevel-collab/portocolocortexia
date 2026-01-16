@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import ImageScrollSequence from "./ImageScrollSequence";
 import { useEffect, useState } from "react";
 
@@ -63,7 +63,7 @@ const HeroSection = () => {
             }}>
                 <span className="hero-cta-text">Iniciar Seu Projeto</span>
                 <div className="hero-cta-icon">
-                  <ArrowUpRight className="w-5 h-5 text-primary-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  <ArrowRight className="w-5 h-5 text-primary-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </div>
               </motion.a>
             </div>
@@ -81,22 +81,46 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <div className="relative flex items-center gap-3 px-7 py-3.5 bg-transparent border border-white/15 rounded cursor-pointer overflow-hidden transition-all duration-400 ease-out group hover:border-white/35 hover:shadow-[0_0_20px_rgba(255,255,255,0.08),inset_0_0_20px_rgba(255,255,255,0.02)]">
-            {/* Gradient background on hover */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-white/[0.01] to-white/[0.03] opacity-0 transition-opacity duration-400 group-hover:opacity-100"></div>
+          {/* WRAPPER */}
+          <div className="relative group rounded-full p-[6px] overflow-hidden">
+            {/* 1. FUNDO METÁLICO DA MOLDURA */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#2a2a2a] via-[#555555] to-[#1a1a1a]"></div>
             
-            {/* Text */}
-            <span className="font-['Inter'] text-[11px] font-light tracking-[0.25em] text-white/85 uppercase transition-all duration-400 group-hover:text-white group-hover:tracking-[0.3em]">
-              INICIAR SEU PROJETO
-            </span>
+            {/* 2. BRILHO GIRATÓRIO (SHINE) */}
+            <div className="absolute inset-[-100%] animate-spin-slow bg-[conic-gradient(from_0deg,transparent_0_250deg,#ff0000_360deg)] opacity-100 blur-md"></div>
+            <div className="absolute inset-[-100%] animate-spin-slow bg-[conic-gradient(from_0deg,transparent_0_340deg,#ffffff_360deg)] opacity-40 mix-blend-overlay"></div>
             
-            {/* Icon container */}
-            <div className="flex items-center justify-center w-6 h-6 border border-white/20 rounded-sm text-white/70 transition-all duration-400 group-hover:border-white/50 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-              <ArrowUpRight className="w-4 h-4" />
-            </div>
+            {/* 3. CONTRASTE */}
+            <div className="absolute inset-0 bg-black/20"></div>
             
-            {/* Shine effect */}
-            <div className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/[0.06] to-transparent animate-[shine_4s_ease-in-out_infinite]"></div>
+            {/* BOTÃO PRINCIPAL */}
+            <button className="relative z-10 flex items-center justify-between gap-10 w-[800px] h-20 bg-gradient-to-b from-[#3a3a3a] via-[#111111] to-black text-white rounded-full px-10 border-[3px] border-[#555555] shadow-[inset_30px_0_40px_-10px_rgba(0,0,0,0.9),inset_-30px_0_40px_-10px_rgba(0,0,0,0.9)] transition-transform active:scale-[0.98] overflow-hidden">
+              {/* CAMADA CENTRAL DE REFLEXO */}
+              <div 
+                className="absolute inset-0 bg-gradient-to-b from-[#444444] via-black to-[#444444] pointer-events-none opacity-90"
+                style={{
+                  maskImage: 'linear-gradient(to right, transparent 35%, black 45%, black 55%, transparent 65%)',
+                  WebkitMaskImage: 'linear-gradient(to right, transparent 35%, black 45%, black 55%, transparent 65%)'
+                }}
+              ></div>
+              
+              {/* NEON ESQUERDO */}
+              <div className="h-1.5 flex-1 bg-red-50 shadow-[0_0_2px_#fff,0_0_5px_#fff,0_0_15px_#ff0000,0_0_30px_#ff0000,0_0_60px_#cc0000,0_0_100px_#880000] rounded-full opacity-90 group-hover:opacity-100 transition-all duration-300 relative z-10"></div>
+              
+              {/* CONTEÚDO */}
+              <div className="flex items-center gap-4 z-10 shrink-0">
+                <span className="font-light text-2xl tracking-[0.25em] uppercase text-gray-100 group-hover:text-white transition-colors">
+                  INICIAR SEU PROJETO
+                </span>
+                <ArrowRight className="w-8 h-8 text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.8)]" />
+              </div>
+              
+              {/* NEON DIREITO */}
+              <div className="h-1.5 flex-1 bg-red-50 shadow-[0_0_2px_#fff,0_0_5px_#fff,0_0_15px_#ff0000,0_0_30px_#ff0000,0_0_60px_#cc0000,0_0_100px_#880000] rounded-full opacity-90 group-hover:opacity-100 transition-all duration-300 relative z-10"></div>
+              
+              {/* REFLEXO VIDRO */}
+              <div className="absolute inset-x-0 top-0 h-[40%] bg-gradient-to-b from-white/5 to-transparent pointer-events-none z-20"></div>
+            </button>
           </div>
         </motion.a>
       </section>
