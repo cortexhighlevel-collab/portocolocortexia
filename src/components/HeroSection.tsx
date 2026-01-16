@@ -70,6 +70,25 @@ const HeroSection = () => {
 
           </div>
         </div>
+
+        {/* Cyberpunk CTA Button - Centered below character head */}
+        <motion.a 
+          href="https://tidycal.com/reemtech/30-minute-meeting" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="cyberpunk-cta-wrapper"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          <div className="cyberpunk-cta-button group">
+            <span className="cyberpunk-cta-text">INICIAR SEU PROJETO</span>
+            <div className="cyberpunk-cta-icon">
+              <ArrowUpRight className="w-4 h-4" />
+            </div>
+            <div className="cyberpunk-shine"></div>
+          </div>
+        </motion.a>
       </section>
     </>;
 };
