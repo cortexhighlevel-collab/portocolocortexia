@@ -385,6 +385,115 @@
     .hero-top-content {
       gap: 20px;
     }
+
+    .cyberpunk-cta-wrapper {
+      display: none;
+    }
+  }
+
+  /* Cyberpunk CTA Button */
+  .cyberpunk-cta-wrapper {
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    transform: translateX(-50%);
+    z-index: 20;
+  }
+
+  .cyberpunk-cta-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 28px;
+    background: transparent;
+    border: 1px solid hsla(0, 0%, 100%, 0.15);
+    border-radius: 4px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .cyberpunk-cta-button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      hsla(0, 0%, 100%, 0.03) 0%,
+      hsla(0, 0%, 100%, 0.01) 50%,
+      hsla(0, 0%, 100%, 0.03) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .cyberpunk-cta-button:hover::before {
+    opacity: 1;
+  }
+
+  .cyberpunk-cta-button:hover {
+    border-color: hsla(0, 0%, 100%, 0.35);
+    box-shadow: 
+      0 0 20px hsla(0, 0%, 100%, 0.08),
+      inset 0 0 20px hsla(0, 0%, 100%, 0.02);
+  }
+
+  .cyberpunk-cta-text {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    color: hsla(0, 0%, 100%, 0.85);
+    text-transform: uppercase;
+    transition: all 0.4s ease;
+  }
+
+  .cyberpunk-cta-button:hover .cyberpunk-cta-text {
+    color: hsl(0, 0%, 100%);
+    letter-spacing: 0.3em;
+  }
+
+  .cyberpunk-cta-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid hsla(0, 0%, 100%, 0.2);
+    border-radius: 2px;
+    color: hsla(0, 0%, 100%, 0.7);
+    transition: all 0.4s ease;
+  }
+
+  .cyberpunk-cta-button:hover .cyberpunk-cta-icon {
+    border-color: hsla(0, 0%, 100%, 0.5);
+    color: hsl(0, 0%, 100%);
+    transform: translate(2px, -2px);
+  }
+
+  .cyberpunk-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsla(0, 0%, 100%, 0.06) 50%,
+      transparent 100%
+    );
+    animation: cyberpunk-shine 4s ease-in-out infinite;
+  }
+
+  @keyframes cyberpunk-shine {
+    0%, 100% {
+      left: -100%;
+    }
+    50% {
+      left: 100%;
+    }
   }
 
   @media (max-width: 480px) {
