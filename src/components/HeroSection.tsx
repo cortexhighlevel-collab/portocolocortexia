@@ -105,21 +105,21 @@ const HeroSection = () => {
               ></div>
               
               {/* NEON ESQUERDO */}
-              <div className="h-2 flex-1 max-w-[180px] bg-[#ff2a2a] shadow-[0_0_4px_#ff0000,0_0_8px_#ff0000,0_0_16px_#ff0000,0_0_32px_#ff0000,0_0_48px_#cc0000,0_0_80px_#990000] rounded-full relative z-10">
-                <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-transparent rounded-full"></div>
+              <div className="h-2 flex-1 max-w-[180px] bg-gradient-to-b from-[#ffaaaa] via-[#ff2a2a] to-[#ff2a2a] shadow-[0_0_4px_#ff0000,0_0_8px_#ff0000,0_0_16px_#ff0000,0_0_32px_#ff0000,0_0_48px_#cc0000,0_0_80px_#990000] rounded-full relative z-10">
+                <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/60 via-white/20 to-transparent rounded-full"></div>
               </div>
               
               {/* CONTEÚDO */}
               <div className="flex items-center gap-3 z-10 shrink-0">
-                <span className="font-normal text-lg tracking-[0.15em] uppercase text-white/90 group-hover:text-white transition-colors">
+                <span className="font-normal text-2xl tracking-[0.15em] uppercase text-white/90 group-hover:text-white transition-colors">
                   INICIAR SEU PROJETO
                 </span>
-                <ArrowRight className="w-5 h-5 text-white/80" />
+                <ArrowRight className="w-6 h-6 text-white/80" />
               </div>
               
               {/* NEON DIREITO */}
-              <div className="h-2 flex-1 max-w-[180px] bg-[#ff2a2a] shadow-[0_0_4px_#ff0000,0_0_8px_#ff0000,0_0_16px_#ff0000,0_0_32px_#ff0000,0_0_48px_#cc0000,0_0_80px_#990000] rounded-full relative z-10">
-                <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-transparent rounded-full"></div>
+              <div className="h-2 flex-1 max-w-[180px] bg-gradient-to-b from-[#ffaaaa] via-[#ff2a2a] to-[#ff2a2a] shadow-[0_0_4px_#ff0000,0_0_8px_#ff0000,0_0_16px_#ff0000,0_0_32px_#ff0000,0_0_48px_#cc0000,0_0_80px_#990000] rounded-full relative z-10">
+                <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/60 via-white/20 to-transparent rounded-full"></div>
               </div>
               
               {/* REFLEXO SUPERIOR */}
