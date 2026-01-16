@@ -105,7 +105,7 @@ const HeroSection = () => {
               ></div>
               
               {/* NEON ESQUERDO */}
-              <div className="h-1.5 flex-1 bg-red-50 shadow-[0_0_2px_#fff,0_0_5px_#fff,0_0_15px_#ff0000,0_0_30px_#ff0000,0_0_60px_#cc0000,0_0_100px_#880000] rounded-full opacity-90 group-hover:opacity-100 transition-all duration-300 relative z-10"></div>
+              <div className="h-1.5 flex-1 bg-[#ffd6d6] shadow-[0_0_2px_#fff,0_0_5px_#fff,0_0_15px_#ff0000,0_0_30px_#ff0000,0_0_60px_#cc0000,0_0_100px_#880000] rounded-full opacity-90 group-hover:opacity-100 transition-all duration-300 relative z-10"></div>
               
               {/* CONTEÚDO */}
               <div className="flex items-center gap-4 z-10 shrink-0">
@@ -116,7 +116,7 @@ const HeroSection = () => {
               </div>
               
               {/* NEON DIREITO */}
-              <div className="h-1.5 flex-1 bg-red-50 shadow-[0_0_2px_#fff,0_0_5px_#fff,0_0_15px_#ff0000,0_0_30px_#ff0000,0_0_60px_#cc0000,0_0_100px_#880000] rounded-full opacity-90 group-hover:opacity-100 transition-all duration-300 relative z-10"></div>
+              <div className="h-1.5 flex-1 bg-[#ffd6d6] shadow-[0_0_2px_#fff,0_0_5px_#fff,0_0_15px_#ff0000,0_0_30px_#ff0000,0_0_60px_#cc0000,0_0_100px_#880000] rounded-full opacity-90 group-hover:opacity-100 transition-all duration-300 relative z-10"></div>
               
               {/* REFLEXO VIDRO */}
               <div className="absolute inset-x-0 top-0 h-[40%] bg-gradient-to-b from-white/5 to-transparent pointer-events-none z-20"></div>
