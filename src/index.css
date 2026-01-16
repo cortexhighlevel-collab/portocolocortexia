@@ -405,12 +405,8 @@
     transform-origin: center;
     z-index: 50;
     pointer-events: auto;
-    display: block;
-    width: min(92vw, 1200px);
-  }
-
-  .cyberpunk-cta-wrapper > * {
-    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 
   .cyberpunk-cta-button {
