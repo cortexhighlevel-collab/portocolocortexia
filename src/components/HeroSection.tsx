@@ -94,32 +94,36 @@ const HeroSection = () => {
             <div className="absolute inset-0 bg-black/20"></div>
             
             {/* BOTÃO PRINCIPAL */}
-            <button className="relative z-10 flex items-center justify-between gap-10 w-[800px] h-20 bg-gradient-to-b from-[#3a3a3a] via-[#111111] to-black text-white rounded-full px-10 border-[3px] border-[#555555] shadow-[inset_30px_0_40px_-10px_rgba(0,0,0,0.9),inset_-30px_0_40px_-10px_rgba(0,0,0,0.9)] transition-transform active:scale-[0.98] overflow-hidden">
+            <button className="relative z-10 flex items-center justify-between gap-6 w-[700px] h-16 bg-gradient-to-b from-[#2a2a2a] via-[#0a0a0a] to-[#1a1a1a] text-white rounded-full px-6 border-2 border-[#3a3a3a] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_4px_20px_-5px_rgba(0,0,0,0.8)] transition-transform active:scale-[0.98] overflow-hidden">
               {/* CAMADA CENTRAL DE REFLEXO */}
               <div 
-                className="absolute inset-0 bg-gradient-to-b from-[#444444] via-black to-[#444444] pointer-events-none opacity-90"
+                className="absolute inset-0 bg-gradient-to-b from-[#333333] via-[#0a0a0a] to-[#222222] pointer-events-none opacity-80"
                 style={{
-                  maskImage: 'linear-gradient(to right, transparent 35%, black 45%, black 55%, transparent 65%)',
-                  WebkitMaskImage: 'linear-gradient(to right, transparent 35%, black 45%, black 55%, transparent 65%)'
+                  maskImage: 'linear-gradient(to right, transparent 30%, black 40%, black 60%, transparent 70%)',
+                  WebkitMaskImage: 'linear-gradient(to right, transparent 30%, black 40%, black 60%, transparent 70%)'
                 }}
               ></div>
               
               {/* NEON ESQUERDO */}
-              <div className="h-1.5 flex-1 bg-[#ffd6d6] shadow-[0_0_2px_#fff,0_0_5px_#fff,0_0_15px_#ff0000,0_0_30px_#ff0000,0_0_60px_#cc0000,0_0_100px_#880000] rounded-full opacity-90 group-hover:opacity-100 transition-all duration-300 relative z-10"></div>
+              <div className="h-2 flex-1 max-w-[180px] bg-[#ff2a2a] shadow-[0_0_4px_#ff0000,0_0_8px_#ff0000,0_0_16px_#ff0000,0_0_32px_#ff0000,0_0_48px_#cc0000,0_0_80px_#990000] rounded-full relative z-10">
+                <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-transparent rounded-full"></div>
+              </div>
               
               {/* CONTEÚDO */}
-              <div className="flex items-center gap-4 z-10 shrink-0">
-                <span className="font-light text-2xl tracking-[0.25em] uppercase text-gray-100 group-hover:text-white transition-colors">
+              <div className="flex items-center gap-3 z-10 shrink-0">
+                <span className="font-normal text-lg tracking-[0.15em] uppercase text-white/90 group-hover:text-white transition-colors">
                   INICIAR SEU PROJETO
                 </span>
-                <ArrowRight className="w-8 h-8 text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.8)]" />
+                <ArrowRight className="w-5 h-5 text-white/80" />
               </div>
               
               {/* NEON DIREITO */}
-              <div className="h-1.5 flex-1 bg-[#ffd6d6] shadow-[0_0_2px_#fff,0_0_5px_#fff,0_0_15px_#ff0000,0_0_30px_#ff0000,0_0_60px_#cc0000,0_0_100px_#880000] rounded-full opacity-90 group-hover:opacity-100 transition-all duration-300 relative z-10"></div>
+              <div className="h-2 flex-1 max-w-[180px] bg-[#ff2a2a] shadow-[0_0_4px_#ff0000,0_0_8px_#ff0000,0_0_16px_#ff0000,0_0_32px_#ff0000,0_0_48px_#cc0000,0_0_80px_#990000] rounded-full relative z-10">
+                <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-transparent rounded-full"></div>
+              </div>
               
-              {/* REFLEXO VIDRO */}
-              <div className="absolute inset-x-0 top-0 h-[40%] bg-gradient-to-b from-white/5 to-transparent pointer-events-none z-20"></div>
+              {/* REFLEXO SUPERIOR */}
+              <div className="absolute inset-x-0 top-0 h-[35%] bg-gradient-to-b from-white/8 to-transparent pointer-events-none z-20 rounded-t-full"></div>
             </button>
           </div>
         </motion.a>
