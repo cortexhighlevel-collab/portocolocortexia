@@ -387,17 +387,27 @@
     }
 
     .cyberpunk-cta-wrapper {
-      display: none;
+      display: block;
+      top: 64%;
+      transform: translate(-50%, -50%) scale(0.55);
+      transform-origin: center;
     }
   }
 
   /* Cyberpunk CTA Button */
   .cyberpunk-cta-wrapper {
-    position: absolute;
+    position: fixed;
     left: 50%;
     top: 60%;
-    transform: translateX(-50%);
-    z-index: 20;
+    transform: translate(-50%, -50%);
+    z-index: 50;
+    pointer-events: auto;
+    display: block;
+    width: min(92vw, 1200px);
+  }
+
+  .cyberpunk-cta-wrapper > * {
+    width: 100%;
   }
 
   .cyberpunk-cta-button {
