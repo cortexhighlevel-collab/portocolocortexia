@@ -3,23 +3,23 @@ import { Check, MessageCircle, ArrowUpRight } from "lucide-react";
 
 const PricingSection = () => {
   const starterFeatures = [
-    "Design com Template Premium",
-    "Até 3 Páginas",
-    "2 Rodadas de Revisões",
-    "Configuração SEO Básico (Para ser encontrado no Google)",
-    "Totalmente Responsivo (Mobile, Tablet & Desktop)",
-    "Suporte por Email"
+    "Diagnóstico de Processos",
+    "1 Automação Completa",
+    "Integração com até 3 Ferramentas",
+    "Treinamento Básico de IA",
+    "Prompts Personalizados",
+    "Suporte por Email (30 dias)"
   ];
 
   const premiumFeatures = [
-    "Design 100% Personalizado",
-    "5 Páginas",
-    "3 Rodadas de Revisões",
-    "SEO Técnico & Otimização de Velocidade",
-    "Totalmente Responsivo (Mobile, Tablet & Telas Grandes)",
-    "Animações & Interações Avançadas",
-    "Funcionalidades Complexas (CMS, Integrações)",
-    "Suporte WhatsApp & Email"
+    "Análise Estratégica Completa",
+    "Até 5 Automações",
+    "Agente de IA Personalizado",
+    "AEO & SEO Optimization",
+    "Treinamento de Personas IA",
+    "Integração Ilimitada de Ferramentas",
+    "Engenharia de Prompt Avançada",
+    "Suporte WhatsApp & Email (90 dias)"
   ];
 
   return (
@@ -33,7 +33,7 @@ const PricingSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          Preços Flexíveis para Cada Etapa
+          Planos de Implementação IA
         </motion.h2>
         <motion.p
           className="pricing-subtitle"
@@ -42,7 +42,7 @@ const PricingSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
-          Seja lançando um MVP ou escalando uma marca, tenho um plano para você. Não deixe o orçamento te impedir. Vamos conversar e encontrar uma solução para dar vida ao seu projeto.
+          Seja automatizando tarefas ou implementando agentes de IA, tenho um plano para acelerar sua transformação digital. Vamos conversar e encontrar a solução ideal.
         </motion.p>
       </div>
 
@@ -58,16 +58,16 @@ const PricingSection = () => {
         >
           <div className="pricing-card-header">
             <div className="pricing-card-title-row">
-              <h3 className="pricing-card-name">Kit Inicial</h3>
+              <h3 className="pricing-card-name">Automação Essencial</h3>
               <div className="pricing-card-badge pricing-card-badge-light">
                 <span>Popular</span>
               </div>
             </div>
             <div className="pricing-card-divider" />
             <div className="pricing-card-price-section">
-              <span className="pricing-card-price">R$ 4.999</span>
+              <span className="pricing-card-price">R$ 2.999</span>
               <p className="pricing-card-description">
-                Templates premium & recursos essenciais para empresas prontas para lançar rápido
+                Automações essenciais para empresas prontas para começar sua jornada de IA
               </p>
             </div>
           </div>
@@ -94,16 +94,16 @@ const PricingSection = () => {
         >
           <div className="pricing-card-header">
             <div className="pricing-card-title-row">
-              <h3 className="pricing-card-name pricing-card-name-dark">Premium</h3>
+              <h3 className="pricing-card-name pricing-card-name-dark">Transformação IA</h3>
               <div className="pricing-card-badge pricing-card-badge-dark">
                 <span>Melhor Valor</span>
               </div>
             </div>
             <div className="pricing-card-divider pricing-card-divider-dark" />
             <div className="pricing-card-price-section">
-              <span className="pricing-card-price pricing-card-price-dark">A partir de R$ 9.999</span>
+              <span className="pricing-card-price pricing-card-price-dark">A partir de R$ 7.999</span>
               <p className="pricing-card-description pricing-card-description-dark">
-                Design personalizado & tecnologia avançada para empresas que buscam impacto.
+                Solução completa para empresas que buscam transformação digital com IA.
               </p>
             </div>
           </div>
@@ -133,7 +133,7 @@ const PricingSection = () => {
           <div className="custom-quote-header">
             <div className="custom-quote-title-wrapper">
               <MessageCircle className="custom-quote-icon" size={24} />
-              <h4 className="custom-quote-title">Orçamento Personalizado</h4>
+              <h4 className="custom-quote-title">Projeto Personalizado</h4>
             </div>
             <a 
               href="#contact" 
@@ -146,7 +146,7 @@ const PricingSection = () => {
             </a>
           </div>
           <p className="custom-quote-description">
-            Esses preços cobrem projetos de Web Design & Dev. Para IA, Apps ou outras necessidades personalizadas, entre em contato para um orçamento sob medida.
+            Precisa de agentes de IA sob medida, integrações complexas ou consultoria estratégica? Entre em contato para um orçamento personalizado.
           </p>
         </div>
       </motion.div>

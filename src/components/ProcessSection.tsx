@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Phone, Palette, Code, Package, Heart } from "lucide-react";
+import { Phone, Brain, Workflow, Rocket, Heart } from "lucide-react";
 import { useRef } from "react";
 
 const processSteps = [
@@ -7,29 +7,29 @@ const processSteps = [
     id: 1,
     step: "Passo 1",
     icon: Phone,
-    title: "Vamos Conversar",
-    description: "Comece entrando em contato pela nossa página. Preencha o formulário ou agende uma chamada para discutir seu projeto, objetivos e ideias em detalhes.",
+    title: "Diagnóstico Inicial",
+    description: "Agendamos uma call para entender seu negócio, processos atuais e identificar onde a IA pode gerar mais impacto e economia de tempo.",
   },
   {
     id: 2,
     step: "Passo 2",
-    icon: Palette,
-    title: "Receba Seus Designs",
-    description: "Conte-me sua visão única e criarei designs impressionantes e funcionais que se alinham perfeitamente com seus objetivos e dão vida às suas ideias.",
+    icon: Brain,
+    title: "Estratégia Personalizada",
+    description: "Desenvolvo uma estratégia sob medida combinando automações, análise de dados e otimização de IA específica para seus objetivos.",
   },
   {
     id: 3,
     step: "Passo 3",
-    icon: Code,
-    title: "Início do Desenvolvimento",
-    description: "Transformo seus designs em uma solução poderosa e escalável, pronta para lançar e otimizada para performance, usabilidade e crescimento.",
+    icon: Workflow,
+    title: "Implementação",
+    description: "Construo e integro as soluções de IA no seu fluxo de trabalho, com treinamento completo para sua equipe extrair o máximo valor.",
   },
   {
     id: 4,
     step: "Passo 4",
-    icon: Package,
-    title: "Entrega Final",
-    description: "Receba um produto testado, polido e de alta qualidade, personalizado para suas necessidades, com suporte para performance contínua e sucesso a longo prazo.",
+    icon: Rocket,
+    title: "Otimização Contínua",
+    description: "Monitoro resultados e otimizo continuamente as soluções para garantir ROI crescente e adaptação às novas tecnologias de IA.",
   },
 ];
 
@@ -88,7 +88,7 @@ const ProcessSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          O Processo é Tudo
+          Método de Implementação
         </motion.h2>
         <motion.p
           className="process-subheading"
@@ -97,7 +97,7 @@ const ProcessSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
-          Um processo simples e organizado é o que traz resultados
+          Um processo estruturado para integrar IA de forma eficiente no seu negócio
         </motion.p>
       </div>
 
@@ -121,10 +121,10 @@ const ProcessSection = () => {
         <div className="process-footer-content">
           <div className="process-footer-header">
             <Heart className="process-footer-icon" />
-            <h3 className="process-footer-title">Estou com você em cada etapa</h3>
+            <h3 className="process-footer-title">Suporte dedicado em cada etapa</h3>
           </div>
           <p className="process-footer-description">
-            ao seu lado em cada passo para uma experiência perfeita
+            do diagnóstico à implementação, você nunca estará sozinho na jornada de IA
           </p>
         </div>
       </motion.div>
