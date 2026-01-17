@@ -53,8 +53,8 @@ function Navbar() {
       show: true,
       style: { 
         strokeWidth: "1", 
-        stroke: "rgba(255,255,255,0.25)", 
-        fill: "rgba(255,255,255,0.05)",
+        stroke: "rgba(255,255,255,0.3)", 
+        fill: "rgba(255,255,255,0.12)",
       },
       path: [
         ["M", "0", "5"],
@@ -107,7 +107,7 @@ function Navbar() {
         <div className="h-12 mt-4 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40">
           {/* Main glass frame */}
           <div className="absolute inset-0 w-full h-full z-10">
-            <Frame enableBackdropBlur className="backdrop-blur-xl" paths={mainFramePath} />
+            <Frame enableBackdropBlur className="backdrop-blur-2xl" paths={mainFramePath} />
           </div>
 
 
