@@ -125,6 +125,15 @@ function Navbar() {
             <Frame enableBackdropBlur className="backdrop-blur-2xl" paths={mainFramePath} />
           </div>
 
+          {/* Red glow on bottom interior edge */}
+          <div 
+            className="absolute left-[15%] right-[15%] bottom-0 h-[1px] z-15 pointer-events-none"
+            style={{
+              background: 'linear-gradient(90deg, transparent, #ff2244 20%, #ff4466 50%, #ff2244 80%, transparent)',
+              boxShadow: '0 0 12px 3px rgba(255, 34, 68, 0.6), 0 0 24px 6px rgba(255, 34, 68, 0.3)',
+            }}
+          />
+
 
           {/* Left LED line - gradient red to purple */}
           <div className="absolute inset-0 w-full h-full pointer-events-none z-20">
