@@ -60,10 +60,14 @@ function Navbar() {
   const tabWidth = centerWidth + tabPadding * 2;
   const halfTab = tabWidth / 2;
 
-  // Responsive side offset - larger values = shorter sides (closer to center)
+  // Responsive offsets
+  // sideOffset controls where the bottom diagonal "cuts" end (bigger = closer to center)
   const sideOffset = navWidth < 640 ? 80 : navWidth < 1024 ? 140 : 220;
-  const ledStartPercent = navWidth < 640 ? "20%" : navWidth < 1024 ? "18%" : "15%";
-  const ledEndPercent = navWidth < 640 ? "80%" : navWidth < 1024 ? "82%" : "85%";
+
+  // LED should follow the bottom sides
+  const ledStartX = sideOffset;
+  const ledEndX = `100% - ${sideOffset}`;
+
   
 
   // Main frame - glass effect (transparent)
@@ -76,17 +80,17 @@ function Navbar() {
         fill: "rgba(255,255,255,0.12)",
       },
       path: [
-        ["M", `${sideOffset}`, "5"],
-        ["Q", `${sideOffset}`, "0", `${sideOffset} + 5`, "0"],
-        ["L", `100% - ${sideOffset} - 5`, "0"],
-        ["Q", `100% - ${sideOffset}`, "0", `100% - ${sideOffset}`, "5"],
+        ["M", "0", "5"],
+        ["Q", "0", "0", "5", "0"],
+        ["L", "100% - 5", "0"],
+        ["Q", "100%", "0", "100%", "5"],
         ["L", `100% - ${sideOffset}`, `100% - 12`],
         ["L", `50% + ${halfTab + 30}`, `100% - 12`],
         ["L", `50% + ${halfTab}`, `100% + 14`],
         ["L", `50% - ${halfTab}`, `100% + 14`],
         ["L", `50% - ${halfTab + 30}`, `100% - 12`],
         ["L", `${sideOffset}`, `100% - 12`],
-        ["L", `${sideOffset}`, "5"],
+        ["L", "0", "5"],
         ["Z"],
       ],
     },
@@ -116,7 +120,7 @@ function Navbar() {
                     fill: "transparent",
                   },
                   path: [
-                    ["M", ledStartPercent, "100%"],
+                    ["M", ledStartX, "100%"],
                     ["L", `50% - ${halfTab + 35}`, "100%"],
                     ["L", `50% - ${halfTab}`, "100% + 26"],
                   ],
@@ -137,7 +141,7 @@ function Navbar() {
                     fill: "transparent",
                   },
                   path: [
-                    ["M", ledEndPercent, "100%"],
+                    ["M", ledEndX, "100%"],
                     ["L", `50% + ${halfTab + 35}`, "100%"],
                     ["L", `50% + ${halfTab}`, "100% + 26"],
                   ],
