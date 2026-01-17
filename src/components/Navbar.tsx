@@ -87,7 +87,7 @@ function Navbar() {
       },
       path: [
         // Start on the left diagonal, above the bottom edge
-        ["M", sideOffset, `100% - 12`],
+        ["M", sideOffset, `100% - 26`],
 
         // Left top "tip" with a small rounding (avoid y=0 to prevent clipping)
         ["L", `${topOffset + topCorner}`, `${topCorner + topInset}`],
@@ -100,13 +100,13 @@ function Navbar() {
         ["Q", `100% - ${topOffset}`, `${topInset}`, `100% - ${topOffset + topCorner}`, `${topCorner + topInset}`],
 
         // Right diagonal going down
-        ["L", `100% - ${sideOffset}`, `100% - 12`],
+        ["L", `100% - ${sideOffset}`, `100% - 26`],
 
         // Bottom edge with center tab
-        ["L", `50% + ${halfTab + 30}`, `100% - 12`],
-        ["L", `50% + ${halfTab}`, `100% + 14`],
-        ["L", `50% - ${halfTab}`, `100% + 14`],
-        ["L", `50% - ${halfTab + 30}`, `100% - 12`],
+        ["L", `50% + ${halfTab + 30}`, `100% - 26`],
+        ["L", `50% + ${halfTab}`, `100%`],
+        ["L", `50% - ${halfTab}`, `100%`],
+        ["L", `50% - ${halfTab + 30}`, `100% - 26`],
 
         // Close path back to start
         ["Z"],
@@ -119,10 +119,10 @@ function Navbar() {
     <MobileMenuContext.Provider value={{ showMenu, setShowMenu }}>
       <nav className="fixed left-0 right-0 top-0 z-50 px-4 lg:px-8 pt-6 lg:pt-8">
 
-        <div ref={navRef} className="h-12 mt-4 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40">
+        <div ref={navRef} className="h-[76px] mt-4 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40 overflow-hidden">
           {/* Main glass frame */}
           <div className="absolute inset-0 w-full h-full z-10">
-            <Frame enableBackdropBlur className="backdrop-blur-2xl" paths={mainFramePath} />
+            <Frame enableBackdropBlur className="backdrop-blur-2xl overflow-hidden" paths={mainFramePath} />
           </div>
 
           {/* Red glow LED line on bottom interior edge - horizontal where texts are */}
@@ -152,9 +152,9 @@ function Navbar() {
                     fill: "transparent",
                   },
                   path: [
-                    ["M", ledStartX, "100%"],
-                    ["L", `50% - ${halfTab + 35}`, "100%"],
-                    ["L", `50% - ${halfTab}`, "100% + 26"],
+                    ["M", ledStartX, "100% - 26"],
+                    ["L", `50% - ${halfTab + 35}`, "100% - 26"],
+                    ["L", `50% - ${halfTab}`, "100%"],
                   ],
                 },
               ]}
@@ -173,9 +173,9 @@ function Navbar() {
                     fill: "transparent",
                   },
                   path: [
-                    ["M", ledEndX, "100%"],
-                    ["L", `50% + ${halfTab + 35}`, "100%"],
-                    ["L", `50% + ${halfTab}`, "100% + 26"],
+                    ["M", ledEndX, "100% - 26"],
+                    ["L", `50% + ${halfTab + 35}`, "100% - 26"],
+                    ["L", `50% + ${halfTab}`, "100%"],
                   ],
                 },
               ]}
