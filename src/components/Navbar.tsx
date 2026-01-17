@@ -74,14 +74,14 @@ function Navbar() {
   const ledStartX = sideOffset;
   const ledEndX = `100% - ${sideOffset}`;
 
-  // Main frame - glass effect (transparent)
+  // Main frame - glass effect (stronger)
   const mainFramePath: Paths = [
     {
       show: true,
       style: {
-        strokeWidth: "1",
-        stroke: "rgba(255,255,255,0.3)",
-        fill: "rgba(255,255,255,0.12)",
+        strokeWidth: "1.5",
+        stroke: "rgba(255,255,255,0.4)",
+        fill: "rgba(30,30,40,0.85)",
         strokeLinejoin: "round",
         strokeLinecap: "round",
       },
@@ -121,15 +121,15 @@ function Navbar() {
 
         <div ref={navRef} className="h-12 mt-4 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40">
           {/* Main glass frame */}
-          <div className="absolute inset-0 w-full h-full z-10">
-            <Frame enableBackdropBlur className="backdrop-blur-2xl" paths={mainFramePath} />
+          <div className="absolute inset-0 w-full h-full z-10 overflow-hidden">
+            <Frame enableBackdropBlur className="backdrop-blur-xl" paths={mainFramePath} />
           </div>
 
           {/* Red glow LED line on bottom interior edge - horizontal where texts are */}
           <div 
             className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
             style={{
-              top: '60px',
+              top: '52px',
               width: '27%',
               height: '1px',
               background: 'linear-gradient(90deg, transparent 0%, #ff2244 10%, #ff3355 30%, #ff4466 50%, #ff3355 70%, #ff2244 90%, transparent 100%)',
