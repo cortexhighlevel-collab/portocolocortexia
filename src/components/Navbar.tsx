@@ -60,8 +60,8 @@ function Navbar() {
   const tabWidth = centerWidth + tabPadding * 2;
   const halfTab = tabWidth / 2;
 
-  // Responsive side offset - smaller on mobile, larger on desktop
-  const sideOffset = navWidth < 640 ? 20 : navWidth < 1024 ? 30 : 40;
+  // Responsive side offset - smaller sides on all screens
+  const sideOffset = navWidth < 640 ? 80 : navWidth < 1024 ? 120 : 160;
   const ledStartPercent = navWidth < 640 ? "20%" : navWidth < 1024 ? "18%" : "15%";
   const ledEndPercent = navWidth < 640 ? "80%" : navWidth < 1024 ? "82%" : "85%";
 
