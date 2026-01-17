@@ -62,7 +62,7 @@ function Navbar() {
 
   // Responsive offsets
   // sideOffset controls where the bottom diagonal "cuts" end (bigger = closer to center)
-  const sideOffset = navWidth < 640 ? 80 : navWidth < 1024 ? 140 : 220;
+  const sideOffset = navWidth < 640 ? 120 : navWidth < 1024 ? 200 : 320;
 
   // LED should follow the bottom sides
   const ledStartX = sideOffset;
