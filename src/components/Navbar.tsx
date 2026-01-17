@@ -85,47 +85,63 @@ function Navbar() {
           </div>
 
 
-          {/* Bottom LED gradient lines with diagonal shape - aligned with navbar frame */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none z-20" preserveAspectRatio="none" viewBox="0 0 1000 60" style={{ overflow: 'visible' }}>
-            <defs>
-              <linearGradient id="leftLedGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#ff2244" />
-                <stop offset="100%" stopColor="#aa22ff" />
-              </linearGradient>
-              <linearGradient id="rightLedGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#aa22ff" />
-                <stop offset="100%" stopColor="#ff2244" />
-              </linearGradient>
-              <filter id="ledGlow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="2" result="blur"/>
-                <feMerge>
-                  <feMergeNode in="blur"/>
-                  <feMergeNode in="blur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-            {/* Left LED line - horizontal then diagonal to center tab */}
-            <path 
-              d="M 60 36 L 410 36 L 450 60"
-              stroke="url(#leftLedGradient)" 
-              strokeWidth="3" 
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-              filter="url(#ledGlow)"
-            />
-            {/* Right LED line - horizontal then diagonal to center tab */}
-            <path 
-              d="M 940 36 L 590 36 L 550 60"
-              stroke="url(#rightLedGradient)" 
-              strokeWidth="3" 
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-              filter="url(#ledGlow)"
-            />
-          </svg>
+          {/* Left LED line */}
+          <div className="absolute inset-0 w-full h-full pointer-events-none z-20">
+            <Frame 
+              paths={[
+                {
+                  show: true,
+                  style: { 
+                    strokeWidth: "3", 
+                    stroke: "url(#leftLedGrad)", 
+                    fill: "transparent",
+                    filter: "drop-shadow(0 0 4px #ff2244) drop-shadow(0 0 8px #aa22ff) drop-shadow(0 0 12px #aa22ff)",
+                  },
+                  path: [
+                    ["M", "6%", "100%"],
+                    ["L", `50% - ${halfTab + 35}`, "100%"],
+                    ["L", `50% - ${halfTab}`, "100% + 26"],
+                  ],
+                },
+              ]}
+            >
+              <defs>
+                <linearGradient id="leftLedGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#ff2244" />
+                  <stop offset="100%" stopColor="#aa22ff" />
+                </linearGradient>
+              </defs>
+            </Frame>
+          </div>
+
+          {/* Right LED line */}
+          <div className="absolute inset-0 w-full h-full pointer-events-none z-20">
+            <Frame 
+              paths={[
+                {
+                  show: true,
+                  style: { 
+                    strokeWidth: "3", 
+                    stroke: "url(#rightLedGrad)", 
+                    fill: "transparent",
+                    filter: "drop-shadow(0 0 4px #aa22ff) drop-shadow(0 0 8px #ff2244) drop-shadow(0 0 12px #ff2244)",
+                  },
+                  path: [
+                    ["M", "94%", "100%"],
+                    ["L", `50% + ${halfTab + 35}`, "100%"],
+                    ["L", `50% + ${halfTab}`, "100% + 26"],
+                  ],
+                },
+              ]}
+            >
+              <defs>
+                <linearGradient id="rightLedGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#aa22ff" />
+                  <stop offset="100%" stopColor="#ff2244" />
+                </linearGradient>
+              </defs>
+            </Frame>
+          </div>
 
           {/* Navigation content */}
           <div className="relative w-full h-full flex justify-center z-30">
