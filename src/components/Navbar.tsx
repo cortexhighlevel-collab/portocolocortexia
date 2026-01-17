@@ -80,13 +80,14 @@ function Navbar() {
         fill: "rgba(255,255,255,0.12)",
       },
       path: [
-        // Top left corner with rounded edge
-        ["M", topOffset, "5"],
-        ["Q", topOffset, "0", `${topOffset} + 5`, "0"],
+        // Start below top-left corner
+        ["M", `${topOffset} + 8`, "8"],
+        // Top left rounded corner
+        ["Q", topOffset, "0", `${topOffset} + 12`, "0"],
         // Top edge
-        ["L", `100% - ${topOffset} - 5`, "0"],
-        // Top right corner with rounded edge
-        ["Q", `100% - ${topOffset}`, "0", `100% - ${topOffset}`, "5"],
+        ["L", `100% - ${topOffset} - 12`, "0"],
+        // Top right rounded corner
+        ["Q", `100% - ${topOffset}`, "0", `100% - ${topOffset} - 8`, "8"],
         // Right diagonal to bottom
         ["L", `100% - ${sideOffset}`, `100% - 12`],
         // Bottom edge with center tab
@@ -97,7 +98,7 @@ function Navbar() {
         // Left diagonal from bottom
         ["L", sideOffset, `100% - 12`],
         // Back to top left
-        ["L", topOffset, "5"],
+        ["L", `${topOffset} + 8`, "8"],
         ["Z"],
       ],
     },
