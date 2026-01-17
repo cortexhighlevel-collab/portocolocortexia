@@ -80,25 +80,24 @@ function Navbar() {
         fill: "rgba(255,255,255,0.12)",
       },
       path: [
-        // Start below top-left corner
-        ["M", `${topOffset} + 8`, "8"],
-        // Top left rounded corner
-        ["Q", topOffset, "0", `${topOffset} + 12`, "0"],
-        // Top edge
-        ["L", `100% - ${topOffset} - 12`, "0"],
-        // Top right rounded corner
-        ["Q", `100% - ${topOffset}`, "0", `100% - ${topOffset} - 8`, "8"],
-        // Right diagonal to bottom
+        // Start on the left diagonal, below the rounded top-left corner
+        ["M", sideOffset, `100% - 12`],
+        // Go up the left diagonal toward top-left
+        ["L", `${topOffset} + 10`, "10"],
+        // Rounded top-left corner (curve from diagonal to horizontal)
+        ["Q", topOffset, "0", `${topOffset} + 20`, "0"],
+        // Top horizontal edge
+        ["L", `100% - ${topOffset} - 20`, "0"],
+        // Rounded top-right corner (curve from horizontal to diagonal)
+        ["Q", `100% - ${topOffset}`, "0", `100% - ${topOffset} - 10`, "10"],
+        // Right diagonal going down
         ["L", `100% - ${sideOffset}`, `100% - 12`],
         // Bottom edge with center tab
         ["L", `50% + ${halfTab + 30}`, `100% - 12`],
         ["L", `50% + ${halfTab}`, `100% + 14`],
         ["L", `50% - ${halfTab}`, `100% + 14`],
         ["L", `50% - ${halfTab + 30}`, `100% - 12`],
-        // Left diagonal from bottom
-        ["L", sideOffset, `100% - 12`],
-        // Back to top left
-        ["L", `${topOffset} + 8`, "8"],
+        // Close path back to start
         ["Z"],
       ],
     },
