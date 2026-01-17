@@ -95,7 +95,7 @@ function Navbar() {
                     strokeWidth: "3", 
                     stroke: "url(#ledGradientLeft)", 
                     fill: "transparent",
-                    filter: "drop-shadow(0 0 4px #ff2244) drop-shadow(0 0 8px #aa22ff) drop-shadow(0 0 12px #aa22ff)",
+                    filter: "drop-shadow(0 0 3px #ff2244) drop-shadow(0 0 6px #ff2244) drop-shadow(0 0 12px #ff2244) drop-shadow(0 0 20px #aa22ff) drop-shadow(0 0 30px #aa22ff)",
                   },
                   path: [
                     ["M", "6%", "100%"],
@@ -117,7 +117,7 @@ function Navbar() {
                     strokeWidth: "3", 
                     stroke: "url(#ledGradientRight)", 
                     fill: "transparent",
-                    filter: "drop-shadow(0 0 4px #aa22ff) drop-shadow(0 0 8px #ff2244) drop-shadow(0 0 12px #ff2244)",
+                    filter: "drop-shadow(0 0 3px #aa22ff) drop-shadow(0 0 6px #aa22ff) drop-shadow(0 0 12px #aa22ff) drop-shadow(0 0 20px #ff2244) drop-shadow(0 0 30px #ff2244)",
                   },
                   path: [
                     ["M", "94%", "100%"],
