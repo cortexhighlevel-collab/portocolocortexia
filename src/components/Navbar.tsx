@@ -118,7 +118,7 @@ function Navbar() {
 
   return (
     <MobileMenuContext.Provider value={{ showMenu, setShowMenu }}>
-      <nav className="fixed left-0 right-0 top-0 z-50 px-4 lg:px-8 pt-6 lg:pt-8">
+      <nav className="fixed left-0 right-0 top-0 z-[100] px-4 lg:px-8 pt-6 lg:pt-8">
 
         <div ref={navRef} className="h-12 mt-4 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40">
           {/* Main glass frame */}
