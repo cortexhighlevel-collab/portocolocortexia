@@ -86,48 +86,20 @@ function Navbar() {
 
 
           {/* Bottom LED gradient lines */}
-          <svg className="absolute inset-0 w-full h-full z-15 pointer-events-none overflow-visible">
-            <defs>
-              <linearGradient id="leftGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#ff2244" />
-                <stop offset="100%" stopColor="#aa22ff" />
-              </linearGradient>
-              <linearGradient id="rightGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#aa22ff" />
-                <stop offset="100%" stopColor="#ff2244" />
-              </linearGradient>
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                <feMerge>
-                  <feMergeNode in="coloredBlur"/>
-                  <feMergeNode in="coloredBlur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-            {/* Left LED line */}
-            <line 
-              x1="6%" 
-              y1="100%" 
-              x2="38%" 
-              y2="100%" 
-              stroke="url(#leftGradient)" 
-              strokeWidth="4" 
-              strokeLinecap="round"
-              filter="url(#glow)"
-            />
-            {/* Right LED line */}
-            <line 
-              x1="62%" 
-              y1="100%" 
-              x2="94%" 
-              y2="100%" 
-              stroke="url(#rightGradient)" 
-              strokeWidth="4" 
-              strokeLinecap="round"
-              filter="url(#glow)"
-            />
-          </svg>
+          <div className="absolute left-[6%] right-[62%] bottom-0 h-[4px] pointer-events-none z-20"
+            style={{
+              background: "linear-gradient(90deg, #ff2244 0%, #aa22ff 100%)",
+              boxShadow: "0 0 8px #ff2244, 0 0 16px #aa22ff, 0 0 24px #aa22ff",
+              borderRadius: "2px",
+            }}
+          />
+          <div className="absolute left-[62%] right-[6%] bottom-0 h-[4px] pointer-events-none z-20"
+            style={{
+              background: "linear-gradient(90deg, #aa22ff 0%, #ff2244 100%)",
+              boxShadow: "0 0 8px #aa22ff, 0 0 16px #ff2244, 0 0 24px #ff2244",
+              borderRadius: "2px",
+            }}
+          />
 
           {/* Navigation content */}
           <div className="relative w-full h-full flex justify-center z-30">
