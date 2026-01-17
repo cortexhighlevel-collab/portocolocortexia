@@ -43,17 +43,19 @@ function Navbar() {
     setShowMenu(false);
   };
 
-  const primaryStroke = "#ffffff";
-  const primaryFill = "transparent";
-
   const tabPadding = 32;
   const tabWidth = centerWidth + tabPadding * 2;
   const halfTab = tabWidth / 2;
 
-  const combinedPaths: Paths = [
+  // Main frame - white border with glass fill
+  const mainFramePath: Paths = [
     {
       show: true,
-      style: { strokeWidth: "1", stroke: primaryStroke, fill: primaryFill },
+      style: { 
+        strokeWidth: "1.5", 
+        stroke: "rgba(255,255,255,0.6)", 
+        fill: "rgba(40,40,50,0.85)",
+      },
       path: [
         ["M", "0", "5"],
         ["Q", "0", "0", "5", "0"],
@@ -69,18 +71,77 @@ function Navbar() {
         ["Z"],
       ],
     },
+  ];
+
+  // Left cyan glow line
+  const leftGlowPath: Paths = [
     {
       show: true,
-      style: { strokeWidth: "1", stroke: primaryStroke, fill: "transparent", opacity: 1 },
+      style: { 
+        strokeWidth: "3", 
+        stroke: "#00d4ff",
+        fill: "transparent",
+        filter: "drop-shadow(0 0 6px #00d4ff) drop-shadow(0 0 12px #00d4ff)",
+      },
+      path: [
+        ["M", "0", "0"],
+        ["L", "25%", "0"],
+      ],
+    },
+  ];
+
+  // Right red glow line  
+  const rightGlowPath: Paths = [
+    {
+      show: true,
+      style: { 
+        strokeWidth: "3", 
+        stroke: "#ff3366",
+        fill: "transparent",
+        filter: "drop-shadow(0 0 6px #ff3366) drop-shadow(0 0 12px #ff3366)",
+      },
+      path: [
+        ["M", "75%", "0"],
+        ["L", "100%", "0"],
+      ],
+    },
+  ];
+
+  // Center red glow line (on the tab)
+  const centerRedGlowPath: Paths = [
+    {
+      show: true,
+      style: { 
+        strokeWidth: "2.5", 
+        stroke: "#ff2244",
+        fill: "transparent",
+        filter: "drop-shadow(0 0 4px #ff2244) drop-shadow(0 0 8px #ff2244) drop-shadow(0 0 16px #ff0033)",
+      },
+      path: [
+        ["M", `50% - ${halfTab - 10}`, `100% + 10`],
+        ["L", `50% + ${halfTab - 10}`, `100% + 10`],
+      ],
+    },
+  ];
+
+  // Bottom left accent line
+  const bottomLeftLine: Paths = [
+    {
+      show: true,
+      style: { strokeWidth: "1", stroke: "rgba(255,255,255,0.4)", fill: "transparent" },
       path: [
         ["M", "6%", "100%"],
         ["L", `50% - ${halfTab + 35}`, "100%"],
         ["L", `50% - ${halfTab}`, `100% + 26`],
       ],
     },
+  ];
+
+  // Bottom right accent line
+  const bottomRightLine: Paths = [
     {
       show: true,
-      style: { strokeWidth: "1", stroke: primaryStroke, fill: "transparent", opacity: 1 },
+      style: { strokeWidth: "1", stroke: "rgba(255,255,255,0.4)", fill: "transparent" },
       path: [
         ["M", "94%", "100%"],
         ["L", `50% + ${halfTab + 35}`, "100%"],
@@ -91,25 +152,40 @@ function Navbar() {
 
   return (
     <MobileMenuContext.Provider value={{ showMenu, setShowMenu }}>
-      <nav className="fixed left-0 right-0 top-0 z-50 px-8 pt-8">
+      <nav className="fixed left-0 right-0 top-0 z-50 px-4 lg:px-8 pt-4 lg:pt-6">
         <div className="h-12 mt-2 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40">
+          {/* Main glass frame */}
           <div className="absolute inset-0 w-full h-full z-10">
-            <Frame enableBackdropBlur className="" paths={combinedPaths} />
+            <Frame enableBackdropBlur className="backdrop-blur-xl" paths={mainFramePath} />
           </div>
 
-          <div className="relative w-full h-full flex justify-center z-20">
+          {/* Top glow lines */}
+          <div className="absolute inset-0 w-full h-full z-20 pointer-events-none">
+            <Frame paths={leftGlowPath} />
+            <Frame paths={rightGlowPath} />
+          </div>
+
+          {/* Center red glow on tab */}
+          <div className="absolute inset-0 w-full h-full z-20 pointer-events-none">
+            <Frame paths={centerRedGlowPath} />
+          </div>
+
+          {/* Bottom accent lines */}
+          <div className="absolute inset-0 w-full h-full z-15 pointer-events-none">
+            <Frame paths={bottomLeftLine} />
+            <Frame paths={bottomRightLine} />
+          </div>
+
+          {/* Navigation content */}
+          <div className="relative w-full h-full flex justify-center z-30">
             <div ref={contentRef} className="flex-none flex items-center mt-6 px-8 pb-4">
-              <a href="#" className="me-16 font-bold text-white tracking-widest uppercase text-sm flex items-center gap-2">
-                <Zap className="h-5 w-5 text-indigo-500" />
-                Studio
-              </a>
-              <div className="hidden lg:flex gap-8 font-medium text-slate-300 text-sm">
+              <div className="hidden lg:flex gap-10 font-medium text-sm">
                 {navLinks.map((link) => (
                   <a
                     key={link.label}
                     href={link.href}
                     onClick={(e) => handleClick(e, link.href)}
-                    className="hover:text-white transition-colors tracking-wider"
+                    className="text-white/90 hover:text-white transition-colors tracking-[0.2em] font-semibold"
                   >
                     {link.label}
                   </a>
@@ -117,7 +193,7 @@ function Navbar() {
               </div>
               <div
                 onClick={() => setShowMenu(true)}
-                className="cursor-pointer ms-auto flex items-center gap-2 lg:hidden font-medium text-slate-300"
+                className="cursor-pointer ms-auto flex items-center gap-2 lg:hidden font-medium text-white"
               >
                 <Zap className="size-4" />
                 Menu
@@ -135,12 +211,16 @@ function Navbar() {
             onClick={() => setShowMenu(false)}
           />
           <div className="absolute left-4 right-4 top-20">
-            <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black/80 p-6 backdrop-blur-xl">
+            <div 
+              className="relative overflow-hidden rounded-lg p-6 backdrop-blur-xl"
+              style={{
+                background: "rgba(40,40,50,0.9)",
+                border: "1px solid rgba(255,255,255,0.3)",
+                boxShadow: "0 0 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)"
+              }}
+            >
               <div className="mb-6 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Zap className="h-6 w-6 text-indigo-500" />
-                  <span className="text-lg font-bold text-white">Studio</span>
-                </div>
+                <span className="text-lg font-bold text-white tracking-widest">MENU</span>
                 <button
                   onClick={() => setShowMenu(false)}
                   className="text-white/80 hover:text-white"
@@ -155,7 +235,7 @@ function Navbar() {
                     key={link.label}
                     href={link.href}
                     onClick={(e) => handleClick(e, link.href)}
-                    className="text-lg font-medium text-white/80 transition-colors hover:text-white tracking-wider"
+                    className="text-lg font-semibold text-white/80 transition-colors hover:text-white tracking-[0.2em]"
                   >
                     {link.label}
                   </a>
