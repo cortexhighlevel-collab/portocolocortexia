@@ -35,7 +35,7 @@ const HeroSection = () => {
           <div className="hero-content-inner">
             {/* Headline and CTA */}
             <div className="hero-top-content">
-              <motion.h1 className="hero-headline uppercase font-medium" initial={{
+              <motion.div initial={{
               opacity: 0,
               y: 30
             }} animate={{
@@ -45,8 +45,22 @@ const HeroSection = () => {
               duration: 0.8,
               delay: 0.2
             }}>
-                EU CRIO E DESENVOLVO SITES DE ALTA CONVERSÃO E ECONOMIZO SEU TEMPO COM AUTOMAÇÕES DE IA
-              </motion.h1>
+                <h1 className="hero-headline uppercase font-bold italic text-white" style={{
+                  textShadow: '0 0 10px rgba(255, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.6), 0 0 40px rgba(255, 0, 0, 0.4), 0 0 60px rgba(255, 0, 0, 0.3)'
+                }}>
+                  EU CRIO E<br />
+                  DESENVOLVO<br />
+                  SITES DE ALTA<br />
+                  CONVERSÃO
+                </h1>
+                <p className="hero-headline uppercase font-medium italic text-white/90 mt-4" style={{
+                  fontSize: '0.55em',
+                  letterSpacing: '0.05em'
+                }}>
+                  ECONOMIZO SEU TEMPO COM<br />
+                  AUTOMAÇÕES DE IA
+                </p>
+              </motion.div>
 
               
             </div>
