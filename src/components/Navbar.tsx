@@ -70,6 +70,9 @@ function Navbar() {
 
   
 
+  // Responsive side height - bigger value = thinner sides
+  const sideHeight = navWidth < 640 ? 20 : navWidth < 1024 ? 24 : 28;
+
   // Main frame - glass effect (transparent)
   const mainFramePath: Paths = [
     {
@@ -84,12 +87,12 @@ function Navbar() {
         ["Q", "0", "0", "5", "0"],
         ["L", "100% - 5", "0"],
         ["Q", "100%", "0", "100%", "5"],
-        ["L", `100% - ${sideOffset}`, `100% - 12`],
-        ["L", `50% + ${halfTab + 30}`, `100% - 12`],
+        ["L", `100% - ${sideOffset}`, `100% - ${sideHeight}`],
+        ["L", `50% + ${halfTab + 30}`, `100% - ${sideHeight}`],
         ["L", `50% + ${halfTab}`, `100% + 14`],
         ["L", `50% - ${halfTab}`, `100% + 14`],
-        ["L", `50% - ${halfTab + 30}`, `100% - 12`],
-        ["L", `${sideOffset}`, `100% - 12`],
+        ["L", `50% - ${halfTab + 30}`, `100% - ${sideHeight}`],
+        ["L", `${sideOffset}`, `100% - ${sideHeight}`],
         ["L", "0", "5"],
         ["Z"],
       ],
