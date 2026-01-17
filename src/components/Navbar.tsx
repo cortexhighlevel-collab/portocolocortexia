@@ -90,14 +90,14 @@ function Navbar() {
         ["M", sideOffset, `100% - 12`],
 
         // Left top "tip" with a small rounding (avoid y=0 to prevent clipping)
-        ["L", `${topOffset} + ${topCorner}`, `${topCorner} + ${topInset}`],
-        ["Q", topOffset, `${topInset}`, `${topOffset} + ${topCorner * 2}`, `${topInset}`],
+        ["L", `${topOffset + topCorner}`, `${topCorner + topInset}`],
+        ["Q", topOffset, `${topInset}`, `${topOffset + topCorner * 2}`, `${topInset}`],
 
         // Top horizontal edge
-        ["L", `100% - ${topOffset} - ${topCorner * 2}`, `${topInset}`],
+        ["L", `100% - ${topOffset + topCorner * 2}`, `${topInset}`],
 
         // Right top "tip" rounding
-        ["Q", `100% - ${topOffset}`, `${topInset}`, `100% - ${topOffset} - ${topCorner}`, `${topCorner} + ${topInset}`],
+        ["Q", `100% - ${topOffset}`, `${topInset}`, `100% - ${topOffset + topCorner}`, `${topCorner + topInset}`],
 
         // Right diagonal going down
         ["L", `100% - ${sideOffset}`, `100% - 12`],
