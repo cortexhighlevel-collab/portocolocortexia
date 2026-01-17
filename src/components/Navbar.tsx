@@ -21,7 +21,9 @@ export const MobileMenuContext = createContext<{
 function Navbar() {
   const [showMenu, setShowMenu] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
   const [centerWidth, setCenterWidth] = useState(0);
+  const [navWidth, setNavWidth] = useState(0);
 
   useEffect(() => {
     if (!contentRef.current) return;
@@ -31,6 +33,17 @@ function Navbar() {
       }
     });
     obs.observe(contentRef.current);
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!navRef.current) return;
+    const obs = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setNavWidth(entry.contentRect.width);
+      }
+    });
+    obs.observe(navRef.current);
     return () => obs.disconnect();
   }, []);
 
@@ -47,6 +60,11 @@ function Navbar() {
   const tabWidth = centerWidth + tabPadding * 2;
   const halfTab = tabWidth / 2;
 
+  // Responsive side offset - smaller on mobile, larger on desktop
+  const sideOffset = navWidth < 640 ? 40 : navWidth < 1024 ? 50 : 60;
+  const ledStartPercent = navWidth < 640 ? "12%" : navWidth < 1024 ? "8%" : "6%";
+  const ledEndPercent = navWidth < 640 ? "88%" : navWidth < 1024 ? "92%" : "94%";
+
   // Main frame - glass effect (transparent)
   const mainFramePath: Paths = [
     {
@@ -61,12 +79,12 @@ function Navbar() {
         ["Q", "0", "0", "5", "0"],
         ["L", "100% - 5", "0"],
         ["Q", "100%", "0", "100%", "5"],
-        ["L", `100% - 60`, `100% - 12`],
+        ["L", `100% - ${sideOffset}`, `100% - 12`],
         ["L", `50% + ${halfTab + 30}`, `100% - 12`],
         ["L", `50% + ${halfTab}`, `100% + 14`],
         ["L", `50% - ${halfTab}`, `100% + 14`],
         ["L", `50% - ${halfTab + 30}`, `100% - 12`],
-        ["L", "60", `100% - 12`],
+        ["L", `${sideOffset}`, `100% - 12`],
         ["L", "0", "5"],
         ["Z"],
       ],
@@ -78,7 +96,7 @@ function Navbar() {
     <MobileMenuContext.Provider value={{ showMenu, setShowMenu }}>
       <nav className="fixed left-0 right-0 top-0 z-50 px-4 lg:px-8 pt-6 lg:pt-8">
 
-        <div className="h-12 mt-4 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40">
+        <div ref={navRef} className="h-12 mt-4 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40">
           {/* Main glass frame */}
           <div className="absolute inset-0 w-full h-full z-10">
             <Frame enableBackdropBlur className="backdrop-blur-2xl" paths={mainFramePath} />
@@ -97,7 +115,7 @@ function Navbar() {
                     fill: "transparent",
                   },
                   path: [
-                    ["M", "6%", "100%"],
+                    ["M", ledStartPercent, "100%"],
                     ["L", `50% - ${halfTab + 35}`, "100%"],
                     ["L", `50% - ${halfTab}`, "100% + 26"],
                   ],
@@ -118,7 +136,7 @@ function Navbar() {
                     fill: "transparent",
                   },
                   path: [
-                    ["M", "94%", "100%"],
+                    ["M", ledEndPercent, "100%"],
                     ["L", `50% + ${halfTab + 35}`, "100%"],
                     ["L", `50% + ${halfTab}`, "100% + 26"],
                   ],
