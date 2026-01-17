@@ -8,20 +8,20 @@ import projectVideo3 from "@/assets/project-video-3.webm";
 const projects = [
   {
     id: 1,
-    name: "RGM Partners",
-    tags: ["Finanças", "Design", "Desenvolvimento"],
+    name: "Automação E-commerce",
+    tags: ["Automação", "n8n", "IA Generativa"],
     videoUrl: projectVideo,
   },
   {
     id: 2,
-    name: "Filmbros",
-    tags: ["Animações", "Design", "Desenvolvimento"],
+    name: "Agente de Atendimento",
+    tags: ["Chatbot", "GPT-4", "WhatsApp"],
     videoUrl: projectVideo2,
   },
   {
     id: 3,
-    name: "Sama Cape Town",
-    tags: ["Viagens", "Design", "Desenvolvimento"],
+    name: "Sistema AEO/SEO",
+    tags: ["Análise IA", "Otimização", "Conteúdo"],
     videoUrl: projectVideo3,
   },
 ];
@@ -102,7 +102,7 @@ const ProjectsSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          Projetos Recentes
+          Casos de Sucesso
         </motion.h2>
 
         {/* Main Content Area */}

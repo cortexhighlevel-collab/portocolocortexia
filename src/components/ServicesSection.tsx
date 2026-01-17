@@ -1,69 +1,68 @@
 import { motion } from "framer-motion";
 import { 
   ArrowUpRight, 
-  Globe, 
-  MessageSquare, 
-  Palette, 
   Bot, 
-  Workflow,
-  PenTool,
-  FileText,
-  Database,
-  Code,
+  Brain,
   Search,
-  Frame,
-  MessageCircle,
-  LayoutTemplate,
-  Gauge
+  MessageSquare,
+  Users,
+  Sparkles,
+  Target,
+  Workflow,
+  FileText,
+  Zap,
+  BarChart3,
+  Globe,
+  Layers
 } from "lucide-react";
 
 const services = [
   {
     id: 1,
-    icon: Globe,
-    title: "Design & Desenvolvimento Web",
-    description: "Tenha um site único criado por um designer-desenvolvedor híbrido. Combino estética moderna com código robusto e SEO avançado para criar uma experiência digital rápida e focada em vendas.",
+    icon: Bot,
+    title: "Automação com IA",
+    description: "Automatize tarefas repetitivas e escale suas operações. Construo workflows inteligentes com n8n, Make e ferramentas de IA para liberar seu tempo e aumentar a produtividade.",
     hasImage: true,
-    imageUrl: "https://framerusercontent.com/images/z2UMpz1bWIGSAfsaxn5lm6e9Uw.png",
+    imageUrl: "https://framerusercontent.com/images/oIGhfvN53u0EvH5kU4bPiROQG08.png",
   },
   {
     id: 2,
-    icon: MessageSquare,
-    title: "Consultorias Estratégicas",
-    description: "Tenha clareza sobre seu próximo passo digital. Seja uma auditoria de site, um roadmap de redesign ou brainstorming de workflows de IA, forneço insights acionáveis alinhados aos seus objetivos.",
+    icon: Brain,
+    title: "Análise Estratégica com IA",
+    description: "Tome decisões baseadas em dados. Utilizo IA para analisar seu negócio, identificar oportunidades e criar estratégias personalizadas para crescimento exponencial.",
     hasImage: false,
   },
   {
     id: 3,
-    icon: Palette,
-    title: "Design UI/UX",
-    description: "Eleve sua experiência do usuário. Projeto interfaces intuitivas e de alta conversão para web e apps mobile que fortalecem o valor da sua marca.",
+    icon: Search,
+    title: "AEO & SEO",
+    description: "Domine os mecanismos de busca tradicionais e as novas IAs. Otimizo seu conteúdo para Google, ChatGPT, Perplexity e outros sistemas de resposta por IA.",
     hasImage: false,
   },
   {
     id: 4,
-    icon: Bot,
-    title: "Automações com IA",
-    description: "Otimize suas operações. Construo chatbots de IA personalizados e workflows inteligentes com n8n para automatizar seu marketing e tarefas repetitivas.",
+    icon: MessageSquare,
+    title: "Engenharia de Prompt",
+    description: "Maximize o potencial da IA para seu negócio. Desenvolvo prompts personalizados e sistemas de instrução para empresas e profissionais extraírem o máximo das ferramentas de IA.",
     hasImage: false,
     hasTicker: true,
   },
 ];
 
 const moreServicesRow1 = [
+  { icon: Users, label: "Treinamento de Personas" },
+  { icon: Bot, label: "Agentes de IA" },
   { icon: Workflow, label: "Workflows n8n" },
-  { icon: PenTool, label: "Wireframing" },
-  { icon: FileText, label: "Copywriting" },
-  { icon: Database, label: "Configuração CMS" },
+  { icon: Sparkles, label: "ChatGPT Custom" },
 ];
 
 const moreServicesRow2 = [
-  { icon: Code, label: "Código Personalizado" },
-  { icon: Search, label: "SEO" },
-  { icon: Frame, label: "Especialista Framer" },
-  { icon: MessageCircle, label: "Bots WhatsApp" },
-  { icon: LayoutTemplate, label: "Landing Pages" },
-  { icon: Gauge, label: "Otimização" },
+  { icon: Target, label: "AEO Optimization" },
+  { icon: BarChart3, label: "Análise de Dados" },
+  { icon: FileText, label: "Copywriting IA" },
+  { icon: Globe, label: "SEO Avançado" },
+  { icon: Zap, label: "Automações" },
+  { icon: Layers, label: "Integrações API" },
 ];
 
 const ServiceCard = ({ 
@@ -148,7 +147,7 @@ const ServicesSection = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              Como Posso Ajudar Seu Negócio
+              Soluções de IA para Seu Negócio
             </motion.h2>
           </div>
           
@@ -162,7 +161,7 @@ const ServicesSection = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <span className="services-cta-text">Entre em Contato</span>
+            <span className="services-cta-text">Agendar Consultoria</span>
             <div className="services-cta-icon">
               <ArrowUpRight className="w-5 h-5 text-primary-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </div>
