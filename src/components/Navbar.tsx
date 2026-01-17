@@ -47,14 +47,14 @@ function Navbar() {
   const tabWidth = centerWidth + tabPadding * 2;
   const halfTab = tabWidth / 2;
 
-  // Main frame - white border with glass fill
+  // Main frame - glass effect
   const mainFramePath: Paths = [
     {
       show: true,
       style: { 
-        strokeWidth: "1.5", 
-        stroke: "rgba(255,255,255,0.6)", 
-        fill: "rgba(40,40,50,0.85)",
+        strokeWidth: "1", 
+        stroke: "rgba(255,255,255,0.4)", 
+        fill: "rgba(20,20,30,0.6)",
       },
       path: [
         ["M", "0", "5"],
@@ -73,53 +73,19 @@ function Navbar() {
     },
   ];
 
-  // Left cyan glow line
-  const leftGlowPath: Paths = [
+  // Small center red LED glow on tab (smaller size)
+  const centerRedLedPath: Paths = [
     {
       show: true,
       style: { 
-        strokeWidth: "3", 
-        stroke: "#00d4ff",
-        fill: "transparent",
-        filter: "drop-shadow(0 0 6px #00d4ff) drop-shadow(0 0 12px #00d4ff)",
-      },
-      path: [
-        ["M", "0", "0"],
-        ["L", "25%", "0"],
-      ],
-    },
-  ];
-
-  // Right red glow line  
-  const rightGlowPath: Paths = [
-    {
-      show: true,
-      style: { 
-        strokeWidth: "3", 
-        stroke: "#ff3366",
-        fill: "transparent",
-        filter: "drop-shadow(0 0 6px #ff3366) drop-shadow(0 0 12px #ff3366)",
-      },
-      path: [
-        ["M", "75%", "0"],
-        ["L", "100%", "0"],
-      ],
-    },
-  ];
-
-  // Center red glow line (on the tab)
-  const centerRedGlowPath: Paths = [
-    {
-      show: true,
-      style: { 
-        strokeWidth: "2.5", 
+        strokeWidth: "2", 
         stroke: "#ff2244",
         fill: "transparent",
-        filter: "drop-shadow(0 0 4px #ff2244) drop-shadow(0 0 8px #ff2244) drop-shadow(0 0 16px #ff0033)",
+        filter: "drop-shadow(0 0 3px #ff2244) drop-shadow(0 0 6px #ff0033)",
       },
       path: [
-        ["M", `50% - ${halfTab - 10}`, `100% + 10`],
-        ["L", `50% + ${halfTab - 10}`, `100% + 10`],
+        ["M", `50% - ${halfTab - 30}`, `100% + 10`],
+        ["L", `50% + ${halfTab - 30}`, `100% + 10`],
       ],
     },
   ];
@@ -128,7 +94,7 @@ function Navbar() {
   const bottomLeftLine: Paths = [
     {
       show: true,
-      style: { strokeWidth: "1", stroke: "rgba(255,255,255,0.4)", fill: "transparent" },
+      style: { strokeWidth: "1", stroke: "rgba(255,255,255,0.3)", fill: "transparent" },
       path: [
         ["M", "6%", "100%"],
         ["L", `50% - ${halfTab + 35}`, "100%"],
@@ -141,7 +107,7 @@ function Navbar() {
   const bottomRightLine: Paths = [
     {
       show: true,
-      style: { strokeWidth: "1", stroke: "rgba(255,255,255,0.4)", fill: "transparent" },
+      style: { strokeWidth: "1", stroke: "rgba(255,255,255,0.3)", fill: "transparent" },
       path: [
         ["M", "94%", "100%"],
         ["L", `50% + ${halfTab + 35}`, "100%"],
@@ -152,22 +118,36 @@ function Navbar() {
 
   return (
     <MobileMenuContext.Provider value={{ showMenu, setShowMenu }}>
-      <nav className="fixed left-0 right-0 top-0 z-50 px-4 lg:px-8 pt-4 lg:pt-6">
-        <div className="h-12 mt-2 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40">
+      <nav className="fixed left-0 right-0 top-0 z-50 px-4 lg:px-8 pt-6 lg:pt-8">
+        {/* Decorative lines OUTSIDE navbar */}
+        <div className="absolute left-4 lg:left-8 right-4 lg:right-8 top-4 lg:top-6 h-[3px] pointer-events-none flex justify-between">
+          {/* Left cyan line */}
+          <div 
+            className="w-[20%] h-full rounded-full"
+            style={{
+              background: "#00d4ff",
+              boxShadow: "0 0 8px #00d4ff, 0 0 16px #00d4ff, 0 0 24px #00d4ff",
+            }}
+          />
+          {/* Right gradient line (red to purple) */}
+          <div 
+            className="w-[20%] h-full rounded-full"
+            style={{
+              background: "linear-gradient(90deg, #ff2244 0%, #aa22ff 100%)",
+              boxShadow: "0 0 8px #ff2244, 0 0 16px #aa22ff, 0 0 24px #aa22ff",
+            }}
+          />
+        </div>
+
+        <div className="h-12 mt-4 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40">
           {/* Main glass frame */}
           <div className="absolute inset-0 w-full h-full z-10">
             <Frame enableBackdropBlur className="backdrop-blur-xl" paths={mainFramePath} />
           </div>
 
-          {/* Top glow lines */}
+          {/* Center red LED on tab (smaller) */}
           <div className="absolute inset-0 w-full h-full z-20 pointer-events-none">
-            <Frame paths={leftGlowPath} />
-            <Frame paths={rightGlowPath} />
-          </div>
-
-          {/* Center red glow on tab */}
-          <div className="absolute inset-0 w-full h-full z-20 pointer-events-none">
-            <Frame paths={centerRedGlowPath} />
+            <Frame paths={centerRedLedPath} />
           </div>
 
           {/* Bottom accent lines */}
@@ -210,13 +190,13 @@ function Navbar() {
             className="absolute inset-0 bg-black/80 backdrop-blur-md"
             onClick={() => setShowMenu(false)}
           />
-          <div className="absolute left-4 right-4 top-20">
+          <div className="absolute left-4 right-4 top-24">
             <div 
               className="relative overflow-hidden rounded-lg p-6 backdrop-blur-xl"
               style={{
-                background: "rgba(40,40,50,0.9)",
-                border: "1px solid rgba(255,255,255,0.3)",
-                boxShadow: "0 0 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)"
+                background: "rgba(20,20,30,0.8)",
+                border: "1px solid rgba(255,255,255,0.2)",
+                boxShadow: "0 0 30px rgba(0,0,0,0.5)"
               }}
             >
               <div className="mb-6 flex items-center justify-between">
