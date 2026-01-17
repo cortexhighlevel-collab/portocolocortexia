@@ -56,15 +56,15 @@ function Navbar() {
     setShowMenu(false);
   };
 
-  const tabPadding = 26;
+  const tabPadding = 32;
   const tabWidth = centerWidth + tabPadding * 2;
   const halfTab = tabWidth / 2;
 
   // Responsive offsets
   // sideOffset controls where the bottom diagonal "cuts" end (bigger = closer to center)
   // topOffset controls where the top diagonal starts (bigger = closer to center)
-  const sideOffset = navWidth < 640 ? 80 : navWidth < 1024 ? 130 : 200;
-  const topOffset = navWidth < 640 ? 70 : navWidth < 1024 ? 115 : 175;
+  const sideOffset = navWidth < 640 ? 120 : navWidth < 1024 ? 200 : 320;
+  const topOffset = navWidth < 640 ? 110 : navWidth < 1024 ? 180 : 280;
 
   // Small radius for the "tip" on the top sides
   const topCorner = navWidth < 640 ? 2 : navWidth < 1024 ? 3 : 4;
@@ -87,7 +87,7 @@ function Navbar() {
       },
       path: [
         // Start on the left diagonal, above the bottom edge
-        ["M", sideOffset, `100% - 10`],
+        ["M", sideOffset, `100% - 12`],
 
         // Left top "tip" with a small rounding (avoid y=0 to prevent clipping)
         ["L", `${topOffset + topCorner}`, `${topCorner + topInset}`],
@@ -100,13 +100,13 @@ function Navbar() {
         ["Q", `100% - ${topOffset}`, `${topInset}`, `100% - ${topOffset + topCorner}`, `${topCorner + topInset}`],
 
         // Right diagonal going down
-        ["L", `100% - ${sideOffset}`, `100% - 10`],
+        ["L", `100% - ${sideOffset}`, `100% - 12`],
 
         // Bottom edge with center tab
-        ["L", `50% + ${halfTab + 24}`, `100% - 10`],
-        ["L", `50% + ${halfTab}`, `100% + 11`],
-        ["L", `50% - ${halfTab}`, `100% + 11`],
-        ["L", `50% - ${halfTab + 24}`, `100% - 10`],
+        ["L", `50% + ${halfTab + 30}`, `100% - 12`],
+        ["L", `50% + ${halfTab}`, `100% + 14`],
+        ["L", `50% - ${halfTab}`, `100% + 14`],
+        ["L", `50% - ${halfTab + 30}`, `100% - 12`],
 
         // Close path back to start
         ["Z"],
@@ -117,9 +117,9 @@ function Navbar() {
 
   return (
     <MobileMenuContext.Provider value={{ showMenu, setShowMenu }}>
-      <nav className="fixed left-0 right-0 top-0 z-50 px-3 lg:px-6 pt-5 lg:pt-6">
+      <nav className="fixed left-0 right-0 top-0 z-50 px-4 lg:px-8 pt-6 lg:pt-8">
 
-        <div ref={navRef} className="h-10 mt-3 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40">
+        <div ref={navRef} className="h-12 mt-4 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40">
           {/* Main glass frame */}
           <div className="absolute inset-0 w-full h-full z-10">
             <Frame enableBackdropBlur className="backdrop-blur-2xl" paths={mainFramePath} />
@@ -129,7 +129,7 @@ function Navbar() {
           <div 
             className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
             style={{
-              top: '48px',
+              top: '60px',
               width: '27%',
               height: '1px',
               background: 'linear-gradient(90deg, transparent 0%, #ff2244 10%, #ff3355 30%, #ff4466 50%, #ff3355 70%, #ff2244 90%, transparent 100%)',
@@ -153,8 +153,8 @@ function Navbar() {
                   },
                   path: [
                     ["M", ledStartX, "100%"],
-                    ["L", `50% - ${halfTab + 28}`, "100%"],
-                    ["L", `50% - ${halfTab}`, "100% + 21"],
+                    ["L", `50% - ${halfTab + 35}`, "100%"],
+                    ["L", `50% - ${halfTab}`, "100% + 26"],
                   ],
                 },
               ]}
@@ -174,8 +174,8 @@ function Navbar() {
                   },
                   path: [
                     ["M", ledEndX, "100%"],
-                    ["L", `50% + ${halfTab + 28}`, "100%"],
-                    ["L", `50% + ${halfTab}`, "100% + 21"],
+                    ["L", `50% + ${halfTab + 35}`, "100%"],
+                    ["L", `50% + ${halfTab}`, "100% + 26"],
                   ],
                 },
               ]}
@@ -184,8 +184,8 @@ function Navbar() {
 
           {/* Navigation content */}
           <div className="relative w-full h-full flex justify-center z-30">
-            <div ref={contentRef} className="flex-none flex items-center mt-5 px-6 pb-3">
-              <div className="hidden lg:flex gap-8 font-medium text-xs">
+            <div ref={contentRef} className="flex-none flex items-center mt-6 px-8 pb-4">
+              <div className="hidden lg:flex gap-10 font-medium text-sm">
                 {navLinks.map((link) => (
                   <a
                     key={link.label}
