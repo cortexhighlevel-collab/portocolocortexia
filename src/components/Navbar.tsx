@@ -127,14 +127,14 @@ function Navbar() {
 
           {/* Red glow LED line on bottom interior edge - horizontal where texts are */}
           <div 
-            className="absolute left-1/2 -translate-x-1/2 pointer-events-none z-15"
+            className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
             style={{
-              bottom: '8px',
-              width: '60%',
-              height: '2px',
-              background: 'linear-gradient(90deg, transparent 0%, #ff2244 15%, #ff4466 50%, #ff2244 85%, transparent 100%)',
-              boxShadow: '0 0 8px 2px rgba(255, 34, 68, 0.8), 0 0 16px 4px rgba(255, 34, 68, 0.5), 0 0 24px 6px rgba(255, 34, 68, 0.3)',
-              borderRadius: '2px',
+              top: '38px',
+              width: '55%',
+              height: '1px',
+              background: 'linear-gradient(90deg, transparent 0%, #ff2244 10%, #ff3355 30%, #ff4466 50%, #ff3355 70%, #ff2244 90%, transparent 100%)',
+              boxShadow: '0 0 6px 1px rgba(255, 34, 68, 0.9), 0 0 12px 3px rgba(255, 34, 68, 0.6), 0 0 20px 5px rgba(255, 34, 68, 0.4)',
+              zIndex: 25,
             }}
           />
 
