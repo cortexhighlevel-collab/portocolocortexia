@@ -85,21 +85,47 @@ function Navbar() {
           </div>
 
 
-          {/* Bottom LED gradient lines */}
-          <div className="absolute left-[6%] right-[62%] bottom-0 h-[4px] pointer-events-none z-20"
-            style={{
-              background: "linear-gradient(90deg, #ff2244 0%, #aa22ff 100%)",
-              boxShadow: "0 0 8px #ff2244, 0 0 16px #aa22ff, 0 0 24px #aa22ff",
-              borderRadius: "2px",
-            }}
-          />
-          <div className="absolute left-[62%] right-[6%] bottom-0 h-[4px] pointer-events-none z-20"
-            style={{
-              background: "linear-gradient(90deg, #aa22ff 0%, #ff2244 100%)",
-              boxShadow: "0 0 8px #aa22ff, 0 0 16px #ff2244, 0 0 24px #ff2244",
-              borderRadius: "2px",
-            }}
-          />
+          {/* Bottom LED gradient lines with diagonal shape */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none z-20" preserveAspectRatio="none" viewBox="0 0 1000 48" style={{ overflow: 'visible' }}>
+            <defs>
+              <linearGradient id="leftLedGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#ff2244" />
+                <stop offset="100%" stopColor="#aa22ff" />
+              </linearGradient>
+              <linearGradient id="rightLedGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#aa22ff" />
+                <stop offset="100%" stopColor="#ff2244" />
+              </linearGradient>
+              <filter id="ledGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="2" result="blur"/>
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            {/* Left LED line - from left edge diagonally to center */}
+            <path 
+              d="M 60 48 L 420 36 L 450 62"
+              stroke="url(#leftLedGradient)" 
+              strokeWidth="3" 
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+              filter="url(#ledGlow)"
+            />
+            {/* Right LED line - from right edge diagonally to center */}
+            <path 
+              d="M 940 48 L 580 36 L 550 62"
+              stroke="url(#rightLedGradient)" 
+              strokeWidth="3" 
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+              filter="url(#ledGlow)"
+            />
+          </svg>
 
           {/* Navigation content */}
           <div className="relative w-full h-full flex justify-center z-30">
