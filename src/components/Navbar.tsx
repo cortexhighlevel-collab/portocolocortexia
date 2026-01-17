@@ -85,7 +85,7 @@ function Navbar() {
           </div>
 
 
-          {/* Left LED line - red */}
+          {/* Left LED line - gradient red to purple */}
           <div className="absolute inset-0 w-full h-full pointer-events-none z-20">
             <Frame 
               paths={[
@@ -93,9 +93,9 @@ function Navbar() {
                   show: true,
                   style: { 
                     strokeWidth: "3", 
-                    stroke: "#ff2244", 
+                    stroke: "url(#ledGradientLeft)", 
                     fill: "transparent",
-                    filter: "drop-shadow(0 0 4px #ff2244) drop-shadow(0 0 8px #ff2244) drop-shadow(0 0 16px #ff2244)",
+                    filter: "drop-shadow(0 0 4px #ff2244) drop-shadow(0 0 8px #aa22ff) drop-shadow(0 0 12px #aa22ff)",
                   },
                   path: [
                     ["M", "6%", "100%"],
@@ -107,7 +107,7 @@ function Navbar() {
             />
           </div>
 
-          {/* Right LED line - purple */}
+          {/* Right LED line - gradient purple to red */}
           <div className="absolute inset-0 w-full h-full pointer-events-none z-20">
             <Frame 
               paths={[
@@ -115,9 +115,9 @@ function Navbar() {
                   show: true,
                   style: { 
                     strokeWidth: "3", 
-                    stroke: "#aa22ff", 
+                    stroke: "url(#ledGradientRight)", 
                     fill: "transparent",
-                    filter: "drop-shadow(0 0 4px #aa22ff) drop-shadow(0 0 8px #aa22ff) drop-shadow(0 0 16px #aa22ff)",
+                    filter: "drop-shadow(0 0 4px #aa22ff) drop-shadow(0 0 8px #ff2244) drop-shadow(0 0 12px #ff2244)",
                   },
                   path: [
                     ["M", "94%", "100%"],

@@ -89,6 +89,17 @@ function Frame({
       ])}
       xmlns="http://www.w3.org/2000/svg"
     >
+      {/* Global gradient definitions for LED effects */}
+      <defs>
+        <linearGradient id="ledGradientLeft" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#ff2244" />
+          <stop offset="100%" stopColor="#aa22ff" />
+        </linearGradient>
+        <linearGradient id="ledGradientRight" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#aa22ff" />
+          <stop offset="100%" stopColor="#ff2244" />
+        </linearGradient>
+      </defs>
       {paths.map((p, i) => {
         if (!p.show) return null;
         const d = generateD(p.path, dimensions.width, dimensions.height);
