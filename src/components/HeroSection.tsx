@@ -2,17 +2,15 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import ImageScrollSequence from "./ImageScrollSequence";
 import { useEffect, useState } from "react";
-
 const HeroSection = () => {
   const [isPinned, setIsPinned] = useState(true);
   const [cortexVisible, setCortexVisible] = useState(false);
-
   useEffect(() => {
     const handleScroll = () => {
       // Hero content unpins after scrolling 200vh (the full scroll container)
       const scrollEnd = window.innerHeight * 2;
       setIsPinned(window.scrollY < scrollEnd - window.innerHeight);
-      
+
       // CORTEX appears after scrolling past 1.5x viewport height
       setCortexVisible(window.scrollY > window.innerHeight * 1.5);
     };
@@ -22,7 +20,6 @@ const HeroSection = () => {
     handleScroll(); // Check initial state
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
   return <>
       {/* Image sequence controlled by scroll */}
       <ImageScrollSequence />
@@ -51,36 +48,23 @@ const HeroSection = () => {
                 EU CRIO E DESENVOLVO SITES DE ALTA CONVERSÃO E ECONOMIZO SEU TEMPO COM AUTOMAÇÕES DE IA
               </motion.h1>
 
-              <motion.a href="https://tidycal.com/reemtech/30-minute-meeting" target="_blank" rel="noopener noreferrer" className="hero-cta-button group font-normal" initial={{
-              opacity: 0,
-              y: 30
-            }} animate={{
-              opacity: 1,
-              y: 0
-            }} transition={{
-              duration: 0.8,
-              delay: 0.4
-            }}>
-                <span className="hero-cta-text">Iniciar Seu Projeto</span>
-                <div className="hero-cta-icon">
-                  <ArrowRight className="w-5 h-5 text-primary-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </div>
-              </motion.a>
+              
             </div>
 
           </div>
         </div>
 
         {/* Cyberpunk CTA Button - Centered below character head */}
-        <motion.a 
-          href="https://tidycal.com/reemtech/30-minute-meeting" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="cyberpunk-cta-wrapper"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-        >
+        <motion.a href="https://tidycal.com/reemtech/30-minute-meeting" target="_blank" rel="noopener noreferrer" className="cyberpunk-cta-wrapper" initial={{
+        opacity: 0,
+        y: 20
+      }} animate={{
+        opacity: 1,
+        y: 0
+      }} transition={{
+        duration: 0.8,
+        delay: 0.6
+      }}>
           {/* WRAPPER */}
           <div className="relative group rounded-full p-[6px] overflow-hidden">
             {/* 1. FUNDO METÁLICO DA MOLDURA */}
@@ -96,13 +80,10 @@ const HeroSection = () => {
             {/* BOTÃO PRINCIPAL */}
             <button className="relative z-10 flex items-center justify-between gap-6 w-[700px] h-16 bg-gradient-to-b from-[#2a2a2a] via-[#0a0a0a] to-[#1a1a1a] text-white rounded-full px-6 border-2 border-[#3a3a3a] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_4px_20px_-5px_rgba(0,0,0,0.8)] transition-transform active:scale-[0.98] overflow-hidden">
               {/* CAMADA CENTRAL DE REFLEXO */}
-              <div 
-                className="absolute inset-0 bg-gradient-to-b from-[#333333] via-[#0a0a0a] to-[#222222] pointer-events-none opacity-80"
-                style={{
-                  maskImage: 'linear-gradient(to right, transparent 30%, black 40%, black 60%, transparent 70%)',
-                  WebkitMaskImage: 'linear-gradient(to right, transparent 30%, black 40%, black 60%, transparent 70%)'
-                }}
-              ></div>
+              <div className="absolute inset-0 bg-gradient-to-b from-[#333333] via-[#0a0a0a] to-[#222222] pointer-events-none opacity-80" style={{
+              maskImage: 'linear-gradient(to right, transparent 30%, black 40%, black 60%, transparent 70%)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent 30%, black 40%, black 60%, transparent 70%)'
+            }}></div>
               
               {/* NEON ESQUERDO */}
               <div className="h-2 flex-1 max-w-[180px] bg-gradient-to-b from-[#ffcccc] via-[#ff4444] to-[#ff2a2a] shadow-[0_0_4px_#ff0000,0_0_8px_#ff0000,0_0_16px_#ff0000,0_0_32px_#ff0000,0_0_48px_#cc0000,0_0_80px_#990000] rounded-full relative z-10">
@@ -130,5 +111,4 @@ const HeroSection = () => {
       </section>
     </>;
 };
-
 export default HeroSection;
