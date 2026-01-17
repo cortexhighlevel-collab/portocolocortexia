@@ -76,9 +76,9 @@ function Navbar() {
 
   return (
     <MobileMenuContext.Provider value={{ showMenu, setShowMenu }}>
-      <nav className="fixed left-0 right-0 top-0 z-50 px-4 lg:px-8 pt-6 lg:pt-8">
+      <nav className="fixed left-0 right-0 top-0 z-50 px-12 lg:px-24 pt-3 lg:pt-4">
 
-        <div className="h-12 mt-4 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40">
+        <div className="h-10 mx-0 w-full relative top-0 inset-x-0 z-40">
           {/* Main glass frame */}
           <div className="absolute inset-0 w-full h-full z-10">
             <Frame enableBackdropBlur className="backdrop-blur-2xl" paths={mainFramePath} />
@@ -97,9 +97,9 @@ function Navbar() {
                     fill: "transparent",
                   },
                   path: [
-                    ["M", "6%", "100%"],
-                    ["L", `50% - ${halfTab + 35}`, "100%"],
-                    ["L", `50% - ${halfTab}`, "100% + 26"],
+                    ["M", "12%", "100%"],
+                    ["L", `50% - ${halfTab + 25}`, "100%"],
+                    ["L", `50% - ${halfTab}`, "100% + 20"],
                   ],
                 },
               ]}
@@ -118,9 +118,9 @@ function Navbar() {
                     fill: "transparent",
                   },
                   path: [
-                    ["M", "94%", "100%"],
-                    ["L", `50% + ${halfTab + 35}`, "100%"],
-                    ["L", `50% + ${halfTab}`, "100% + 26"],
+                    ["M", "88%", "100%"],
+                    ["L", `50% + ${halfTab + 25}`, "100%"],
+                    ["L", `50% + ${halfTab}`, "100% + 20"],
                   ],
                 },
               ]}
@@ -129,7 +129,7 @@ function Navbar() {
 
           {/* Navigation content */}
           <div className="relative w-full h-full flex justify-center z-30">
-            <div ref={contentRef} className="flex-none flex items-center mt-6 px-8 pb-4">
+            <div ref={contentRef} className="flex-none flex items-center mt-4 px-6 pb-3">
               <div className="hidden lg:flex gap-10 font-medium text-sm">
                 {navLinks.map((link) => (
                   <a
