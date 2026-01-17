@@ -125,32 +125,18 @@ function Navbar() {
             <Frame enableBackdropBlur className="backdrop-blur-2xl" paths={mainFramePath} />
           </div>
 
-          {/* Red glow on bottom interior edge - follows navbar contour */}
-          <div className="absolute inset-0 w-full h-full pointer-events-none z-15">
-            <Frame 
-              paths={[
-                {
-                  show: true,
-                  style: { 
-                    strokeWidth: "2", 
-                    stroke: "#ff2244", 
-                    fill: "transparent",
-                    filter: "drop-shadow(0 0 4px #ff2244) drop-shadow(0 0 8px #ff2244) drop-shadow(0 0 12px rgba(255,34,68,0.5))",
-                  },
-                  path: [
-                    // Start from left diagonal corner
-                    ["M", sideOffset + 8, `100% - 18`],
-                    // Go up along left diagonal (inside edge)
-                    ["L", `${topOffset + topCorner + 8}`, `${topCorner + topInset + 8}`],
-                    // Horizontal along top inside
-                    ["L", `100% - ${topOffset + topCorner + 8}`, `${topCorner + topInset + 8}`],
-                    // Down along right diagonal
-                    ["L", `100% - ${sideOffset + 8}`, `100% - 18`],
-                  ],
-                },
-              ]}
-            />
-          </div>
+          {/* Red glow LED line on bottom interior edge - horizontal where texts are */}
+          <div 
+            className="absolute left-1/2 -translate-x-1/2 pointer-events-none z-15"
+            style={{
+              bottom: '8px',
+              width: '60%',
+              height: '2px',
+              background: 'linear-gradient(90deg, transparent 0%, #ff2244 15%, #ff4466 50%, #ff2244 85%, transparent 100%)',
+              boxShadow: '0 0 8px 2px rgba(255, 34, 68, 0.8), 0 0 16px 4px rgba(255, 34, 68, 0.5), 0 0 24px 6px rgba(255, 34, 68, 0.3)',
+              borderRadius: '2px',
+            }}
+          />
 
 
 
