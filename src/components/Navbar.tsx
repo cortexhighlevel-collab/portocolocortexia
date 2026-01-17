@@ -133,7 +133,7 @@ function Navbar() {
               width: '27%',
               height: '1px',
               background: 'linear-gradient(90deg, transparent 0%, #ff2244 10%, #ff3355 30%, #ff4466 50%, #ff3355 70%, #ff2244 90%, transparent 100%)',
-              boxShadow: '0 0 6px 1px rgba(255, 34, 68, 0.9), 0 0 12px 3px rgba(255, 34, 68, 0.6), 0 0 20px 5px rgba(255, 34, 68, 0.4)',
+              boxShadow: '0 0 4px 1px rgba(255, 34, 68, 0.5), 0 0 8px 2px rgba(255, 34, 68, 0.3), 0 0 12px 3px rgba(255, 34, 68, 0.2)',
               zIndex: 25,
             }}
           />
