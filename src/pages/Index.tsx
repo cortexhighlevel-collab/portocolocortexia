@@ -11,6 +11,7 @@ import ProjectsSection from "@/components/ProjectsSection";
 import AEOSection from "@/components/AEOSection";
 import ComoIAEntendeSection from "@/components/ComoIAEntendeSection";
 import ResultadoSection from "@/components/ResultadoSection";
+import FAQSection from "@/components/FAQSection";
 import ContactSection from "@/components/ContactSection";
 import FooterSection from "@/components/FooterSection";
 
@@ -41,7 +42,9 @@ const Index = () => {
         <ComoIAEntendeSection />
         {/* 10. Resultado - Transformação */}
         <ResultadoSection />
-        {/* 11. Contato - CTA final */}
+        {/* 11. FAQ - Perguntas frequentes */}
+        <FAQSection />
+        {/* 12. Contato - CTA final */}
         <ContactSection />
         <FooterSection />
       </div>
