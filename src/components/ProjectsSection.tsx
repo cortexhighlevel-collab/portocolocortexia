@@ -184,22 +184,22 @@ const CardContent = ({ project }: { project: typeof projects[0] }) => {
       
       {/* Animated scan line */}
       <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
-        <div className="absolute w-full h-1 bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent animate-scan-line" />
+        <div className="absolute w-full h-1 bg-gradient-to-r from-transparent via-red-500/40 to-transparent animate-scan-line" />
       </div>
       
       {/* Corner HUD elements */}
       <div className="absolute top-4 left-4 z-30 flex items-center gap-2">
-        <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,211,238,0.8)]" />
-        <span className="text-[10px] text-cyan-400 font-mono uppercase tracking-wider">REC</span>
+        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+        <span className="text-[10px] text-red-400 font-mono uppercase tracking-wider">REC</span>
       </div>
       
       <div className="absolute top-4 right-16 z-30">
-        <span className="text-[10px] text-cyan-400/60 font-mono">SYS.OK</span>
+        <span className="text-[10px] text-red-400/60 font-mono">SYS.OK</span>
       </div>
       
       {/* External Link Icon with glow */}
-      <div className="project-card-link-icon group-hover:shadow-[0_0_15px_rgba(34,211,238,0.5)] transition-shadow duration-300">
-        <ExternalLink className="w-5 h-5 group-hover:text-cyan-400 transition-colors duration-300" />
+      <div className="project-card-link-icon group-hover:shadow-[0_0_15px_rgba(239,68,68,0.5)] transition-shadow duration-300">
+        <ExternalLink className="w-5 h-5 group-hover:text-red-400 transition-colors duration-300" />
       </div>
 
       {/* Content Overlay */}
@@ -224,7 +224,7 @@ const CardContent = ({ project }: { project: typeof projects[0] }) => {
                 whileHover={{ scale: 1.05 }}
               >
                 <span className="relative z-10">{tag}</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-purple-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300" />
               </motion.span>
             ))}
           </div>
@@ -243,15 +243,15 @@ const CardContent = ({ project }: { project: typeof projects[0] }) => {
         >
           <source src={project.videoUrl} type="video/webm" />
         </video>
-        {/* Cyan tint overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-transparent to-purple-900/20 mix-blend-overlay" />
+        {/* Red tint overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 via-transparent to-purple-900/20 mix-blend-overlay" />
       </div>
 
       {/* Dark Bottom Overlay with gradient */}
       <div className="project-card-overlay" />
       
       {/* Neon border glow */}
-      <div className="absolute inset-0 rounded-2xl border border-cyan-500/20 pointer-events-none" />
+      <div className="absolute inset-0 rounded-2xl border border-red-500/20 pointer-events-none" />
     </div>
   );
 };
