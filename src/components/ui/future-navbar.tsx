@@ -1,8 +1,55 @@
-import { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { type Paths, setupSvgRenderer } from "@left4code/svg-renderer";
 import { cva, type VariantProps } from "class-variance-authority";
 
+// --- POLYFILL & UTILITIES START ---
+type PathCommand = ["M" | "L" | "Q" | "Z", string | number, string | number, string | number, string | number] | ["M" | "L", string | number, string | number] | ["Z"];
+type PathItem = {
+  show: boolean;
+  style: React.CSSProperties;
+  path: PathCommand[];
+};
+type Paths = PathItem[];
+
+function parseCoord(val: string | number, reference: number): number {
+  if (typeof val === "number") return val;
+  if (!val) return 0;
+  const s = val.toString().trim();
+  if (!s.includes("%")) return parseFloat(s);
+
+  const parts = s.split("%");
+  const percent = parseFloat(parts[0]) / 100;
+  let offset = 0;
+  if (parts[1]) {
+    const cleanOffset = parts[1].replace(/\s+/g, "");
+    if (cleanOffset) offset = parseFloat(cleanOffset);
+  }
+  return reference * percent + offset;
+}
+
+function generateD(pathCommands: PathCommand[], width: number, height: number): string {
+  return pathCommands
+    .map((cmd) => {
+      const type = cmd[0];
+      if (type === "Z") {
+        return "Z";
+      } else if (type === "Q") {
+        const x1 = parseCoord(cmd[1], width);
+        const y1 = parseCoord(cmd[2], height);
+        const x = parseCoord(cmd[3], width);
+        const y = parseCoord(cmd[4], height);
+        return `${type} ${x1} ${y1} ${x} ${y}`;
+      } else {
+        const x = parseCoord(cmd[1], width);
+        const y = parseCoord(cmd[2], height);
+        return `${type} ${x} ${y}`;
+      }
+    })
+    .join(" ");
+}
+// --- POLYFILL END ---
+
+// --- COMPONENT: Frame ---
 function Frame({
   className,
   paths,
@@ -14,71 +61,58 @@ function Frame({
   enableBackdropBlur?: boolean;
   enableViewBox?: boolean;
 } & React.ComponentProps<"svg">) {
-  const svgRef = useRef<SVGSVGElement>(null);
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
-    if (svgRef.current && svgRef.current.parentElement) {
-      const instance = setupSvgRenderer({
-        el: svgRef.current,
-        paths,
-        enableBackdropBlur,
-        enableViewBox,
-      });
-
-      return () => instance.destroy();
-    }
-  }, [paths, enableViewBox, enableBackdropBlur]);
+    if (!svgRef.current) return;
+    const obs = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setDimensions({
+          width: entry.contentRect.width,
+          height: entry.contentRect.height,
+        });
+      }
+    });
+    obs.observe(svgRef.current);
+    return () => obs.disconnect();
+  }, []);
 
   return (
     <svg
-      ref={svgRef}
-      className={twMerge("absolute inset-0 w-full h-full", className)}
       {...props}
-    />
+      ref={svgRef}
+      className={twMerge([
+        "absolute inset-0 size-full pointer-events-none overflow-visible",
+        enableBackdropBlur && "backdrop-blur-[2px]",
+        className,
+      ])}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {paths.map((p, i) => {
+        if (!p.show) return null;
+        const d = generateD(p.path, dimensions.width, dimensions.height);
+        return (
+          <path
+            key={i}
+            d={d}
+            stroke={p.style.stroke as string}
+            strokeWidth={p.style.strokeWidth as string}
+            fill={p.style.fill as string}
+            vectorEffect="non-scaling-stroke"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={p.style}
+          />
+        );
+      })}
+    </svg>
   );
 }
 
-// 🎨 Theme colors — no CSS variables, pure hex/rgba
-const COLORS = {
-  default: {
-    stroke1: "#4f46e5",
-    fill1: "rgba(79,70,229,0.22)",
-    stroke2: "#4f46e5",
-    fill2: "rgba(79,70,229,0.1)",
-    text: "#ffffff",
-  },
-  accent: {
-    stroke1: "#f97316",
-    fill1: "rgba(249,115,22,0.4)",
-    stroke2: "#f97316",
-    fill2: "rgba(249,115,22,0.2)",
-    text: "#ffffff",
-  },
-  destructive: {
-    stroke1: "#dc2626",
-    fill1: "rgba(220,38,38,0.22)",
-    stroke2: "#dc2626",
-    fill2: "rgba(220,38,38,0.1)",
-    text: "#ffffff",
-  },
-  secondary: {
-    stroke1: "#64748b",
-    fill1: "rgba(100,116,139,0.15)",
-    stroke2: "#64748b",
-    fill2: "rgba(100,116,139,0.1)",
-    text: "#ffffff",
-  },
-  success: {
-    stroke1: "#16a34a",
-    fill1: "rgba(22,163,74,0.22)",
-    stroke2: "#16a34a",
-    fill2: "rgba(22,163,74,0.1)",
-    text: "#ffffff",
-  },
-};
-
+// --- COMPONENT: FutureButton ---
 const buttonVariants = cva(
-  "group font-bold mb-2 relative px-8 py-2 cursor-pointer transition-all outline-none [&>span]:relative [&>span]:flex [&>span]:items-center [&>span]:justify-center",
+  "group font-bold mb-2 relative px-8 py-2 cursor-pointer transition-all outline-none [&>span]:relative [&>span]:flex [&>span]:items-center [&>span]:justify-center active:scale-95 select-none",
   {
     variants: {
       shape: {
@@ -90,106 +124,30 @@ const buttonVariants = cva(
     defaultVariants: {
       shape: "default",
     },
-  },
+  }
 );
-
-// Helper function to create paths in the correct format
-function createPath(stroke: string, fill: string, pathData: (["M", string, string] | ["L", string, string])[]): Paths[0] {
-  return {
-    style: {
-      strokeWidth: "1",
-      stroke,
-      fill,
-    },
-    path: pathData,
-  };
-}
 
 function FutureButton({
   className,
   children,
   shape = "default",
-  enableBackdropBlur = false,
-  enableViewBox = false,
-  customPaths,
   textColor,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
-    customPaths?: Paths;
-    enableBackdropBlur?: boolean;
-    enableViewBox?: boolean;
-    bgColor?: string;
     textColor?: string;
   }) {
-  const colors = COLORS.default;
-
-  // Default button path (rectangular with cut corner)
-  const defaultPaths: Paths = [
-    createPath(colors.stroke1, colors.fill1, [
-      ["M", "0", "10"],
-      ["L", "0", "calc(100% - 10px)"],
-      ["L", "10", "100%"],
-      ["L", "calc(100% - 20px)", "100%"],
-      ["L", "calc(100% - 10px)", "calc(100% - 10px)"],
-      ["L", "calc(100% - 10px)", "10"],
-      ["L", "calc(100% - 20px)", "0"],
-      ["L", "10", "0"],
-      ["L", "0", "10"],
-    ]),
-  ];
-
-  const flatPaths: Paths = [
-    createPath(colors.stroke1, colors.fill1, [
-      ["M", "0", "5"],
-      ["L", "0", "calc(100% - 5px)"],
-      ["L", "5", "100%"],
-      ["L", "calc(100% - 5px)", "100%"],
-      ["L", "100%", "calc(100% - 5px)"],
-      ["L", "100%", "5"],
-      ["L", "calc(100% - 5px)", "0"],
-      ["L", "5", "0"],
-      ["L", "0", "5"],
-    ]),
-  ];
-
-  const simplePaths: Paths = [
-    createPath(colors.stroke1, colors.fill1, [
-      ["M", "0", "50%"],
-      ["L", "15", "0"],
-      ["L", "100%", "0"],
-      ["L", "100%", "100%"],
-      ["L", "15", "100%"],
-      ["L", "0", "50%"],
-    ]),
-  ];
-
-  const getPaths = () => {
-    if (customPaths) return customPaths;
-    if (shape === "simple") return simplePaths;
-    if (shape === "flat") return flatPaths;
-    return defaultPaths;
-  };
-
   return (
     <button
-      className={twMerge(buttonVariants({ shape }), className)}
-      style={{ color: textColor || colors.text }}
       {...props}
+      style={{ color: textColor || "#f1f5f9" }}
+      className={twMerge(buttonVariants({ shape, className }))}
     >
-      <div className="absolute inset-0">
-        <Frame
-          enableBackdropBlur={enableBackdropBlur}
-          enableViewBox={enableViewBox}
-          paths={getPaths()}
-        />
-      </div>
-
-      <span>{children}</span>
+      <span className="relative z-10">{children}</span>
     </button>
   );
 }
 
-export { Frame, FutureButton, COLORS, createPath };
-export type { Paths };
+export { Frame, FutureButton };
+export type { Paths, PathItem, PathCommand };
 export default FutureButton;
