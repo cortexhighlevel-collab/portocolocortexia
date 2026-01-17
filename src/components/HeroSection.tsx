@@ -78,7 +78,7 @@ const HeroSection = () => {
             <div className="absolute inset-0 bg-black/20"></div>
             
             {/* BOTÃO PRINCIPAL */}
-            <button className="relative z-10 flex items-center justify-between gap-6 w-[840px] h-[77px] bg-gradient-to-b from-[#2a2a2a] via-[#0a0a0a] to-[#1a1a1a] text-white rounded-full px-7 border-2 border-[#3a3a3a] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_4px_20px_-5px_rgba(0,0,0,0.8)] transition-transform active:scale-[0.98] overflow-hidden">
+            <button className="relative z-10 flex items-center justify-between gap-6 w-[1008px] h-[92px] bg-gradient-to-b from-[#2a2a2a] via-[#0a0a0a] to-[#1a1a1a] text-white rounded-full px-8 border-2 border-[#3a3a3a] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_4px_20px_-5px_rgba(0,0,0,0.8)] transition-transform active:scale-[0.98] overflow-hidden">
               {/* CAMADA CENTRAL DE REFLEXO */}
               <div className="absolute inset-0 bg-gradient-to-b from-[#333333] via-[#0a0a0a] to-[#222222] pointer-events-none opacity-80" style={{
               maskImage: 'linear-gradient(to right, transparent 30%, black 40%, black 60%, transparent 70%)',
