@@ -85,8 +85,8 @@ function Navbar() {
           </div>
 
 
-          {/* Bottom LED gradient lines with diagonal shape */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none z-20" preserveAspectRatio="none" viewBox="0 0 1000 48" style={{ overflow: 'visible' }}>
+          {/* Bottom LED gradient lines with diagonal shape - aligned with navbar frame */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none z-20" preserveAspectRatio="none" viewBox="0 0 1000 60" style={{ overflow: 'visible' }}>
             <defs>
               <linearGradient id="leftLedGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="#ff2244" />
@@ -105,9 +105,9 @@ function Navbar() {
                 </feMerge>
               </filter>
             </defs>
-            {/* Left LED line - from left edge diagonally to center */}
+            {/* Left LED line - horizontal then diagonal to center tab */}
             <path 
-              d="M 60 48 L 420 36 L 450 62"
+              d="M 60 36 L 410 36 L 450 60"
               stroke="url(#leftLedGradient)" 
               strokeWidth="3" 
               strokeLinecap="round"
@@ -115,9 +115,9 @@ function Navbar() {
               fill="none"
               filter="url(#ledGlow)"
             />
-            {/* Right LED line - from right edge diagonally to center */}
+            {/* Right LED line - horizontal then diagonal to center tab */}
             <path 
-              d="M 940 48 L 580 36 L 550 62"
+              d="M 940 36 L 590 36 L 550 60"
               stroke="url(#rightLedGradient)" 
               strokeWidth="3" 
               strokeLinecap="round"
