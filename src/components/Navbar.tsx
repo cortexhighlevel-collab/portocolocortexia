@@ -186,7 +186,7 @@ function Navbar() {
 
           {/* Navigation content */}
           <div className="absolute inset-0 w-full h-full flex items-center justify-center z-30">
-            <div ref={contentRef} className="flex-none flex items-center px-8 mt-2">
+            <div ref={contentRef} className="flex-none flex items-center px-8 mt-4">
               <div className="hidden lg:flex gap-10 font-medium text-base">
                 {navLinks.map((link) => (
                   <a
