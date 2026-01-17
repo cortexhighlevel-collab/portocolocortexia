@@ -66,7 +66,11 @@ function Navbar() {
   const sideOffset = navWidth < 640 ? 120 : navWidth < 1024 ? 200 : 320;
   const topOffset = navWidth < 640 ? 80 : navWidth < 1024 ? 140 : 220;
 
-  // LED should follow the bottom sides
+  // Small radius for the "tip" on the top sides
+  const topCorner = navWidth < 640 ? 10 : navWidth < 1024 ? 14 : 18;
+
+  // Avoid clipping the rounded corner by keeping the top edge slightly inset
+  const topInset = 2;
   const ledStartX = sideOffset;
   const ledEndX = `100% - ${sideOffset}`;
 
@@ -74,29 +78,36 @@ function Navbar() {
   const mainFramePath: Paths = [
     {
       show: true,
-      style: { 
-        strokeWidth: "1", 
-        stroke: "rgba(255,255,255,0.3)", 
+      style: {
+        strokeWidth: "1",
+        stroke: "rgba(255,255,255,0.3)",
         fill: "rgba(255,255,255,0.12)",
+        strokeLinejoin: "round",
+        strokeLinecap: "round",
       },
       path: [
-        // Start on the left diagonal, below the rounded top-left corner
+        // Start on the left diagonal, above the bottom edge
         ["M", sideOffset, `100% - 12`],
-        // Go up the left diagonal toward top-left
-        ["L", `${topOffset} + 10`, "10"],
-        // Rounded top-left corner (curve from diagonal to horizontal)
-        ["Q", topOffset, "0", `${topOffset} + 20`, "0"],
+
+        // Left top "tip" with a small rounding (avoid y=0 to prevent clipping)
+        ["L", `${topOffset} + ${topCorner}`, `${topCorner} + ${topInset}`],
+        ["Q", topOffset, `${topInset}`, `${topOffset} + ${topCorner * 2}`, `${topInset}`],
+
         // Top horizontal edge
-        ["L", `100% - ${topOffset} - 20`, "0"],
-        // Rounded top-right corner (curve from horizontal to diagonal)
-        ["Q", `100% - ${topOffset}`, "0", `100% - ${topOffset} - 10`, "10"],
+        ["L", `100% - ${topOffset} - ${topCorner * 2}`, `${topInset}`],
+
+        // Right top "tip" rounding
+        ["Q", `100% - ${topOffset}`, `${topInset}`, `100% - ${topOffset} - ${topCorner}`, `${topCorner} + ${topInset}`],
+
         // Right diagonal going down
         ["L", `100% - ${sideOffset}`, `100% - 12`],
+
         // Bottom edge with center tab
         ["L", `50% + ${halfTab + 30}`, `100% - 12`],
         ["L", `50% + ${halfTab}`, `100% + 14`],
         ["L", `50% - ${halfTab}`, `100% + 14`],
         ["L", `50% - ${halfTab + 30}`, `100% - 12`],
+
         // Close path back to start
         ["Z"],
       ],
