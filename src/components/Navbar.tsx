@@ -64,7 +64,7 @@ function Navbar() {
   // sideOffset controls where the bottom diagonal "cuts" end (bigger = closer to center)
   // topOffset controls where the top diagonal starts (bigger = closer to center)
   const sideOffset = navWidth < 640 ? 120 : navWidth < 1024 ? 200 : 320;
-  const topOffset = navWidth < 640 ? 40 : navWidth < 1024 ? 60 : 80;
+  const topOffset = navWidth < 640 ? 110 : navWidth < 1024 ? 180 : 280;
 
   // Small radius for the "tip" on the top sides
   const topCorner = navWidth < 640 ? 2 : navWidth < 1024 ? 3 : 4;
