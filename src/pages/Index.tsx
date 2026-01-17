@@ -1,15 +1,15 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import MotionImageSection from "@/components/MotionImageSection";
-import ServicesSection from "@/components/ServicesSection";
-import ProjectsSection from "@/components/ProjectsSection";
 import ProblemaSection from "@/components/ProblemaSection";
 import NovaCamadaSection from "@/components/NovaCamadaSection";
+import ServicesSection from "@/components/ServicesSection";
 import EntregasSection from "@/components/EntregasSection";
-import AEOSection from "@/components/AEOSection";
-import ComoIAEntendeSection from "@/components/ComoIAEntendeSection";
 import ParaQuemSection from "@/components/ParaQuemSection";
 import MetodologiaSection from "@/components/MetodologiaSection";
+import ProjectsSection from "@/components/ProjectsSection";
+import AEOSection from "@/components/AEOSection";
+import ComoIAEntendeSection from "@/components/ComoIAEntendeSection";
 import ResultadoSection from "@/components/ResultadoSection";
 import ContactSection from "@/components/ContactSection";
 import FooterSection from "@/components/FooterSection";
@@ -21,16 +21,27 @@ const Index = () => {
       <HeroSection />
       <MotionImageSection />
       <div className="relative z-10 bg-black">
-        <ServicesSection />
-        <ProjectsSection />
+        {/* 1. Problema - Criar tensão */}
         <ProblemaSection />
+        {/* 2. Nova Camada - Apresentar conceito */}
         <NovaCamadaSection />
+        {/* 3. Soluções - Cards de serviços */}
+        <ServicesSection />
+        {/* 4. Entregas - Detalhamento técnico */}
         <EntregasSection />
-        <AEOSection />
-        <ComoIAEntendeSection />
+        {/* 5. Para Quem - Segmentação */}
         <ParaQuemSection />
+        {/* 6. Metodologia - Processo */}
         <MetodologiaSection />
+        {/* 7. Casos de Sucesso - Prova social */}
+        <ProjectsSection />
+        {/* 8. AEO - Diferencial técnico */}
+        <AEOSection />
+        {/* 9. Como IA Entende - Autoridade */}
+        <ComoIAEntendeSection />
+        {/* 10. Resultado - Transformação */}
         <ResultadoSection />
+        {/* 11. Contato - CTA final */}
         <ContactSection />
         <FooterSection />
       </div>
