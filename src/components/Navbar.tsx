@@ -5,9 +5,9 @@ import NavbarGlassBackdrop from "@/components/NavbarGlassBackdrop";
 
 const navLinks = [
   { label: "SOLUÇÕES", href: "#services" },
-  { label: "CASOS", href: "#projects" },
+  { label: "ENTREGAS", href: "#entregas" },
+  { label: "AEO", href: "#aeo" },
   { label: "MÉTODO", href: "#process" },
-  { label: "PLANOS", href: "#pricing" },
   { label: "CONTATO", href: "#contact" },
 ];
 
@@ -61,21 +61,13 @@ function Navbar() {
   const tabWidth = centerWidth + tabPadding * 2;
   const halfTab = tabWidth / 2;
 
-  // Responsive offsets
-  // sideOffset controls where the bottom diagonal "cuts" end (bigger = closer to center)
-  // topOffset controls where the top diagonal starts (bigger = closer to center)
   const sideOffset = navWidth < 640 ? 120 : navWidth < 1024 ? 200 : 320;
   const topOffset = navWidth < 640 ? 110 : navWidth < 1024 ? 180 : 280;
-
-  // Small radius for the "tip" on the top sides
   const topCorner = navWidth < 640 ? 2 : navWidth < 1024 ? 3 : 4;
-
-  // Avoid clipping the rounded corner by keeping the top edge slightly inset
   const topInset = 2;
   const ledStartX = sideOffset;
   const ledEndX = `100% - ${sideOffset}`;
 
-  // Main frame - glass effect (transparent)
   const mainFramePath: Paths = [
     {
       show: true,
@@ -87,47 +79,30 @@ function Navbar() {
         strokeLinecap: "round",
       },
       path: [
-        // Start on the left diagonal, above the bottom edge
         ["M", sideOffset, `100% - 12`],
-
-        // Left top "tip" with a small rounding (avoid y=0 to prevent clipping)
         ["L", `${topOffset + topCorner}`, `${topCorner + topInset}`],
         ["Q", topOffset, `${topInset}`, `${topOffset + topCorner * 2}`, `${topInset}`],
-
-        // Top horizontal edge
         ["L", `100% - ${topOffset + topCorner * 2}`, `${topInset}`],
-
-        // Right top "tip" rounding
         ["Q", `100% - ${topOffset}`, `${topInset}`, `100% - ${topOffset + topCorner}`, `${topCorner + topInset}`],
-
-        // Right diagonal going down
         ["L", `100% - ${sideOffset}`, `100% - 12`],
-
-        // Bottom edge with center tab
         ["L", `50% + ${halfTab + 30}`, `100% - 12`],
         ["L", `50% + ${halfTab}`, `100% + 14`],
         ["L", `50% - ${halfTab}`, `100% + 14`],
         ["L", `50% - ${halfTab + 30}`, `100% - 12`],
-
-        // Close path back to start
         ["Z"],
       ],
     },
   ];
 
-
   return (
     <MobileMenuContext.Provider value={{ showMenu, setShowMenu }}>
       <nav className="fixed left-0 right-0 top-0 z-[100] px-4 lg:px-8 pt-6 lg:pt-8">
-
         <div ref={navRef} className="h-12 mt-4 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40">
-          {/* Main glass frame */}
           <div className="absolute inset-0 w-full h-full z-10">
             <NavbarGlassBackdrop className="z-0" path={mainFramePath[0].path} />
             <Frame className="z-10" paths={mainFramePath} />
           </div>
 
-          {/* Red glow LED line on bottom interior edge - horizontal where texts are */}
           <div 
             className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
             style={{
@@ -140,9 +115,6 @@ function Navbar() {
             }}
           />
 
-
-
-          {/* Left LED line - gradient red to purple */}
           <div className="absolute inset-0 w-full h-full pointer-events-none z-20">
             <Frame 
               paths={[
@@ -163,7 +135,6 @@ function Navbar() {
             />
           </div>
 
-          {/* Right LED line - gradient purple to red */}
           <div className="absolute inset-0 w-full h-full pointer-events-none z-20">
             <Frame 
               paths={[
@@ -184,7 +155,6 @@ function Navbar() {
             />
           </div>
 
-          {/* Navigation content */}
           <div className="absolute inset-0 w-full h-full flex items-center justify-center z-30">
             <div ref={contentRef} className="flex-none flex items-center px-8 mt-4">
               <div className="hidden lg:flex gap-10 font-medium text-base">
@@ -211,7 +181,6 @@ function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       {showMenu && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div
