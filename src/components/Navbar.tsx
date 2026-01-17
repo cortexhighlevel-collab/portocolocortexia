@@ -67,7 +67,7 @@ function Navbar() {
   const topOffset = navWidth < 640 ? 80 : navWidth < 1024 ? 140 : 220;
 
   // Small radius for the "tip" on the top sides
-  const topCorner = navWidth < 640 ? 10 : navWidth < 1024 ? 14 : 18;
+  const topCorner = navWidth < 640 ? 5 : navWidth < 1024 ? 7 : 9;
 
   // Avoid clipping the rounded corner by keeping the top edge slightly inset
   const topInset = 2;
