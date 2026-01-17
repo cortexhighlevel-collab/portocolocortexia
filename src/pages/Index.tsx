@@ -1,6 +1,8 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import MotionImageSection from "@/components/MotionImageSection";
+import ServicesSection from "@/components/ServicesSection";
+import ProjectsSection from "@/components/ProjectsSection";
 import ProblemaSection from "@/components/ProblemaSection";
 import NovaCamadaSection from "@/components/NovaCamadaSection";
 import EntregasSection from "@/components/EntregasSection";
@@ -19,6 +21,8 @@ const Index = () => {
       <HeroSection />
       <MotionImageSection />
       <div className="relative z-10 bg-black">
+        <ServicesSection />
+        <ProjectsSection />
         <ProblemaSection />
         <NovaCamadaSection />
         <EntregasSection />
