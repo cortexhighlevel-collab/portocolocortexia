@@ -125,14 +125,33 @@ function Navbar() {
             <Frame enableBackdropBlur className="backdrop-blur-2xl" paths={mainFramePath} />
           </div>
 
-          {/* Red glow on bottom interior edge */}
-          <div 
-            className="absolute left-[15%] right-[15%] bottom-0 h-[1px] z-15 pointer-events-none"
-            style={{
-              background: 'linear-gradient(90deg, transparent, #ff2244 20%, #ff4466 50%, #ff2244 80%, transparent)',
-              boxShadow: '0 0 12px 3px rgba(255, 34, 68, 0.6), 0 0 24px 6px rgba(255, 34, 68, 0.3)',
-            }}
-          />
+          {/* Red glow on bottom interior edge - follows navbar contour */}
+          <div className="absolute inset-0 w-full h-full pointer-events-none z-15">
+            <Frame 
+              paths={[
+                {
+                  show: true,
+                  style: { 
+                    strokeWidth: "2", 
+                    stroke: "#ff2244", 
+                    fill: "transparent",
+                    filter: "drop-shadow(0 0 4px #ff2244) drop-shadow(0 0 8px #ff2244) drop-shadow(0 0 12px rgba(255,34,68,0.5))",
+                  },
+                  path: [
+                    // Start from left diagonal corner
+                    ["M", sideOffset + 8, `100% - 18`],
+                    // Go up along left diagonal (inside edge)
+                    ["L", `${topOffset + topCorner + 8}`, `${topCorner + topInset + 8}`],
+                    // Horizontal along top inside
+                    ["L", `100% - ${topOffset + topCorner + 8}`, `${topCorner + topInset + 8}`],
+                    // Down along right diagonal
+                    ["L", `100% - ${sideOffset + 8}`, `100% - 18`],
+                  ],
+                },
+              ]}
+            />
+          </div>
+
 
 
           {/* Left LED line - gradient red to purple */}
