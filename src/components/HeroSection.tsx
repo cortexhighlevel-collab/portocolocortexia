@@ -92,7 +92,7 @@ const HeroSection = () => {
               
               {/* CONTEÚDO */}
               <div className="flex items-center gap-3 z-10 shrink-0">
-                <span className="font-normal text-2xl tracking-[0.15em] uppercase text-white/90 group-hover:text-white transition-colors">
+                <span className="font-normal text-[1.8rem] tracking-[0.15em] uppercase text-white/90 group-hover:text-white transition-colors">
                   INICIAR SEU PROJETO
                 </span>
                 <ArrowRight className="w-6 h-6 text-white/80" />
