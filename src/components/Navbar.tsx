@@ -47,14 +47,14 @@ function Navbar() {
   const tabWidth = centerWidth + tabPadding * 2;
   const halfTab = tabWidth / 2;
 
-  // Main frame - glass effect
+  // Main frame - glass effect (transparent)
   const mainFramePath: Paths = [
     {
       show: true,
       style: { 
         strokeWidth: "1", 
-        stroke: "rgba(255,255,255,0.4)", 
-        fill: "rgba(20,20,30,0.6)",
+        stroke: "rgba(255,255,255,0.25)", 
+        fill: "rgba(255,255,255,0.05)",
       },
       path: [
         ["M", "0", "5"],
@@ -73,22 +73,6 @@ function Navbar() {
     },
   ];
 
-  // Small center red LED glow on tab (smaller size)
-  const centerRedLedPath: Paths = [
-    {
-      show: true,
-      style: { 
-        strokeWidth: "2", 
-        stroke: "#ff2244",
-        fill: "transparent",
-        filter: "drop-shadow(0 0 3px #ff2244) drop-shadow(0 0 6px #ff0033)",
-      },
-      path: [
-        ["M", `50% - ${halfTab - 30}`, `100% + 10`],
-        ["L", `50% + ${halfTab - 30}`, `100% + 10`],
-      ],
-    },
-  ];
 
   // Bottom left accent line
   const bottomLeftLine: Paths = [
@@ -119,25 +103,6 @@ function Navbar() {
   return (
     <MobileMenuContext.Provider value={{ showMenu, setShowMenu }}>
       <nav className="fixed left-0 right-0 top-0 z-50 px-4 lg:px-8 pt-6 lg:pt-8">
-        {/* Decorative lines OUTSIDE navbar */}
-        <div className="absolute left-4 lg:left-8 right-4 lg:right-8 top-4 lg:top-6 h-[3px] pointer-events-none flex justify-between">
-          {/* Left cyan line */}
-          <div 
-            className="w-[20%] h-full rounded-full"
-            style={{
-              background: "#00d4ff",
-              boxShadow: "0 0 8px #00d4ff, 0 0 16px #00d4ff, 0 0 24px #00d4ff",
-            }}
-          />
-          {/* Right gradient line (red to purple) */}
-          <div 
-            className="w-[20%] h-full rounded-full"
-            style={{
-              background: "linear-gradient(90deg, #ff2244 0%, #aa22ff 100%)",
-              boxShadow: "0 0 8px #ff2244, 0 0 16px #aa22ff, 0 0 24px #aa22ff",
-            }}
-          />
-        </div>
 
         <div className="h-12 mt-4 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40">
           {/* Main glass frame */}
@@ -145,10 +110,6 @@ function Navbar() {
             <Frame enableBackdropBlur className="backdrop-blur-xl" paths={mainFramePath} />
           </div>
 
-          {/* Center red LED on tab (smaller) */}
-          <div className="absolute inset-0 w-full h-full z-20 pointer-events-none">
-            <Frame paths={centerRedLedPath} />
-          </div>
 
           {/* Bottom accent lines */}
           <div className="absolute inset-0 w-full h-full z-15 pointer-events-none">
