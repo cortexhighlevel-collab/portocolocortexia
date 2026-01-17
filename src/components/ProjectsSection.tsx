@@ -174,27 +174,64 @@ const ProjectsSection = () => {
 
 const CardContent = ({ project }: { project: typeof projects[0] }) => {
   return (
-    <>
-      {/* External Link Icon */}
-      <div className="project-card-link-icon">
-        <ExternalLink className="w-5 h-5" />
+    <div className="group relative w-full h-full">
+      {/* Cyberpunk scan lines overlay */}
+      <div className="absolute inset-0 pointer-events-none z-20 opacity-30">
+        <div className="w-full h-full" style={{
+          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)',
+        }} />
+      </div>
+      
+      {/* Animated scan line */}
+      <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
+        <div className="absolute w-full h-1 bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent animate-scan-line" />
+      </div>
+      
+      {/* Corner HUD elements */}
+      <div className="absolute top-4 left-4 z-30 flex items-center gap-2">
+        <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,211,238,0.8)]" />
+        <span className="text-[10px] text-cyan-400 font-mono uppercase tracking-wider">REC</span>
+      </div>
+      
+      <div className="absolute top-4 right-16 z-30">
+        <span className="text-[10px] text-cyan-400/60 font-mono">SYS.OK</span>
+      </div>
+      
+      {/* External Link Icon with glow */}
+      <div className="project-card-link-icon group-hover:shadow-[0_0_15px_rgba(34,211,238,0.5)] transition-shadow duration-300">
+        <ExternalLink className="w-5 h-5 group-hover:text-cyan-400 transition-colors duration-300" />
       </div>
 
       {/* Content Overlay */}
       <div className="project-card-content">
         <div className="project-card-row">
-          <h3 className="project-card-title">{project.name}</h3>
+          <motion.h3 
+            className="project-card-title"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {project.name}
+          </motion.h3>
           <div className="project-card-tags">
             {project.tags.map((tag, i) => (
-              <span key={i} className="project-card-tag">
-                {tag}
-              </span>
+              <motion.span 
+                key={i} 
+                className="project-card-tag relative overflow-hidden"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: i * 0.1 }}
+                whileHover={{ scale: 1.05 }}
+              >
+                <span className="relative z-10">{tag}</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+              </motion.span>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Video Background */}
+      {/* Video Background with enhanced overlay */}
       <div className="project-card-video-wrapper">
         <video
           key={project.videoUrl}
@@ -206,11 +243,16 @@ const CardContent = ({ project }: { project: typeof projects[0] }) => {
         >
           <source src={project.videoUrl} type="video/webm" />
         </video>
+        {/* Cyan tint overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-transparent to-purple-900/20 mix-blend-overlay" />
       </div>
 
-      {/* Dark Bottom Overlay */}
+      {/* Dark Bottom Overlay with gradient */}
       <div className="project-card-overlay" />
-    </>
+      
+      {/* Neon border glow */}
+      <div className="absolute inset-0 rounded-2xl border border-cyan-500/20 pointer-events-none" />
+    </div>
   );
 };
 

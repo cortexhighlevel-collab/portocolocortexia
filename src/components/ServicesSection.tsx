@@ -78,26 +78,49 @@ const ServiceCard = ({
   
   return (
     <motion.div
-      className={`service-card ${large ? 'service-card-large' : ''}`}
+      className={`service-card ${large ? 'service-card-large' : ''} group relative overflow-hidden`}
       initial={{ opacity: 0, x: -50 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, delay: index * 0.1 }}
+      whileHover={{ scale: 1.02 }}
     >
-      <div className="service-card-content">
+      {/* Cyberpunk scan line effect */}
+      <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent animate-scan-line" />
+      </div>
+      
+      {/* Corner accents */}
+      <div className="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 border-cyan-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute top-0 right-0 w-8 h-8 border-r-2 border-t-2 border-cyan-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute bottom-0 left-0 w-8 h-8 border-l-2 border-b-2 border-cyan-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute bottom-0 right-0 w-8 h-8 border-r-2 border-b-2 border-cyan-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      
+      {/* Glitch overlay on hover */}
+      <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100">
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-transparent to-purple-500/10 mix-blend-overlay" />
+      </div>
+      
+      <div className="service-card-content relative z-10">
         <div className="service-card-header">
-          <Icon className="service-card-icon" />
-          <h3 className="service-card-title">{service.title}</h3>
+          <motion.div
+            whileHover={{ rotate: 360 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Icon className="service-card-icon group-hover:text-cyan-400 transition-colors duration-300 group-hover:drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]" />
+          </motion.div>
+          <h3 className="service-card-title group-hover:text-cyan-100 transition-colors duration-300">{service.title}</h3>
         </div>
         <p className="service-card-description">{service.description}</p>
       </div>
       
       {service.hasImage && service.imageUrl && (
-        <div className="service-card-image-wrapper">
+        <div className="service-card-image-wrapper relative">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10" />
           <img 
             src={service.imageUrl} 
             alt={service.title}
-            className="service-card-image"
+            className="service-card-image group-hover:scale-110 transition-transform duration-500"
           />
         </div>
       )}
@@ -122,15 +145,24 @@ const ServiceCard = ({
           </div>
         </div>
       )}
+      
+      {/* Neon glow effect on hover */}
+      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none shadow-[inset_0_0_30px_rgba(34,211,238,0.15)]" />
     </motion.div>
   );
 };
 
 const ServicePill = ({ icon: Icon, label }: { icon: React.ElementType; label: string }) => (
-  <div className="service-pill">
-    <Icon className="service-pill-icon" />
-    <span className="service-pill-text">{label}</span>
-  </div>
+  <motion.div 
+    className="service-pill group relative overflow-hidden"
+    whileHover={{ scale: 1.05, y: -2 }}
+    transition={{ duration: 0.2 }}
+  >
+    {/* Glowing border effect */}
+    <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-cyan-500/20" />
+    <Icon className="service-pill-icon group-hover:text-cyan-400 transition-colors duration-300" />
+    <span className="service-pill-text group-hover:text-cyan-100 transition-colors duration-300">{label}</span>
+  </motion.div>
 );
 
 const ServicesSection = () => {
