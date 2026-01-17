@@ -62,13 +62,13 @@ function Navbar() {
 
   // Responsive offsets
   // sideOffset controls where the bottom diagonal "cuts" end (bigger = closer to center)
+  // topOffset controls where the top diagonal starts (bigger = closer to center)
   const sideOffset = navWidth < 640 ? 120 : navWidth < 1024 ? 200 : 320;
+  const topOffset = navWidth < 640 ? 80 : navWidth < 1024 ? 140 : 220;
 
   // LED should follow the bottom sides
   const ledStartX = sideOffset;
   const ledEndX = `100% - ${sideOffset}`;
-
-  
 
   // Main frame - glass effect (transparent)
   const mainFramePath: Paths = [
@@ -80,17 +80,24 @@ function Navbar() {
         fill: "rgba(255,255,255,0.12)",
       },
       path: [
-        ["M", "0", "5"],
-        ["Q", "0", "0", "5", "0"],
-        ["L", "100% - 5", "0"],
-        ["Q", "100%", "0", "100%", "5"],
+        // Top left corner with rounded edge
+        ["M", topOffset, "5"],
+        ["Q", topOffset, "0", `${topOffset} + 5`, "0"],
+        // Top edge
+        ["L", `100% - ${topOffset} - 5`, "0"],
+        // Top right corner with rounded edge
+        ["Q", `100% - ${topOffset}`, "0", `100% - ${topOffset}`, "5"],
+        // Right diagonal to bottom
         ["L", `100% - ${sideOffset}`, `100% - 12`],
+        // Bottom edge with center tab
         ["L", `50% + ${halfTab + 30}`, `100% - 12`],
         ["L", `50% + ${halfTab}`, `100% + 14`],
         ["L", `50% - ${halfTab}`, `100% + 14`],
         ["L", `50% - ${halfTab + 30}`, `100% - 12`],
-        ["L", `${sideOffset}`, `100% - 12`],
-        ["L", "0", "5"],
+        // Left diagonal from bottom
+        ["L", sideOffset, `100% - 12`],
+        // Back to top left
+        ["L", topOffset, "5"],
         ["Z"],
       ],
     },
@@ -101,7 +108,7 @@ function Navbar() {
     <MobileMenuContext.Provider value={{ showMenu, setShowMenu }}>
       <nav className="fixed left-0 right-0 top-0 z-50 px-4 lg:px-8 pt-6 lg:pt-8">
 
-        <div ref={navRef} className="h-8 mt-4 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40">
+        <div ref={navRef} className="h-12 mt-4 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40">
           {/* Main glass frame */}
           <div className="absolute inset-0 w-full h-full z-10">
             <Frame enableBackdropBlur className="backdrop-blur-2xl" paths={mainFramePath} />
