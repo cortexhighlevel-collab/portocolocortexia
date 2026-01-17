@@ -36,20 +36,47 @@ const problemas = [
 
 const ProblemaSection = () => {
   return (
-    <section id="problema" className="relative py-24 md:py-32 bg-black">
-      {/* Grid cyberpunk de fundo */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0" style={{
+    <section id="problema" className="relative py-24 md:py-32 bg-black overflow-hidden">
+      {/* Animated glitch grid background */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 opacity-20" style={{
           backgroundImage: `
-            linear-gradient(rgba(255,0,0,0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,0,0,0.1) 1px, transparent 1px)
+            linear-gradient(rgba(255,0,0,0.3) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,0,0,0.3) 1px, transparent 1px)
           `,
-          backgroundSize: '50px 50px'
+          backgroundSize: '80px 80px',
+          animation: 'grid-pulse 4s ease-in-out infinite'
         }} />
+        {/* Diagonal scan effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-red-900/10 via-transparent to-purple-900/10" />
+      </div>
+
+      {/* Floating particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-red-500 rounded-full"
+            style={{
+              left: `${15 + i * 15}%`,
+              top: `${20 + (i % 3) * 30}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              opacity: [0.3, 0.8, 0.3],
+            }}
+            transition={{
+              duration: 3 + i * 0.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.3,
+            }}
+          />
+        ))}
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
-        {/* Header */}
+        {/* Header with glitch effect */}
         <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
@@ -57,19 +84,27 @@ const ProblemaSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <span className="text-red-500 text-sm uppercase tracking-[0.3em] font-medium">
-            O Problema Real
-          </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mt-4 mb-6">
-            Por que empresas estão perdendo para a IA
+          <motion.span 
+            className="inline-block text-red-500 text-sm uppercase tracking-[0.3em] font-medium px-4 py-2 border border-red-500/30 bg-red-500/5 rounded-full"
+            whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(239,68,68,0.3)" }}
+          >
+            ⚠ Alerta Crítico
+          </motion.span>
+          <h2 className="text-4xl md:text-6xl font-bold text-white mt-6 mb-6">
+            Por que empresas estão
+            <span className="block mt-2" style={{
+              background: 'linear-gradient(90deg, #ff4444, #ff0000, #cc0000)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}> perdendo para a IA</span>
           </h2>
-          <p className="text-white/60 max-w-2xl mx-auto text-lg">
+          <p className="text-white/50 max-w-2xl mx-auto text-lg">
             A maioria usa inteligência artificial como brinquedo. 
             Enquanto isso, concorrentes constroem sistemas cognitivos reais.
           </p>
         </motion.div>
 
-        {/* Grid de problemas */}
+        {/* Grid de problemas - Hexagonal style */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {problemas.map((problema, index) => {
             const Icon = problema.icon;
@@ -77,56 +112,83 @@ const ProblemaSection = () => {
               <motion.div
                 key={index}
                 className="relative group"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 30, rotateX: -15 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                {/* Card */}
-                <div className="relative p-6 bg-gradient-to-br from-[#0a0a0a] to-[#111111] border border-red-500/20 rounded-lg overflow-hidden group-hover:border-red-500/40 transition-colors">
-                  {/* Glow effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                {/* Card with holographic effect */}
+                <div className="relative p-6 bg-gradient-to-br from-[#0a0a0a] via-[#111111] to-[#0a0a0a] border border-red-500/20 rounded-xl overflow-hidden group-hover:border-red-500/50 transition-all duration-500">
+                  {/* Scan line animation */}
+                  <div className="absolute inset-0 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-red-500/50 to-transparent animate-scan-line" />
+                  </div>
                   
-                  {/* Icon */}
-                  <div className="relative z-10 w-12 h-12 rounded-lg bg-red-500/10 flex items-center justify-center mb-4 border border-red-500/20">
-                    <Icon className="w-6 h-6 text-red-400" />
+                  {/* Glitch overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  
+                  {/* Error indicator */}
+                  <div className="absolute top-3 right-3 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+                    <span className="text-[10px] text-red-400 font-mono">ERR</span>
+                  </div>
+                  
+                  {/* Icon with pulse ring */}
+                  <div className="relative z-10 w-14 h-14 rounded-xl bg-gradient-to-br from-red-500/20 to-red-500/5 flex items-center justify-center mb-4 border border-red-500/30 group-hover:border-red-500/60 transition-colors">
+                    <Icon className="w-7 h-7 text-red-400 group-hover:text-red-300 transition-colors" />
+                    {/* Pulse ring */}
+                    <div className="absolute inset-0 rounded-xl border border-red-500/30 animate-ping opacity-0 group-hover:opacity-30" />
                   </div>
                   
                   {/* Content */}
-                  <h3 className="relative z-10 text-white font-semibold text-lg mb-2">
+                  <h3 className="relative z-10 text-white font-bold text-lg mb-2 group-hover:text-red-100 transition-colors">
                     {problema.titulo}
                   </h3>
-                  <p className="relative z-10 text-white/50 text-sm leading-relaxed">
+                  <p className="relative z-10 text-white/40 text-sm leading-relaxed group-hover:text-white/60 transition-colors">
                     {problema.descricao}
                   </p>
 
-                  {/* Corner accent */}
-                  <div className="absolute top-0 right-0 w-16 h-16">
-                    <div className="absolute top-0 right-0 w-[1px] h-8 bg-gradient-to-b from-red-500/50 to-transparent" />
-                    <div className="absolute top-0 right-0 w-8 h-[1px] bg-gradient-to-l from-red-500/50 to-transparent" />
-                  </div>
+                  {/* Corner brackets */}
+                  <div className="absolute top-0 left-0 w-4 h-4 border-l-2 border-t-2 border-red-500/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute top-0 right-0 w-4 h-4 border-r-2 border-t-2 border-red-500/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute bottom-0 left-0 w-4 h-4 border-l-2 border-b-2 border-red-500/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute bottom-0 right-0 w-4 h-4 border-r-2 border-b-2 border-red-500/40 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
               </motion.div>
             );
           })}
         </div>
 
-        {/* Bottom statement */}
+        {/* Bottom warning ticker */}
         <motion.div
-          className="mt-16 text-center"
+          className="mt-16 overflow-hidden"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <p className="text-white/40 text-sm uppercase tracking-[0.2em]">
-            IA não é futuro. É agora. Quem não adapta, desaparece.
-          </p>
+          <div className="flex items-center gap-4 py-4 border-y border-red-500/20">
+            <div className="flex-shrink-0 flex items-center gap-2">
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+              <span className="text-red-400 text-xs font-mono uppercase tracking-wider">SYSTEM ALERT</span>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <div className="flex animate-marquee whitespace-nowrap">
+                <span className="text-white/30 text-sm mx-8">IA não é futuro. É agora.</span>
+                <span className="text-red-400/60 text-sm mx-8">Quem não adapta, desaparece.</span>
+                <span className="text-white/30 text-sm mx-8">Concorrentes já estão usando.</span>
+                <span className="text-red-400/60 text-sm mx-8">Sua empresa está preparada?</span>
+                <span className="text-white/30 text-sm mx-8">IA não é futuro. É agora.</span>
+                <span className="text-red-400/60 text-sm mx-8">Quem não adapta, desaparece.</span>
+              </div>
+            </div>
+          </div>
         </motion.div>
       </div>
 
-      {/* Bottom border glow */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
+      {/* Bottom border with glow */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
+      <div className="absolute bottom-0 left-1/4 right-1/4 h-8 bg-gradient-to-t from-red-500/10 to-transparent blur-xl" />
     </section>
   );
 };

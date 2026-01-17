@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Search, Globe, Brain, Eye, Zap, Target } from "lucide-react";
+import { Search, Globe, Brain, Eye, Zap, Target, ArrowRight } from "lucide-react";
 
 const comparacao = [
   { seo: "Otimiza para crawlers", aeo: "Otimiza para modelos de linguagem" },
@@ -11,11 +11,23 @@ const comparacao = [
 
 const AEOSection = () => {
   return (
-    <section id="aeo" className="relative py-24 md:py-32 bg-[#030303]">
-      {/* Gradient background */}
+    <section id="aeo" className="relative py-24 md:py-32 bg-[#030303] overflow-hidden">
+      {/* Neural network background */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,0,0,0.05)_0%,transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(255,0,0,0.03)_0%,transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,0,0,0.08)_0%,transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(139,0,139,0.05)_0%,transparent_50%)]" />
+        {/* Connecting lines */}
+        <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="rgba(255,0,0,0.5)" />
+              <stop offset="100%" stopColor="rgba(139,0,139,0.5)" />
+            </linearGradient>
+          </defs>
+          <path d="M0 50 Q25 30 50 50 T100 50" stroke="url(#lineGrad)" strokeWidth="0.2" fill="none" />
+          <path d="M0 30 Q25 50 50 30 T100 30" stroke="url(#lineGrad)" strokeWidth="0.2" fill="none" />
+          <path d="M0 70 Q25 50 50 70 T100 70" stroke="url(#lineGrad)" strokeWidth="0.2" fill="none" />
+        </svg>
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
@@ -27,84 +39,124 @@ const AEOSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <span className="text-red-500 text-sm uppercase tracking-[0.3em] font-medium">
-            Answer Engine Optimization
-          </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mt-4 mb-6">
-            O diferencial de 2026
+          <motion.div 
+            className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-full mb-6"
+            whileHover={{ scale: 1.05, borderColor: "rgba(239,68,68,0.5)" }}
+          >
+            <Search className="w-4 h-4 text-red-400" />
+            <span className="text-red-400 text-sm uppercase tracking-wider font-medium">Answer Engine Optimization</span>
+          </motion.div>
+          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
+            O diferencial de <span className="text-red-400">2026</span>
           </h2>
-          <p className="text-white/50 max-w-3xl mx-auto text-lg">
-            SEO tradicional coloca você em listas. AEO coloca você em respostas.
-            Quando alguém pergunta ao ChatGPT, Gemini ou Perplexity, 
-            sua empresa precisa ser a fonte citada.
+          <p className="text-white/40 max-w-3xl mx-auto text-lg">
+            SEO tradicional coloca você em listas. <span className="text-white/70">AEO coloca você em respostas.</span>
           </p>
         </motion.div>
 
-        {/* Main content */}
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          {/* O que é AEO */}
+        {/* Main content - Split view */}
+        <div className="grid lg:grid-cols-2 gap-8 items-stretch">
+          {/* O que é AEO - Left panel */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
+            className="h-full"
           >
-            <div className="relative p-8 bg-gradient-to-br from-[#0f0f0f] to-[#080808] border border-red-500/20 rounded-xl">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
-                  <Brain className="w-5 h-5 text-red-400" />
+            <div className="relative h-full p-8 md:p-10 bg-gradient-to-br from-[#0f0f0f] via-[#0a0a0a] to-[#080808] border border-red-500/20 rounded-2xl overflow-hidden group hover:border-red-500/40 transition-all duration-500">
+              {/* Animated corner brackets */}
+              <motion.div 
+                className="absolute top-0 left-0 w-12 h-12"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                <div className="absolute top-0 left-0 w-[2px] h-full bg-gradient-to-b from-red-500 to-transparent" />
+                <div className="absolute top-0 left-0 h-[2px] w-full bg-gradient-to-r from-red-500 to-transparent" />
+              </motion.div>
+              <motion.div 
+                className="absolute bottom-0 right-0 w-12 h-12"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+              >
+                <div className="absolute bottom-0 right-0 w-[2px] h-full bg-gradient-to-t from-red-500 to-transparent" />
+                <div className="absolute bottom-0 right-0 h-[2px] w-full bg-gradient-to-l from-red-500 to-transparent" />
+              </motion.div>
+
+              <div className="flex items-center gap-3 mb-8">
+                <motion.div 
+                  className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500/30 to-red-500/10 flex items-center justify-center border border-red-500/30"
+                  whileHover={{ rotate: 10, scale: 1.1 }}
+                >
+                  <Brain className="w-6 h-6 text-red-400" />
+                </motion.div>
+                <div>
+                  <h3 className="text-white font-bold text-xl">O que é AEO</h3>
+                  <span className="text-white/30 text-xs font-mono">DEFINITION_MODULE</span>
                 </div>
-                <h3 className="text-white font-bold text-xl">O que é AEO</h3>
               </div>
               
-              <p className="text-white/70 leading-relaxed mb-6">
-                <strong className="text-white">Answer Engine Optimization</strong> é a evolução do SEO para a era das IAs. 
+              <p className="text-white/60 leading-relaxed mb-8 text-lg">
+                <span className="text-red-400 font-semibold">Answer Engine Optimization</span> é a evolução do SEO para a era das IAs. 
                 Enquanto SEO otimiza para buscadores tradicionais, AEO prepara seu conteúdo 
-                para ser compreendido e citado por modelos de linguagem como GPT-4, Gemini e Claude.
+                para ser compreendido e citado por modelos de linguagem.
               </p>
 
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <Eye className="w-5 h-5 text-red-400 mt-0.5" />
+              <div className="space-y-6">
+                <motion.div 
+                  className="flex items-start gap-4 p-4 bg-white/[0.02] rounded-xl border border-white/5 group/item hover:border-red-500/20 transition-colors"
+                  whileHover={{ x: 5 }}
+                >
+                  <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center border border-red-500/20">
+                    <Eye className="w-5 h-5 text-red-400" />
+                  </div>
                   <div>
                     <span className="text-white font-medium">Como IAs leem páginas</span>
-                    <p className="text-white/50 text-sm">Estrutura semântica, entidades claras, contexto hierárquico, intenção definida</p>
+                    <p className="text-white/40 text-sm mt-1">Estrutura semântica, entidades claras, contexto hierárquico</p>
                   </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Target className="w-5 h-5 text-red-400 mt-0.5" />
+                </motion.div>
+                <motion.div 
+                  className="flex items-start gap-4 p-4 bg-white/[0.02] rounded-xl border border-white/5 group/item hover:border-red-500/20 transition-colors"
+                  whileHover={{ x: 5 }}
+                >
+                  <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center border border-red-500/20">
+                    <Target className="w-5 h-5 text-red-400" />
+                  </div>
                   <div>
                     <span className="text-white font-medium">Resultado</span>
-                    <p className="text-white/50 text-sm">Sua empresa citada quando IAs respondem perguntas do seu mercado</p>
+                    <p className="text-white/40 text-sm mt-1">Sua empresa citada quando IAs respondem perguntas do seu mercado</p>
                   </div>
-                </div>
-              </div>
-
-              {/* Corner accents */}
-              <div className="absolute top-0 left-0 w-8 h-8">
-                <div className="absolute top-0 left-0 w-[1px] h-full bg-gradient-to-b from-red-500/50 to-transparent" />
-                <div className="absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-red-500/50 to-transparent" />
+                </motion.div>
               </div>
             </div>
           </motion.div>
 
-          {/* Comparação SEO vs AEO */}
+          {/* Comparação SEO vs AEO - Right panel */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
+            className="h-full"
           >
-            <div className="relative p-8 bg-gradient-to-br from-[#0a0a0a] to-[#050505] border border-white/10 rounded-xl">
-              <div className="flex items-center justify-between mb-8">
+            <div className="relative h-full p-8 md:p-10 bg-gradient-to-br from-[#0a0a0a] to-[#050505] border border-white/10 rounded-2xl overflow-hidden">
+              {/* Header row */}
+              <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/10">
                 <div className="flex items-center gap-2">
-                  <Globe className="w-5 h-5 text-white/40" />
-                  <span className="text-white/40 font-medium">SEO Tradicional</span>
+                  <Globe className="w-5 h-5 text-white/30" />
+                  <span className="text-white/30 font-medium uppercase tracking-wider text-sm">SEO Tradicional</span>
                 </div>
-                <div className="text-white/20">vs</div>
+                <motion.div
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <ArrowRight className="w-5 h-5 text-red-500" />
+                </motion.div>
                 <div className="flex items-center gap-2">
                   <Search className="w-5 h-5 text-red-400" />
-                  <span className="text-red-400 font-medium">AEO</span>
+                  <span className="text-red-400 font-medium uppercase tracking-wider text-sm">AEO</span>
                 </div>
               </div>
 
@@ -112,24 +164,41 @@ const AEOSection = () => {
                 {comparacao.map((item, index) => (
                   <motion.div
                     key={index}
-                    className="flex items-center gap-4"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
+                    className="flex items-center gap-4 p-3 rounded-lg hover:bg-white/[0.02] transition-colors"
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.3 + index * 0.1 }}
                   >
                     <div className="flex-1 text-right">
-                      <span className="text-white/50 text-sm">{item.seo}</span>
+                      <span className="text-white/40 text-sm">{item.seo}</span>
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center">
+                    <motion.div 
+                      className="w-10 h-10 rounded-full bg-gradient-to-r from-red-500/20 to-purple-500/20 flex items-center justify-center border border-red-500/30"
+                      whileHover={{ scale: 1.2, rotate: 180 }}
+                      transition={{ duration: 0.3 }}
+                    >
                       <Zap className="w-4 h-4 text-red-400" />
-                    </div>
+                    </motion.div>
                     <div className="flex-1">
                       <span className="text-white text-sm font-medium">{item.aeo}</span>
                     </div>
                   </motion.div>
                 ))}
               </div>
+
+              {/* Bottom badge */}
+              <motion.div 
+                className="mt-8 pt-6 border-t border-white/5 text-center"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.8 }}
+              >
+                <span className="text-white/20 text-xs font-mono uppercase tracking-wider">
+                  Evolução necessária para 2026
+                </span>
+              </motion.div>
             </div>
           </motion.div>
         </div>
@@ -137,15 +206,18 @@ const AEOSection = () => {
         {/* Bottom statement */}
         <motion.div
           className="mt-16 text-center"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <p className="text-white/60 text-lg max-w-2xl mx-auto">
-            <span className="text-red-400">Esta página foi construída com AEO.</span>{" "}
-            Estrutura semântica, leitura por tópicos, entidades claras, intenção definida.
-          </p>
+          <div className="inline-flex items-center gap-4 px-6 py-4 bg-gradient-to-r from-red-500/10 via-transparent to-red-500/10 border border-red-500/20 rounded-full">
+            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+            <p className="text-white/70 text-lg">
+              <span className="text-red-400 font-medium">Esta página foi construída com AEO.</span>
+            </p>
+            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+          </div>
         </motion.div>
       </div>
 

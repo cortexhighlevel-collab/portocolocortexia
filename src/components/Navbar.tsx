@@ -4,10 +4,10 @@ import { Frame, type Paths } from "@/components/ui/future-navbar";
 import NavbarGlassBackdrop from "@/components/NavbarGlassBackdrop";
 
 const navLinks = [
+  { label: "PROBLEMA", href: "#problema" },
   { label: "SOLUÇÕES", href: "#services" },
-  { label: "ENTREGAS", href: "#entregas" },
-  { label: "AEO", href: "#aeo" },
   { label: "MÉTODO", href: "#process" },
+  { label: "CASOS", href: "#projects" },
   { label: "CONTATO", href: "#contact" },
 ];
 
