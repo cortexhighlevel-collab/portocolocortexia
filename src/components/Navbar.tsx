@@ -61,9 +61,9 @@ function Navbar() {
   const halfTab = tabWidth / 2;
 
   // Responsive side offset - larger values = shorter sides (closer to center)
-  const sideOffset = navWidth < 640 ? 60 : navWidth < 1024 ? 100 : 150;
-  const ledStartPercent = navWidth < 640 ? "15%" : navWidth < 1024 ? "12%" : "10%";
-  const ledEndPercent = navWidth < 640 ? "85%" : navWidth < 1024 ? "88%" : "90%";
+  const sideOffset = navWidth < 640 ? 80 : navWidth < 1024 ? 140 : 220;
+  const ledStartPercent = navWidth < 640 ? "20%" : navWidth < 1024 ? "18%" : "15%";
+  const ledEndPercent = navWidth < 640 ? "80%" : navWidth < 1024 ? "82%" : "85%";
   
 
   // Main frame - glass effect (transparent)
