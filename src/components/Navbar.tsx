@@ -74,42 +74,6 @@ function Navbar() {
   ];
 
 
-  // Bottom left LED line (red to purple gradient)
-  const bottomLeftLine: Paths = [
-    {
-      show: true,
-      style: { 
-        strokeWidth: "2", 
-        stroke: "#ff2244", 
-        fill: "transparent",
-        filter: "drop-shadow(0 0 4px #ff2244) drop-shadow(0 0 8px #ff2244) drop-shadow(0 0 12px #aa22ff)",
-      },
-      path: [
-        ["M", "6%", "100%"],
-        ["L", `50% - ${halfTab + 35}`, "100%"],
-        ["L", `50% - ${halfTab}`, `100% + 26`],
-      ],
-    },
-  ];
-
-  // Bottom right LED line (purple to red gradient)
-  const bottomRightLine: Paths = [
-    {
-      show: true,
-      style: { 
-        strokeWidth: "2", 
-        stroke: "#aa22ff", 
-        fill: "transparent",
-        filter: "drop-shadow(0 0 4px #aa22ff) drop-shadow(0 0 8px #aa22ff) drop-shadow(0 0 12px #ff2244)",
-      },
-      path: [
-        ["M", "94%", "100%"],
-        ["L", `50% + ${halfTab + 35}`, "100%"],
-        ["L", `50% + ${halfTab}`, `100% + 26`],
-      ],
-    },
-  ];
-
   return (
     <MobileMenuContext.Provider value={{ showMenu, setShowMenu }}>
       <nav className="fixed left-0 right-0 top-0 z-50 px-4 lg:px-8 pt-6 lg:pt-8">
@@ -121,11 +85,49 @@ function Navbar() {
           </div>
 
 
-          {/* Bottom accent lines */}
-          <div className="absolute inset-0 w-full h-full z-15 pointer-events-none">
-            <Frame paths={bottomLeftLine} />
-            <Frame paths={bottomRightLine} />
-          </div>
+          {/* Bottom LED gradient lines */}
+          <svg className="absolute inset-0 w-full h-full z-15 pointer-events-none overflow-visible">
+            <defs>
+              <linearGradient id="leftGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#ff2244" />
+                <stop offset="100%" stopColor="#aa22ff" />
+              </linearGradient>
+              <linearGradient id="rightGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#aa22ff" />
+                <stop offset="100%" stopColor="#ff2244" />
+              </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            {/* Left LED line */}
+            <line 
+              x1="6%" 
+              y1="100%" 
+              x2="38%" 
+              y2="100%" 
+              stroke="url(#leftGradient)" 
+              strokeWidth="4" 
+              strokeLinecap="round"
+              filter="url(#glow)"
+            />
+            {/* Right LED line */}
+            <line 
+              x1="62%" 
+              y1="100%" 
+              x2="94%" 
+              y2="100%" 
+              stroke="url(#rightGradient)" 
+              strokeWidth="4" 
+              strokeLinecap="round"
+              filter="url(#glow)"
+            />
+          </svg>
 
           {/* Navigation content */}
           <div className="relative w-full h-full flex justify-center z-30">
