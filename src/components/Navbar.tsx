@@ -74,11 +74,16 @@ function Navbar() {
   ];
 
 
-  // Bottom left accent line
+  // Bottom left LED line (red to purple gradient)
   const bottomLeftLine: Paths = [
     {
       show: true,
-      style: { strokeWidth: "1", stroke: "rgba(255,255,255,0.3)", fill: "transparent" },
+      style: { 
+        strokeWidth: "2", 
+        stroke: "#ff2244", 
+        fill: "transparent",
+        filter: "drop-shadow(0 0 4px #ff2244) drop-shadow(0 0 8px #ff2244) drop-shadow(0 0 12px #aa22ff)",
+      },
       path: [
         ["M", "6%", "100%"],
         ["L", `50% - ${halfTab + 35}`, "100%"],
@@ -87,11 +92,16 @@ function Navbar() {
     },
   ];
 
-  // Bottom right accent line
+  // Bottom right LED line (purple to red gradient)
   const bottomRightLine: Paths = [
     {
       show: true,
-      style: { strokeWidth: "1", stroke: "rgba(255,255,255,0.3)", fill: "transparent" },
+      style: { 
+        strokeWidth: "2", 
+        stroke: "#aa22ff", 
+        fill: "transparent",
+        filter: "drop-shadow(0 0 4px #aa22ff) drop-shadow(0 0 8px #aa22ff) drop-shadow(0 0 12px #ff2244)",
+      },
       path: [
         ["M", "94%", "100%"],
         ["L", `50% + ${halfTab + 35}`, "100%"],
