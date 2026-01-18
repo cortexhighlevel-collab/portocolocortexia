@@ -38,99 +38,14 @@ const TypingText = ({ text, delay = 0 }: { text: string; delay?: number }) => {
   return (
     <span>
       {displayText}
-      <span className={`${showCursor ? "opacity-100" : "opacity-0"} text-destructive`}>_</span>
+      <span className={`${showCursor ? "opacity-100" : "opacity-0"} text-red-500`}>_</span>
     </span>
-  );
-};
-
-// Cyberpunk card with neon borders
-const CyberCard = ({ 
-  problema, 
-  index,
-  className = ""
-}: { 
-  problema: typeof problemas[0]; 
-  index: number;
-  className?: string;
-}) => {
-  const severityColors: Record<string, string> = {
-    CRITICAL: "bg-red-600 text-white",
-    HIGH: "bg-amber-600 text-white",
-    MEDIUM: "bg-cyan-600 text-white"
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.08 }}
-      className={`relative group ${className}`}
-    >
-      {/* Main card */}
-      <div className="relative h-full min-h-[160px] bg-[#0a0f14] rounded-lg overflow-hidden border border-red-500/30 hover:border-red-500/60 transition-all duration-300">
-        
-        {/* Circuit pattern background */}
-        <div 
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage: `
-              linear-gradient(90deg, transparent 95%, rgba(239,68,68,0.15) 95%),
-              linear-gradient(0deg, transparent 95%, rgba(239,68,68,0.15) 95%)
-            `,
-            backgroundSize: '30px 30px'
-          }}
-        />
-        
-        {/* Corner accents - Top Left */}
-        <div className="absolute top-0 left-0 w-8 h-[2px] bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.7)]" />
-        <div className="absolute top-0 left-0 w-[2px] h-8 bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.7)]" />
-        
-        {/* Corner accents - Top Right */}
-        <div className="absolute top-0 right-0 w-8 h-[2px] bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.7)]" />
-        <div className="absolute top-0 right-0 w-[2px] h-8 bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.7)]" />
-        
-        {/* Corner accents - Bottom Left */}
-        <div className="absolute bottom-0 left-0 w-8 h-[2px] bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.7)]" />
-        <div className="absolute bottom-0 left-0 w-[2px] h-8 bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.7)]" />
-        
-        {/* Corner accents - Bottom Right */}
-        <div className="absolute bottom-0 right-0 w-8 h-[2px] bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.7)]" />
-        <div className="absolute bottom-0 right-0 w-[2px] h-8 bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.7)]" />
-
-        {/* Content */}
-        <div className="relative z-10 p-5 h-full flex flex-col justify-end">
-          {/* Severity badge */}
-          <div className="absolute top-4 right-4">
-            <span 
-              className={`text-[10px] font-bold px-2 py-1 rounded-sm ${severityColors[problema.severity]} ${
-                problema.severity === "CRITICAL" ? "animate-pulse" : ""
-              }`}
-            >
-              [{problema.severity}]
-            </span>
-          </div>
-
-          {/* Error ID */}
-          <span className="text-red-400 text-xs tracking-wider mb-2">
-            {problema.id}
-          </span>
-          
-          {/* Title */}
-          <h3 className="text-white font-semibold text-lg leading-tight">
-            {problema.titulo}
-          </h3>
-        </div>
-
-        {/* Hover glow effect */}
-        <div className="absolute inset-0 bg-gradient-to-t from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      </div>
-    </motion.div>
   );
 };
 
 const ProblemaSection = () => {
   const [scanProgress, setScanProgress] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -139,20 +54,40 @@ const ProblemaSection = () => {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndex(prev => (prev + 1) % problemas.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const getSeverityStyle = (severity: string) => {
+    switch (severity) {
+      case "CRITICAL":
+        return "bg-red-600 text-white animate-pulse";
+      case "HIGH":
+        return "bg-amber-600 text-white";
+      case "MEDIUM":
+        return "bg-cyan-600 text-white";
+      default:
+        return "bg-gray-600 text-white";
+    }
+  };
+
   return (
     <section
       id="problema"
-      className="relative z-[60] bg-background overflow-hidden pt-16 pb-24 md:pt-24 md:pb-32 scroll-mt-32"
+      className="relative bg-black py-20 md:py-32 scroll-mt-32"
     >
       {/* Scan lines overlay */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        className="absolute inset-0 pointer-events-none opacity-[0.02]"
         style={{
           backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)`,
         }}
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12">
         {/* Terminal Header */}
         <motion.div
           className="mb-16"
@@ -161,73 +96,169 @@ const ProblemaSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          {/* Terminal window */}
-          <div className="bg-[#0a0a0a] border border-destructive/25 rounded-lg overflow-hidden max-w-3xl">
+          <div className="bg-zinc-950 border border-red-500/20 rounded-lg overflow-hidden max-w-3xl">
             {/* Terminal title bar */}
-            <div className="flex items-center gap-2 px-4 py-2 bg-destructive/10 border-b border-destructive/25">
+            <div className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border-b border-red-500/20">
               <div className="flex gap-2">
-                <div className="w-3 h-3 rounded-full bg-destructive" />
-                <div className="w-3 h-3 rounded-full bg-muted" />
-                <div className="w-3 h-3 rounded-full bg-accent" />
+                <div className="w-3 h-3 rounded-full bg-red-500" />
+                <div className="w-3 h-3 rounded-full bg-zinc-700" />
+                <div className="w-3 h-3 rounded-full bg-zinc-600" />
               </div>
-              <span className="text-destructive/80 text-xs ml-4">cortex_diagnostic.exe</span>
+              <span className="text-red-400/80 text-xs ml-4">cortex_diagnostic.exe</span>
             </div>
 
             {/* Terminal content */}
             <div className="p-6 text-sm">
-              <div className="text-foreground/80 mb-2">
-                <span className="text-destructive">$</span> ./scan --target="business_ai_status"
+              <div className="text-zinc-400 mb-2">
+                <span className="text-red-500">$</span> ./scan --target="business_ai_status"
               </div>
-              <div className="text-foreground/80 mb-4">[SCANNING] Analyzing current market position...</div>
-              <div className="text-destructive text-2xl md:text-4xl font-bold">
+              <div className="text-zinc-400 mb-4">[SCANNING] Analyzing current market position...</div>
+              <div className="text-red-500 text-2xl md:text-4xl font-bold">
                 <TypingText text="⚠ SISTEMA COMPROMETIDO" delay={500} />
               </div>
-              <div className="text-foreground/80 mt-4">Detected: 6 critical vulnerabilities</div>
+              <div className="text-zinc-400 mt-4">Detected: 6 critical vulnerabilities</div>
             </div>
           </div>
         </motion.div>
 
-        {/* Bento Grid Layout - 3 columns */}
+        {/* Cards Grid - Bento Style */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Column 1 */}
-          <div className="flex flex-col gap-4">
-            <CyberCard problema={problemas[0]} index={0} />
-            <CyberCard problema={problemas[1]} index={1} />
-            <CyberCard problema={problemas[4]} index={4} />
+          {/* Coluna 1 */}
+          <div className="space-y-4">
+            {[problemas[0], problemas[1], problemas[4]].map((problema, i) => (
+              <motion.div
+                key={problema.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="group"
+              >
+                <div className="relative p-5 bg-zinc-950 border border-red-500/30 rounded-lg hover:border-red-500/60 transition-all duration-300 min-h-[140px]">
+                  {/* Corner accents */}
+                  <div className="absolute top-0 left-0 w-6 h-[2px] bg-red-500" />
+                  <div className="absolute top-0 left-0 w-[2px] h-6 bg-red-500" />
+                  <div className="absolute top-0 right-0 w-6 h-[2px] bg-red-500" />
+                  <div className="absolute top-0 right-0 w-[2px] h-6 bg-red-500" />
+                  <div className="absolute bottom-0 left-0 w-6 h-[2px] bg-red-500" />
+                  <div className="absolute bottom-0 left-0 w-[2px] h-6 bg-red-500" />
+                  <div className="absolute bottom-0 right-0 w-6 h-[2px] bg-red-500" />
+                  <div className="absolute bottom-0 right-0 w-[2px] h-6 bg-red-500" />
+
+                  {/* Severity badge */}
+                  <div className="absolute top-3 right-3">
+                    <span className={`text-[10px] font-bold px-2 py-1 rounded ${getSeverityStyle(problema.severity)}`}>
+                      [{problema.severity}]
+                    </span>
+                  </div>
+
+                  {/* Content */}
+                  <div className="pt-6">
+                    <span className="text-red-400 text-xs tracking-wider">{problema.id}</span>
+                    <h3 className="text-white font-semibold text-lg mt-2">{problema.titulo}</h3>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
-          
-          {/* Column 2 - Center with taller card */}
-          <div className="flex flex-col gap-4">
-            <CyberCard problema={problemas[2]} index={2} className="flex-1 min-h-[340px]" />
-          </div>
-          
-          {/* Column 3 */}
-          <div className="flex flex-col gap-4">
-            <CyberCard problema={problemas[3]} index={3} />
-            <CyberCard problema={problemas[5]} index={5} />
+
+          {/* Coluna 2 - Card central maior */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="group"
+          >
+            <div className="relative p-5 bg-zinc-950 border border-red-500/30 rounded-lg hover:border-red-500/60 transition-all duration-300 h-full min-h-[300px] md:min-h-full">
+              {/* Corner accents */}
+              <div className="absolute top-0 left-0 w-8 h-[2px] bg-red-500" />
+              <div className="absolute top-0 left-0 w-[2px] h-8 bg-red-500" />
+              <div className="absolute top-0 right-0 w-8 h-[2px] bg-red-500" />
+              <div className="absolute top-0 right-0 w-[2px] h-8 bg-red-500" />
+              <div className="absolute bottom-0 left-0 w-8 h-[2px] bg-red-500" />
+              <div className="absolute bottom-0 left-0 w-[2px] h-8 bg-red-500" />
+              <div className="absolute bottom-0 right-0 w-8 h-[2px] bg-red-500" />
+              <div className="absolute bottom-0 right-0 w-[2px] h-8 bg-red-500" />
+
+              {/* Severity badge */}
+              <div className="absolute top-3 right-3">
+                <span className={`text-[10px] font-bold px-2 py-1 rounded ${getSeverityStyle(problemas[2].severity)}`}>
+                  [{problemas[2].severity}]
+                </span>
+              </div>
+
+              {/* Content - centered */}
+              <div className="h-full flex flex-col justify-end">
+                <span className="text-red-400 text-xs tracking-wider">{problemas[2].id}</span>
+                <h3 className="text-white font-semibold text-xl mt-2">{problemas[2].titulo}</h3>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Coluna 3 */}
+          <div className="space-y-4">
+            {[problemas[3], problemas[5]].map((problema, i) => (
+              <motion.div
+                key={problema.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: (i + 3) * 0.1 }}
+                className="group"
+              >
+                <div className="relative p-5 bg-zinc-950 border border-red-500/30 rounded-lg hover:border-red-500/60 transition-all duration-300 min-h-[140px]">
+                  {/* Corner accents */}
+                  <div className="absolute top-0 left-0 w-6 h-[2px] bg-red-500" />
+                  <div className="absolute top-0 left-0 w-[2px] h-6 bg-red-500" />
+                  <div className="absolute top-0 right-0 w-6 h-[2px] bg-red-500" />
+                  <div className="absolute top-0 right-0 w-[2px] h-6 bg-red-500" />
+                  <div className="absolute bottom-0 left-0 w-6 h-[2px] bg-red-500" />
+                  <div className="absolute bottom-0 left-0 w-[2px] h-6 bg-red-500" />
+                  <div className="absolute bottom-0 right-0 w-6 h-[2px] bg-red-500" />
+                  <div className="absolute bottom-0 right-0 w-[2px] h-6 bg-red-500" />
+
+                  {/* Severity badge */}
+                  <div className="absolute top-3 right-3">
+                    <span className={`text-[10px] font-bold px-2 py-1 rounded ${getSeverityStyle(problema.severity)}`}>
+                      [{problema.severity}]
+                    </span>
+                  </div>
+
+                  {/* Content */}
+                  <div className="pt-6">
+                    <span className="text-red-400 text-xs tracking-wider">{problema.id}</span>
+                    <h3 className="text-white font-semibold text-lg mt-2">{problema.titulo}</h3>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
 
         {/* System status bar */}
         <motion.div
-          className="mt-12 p-4 bg-[#0a0a0a] border border-destructive/25 rounded text-xs"
+          className="mt-12 p-4 bg-zinc-950 border border-red-500/20 rounded text-xs"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
         >
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
-              <span className="text-destructive">●</span>
-              <span className="text-foreground/80">THREAT LEVEL:</span>
-              <span className="text-destructive">CRITICAL</span>
+              <span className="text-red-500">●</span>
+              <span className="text-zinc-400">THREAT LEVEL:</span>
+              <span className="text-red-500 font-bold">CRITICAL</span>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-foreground/80">SCAN:</span>
-              <div className="w-32 h-1 bg-muted rounded overflow-hidden">
-                <motion.div className="h-full bg-destructive" style={{ width: `${scanProgress}%` }} />
+              <span className="text-zinc-400">SCAN:</span>
+              <div className="w-32 h-1 bg-zinc-800 rounded overflow-hidden">
+                <motion.div 
+                  className="h-full bg-red-500" 
+                  style={{ width: `${scanProgress}%` }} 
+                />
               </div>
-              <span className="text-foreground/80">{scanProgress}%</span>
+              <span className="text-zinc-400">{scanProgress}%</span>
             </div>
           </div>
         </motion.div>
