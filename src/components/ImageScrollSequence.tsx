@@ -133,11 +133,25 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isReady, setIsReady] = useState(false);
+  const [isInView, setIsInView] = useState(true);
   const rafIdRef = useRef<number | null>(null);
   const currentFrameRef = useRef(0);
   const isMobile = useIsMobile();
 
   const frames = isMobile ? mobileFrames : desktopFrames;
+
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+
+    const obs = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { threshold: 0 },
+    );
+
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -208,7 +222,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       {/* Frames (apenas dentro do Hero, não cria tela preta extra) */}
       <div
         className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-background"
-        style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease" }}
+        style={{ opacity: isReady && isInView ? 1 : 0, transition: "opacity 0.3s ease" }}
         aria-hidden="true"
       >
         {frames.map((src, index) => (
