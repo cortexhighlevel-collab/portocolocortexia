@@ -79,11 +79,11 @@ const ServiceCard = ({
   return (
     <motion.div
       className={`service-card ${large ? 'service-card-large' : ''} group relative overflow-hidden`}
-      initial={{ opacity: 0, x: -50 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5, delay: index * 0.05 }}
+      initial={{ opacity: 0, x: -30 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.6, delay: index * 0.08 }}
       whileHover={{ scale: 1.02 }}
+    >
     >
       {/* Cyberpunk scan line effect */}
       <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
