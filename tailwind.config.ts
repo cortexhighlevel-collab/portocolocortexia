@@ -17,6 +17,7 @@ export default {
         sans: ["Rajdhani", "system-ui", "sans-serif"],
         display: ["Orbitron", "Rajdhani", "sans-serif"],
         cyber: ["Orbitron", "sans-serif"],
+        mono: ["Rajdhani", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
