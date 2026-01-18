@@ -11,24 +11,7 @@ const comparacao = [
 
 const AEOSection = () => {
   return (
-    <section id="aeo" className="relative py-24 md:py-32 bg-[#030303] overflow-hidden">
-      {/* Neural network background */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,0,0,0.08)_0%,transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(139,0,139,0.05)_0%,transparent_50%)]" />
-        {/* Connecting lines */}
-        <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(255,0,0,0.5)" />
-              <stop offset="100%" stopColor="rgba(139,0,139,0.5)" />
-            </linearGradient>
-          </defs>
-          <path d="M0 50 Q25 30 50 50 T100 50" stroke="url(#lineGrad)" strokeWidth="0.2" fill="none" />
-          <path d="M0 30 Q25 50 50 30 T100 30" stroke="url(#lineGrad)" strokeWidth="0.2" fill="none" />
-          <path d="M0 70 Q25 50 50 70 T100 70" stroke="url(#lineGrad)" strokeWidth="0.2" fill="none" />
-        </svg>
-      </div>
+    <section id="aeo" className="relative py-24 md:py-32 bg-background overflow-hidden">
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
         {/* Header */}
@@ -221,8 +204,6 @@ const AEOSection = () => {
         </motion.div>
       </div>
 
-      {/* Bottom border */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
     </section>
   );
 };

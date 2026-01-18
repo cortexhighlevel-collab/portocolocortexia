@@ -44,45 +44,6 @@ const faqs = [
 const FAQSection = () => {
   return (
     <section id="faq" className="relative py-24 md:py-32 overflow-hidden bg-background">
-      {/* Cyberpunk Background Effects */}
-      <div className="absolute inset-0 opacity-20">
-        {/* Animated grid */}
-        <div 
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(220, 38, 38, 0.1) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(220, 38, 38, 0.1) 1px, transparent 1px)
-            `,
-            backgroundSize: '60px 60px',
-          }}
-        />
-        
-        {/* Glowing orbs */}
-        <motion.div
-          className="absolute top-20 left-10 w-64 h-64 bg-red-500/20 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{ duration: 4, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-10 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{ duration: 5, repeat: Infinity }}
-        />
-      </div>
-
-      {/* Scan lines */}
-      <div className="absolute inset-0 pointer-events-none opacity-5">
-        <div className="h-full w-full" style={{
-          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(220, 38, 38, 0.3) 2px, rgba(220, 38, 38, 0.3) 4px)',
-        }} />
-      </div>
 
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         {/* Section Header */}

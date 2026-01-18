@@ -58,69 +58,7 @@ const ProblemaSection = () => {
   const glitchX = useTransform(scrollYProgress, [0, 0.5, 1], [0, 5, 0]);
 
   return (
-    <section ref={sectionRef} id="problema" className="relative py-32 md:py-40 bg-black overflow-hidden">
-      {/* Matrix rain background */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(30)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute text-red-500/20 font-mono text-xs"
-            style={{ left: `${(i * 3.33)}%` }}
-            initial={{ y: -100 }}
-            animate={{ y: "100vh" }}
-            transition={{
-              duration: 8 + Math.random() * 4,
-              repeat: Infinity,
-              ease: "linear",
-              delay: Math.random() * 5
-            }}
-          >
-            {[...Array(20)].map((_, j) => (
-              <div key={j} className="opacity-60">
-                {String.fromCharCode(0x30A0 + Math.random() * 96)}
-              </div>
-            ))}
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Holographic gradient overlay */}
-      <motion.div 
-        className="absolute inset-0"
-        style={{ y: backgroundY }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-red-950/30 via-transparent to-purple-950/20" />
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(220,38,38,0.15),transparent)]" />
-      </motion.div>
-
-      {/* Animated circuit lines */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-30">
-        <defs>
-          <linearGradient id="circuit-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#dc2626" stopOpacity="0" />
-            <stop offset="50%" stopColor="#dc2626" stopOpacity="1" />
-            <stop offset="100%" stopColor="#dc2626" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <motion.path
-          d="M0,100 L200,100 L250,150 L400,150 L450,100 L600,100"
-          stroke="url(#circuit-gradient)"
-          strokeWidth="1"
-          fill="none"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 2, repeat: Infinity, repeatType: "loop" }}
-        />
-        <motion.path
-          d="M100,300 L300,300 L350,250 L500,250 L550,300 L800,300"
-          stroke="url(#circuit-gradient)"
-          strokeWidth="1"
-          fill="none"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 2.5, repeat: Infinity, repeatType: "loop", delay: 0.5 }}
-        />
-      </svg>
+    <section ref={sectionRef} id="problema" className="relative py-32 md:py-40 bg-background overflow-hidden">
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
         {/* Glitched Header */}
@@ -419,15 +357,6 @@ const ProblemaSection = () => {
         </motion.div>
       </div>
 
-      {/* Bottom decorative line with pulse */}
-      <div className="absolute bottom-0 left-0 right-0">
-        <div className="h-px bg-gradient-to-r from-transparent via-red-500/60 to-transparent" />
-        <motion.div 
-          className="absolute left-1/2 -translate-x-1/2 bottom-0 w-64 h-16 bg-red-500/20 blur-3xl"
-          animate={{ opacity: [0.3, 0.6, 0.3] }}
-          transition={{ duration: 3, repeat: Infinity }}
-        />
-      </div>
     </section>
   );
 };
