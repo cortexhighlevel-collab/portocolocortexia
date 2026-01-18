@@ -132,6 +132,8 @@ type ImageScrollSequenceProps = {
 const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentFrame, setCurrentFrame] = useState(0);
+  // Mantém o último frame válido como “fallback” para que nunca apareça o fundo (pisca preto)
+  const [previousFrame, setPreviousFrame] = useState(0);
   const [isReady, setIsReady] = useState(false);
   const [isInView, setIsInView] = useState(true);
   const rafIdRef = useRef<number | null>(null);
@@ -206,6 +208,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     currentFrameRef.current = 0;
     committedFrameRef.current = 0;
     setCurrentFrame(0);
+    setPreviousFrame(0);
   }, [isMobile]);
 
   useEffect(() => {
@@ -235,12 +238,14 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       const nextFrame = clamp(Math.round(currentFrameRef.current), 0, frames.length - 1);
 
       // Evita "piscada preta": só troca para um frame que já foi carregado/decodado.
-      // E só dá setState quando realmente muda o frame (evita transições se acumulando).
+      // E garante que SEMPRE exista pelo menos um frame visível (mantém o anterior como fallback).
       if (
         loadedFramesRef.current[nextFrame] &&
         nextFrame !== committedFrameRef.current
       ) {
+        const prev = committedFrameRef.current;
         committedFrameRef.current = nextFrame;
+        setPreviousFrame(prev);
         setCurrentFrame(nextFrame);
       }
 
@@ -293,7 +298,10 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
                 maxWidth: "none",
                 objectFit: "cover",
                 objectPosition: "center top",
-                opacity: index === currentFrame ? 1 : 0,
+                // Mostra o frame atual; se ele ainda não pintou por algum motivo,
+                // o frame anterior permanece por baixo (evita pisca preto, especialmente voltando o scroll)
+                opacity: index === currentFrame || index === previousFrame ? 1 : 0,
+                zIndex: index === currentFrame ? 2 : index === previousFrame ? 1 : 0,
                 // Troca instantânea entre frames (transição pode causar "pisca preto" em scroll rápido)
                 transition: "none",
                 willChange: "opacity",
