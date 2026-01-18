@@ -1,6 +1,5 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
-import MotionImageSection from "@/components/MotionImageSection";
 import ProblemaSection from "@/components/ProblemaSection";
 import NovaCamadaSection from "@/components/NovaCamadaSection";
 import ServicesSection from "@/components/ServicesSection";
@@ -20,7 +19,6 @@ const Index = () => {
     <div className="min-h-screen bg-black">
       <Navbar />
       <HeroSection />
-      <MotionImageSection />
       <div className="relative z-10 bg-black">
         {/* 1. Problema - Criar tensão */}
         <ProblemaSection />
