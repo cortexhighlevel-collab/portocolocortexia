@@ -136,6 +136,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const [isInView, setIsInView] = useState(true);
   const rafIdRef = useRef<number | null>(null);
   const currentFrameRef = useRef(0);
+  // Frame atualmente "commitado" na UI (evita setState a cada RAF e reduz flicker)
+  const committedFrameRef = useRef(0);
   const loadedFramesRef = useRef<boolean[]>([]);
   const isMobile = useIsMobile();
 
@@ -202,6 +204,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
   useEffect(() => {
     currentFrameRef.current = 0;
+    committedFrameRef.current = 0;
     setCurrentFrame(0);
   }, [isMobile]);
 
@@ -232,7 +235,12 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       const nextFrame = clamp(Math.round(currentFrameRef.current), 0, frames.length - 1);
 
       // Evita "piscada preta": só troca para um frame que já foi carregado/decodado.
-      if (loadedFramesRef.current[nextFrame]) {
+      // E só dá setState quando realmente muda o frame (evita transições se acumulando).
+      if (
+        loadedFramesRef.current[nextFrame] &&
+        nextFrame !== committedFrameRef.current
+      ) {
+        committedFrameRef.current = nextFrame;
         setCurrentFrame(nextFrame);
       }
 
@@ -286,7 +294,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
                 objectFit: "cover",
                 objectPosition: "center top",
                 opacity: index === currentFrame ? 1 : 0,
-                transition: "opacity 40ms linear",
+                // Troca instantânea entre frames (transição pode causar "pisca preto" em scroll rápido)
+                transition: "none",
                 willChange: "opacity",
                 backfaceVisibility: "hidden",
               }}
