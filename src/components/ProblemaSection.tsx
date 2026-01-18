@@ -62,7 +62,7 @@ const ProblemaSection = () => {
   }, []);
 
   return (
-    <section id="problema" className="relative z-[60] py-32 md:py-48 bg-background overflow-hidden">
+    <section id="problema" className="relative z-[60] bg-background overflow-hidden pt-16 pb-24 md:pt-24 md:pb-32 scroll-mt-32">
       {/* Scan lines overlay */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
         backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)`
@@ -74,7 +74,7 @@ const ProblemaSection = () => {
           className="mb-20"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
         >
           {/* Terminal window */}
           <div className="bg-[#0a0a0a] border border-red-500/20 rounded-lg overflow-hidden max-w-3xl">
@@ -113,7 +113,7 @@ const ProblemaSection = () => {
               key={index}
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
               className="group"
             >
@@ -168,7 +168,7 @@ const ProblemaSection = () => {
           className="mt-12 p-4 bg-[#0a0a0a] border border-red-500/20 rounded font-mono text-xs"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.2 }}
         >
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
