@@ -266,10 +266,9 @@ const NovaCamadaSection = () => {
               <motion.div
                 key={index}
                 className="relative group perspective-1000"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.08 }}
               >
                 <motion.div
                   className="relative h-full p-8 bg-card border border-border rounded-2xl overflow-hidden transition-all duration-500"
