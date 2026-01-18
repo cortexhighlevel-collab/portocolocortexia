@@ -103,7 +103,7 @@ const frames = [
   frame048,
 ];
 
-const FRAME_DURATION = 80; // ms por frame (velocidade da animação)
+const FRAME_DURATION = 16; // ms por frame (~60+ FPS para parecer vídeo)
 
 const camadas = [
   {
@@ -210,15 +210,6 @@ const NovaCamadaSection = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
                   </div>
 
-                  {/* HUD mini */}
-                  <div className="absolute bottom-4 left-4 z-10 rounded-lg border border-border bg-background/60 px-3 py-2 backdrop-blur">
-                    <div className="text-[10px] text-foreground/60 font-mono uppercase tracking-wider">
-                      [NOVA_CAMADA://FRAME]
-                    </div>
-                    <div className="text-[10px] text-foreground/40 font-mono">
-                      {String(currentFrame + 1).padStart(2, "0")}/{frames.length}
-                    </div>
-                  </div>
                 </div>
 
                 {/* Lado texto */}
