@@ -229,39 +229,49 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     };
   }, [frames.length, isInView]);
 
+  // Renderizar apenas frames próximos (evita 48 elementos no DOM piscando)
+  const visibleRange = 2; // quantos frames antes/depois do atual manter
+  const visibleFrames = frames
+    .map((src, index) => ({ src, index }))
+    .filter(({ index }) => Math.abs(index - currentFrame) <= visibleRange);
+
   return (
     <div ref={scrollContainerRef} className="relative" style={{ height: "300vh" }}>
       {/* Sticky container que fica fixo durante o scroll */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        {/* Frames de fundo */}
+        {/* Frames de fundo - só renderiza os próximos para evitar flicker */}
         <div
           className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-background"
           style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease" }}
           aria-hidden="true"
         >
-          {frames.map((src, index) => (
-            <img
-              key={`${isMobile ? "mobile" : "desktop"}-${index}`}
-              src={src}
-              alt=""
-              decoding="async"
-              loading={index === 0 ? "eager" : "lazy"}
-              style={{
-                position: "absolute",
-                top: 0,
-                left: "50%",
-                transform: "translateX(-50%) scale(1.1)",
-                width: isMobile ? "100%" : "auto",
-                height: "100%",
-                minWidth: isMobile ? "auto" : "100%",
-                maxWidth: "none",
-                objectFit: "cover",
-                objectPosition: "center top",
-                opacity: index === currentFrame ? 1 : 0,
-                visibility: index === currentFrame ? "visible" : "hidden",
-              }}
-            />
-          ))}
+          {visibleFrames.map(({ src, index }) => {
+            const isActive = index === currentFrame;
+            return (
+              <img
+                key={`${isMobile ? "mobile" : "desktop"}-${index}`}
+                src={src}
+                alt=""
+                decoding="async"
+                loading="eager"
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: "50%",
+                  transform: "translateX(-50%) scale(1.1)",
+                  width: isMobile ? "100%" : "auto",
+                  height: "100%",
+                  minWidth: isMobile ? "auto" : "100%",
+                  maxWidth: "none",
+                  objectFit: "cover",
+                  objectPosition: "center top",
+                  opacity: isActive ? 1 : 0,
+                  willChange: "opacity",
+                  backfaceVisibility: "hidden",
+                }}
+              />
+            );
+          })}
         </div>
 
         {/* Overlay content (texto do hero) */}
