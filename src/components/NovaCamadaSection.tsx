@@ -23,6 +23,16 @@ import frame017 from "@/assets/nova-camada-frames/frame-017.jpg";
 import frame018 from "@/assets/nova-camada-frames/frame-018.jpg";
 import frame019 from "@/assets/nova-camada-frames/frame-019.jpg";
 import frame020 from "@/assets/nova-camada-frames/frame-020.jpg";
+import frame021 from "@/assets/nova-camada-frames/frame-021.jpg";
+import frame022 from "@/assets/nova-camada-frames/frame-022.jpg";
+import frame023 from "@/assets/nova-camada-frames/frame-023.jpg";
+import frame024 from "@/assets/nova-camada-frames/frame-024.jpg";
+import frame025 from "@/assets/nova-camada-frames/frame-025.jpg";
+import frame026 from "@/assets/nova-camada-frames/frame-026.jpg";
+import frame027 from "@/assets/nova-camada-frames/frame-027.jpg";
+import frame028 from "@/assets/nova-camada-frames/frame-028.jpg";
+import frame029 from "@/assets/nova-camada-frames/frame-029.jpg";
+import frame030 from "@/assets/nova-camada-frames/frame-030.jpg";
 
 const frames = [
   frame001,
@@ -45,6 +55,16 @@ const frames = [
   frame018,
   frame019,
   frame020,
+  frame021,
+  frame022,
+  frame023,
+  frame024,
+  frame025,
+  frame026,
+  frame027,
+  frame028,
+  frame029,
+  frame030,
 ];
 
 const SMOOTH_FACTOR = 0.12;
