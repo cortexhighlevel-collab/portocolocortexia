@@ -21,7 +21,7 @@ const frames = [
 const SMOOTH_FACTOR = 0.12;
 
 const NovaCamadaSection = () => {
-  const scrollContainerRef = useRef<HTMLElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isReady, setIsReady] = useState(false);
   const [isPinned, setIsPinned] = useState(false);
@@ -59,15 +59,16 @@ const NovaCamadaSection = () => {
       }
 
       const rect = container.getBoundingClientRect();
-      const startY = container.offsetTop;
       const containerHeight = container.offsetHeight;
-      const maxScroll = Math.max(containerHeight - window.innerHeight, 1);
-      const localScroll = window.scrollY - startY;
-      const progress = clamp(localScroll / maxScroll, 0, 1);
+      const viewportHeight = window.innerHeight;
+      
+      // Calculate scroll progress within this section
+      const scrollStart = -rect.top;
+      const scrollEnd = containerHeight - viewportHeight;
+      const progress = clamp(scrollStart / Math.max(scrollEnd, 1), 0, 1);
 
-      // Only pin when we're inside the section (rect.top <= 0 means we've scrolled into it)
-      const scrollEnd = startY + containerHeight - window.innerHeight;
-      const isInSection = rect.top <= 0 && window.scrollY < scrollEnd;
+      // Pin when top of section reaches top of viewport and we haven't scrolled past
+      const isInSection = rect.top <= 0 && rect.bottom > viewportHeight;
       setIsPinned(isInSection);
 
       // Target frame based on scroll progress
@@ -96,59 +97,46 @@ const NovaCamadaSection = () => {
     <section
       ref={scrollContainerRef}
       id="nova-camada"
-      className="relative"
+      className="relative bg-black"
       style={{ height: "200vh" }}
     >
-      {/* Frame sequence background - only visible when in section */}
+      {/* Sticky container that holds frames and content */}
       <div 
-        className="pointer-events-none overflow-hidden bg-black"
-        style={{ 
-          position: isPinned ? 'fixed' : 'absolute',
-          top: isPinned ? 0 : 'auto',
-          bottom: isPinned ? 'auto' : 0,
-          left: 0,
-          right: 0,
-          width: '100vw',
-          height: '100vh',
-          opacity: isPinned && isReady ? 1 : 0,
-          visibility: isPinned ? 'visible' : 'hidden',
-          transition: 'opacity 0.3s ease',
-          zIndex: 1,
-        }}
+        className="sticky top-0 h-screen w-full overflow-hidden"
       >
-        {frames.map((src, index) => (
-          <img
-            key={index}
-            src={src}
-            alt={`Frame ${index + 1}`}
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 'auto',
-              height: '100%',
-              minWidth: '100%',
-              maxWidth: 'none',
-              objectFit: 'cover',
-              objectPosition: 'center',
-              opacity: index === currentFrame ? 1 : 0,
-              visibility: index === currentFrame ? 'visible' : 'hidden',
-            }}
-          />
-        ))}
+        {/* Frame sequence background */}
+        <div 
+          className="absolute inset-0 pointer-events-none"
+          style={{ 
+            opacity: isReady ? 1 : 0,
+            transition: 'opacity 0.5s ease',
+          }}
+        >
+          {frames.map((src, index) => (
+            <img
+              key={index}
+              src={src}
+              alt={`Frame ${index + 1}`}
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{
+                opacity: index === currentFrame ? 1 : 0,
+                visibility: index === currentFrame ? 'visible' : 'hidden',
+              }}
+            />
+          ))}
 
-        {/* Overlay gradient for readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
+          {/* Overlay gradient for readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70" />
+        </div>
         
         {/* Content overlay */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center px-6 max-w-4xl">
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          <div className="text-center px-6 max-w-4xl relative">
             {/* HUD frame corners */}
-            <div className="absolute top-8 left-8 w-16 h-16 border-t-2 border-l-2 border-red-500/50" />
-            <div className="absolute top-8 right-8 w-16 h-16 border-t-2 border-r-2 border-red-500/50" />
-            <div className="absolute bottom-8 left-8 w-16 h-16 border-b-2 border-l-2 border-red-500/50" />
-            <div className="absolute bottom-8 right-8 w-16 h-16 border-b-2 border-r-2 border-red-500/50" />
+            <div className="absolute -top-16 -left-16 w-16 h-16 border-t-2 border-l-2 border-red-500/50 hidden md:block" />
+            <div className="absolute -top-16 -right-16 w-16 h-16 border-t-2 border-r-2 border-red-500/50 hidden md:block" />
+            <div className="absolute -bottom-16 -left-16 w-16 h-16 border-b-2 border-l-2 border-red-500/50 hidden md:block" />
+            <div className="absolute -bottom-16 -right-16 w-16 h-16 border-b-2 border-r-2 border-red-500/50 hidden md:block" />
 
             {/* Tag */}
             <motion.div 
@@ -213,7 +201,7 @@ const NovaCamadaSection = () => {
 
             {/* Scroll indicator */}
             <motion.div 
-              className="absolute bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+              className="absolute -bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.5 }}
@@ -229,7 +217,7 @@ const NovaCamadaSection = () => {
         </div>
 
         {/* HUD elements */}
-        <div className="absolute top-8 left-8 text-left hidden md:block">
+        <div className="absolute top-8 left-8 text-left hidden md:block z-10">
           <div className="text-[10px] text-red-500/70 font-mono uppercase tracking-wider mb-1">
             [CORTEX://AI_LAYER]
           </div>
@@ -238,7 +226,7 @@ const NovaCamadaSection = () => {
           </div>
         </div>
 
-        <div className="absolute top-8 right-8 text-right hidden md:block">
+        <div className="absolute top-8 right-8 text-right hidden md:block z-10">
           <div className="flex items-center gap-2 justify-end mb-1">
             <span className="text-[10px] text-green-400 font-mono">ONLINE</span>
             <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
