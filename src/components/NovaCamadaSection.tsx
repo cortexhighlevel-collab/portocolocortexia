@@ -103,7 +103,7 @@ const frames = [
   frame048,
 ];
 
-const FRAME_DURATION = 16; // ms por frame (~60+ FPS para parecer vídeo)
+const FRAME_DURATION = 42; // ms por frame (~24 FPS - velocidade de cinema)
 
 const camadas = [
   {
