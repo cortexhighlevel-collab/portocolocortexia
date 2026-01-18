@@ -1,8 +1,8 @@
-import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Bot, BarChart3, Brain, Users, Sparkles, Search } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
-// Frames (background)
+// Frames (lado esquerdo do card)
 import frame001 from "@/assets/nova-camada-frames/frame-001.jpg";
 import frame002 from "@/assets/nova-camada-frames/frame-002.jpg";
 import frame003 from "@/assets/nova-camada-frames/frame-003.jpg";
@@ -15,8 +15,16 @@ import frame009 from "@/assets/nova-camada-frames/frame-009.jpg";
 import frame010 from "@/assets/nova-camada-frames/frame-010.jpg";
 
 const frames = [
-  frame001, frame002, frame003, frame004, frame005,
-  frame006, frame007, frame008, frame009, frame010,
+  frame001,
+  frame002,
+  frame003,
+  frame004,
+  frame005,
+  frame006,
+  frame007,
+  frame008,
+  frame009,
+  frame010,
 ];
 
 const SMOOTH_FACTOR = 0.12;
@@ -103,8 +111,7 @@ const NovaCamadaSection = () => {
 
       const targetFrame = progress * (frames.length - 1);
       currentFrameRef.current = lerp(currentFrameRef.current, targetFrame, SMOOTH_FACTOR);
-      const idx = Math.round(currentFrameRef.current);
-      setCurrentFrame(clamp(idx, 0, frames.length - 1));
+      setCurrentFrame(clamp(Math.round(currentFrameRef.current), 0, frames.length - 1));
 
       rafIdRef.current = window.requestAnimationFrame(tick);
     };
@@ -120,92 +127,100 @@ const NovaCamadaSection = () => {
 
   return (
     <section id="nova-camada" className="relative bg-background">
-      {/* 1) Scroll frames */}
-      <div ref={scrollContainerRef} className="relative" style={{ height: "200vh" }}>
-        <div className="sticky top-0 h-screen w-full overflow-hidden">
-          {/* Frames bg */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.5s ease" }}
-          >
-            {frames.map((src, index) => (
-              <img
-                key={index}
-                src={src}
-                alt={`Frame ${index + 1}`}
-                className="absolute inset-0 w-full h-full object-cover"
+      {/* CARD com imagem (frames) + texto (mantém scroll frame, sem virar background da tela inteira) */}
+      <div ref={scrollContainerRef} className="relative" style={{ height: "180vh" }}>
+        <div className="sticky top-24 px-6 md:px-12">
+          <div className="max-w-7xl mx-auto">
+            <div className="relative overflow-hidden rounded-2xl border border-border bg-card">
+              {/* brilho/scan sutil */}
+              <div
+                className="absolute inset-0 pointer-events-none opacity-[0.06]"
                 style={{
-                  opacity: index === currentFrame ? 1 : 0,
-                  visibility: index === currentFrame ? "visible" : "hidden",
+                  backgroundImage:
+                    "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.06) 2px, rgba(255,255,255,0.06) 3px)",
                 }}
               />
-            ))}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70" />
-          </div>
 
-          {/* Overlay headline (não remove o conteúdo abaixo) */}
-          <div className="absolute inset-0 flex items-center justify-center z-10">
-            <div className="text-center px-6 max-w-4xl relative">
-              <motion.div
-                className="inline-flex items-center gap-3 mb-8"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                <span className="text-red-400 text-sm uppercase tracking-[0.4em] font-mono">SYSTEM.INIT</span>
-                <div className="w-12 h-px bg-gradient-to-r from-red-500 to-transparent" />
-              </motion.div>
+              <div className="grid lg:grid-cols-2">
+                {/* Lado imagem */}
+                <div className="relative min-h-[320px] lg:min-h-[520px] bg-background">
+                  <div
+                    className="absolute inset-0"
+                    style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.4s ease" }}
+                  >
+                    {frames.map((src, index) => (
+                      <img
+                        key={index}
+                        src={src}
+                        alt={`Frame ${index + 1}`}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        style={{
+                          opacity: index === currentFrame ? 1 : 0,
+                          visibility: index === currentFrame ? "visible" : "hidden",
+                        }}
+                      />
+                    ))}
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
+                  </div>
 
-              <motion.h2
-                className="text-4xl md:text-7xl font-bold text-white leading-tight mb-4"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                style={{
-                  textShadow: "0 0 40px rgba(0,0,0,0.8), 0 0 80px rgba(239,68,68,0.3)",
-                }}
-              >
-                A Nova Camada
-              </motion.h2>
+                  {/* HUD mini */}
+                  <div className="absolute bottom-4 left-4 z-10 rounded-lg border border-border bg-background/60 px-3 py-2 backdrop-blur">
+                    <div className="text-[10px] text-foreground/60 font-mono uppercase tracking-wider">
+                      [NOVA_CAMADA://FRAME]
+                    </div>
+                    <div className="text-[10px] text-foreground/40 font-mono">
+                      {String(currentFrame + 1).padStart(2, "0")}/{frames.length}
+                    </div>
+                  </div>
+                </div>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-              >
-                <p className="text-xl md:text-3xl text-white/90 font-light mb-3">Não usamos IA como ferramenta.</p>
-                <p
-                  className="text-xl md:text-3xl font-semibold"
-                  style={{
-                    background: "linear-gradient(90deg, #ff4444, #ff6666)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                  }}
-                >
-                  Criamos sistemas cognitivos.
-                  <span className="inline-block w-0.5 h-6 md:h-8 bg-red-500 ml-2 align-middle animate-pulse" />
-                </p>
-              </motion.div>
+                {/* Lado texto */}
+                <div className="relative p-8 md:p-10 lg:p-12">
+                  <div className="inline-flex items-center gap-3 mb-6">
+                    <div className="w-2 h-2 rounded-full bg-foreground/60 animate-pulse" />
+                    <span className="text-foreground/70 text-xs uppercase tracking-[0.35em] font-mono">
+                      A Nova Camada
+                    </span>
+                    <div className="w-10 h-px bg-foreground/20" />
+                  </div>
 
-              <motion.p
-                className="text-white/50 max-w-2xl mx-auto text-base md:text-lg mt-8 font-light"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-              >
-                Uma estrutura de inteligência aplicada que transforma operações, decisões e presença digital.
-              </motion.p>
+                  <h2 className="text-3xl md:text-5xl font-bold text-foreground leading-tight">
+                    Não usamos IA como ferramenta.
+                  </h2>
+                  <h3 className="text-3xl md:text-5xl font-bold text-foreground mt-3 leading-tight">
+                    Criamos sistemas cognitivos.
+                  </h3>
+
+                  <p className="text-foreground/60 mt-6 text-base md:text-lg max-w-xl">
+                    Uma estrutura de inteligência aplicada que transforma operações, decisões e presença digital.
+                  </p>
+
+                  <div className="mt-8 grid gap-3 text-sm">
+                    <div className="flex items-start gap-3">
+                      <span className="text-foreground/40 font-mono">01</span>
+                      <p className="text-foreground/70">Diagnóstico do seu cenário + mapeamento de oportunidades</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="text-foreground/40 font-mono">02</span>
+                      <p className="text-foreground/70">Arquitetura de automações, agentes e conteúdo orientado a IA</p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="text-foreground/40 font-mono">03</span>
+                      <p className="text-foreground/70">Implementação com rastreio, métricas e melhoria contínua</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-10 text-xs text-foreground/40 font-mono">
+                    Scroll para animar a imagem  
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 2) Conteúdo que existia (cards) */}
+      {/* Conteúdo que você pediu para voltar (cards/grid) */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-24 md:py-40">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {camadas.map((camada, index) => {
@@ -217,56 +232,35 @@ const NovaCamadaSection = () => {
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                transition={{ duration: 0.6, delay: index * 0.08 }}
               >
                 <motion.div
-                  className="relative h-full p-8 bg-gradient-to-br from-[#0f0f0f] via-[#0a0a0a] to-[#080808] border border-white/5 rounded-2xl overflow-hidden transition-all duration-500"
-                  whileHover={{
-                    borderColor: "rgba(239,68,68,0.4)",
-                    rotateY: 5,
-                    rotateX: -5,
-                    scale: 1.02,
-                  }}
+                  className="relative h-full p-8 bg-card border border-border rounded-2xl overflow-hidden transition-all duration-500"
+                  whileHover={{ rotateY: 5, rotateX: -5, scale: 1.02 }}
                   style={{ transformStyle: "preserve-3d" }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/0 via-red-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-foreground/0 via-foreground/5 to-foreground/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                   <div className="absolute top-4 right-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-[9px] text-green-400 font-mono">ACTIVE</span>
-                    <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+                    <span className="text-[9px] text-foreground/60 font-mono">ACTIVE</span>
+                    <div className="w-1.5 h-1.5 bg-foreground/60 rounded-full animate-pulse" />
                   </div>
 
-                  <div className="relative z-10 w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500/20 to-red-500/5 flex items-center justify-center mb-6 border border-red-500/30 group-hover:border-red-400/60 transition-all duration-500">
-                    <Icon className="w-8 h-8 text-red-400 group-hover:text-red-300 transition-colors" />
-                    <motion.div
-                      className="absolute inset-0 rounded-2xl border border-red-500/20"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                      style={{ borderStyle: "dashed" }}
-                    />
+                  <div className="relative z-10 w-16 h-16 rounded-2xl bg-background flex items-center justify-center mb-6 border border-border">
+                    <Icon className="w-8 h-8 text-foreground/80" />
                   </div>
 
-                  <h3 className="relative z-10 text-white font-bold text-xl mb-2 group-hover:text-red-100 transition-colors">
+                  <h3 className="relative z-10 text-foreground font-bold text-xl mb-2">
                     {camada.titulo}
                   </h3>
 
-                  <p className="relative z-10 text-white/30 text-xs mb-4 uppercase tracking-widest font-mono">
+                  <p className="relative z-10 text-foreground/40 text-xs mb-4 uppercase tracking-widest font-mono">
                     {camada.funcao}
                   </p>
 
-                  <p className="relative z-10 text-white/60 text-base leading-relaxed group-hover:text-white/80 transition-colors">
+                  <p className="relative z-10 text-foreground/70 text-base leading-relaxed">
                     {camada.beneficio}
                   </p>
-
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/5">
-                    <motion.div
-                      className="h-full bg-gradient-to-r from-red-500 to-red-400"
-                      initial={{ width: "0%" }}
-                      whileInView={{ width: "100%" }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1.5, delay: 0.5 + index * 0.1 }}
-                    />
-                  </div>
                 </motion.div>
               </motion.div>
             );

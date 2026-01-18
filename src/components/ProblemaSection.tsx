@@ -62,7 +62,7 @@ const ProblemaSection = () => {
   }, []);
 
   return (
-    <section id="problema" className="relative py-32 md:py-48 bg-background overflow-hidden">
+    <section id="problema" className="relative z-[60] py-32 md:py-48 bg-background overflow-hidden">
       {/* Scan lines overlay */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
         backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)`
