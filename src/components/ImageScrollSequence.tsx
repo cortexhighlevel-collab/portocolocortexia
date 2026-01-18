@@ -204,10 +204,10 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   }, [frames.length]);
 
   return (
-    <div ref={scrollContainerRef} className="relative">
+    <div ref={scrollContainerRef} className="relative overflow-hidden">
       {/* Frames (apenas dentro do Hero, não cria tela preta extra) */}
       <div
-        className="pointer-events-none absolute inset-0 overflow-hidden bg-background"
+        className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-background"
         style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease" }}
         aria-hidden="true"
       >
