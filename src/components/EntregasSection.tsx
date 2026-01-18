@@ -1,59 +1,67 @@
 import { motion } from "framer-motion";
-import { Bot, BarChart3, Brain, Users, Workflow, Search } from "lucide-react";
+import { Bot, BarChart3, Brain, Users, Workflow, Search, ArrowRight } from "lucide-react";
 
 const entregas = [
-  { icon: Bot, titulo: "Automação com IA", resultado: "Economia de 20h+ por semana" },
-  { icon: BarChart3, titulo: "Análise Estratégica", resultado: "Decisões baseadas em dados" },
-  { icon: Brain, titulo: "Engenharia de Prompt", resultado: "Outputs 10x mais precisos" },
-  { icon: Users, titulo: "Personas Treinadas", resultado: "Assistentes personalizados" },
-  { icon: Workflow, titulo: "Agentes de IA", resultado: "Sistemas que executam" },
-  { icon: Search, titulo: "SEO + AEO", resultado: "Visibilidade em todas as IAs" }
+  { icon: Bot, titulo: "Automação com IA" },
+  { icon: BarChart3, titulo: "Análise Estratégica" },
+  { icon: Brain, titulo: "Engenharia de Prompt" },
+  { icon: Users, titulo: "Personas Treinadas" },
+  { icon: Workflow, titulo: "Agentes de IA" },
+  { icon: Search, titulo: "SEO + AEO" }
 ];
 
 const EntregasSection = () => {
   return (
-    <section id="entregas" className="relative py-32 md:py-48 bg-background">
-      <div className="max-w-6xl mx-auto px-6 md:px-12">
+    <section id="entregas" className="relative py-40 md:py-56 bg-background overflow-hidden">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12">
         {/* Header */}
         <motion.div
-          className="mb-20"
+          className="mb-24"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-2 h-2 bg-red-500 rounded-full" />
-            <span className="text-red-500 text-sm uppercase tracking-[0.3em] font-medium">Entregas</span>
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-12 h-px bg-gradient-to-r from-red-500 to-transparent" />
+            <span className="text-red-500 text-sm uppercase tracking-[0.3em]">Entregas</span>
           </div>
           
-          <h2 className="text-4xl md:text-5xl font-bold text-white max-w-2xl">
-            Clareza técnica.<br/>
-            <span className="text-white/40">Resultado prático.</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-white">
+            Clareza técnica.
+            <span className="text-white/30 block mt-2">Resultado prático.</span>
           </h2>
         </motion.div>
 
-        {/* Lista minimalista */}
-        <div className="space-y-1">
+        {/* Lista estilo terminal */}
+        <div className="space-y-2">
           {entregas.map((entrega, index) => {
             const Icon = entrega.icon;
             return (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.08 }}
               >
-                <div className="group py-6 border-b border-white/5 hover:border-red-500/20 transition-colors">
-                  <div className="flex items-center justify-between gap-6">
+                <motion.div 
+                  className="group relative p-6 bg-gradient-to-r from-[#0a0a0a] to-transparent border-l-2 border-white/5 hover:border-red-500/50 transition-all duration-300 cursor-default"
+                  whileHover={{ x: 10 }}
+                >
+                  {/* Scan effect on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  
+                  <div className="relative z-10 flex items-center justify-between">
                     <div className="flex items-center gap-6">
-                      <Icon className="w-5 h-5 text-red-400 opacity-60 group-hover:opacity-100 transition-opacity" />
-                      <span className="text-white font-medium text-lg">{entrega.titulo}</span>
+                      <Icon className="w-5 h-5 text-red-500/50 group-hover:text-red-400 transition-colors" />
+                      <span className="text-white/70 text-lg group-hover:text-white transition-colors">
+                        {entrega.titulo}
+                      </span>
                     </div>
-                    <span className="text-white/30 text-sm hidden md:block">{entrega.resultado}</span>
+                    <ArrowRight className="w-4 h-4 text-white/10 group-hover:text-red-400 transition-colors" />
                   </div>
-                </div>
+                </motion.div>
               </motion.div>
             );
           })}
