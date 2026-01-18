@@ -13,11 +13,6 @@ export default {
       },
     },
     extend: {
-      fontFamily: {
-        sans: ["Rajdhani", "system-ui", "sans-serif"],
-        display: ["Orbitron", "Rajdhani", "sans-serif"],
-        cyber: ["Orbitron", "sans-serif"],
-      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
