@@ -19,7 +19,7 @@ const Index = () => {
     <div className="min-h-screen bg-black">
       <Navbar />
       <HeroSection />
-      <div className="relative z-10 bg-black">
+      <div className="relative z-[60] bg-black">
         {/* 1. Problema - Criar tensão */}
         <ProblemaSection />
         {/* 2. Nova Camada - Apresentar conceito */}
