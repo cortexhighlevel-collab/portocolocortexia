@@ -103,7 +103,7 @@ const frames = [
   frame048,
 ];
 
-const SMOOTH_FACTOR = 0.12;
+const FRAME_DURATION = 80; // ms por frame (velocidade da animação)
 
 const camadas = [
   {
@@ -145,11 +145,8 @@ const camadas = [
 ];
 
 const NovaCamadaSection = () => {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isReady, setIsReady] = useState(false);
-  const rafIdRef = useRef<number | null>(null);
-  const currentFrameRef = useRef(0);
 
   // Preload
   useEffect(() => {
@@ -165,49 +162,23 @@ const NovaCamadaSection = () => {
     });
   }, []);
 
-  // Scroll → frame
+  // Autoplay loop
   useEffect(() => {
-    const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
-    const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor;
+    if (!isReady) return;
+    
+    const interval = setInterval(() => {
+      setCurrentFrame((prev) => (prev + 1) % frames.length);
+    }, FRAME_DURATION);
 
-    const tick = () => {
-      const container = scrollContainerRef.current;
-      if (!container) {
-        rafIdRef.current = window.requestAnimationFrame(tick);
-        return;
-      }
-
-      const rect = container.getBoundingClientRect();
-      const containerHeight = container.offsetHeight;
-      const viewportHeight = window.innerHeight;
-
-      const scrollStart = -rect.top;
-      const scrollEnd = containerHeight - viewportHeight;
-      const progress = clamp(scrollStart / Math.max(scrollEnd, 1), 0, 1);
-
-      const targetFrame = progress * (frames.length - 1);
-      currentFrameRef.current = lerp(currentFrameRef.current, targetFrame, SMOOTH_FACTOR);
-      setCurrentFrame(clamp(Math.round(currentFrameRef.current), 0, frames.length - 1));
-
-      rafIdRef.current = window.requestAnimationFrame(tick);
-    };
-
-    rafIdRef.current = window.requestAnimationFrame(tick);
-    return () => {
-      if (rafIdRef.current) {
-        cancelAnimationFrame(rafIdRef.current);
-        rafIdRef.current = null;
-      }
-    };
-  }, []);
+    return () => clearInterval(interval);
+  }, [isReady]);
 
   return (
-    <section id="nova-camada" className="relative bg-background">
-      {/* CARD com imagem (frames) + texto (mantém scroll frame, sem virar background da tela inteira) */}
-      <div ref={scrollContainerRef} className="relative" style={{ height: "180vh" }}>
-        <div className="sticky top-24 px-6 md:px-12">
-          <div className="max-w-7xl mx-auto">
-            <div className="relative overflow-hidden rounded-2xl border border-border bg-card">
+    <section id="nova-camada" className="relative bg-background py-24 md:py-32">
+      {/* CARD com imagem (frames) + texto */}
+      <div className="px-6 md:px-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="relative overflow-hidden rounded-2xl border border-border bg-card">
               {/* brilho/scan sutil */}
               <div
                 className="absolute inset-0 pointer-events-none opacity-[0.06]"
@@ -287,14 +258,13 @@ const NovaCamadaSection = () => {
                   </div>
 
                   <div className="mt-10 text-xs text-foreground/40 font-mono">
-                    Scroll para animar a imagem  
+                    Animação automática em loop  
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
       {/* Conteúdo que você pediu para voltar (cards/grid) */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-24 md:py-40">
