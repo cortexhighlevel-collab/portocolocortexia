@@ -20,6 +20,6 @@ const MotionImageSection = () => {
   // CORTEX text appears from 50% to 70% of scroll
   const cortexOpacity = useTransform(scrollYProgress, [0.5, 0.7], [0, 1]);
   const cortexY = useTransform(scrollYProgress, [0.5, 0.7], [50, 0]);
-  return;
+  return null;
 };
 export default MotionImageSection;
