@@ -36,34 +36,7 @@ const resultados = [
 
 const ResultadoSection = () => {
   return (
-    <section id="resultado" className="relative py-24 md:py-40 bg-[#030303] overflow-hidden">
-      {/* Radial glow - Intense */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,0,0,0.12)_0%,transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(139,0,139,0.08)_0%,transparent_40%)]" />
-      </div>
-
-      {/* Floating orbs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute w-64 h-64 rounded-full bg-red-500/5 blur-3xl"
-          style={{ left: '10%', top: '20%' }}
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{ duration: 8, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute w-48 h-48 rounded-full bg-purple-500/5 blur-3xl"
-          style={{ right: '15%', bottom: '30%' }}
-          animate={{
-            scale: [1, 1.3, 1],
-            opacity: [0.2, 0.4, 0.2],
-          }}
-          transition={{ duration: 10, repeat: Infinity, delay: 2 }}
-        />
-      </div>
+    <section id="resultado" className="relative py-24 md:py-40 bg-background overflow-hidden">
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
         {/* Header */}
@@ -199,8 +172,6 @@ const ResultadoSection = () => {
         </motion.div>
       </div>
 
-      {/* Bottom border */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
     </section>
   );
 };

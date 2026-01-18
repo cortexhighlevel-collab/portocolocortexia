@@ -17,11 +17,7 @@ const ContactSection = () => {
   };
 
   return (
-    <section className="relative py-24 md:py-32 bg-black" id="contact">
-      {/* Background */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,0,0,0.1)_0%,transparent_50%)]" />
-      </div>
+    <section className="relative py-24 md:py-32 bg-background" id="contact">
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
         {/* Header */}
@@ -176,8 +172,6 @@ const ContactSection = () => {
         </div>
       </div>
 
-      {/* Bottom border */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
     </section>
   );
 };

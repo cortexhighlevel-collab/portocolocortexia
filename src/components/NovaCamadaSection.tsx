@@ -51,48 +51,7 @@ const NovaCamadaSection = () => {
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
 
   return (
-    <section id="nova-camada" ref={sectionRef} className="relative py-24 md:py-40 bg-[#030303] overflow-hidden">
-      {/* Parallax circuit background */}
-      <motion.div 
-        className="absolute inset-0"
-        style={{ y: backgroundY }}
-      >
-        <div className="absolute inset-0 opacity-10">
-          <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <defs>
-              <pattern id="circuit" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                <path d="M10 0 L10 8 M10 12 L10 20 M0 10 L8 10 M12 10 L20 10" stroke="rgba(255,0,0,0.3)" strokeWidth="0.5" fill="none"/>
-                <circle cx="10" cy="10" r="1.5" fill="rgba(255,0,0,0.4)"/>
-              </pattern>
-            </defs>
-            <rect width="100" height="100" fill="url(#circuit)"/>
-          </svg>
-        </div>
-        {/* Central glow */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,0,0,0.08)_0%,transparent_60%)]" />
-      </motion.div>
-
-      {/* Animated light beams */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute w-0.5 h-40 bg-gradient-to-b from-transparent via-red-500/20 to-transparent"
-          style={{ left: '20%', top: '-10%' }}
-          animate={{ y: ['0%', '300%'], opacity: [0, 1, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "linear", delay: 0 }}
-        />
-        <motion.div
-          className="absolute w-0.5 h-40 bg-gradient-to-b from-transparent via-red-500/20 to-transparent"
-          style={{ left: '50%', top: '-10%' }}
-          animate={{ y: ['0%', '300%'], opacity: [0, 1, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "linear", delay: 1.3 }}
-        />
-        <motion.div
-          className="absolute w-0.5 h-40 bg-gradient-to-b from-transparent via-red-500/20 to-transparent"
-          style={{ left: '80%', top: '-10%' }}
-          animate={{ y: ['0%', '300%'], opacity: [0, 1, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "linear", delay: 2.6 }}
-        />
-      </div>
+    <section id="nova-camada" ref={sectionRef} className="relative py-24 md:py-40 bg-background overflow-hidden">
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
         {/* Header with dramatic reveal */}
@@ -241,8 +200,6 @@ const NovaCamadaSection = () => {
         </div>
       </div>
 
-      {/* Bottom border with animated glow */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
     </section>
   );
 };

@@ -28,9 +28,7 @@ const FooterSection = () => {
   };
 
   return (
-    <footer className="relative py-16 md:py-24 bg-[#030303]">
-      {/* Top border */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
+    <footer className="relative py-16 md:py-24 bg-background">
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
         {/* Footer Content */}

@@ -48,22 +48,7 @@ const entregas = [
 
 const EntregasSection = () => {
   return (
-    <section id="entregas" className="relative py-24 md:py-32 bg-black overflow-hidden">
-      {/* Terminal-style background */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 opacity-[0.03]" style={{
-          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.05) 2px, rgba(255,255,255,0.05) 4px)'
-        }} />
-        {/* Corner terminal decorations */}
-        <div className="absolute top-8 left-8 text-white/10 font-mono text-xs hidden lg:block">
-          <div>{'>'} LOADING_SERVICES.exe</div>
-          <div>{'>'} STATUS: READY</div>
-        </div>
-        <div className="absolute top-8 right-8 text-white/10 font-mono text-xs hidden lg:block text-right">
-          <div>v2.0.26</div>
-          <div>BUILD: STABLE</div>
-        </div>
-      </div>
+    <section id="entregas" className="relative py-24 md:py-32 bg-background overflow-hidden">
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
         {/* Header */}
@@ -169,8 +154,6 @@ const EntregasSection = () => {
         </div>
       </div>
 
-      {/* Bottom border */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/20 to-transparent" />
     </section>
   );
 };

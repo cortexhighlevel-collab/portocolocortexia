@@ -54,31 +54,7 @@ const etapas = [
 
 const MetodologiaSection = () => {
   return (
-    <section id="process" className="relative py-24 md:py-32 bg-[#020202] overflow-hidden">
-      {/* DNA Helix background */}
-      <div className="absolute inset-0">
-        <div className="absolute left-1/2 top-0 bottom-0 w-px">
-          <div className="w-full h-full bg-gradient-to-b from-transparent via-red-500/30 to-transparent" />
-        </div>
-        {/* Animated DNA nodes */}
-        {[...Array(8)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute left-1/2 -translate-x-1/2 w-3 h-3 bg-red-500/30 rounded-full"
-            style={{ top: `${12 + i * 11}%` }}
-            animate={{
-              x: [0, 30, 0, -30, 0],
-              scale: [1, 1.2, 1, 1.2, 1],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              delay: i * 0.3,
-              ease: "easeInOut"
-            }}
-          />
-        ))}
-      </div>
+    <section id="process" className="relative py-24 md:py-32 bg-background overflow-hidden">
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
         {/* Header */}
@@ -208,8 +184,6 @@ const MetodologiaSection = () => {
         </div>
       </div>
 
-      {/* Bottom border */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/20 to-transparent" />
     </section>
   );
 };

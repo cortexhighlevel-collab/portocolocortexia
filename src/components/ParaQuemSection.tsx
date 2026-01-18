@@ -36,12 +36,7 @@ const segmentos = [
 
 const ParaQuemSection = () => {
   return (
-    <section id="para-quem" className="relative py-24 md:py-32 bg-[#050505]">
-      {/* Background */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(255,0,0,0.03)_0%,transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_50%,rgba(255,0,0,0.03)_0%,transparent_50%)]" />
-      </div>
+    <section id="para-quem" className="relative py-24 md:py-32 bg-background">
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
         {/* Header */}
@@ -111,8 +106,6 @@ const ParaQuemSection = () => {
         </div>
       </div>
 
-      {/* Bottom border */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
     </section>
   );
 };
