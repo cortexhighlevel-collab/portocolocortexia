@@ -72,9 +72,9 @@ const ProblemaSection = () => {
         {/* Terminal Header */}
         <motion.div
           className="mb-20"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, amount: 0.2 }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
         >
           {/* Terminal window */}
           <div className="bg-[#0a0a0a] border border-red-500/20 rounded-lg overflow-hidden max-w-3xl">
@@ -112,9 +112,8 @@ const ProblemaSection = () => {
             <motion.div
               key={index}
               initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.45, delay: index * 0.08, ease: "easeOut" }}
               className="group"
             >
               <div 
@@ -166,9 +165,9 @@ const ProblemaSection = () => {
         {/* System status bar */}
         <motion.div 
           className="mt-12 p-4 bg-[#0a0a0a] border border-red-500/20 rounded font-mono text-xs"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, amount: 0.2 }}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: "easeOut", delay: 0.2 }}
         >
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
