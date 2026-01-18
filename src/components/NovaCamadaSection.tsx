@@ -249,7 +249,7 @@ const NovaCamadaSection = () => {
                   </div>
 
                   <div className="mt-10 text-xs text-foreground/40 font-mono">
-                    Animação automática em loop  
+                    Animação automática em loop
                   </div>
                 </div>
               </div>
@@ -265,10 +265,7 @@ const NovaCamadaSection = () => {
             return (
               <motion.div
                 key={index}
-                className="relative group perspective-1000"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.08 }}
+                className="relative group"
               >
                 <motion.div
                   className="relative h-full p-8 bg-card border border-border rounded-2xl overflow-hidden transition-all duration-500"
