@@ -58,15 +58,17 @@ const NovaCamadaSection = () => {
         return;
       }
 
+      const rect = container.getBoundingClientRect();
       const startY = container.offsetTop;
       const containerHeight = container.offsetHeight;
       const maxScroll = Math.max(containerHeight - window.innerHeight, 1);
       const localScroll = window.scrollY - startY;
       const progress = clamp(localScroll / maxScroll, 0, 1);
 
-      // Check if we've scrolled past the container
+      // Only pin when we're inside the section (rect.top <= 0 means we've scrolled into it)
       const scrollEnd = startY + containerHeight - window.innerHeight;
-      setIsPinned(window.scrollY >= startY && window.scrollY < scrollEnd);
+      const isInSection = rect.top <= 0 && window.scrollY < scrollEnd;
+      setIsPinned(isInSection);
 
       // Target frame based on scroll progress
       const targetFrame = progress * (frames.length - 1);
@@ -97,7 +99,7 @@ const NovaCamadaSection = () => {
       className="relative"
       style={{ height: "200vh" }}
     >
-      {/* Frame sequence background */}
+      {/* Frame sequence background - only visible when in section */}
       <div 
         className="pointer-events-none overflow-hidden bg-black"
         style={{ 
@@ -108,9 +110,10 @@ const NovaCamadaSection = () => {
           right: 0,
           width: '100vw',
           height: '100vh',
-          opacity: isReady ? 1 : 0,
-          transition: 'opacity 0.5s ease',
-          zIndex: 0,
+          opacity: isPinned && isReady ? 1 : 0,
+          visibility: isPinned ? 'visible' : 'hidden',
+          transition: 'opacity 0.3s ease',
+          zIndex: 1,
         }}
       >
         {frames.map((src, index) => (
