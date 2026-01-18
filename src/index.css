@@ -1,3 +1,10 @@
+@import "@fontsource/orbitron/400.css";
+@import "@fontsource/orbitron/500.css";
+@import "@fontsource/orbitron/700.css";
+@import "@fontsource/rajdhani/400.css";
+@import "@fontsource/rajdhani/500.css";
+@import "@fontsource/rajdhani/700.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -73,21 +80,22 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Rajdhani', system-ui, sans-serif !important;
+    @apply bg-background text-foreground antialiased font-display;
     font-weight: 500;
+    letter-spacing: 0.01em;
   }
 
-  /* Tipografia Cyberpunk - Títulos com Orbitron */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Orbitron', 'Rajdhani', sans-serif !important;
+    @apply font-display;
     font-weight: 700;
     letter-spacing: 0.02em;
   }
 
-  /* Textos menores e labels com Rajdhani */
-  p, span, a, li, label, input, textarea, button, div {
-    font-family: 'Rajdhani', system-ui, sans-serif;
+}
+
+@layer utilities {
+  .font-mono {
+    @apply font-display;
   }
 }
 
@@ -462,9 +470,8 @@
   }
 
   .cyberpunk-cta-text {
-    font-family: 'Orbitron', 'Rajdhani', sans-serif;
+    @apply font-display font-medium;
     font-size: 11px;
-    font-weight: 500;
     letter-spacing: 0.25em;
     color: hsla(0, 0%, 100%, 0.85);
     text-transform: uppercase;
