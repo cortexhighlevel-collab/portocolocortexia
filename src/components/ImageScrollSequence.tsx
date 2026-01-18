@@ -136,6 +136,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const [isInView, setIsInView] = useState(true);
   const rafIdRef = useRef<number | null>(null);
   const currentFrameRef = useRef(0);
+  const loadedFramesRef = useRef<boolean[]>([]);
   const isMobile = useIsMobile();
 
   const frames = isMobile ? mobileFrames : desktopFrames;
@@ -157,17 +158,40 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     let cancelled = false;
     let loadedCount = 0;
 
+    // Reset load tracking when the frame-set changes (mobile/desktop)
+    loadedFramesRef.current = new Array(frames.length).fill(false);
+
     // We only need the FIRST frame to be ready to avoid a black flash.
     // The rest can continue loading in the background.
     setIsReady(false);
 
-    frames.forEach((src) => {
+    frames.forEach((src, index) => {
       const img = new Image();
       img.src = src;
-      img.onload = () => {
+
+      const markLoaded = () => {
         if (cancelled) return;
-        loadedCount++;
-        if (loadedCount === 1) setIsReady(true);
+        if (!loadedFramesRef.current[index]) {
+          loadedFramesRef.current[index] = true;
+          loadedCount++;
+          if (loadedCount === 1) setIsReady(true);
+        }
+      };
+
+      // Prefer decode for smoother swapping (avoids a black flash on some browsers)
+      img.onload = () => {
+        // decode() resolves when the image is ready to be painted.
+        // Some browsers may not support it; fallback to markLoaded.
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        img
+          .decode?.()
+          .then(markLoaded)
+          .catch(markLoaded);
+      };
+
+      img.onerror = () => {
+        // Don't block the sequence if one frame fails
+        markLoaded();
       };
     });
 
@@ -205,8 +229,12 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
       const targetFrame = progress * (frames.length - 1);
       currentFrameRef.current = lerp(currentFrameRef.current, targetFrame, SMOOTH_FACTOR);
-      const frameIndex = Math.round(currentFrameRef.current);
-      setCurrentFrame(clamp(frameIndex, 0, frames.length - 1));
+      const nextFrame = clamp(Math.round(currentFrameRef.current), 0, frames.length - 1);
+
+      // Evita "piscada preta": só troca para um frame que já foi carregado/decodado.
+      if (loadedFramesRef.current[nextFrame]) {
+        setCurrentFrame(nextFrame);
+      }
 
       rafIdRef.current = window.requestAnimationFrame(tick);
     };
@@ -229,49 +257,41 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     };
   }, [frames.length, isInView]);
 
-  // Renderizar apenas frames próximos (evita 48 elementos no DOM piscando)
-  const visibleRange = 2; // quantos frames antes/depois do atual manter
-  const visibleFrames = frames
-    .map((src, index) => ({ src, index }))
-    .filter(({ index }) => Math.abs(index - currentFrame) <= visibleRange);
-
   return (
     <div ref={scrollContainerRef} className="relative" style={{ height: "300vh" }}>
       {/* Sticky container que fica fixo durante o scroll */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        {/* Frames de fundo - só renderiza os próximos para evitar flicker */}
+        {/* Frames de fundo (48 frames, na ordem) */}
         <div
           className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-background"
           style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease" }}
           aria-hidden="true"
         >
-          {visibleFrames.map(({ src, index }) => {
-            const isActive = index === currentFrame;
-            return (
-              <img
-                key={`${isMobile ? "mobile" : "desktop"}-${index}`}
-                src={src}
-                alt=""
-                decoding="async"
-                loading="eager"
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: "50%",
-                  transform: "translateX(-50%) scale(1.1)",
-                  width: isMobile ? "100%" : "auto",
-                  height: "100%",
-                  minWidth: isMobile ? "auto" : "100%",
-                  maxWidth: "none",
-                  objectFit: "cover",
-                  objectPosition: "center top",
-                  opacity: isActive ? 1 : 0,
-                  willChange: "opacity",
-                  backfaceVisibility: "hidden",
-                }}
-              />
-            );
-          })}
+          {frames.map((src, index) => (
+            <img
+              key={`${isMobile ? "mobile" : "desktop"}-${index}`}
+              src={src}
+              alt=""
+              decoding="async"
+              loading="eager"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: "50%",
+                transform: "translate3d(-50%, 0, 0) scale(1.1)",
+                width: isMobile ? "100%" : "auto",
+                height: "100%",
+                minWidth: isMobile ? "auto" : "100%",
+                maxWidth: "none",
+                objectFit: "cover",
+                objectPosition: "center top",
+                opacity: index === currentFrame ? 1 : 0,
+                transition: "opacity 40ms linear",
+                willChange: "opacity",
+                backfaceVisibility: "hidden",
+              }}
+            />
+          ))}
         </div>
 
         {/* Overlay content (texto do hero) */}
