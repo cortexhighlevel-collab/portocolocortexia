@@ -51,10 +51,23 @@ function Navbar() {
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
+
     const element = document.querySelector(href);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      // Ensure hash navigation jumps past the 300vh sticky hero (avoid "black screen" during smooth scroll)
+      const NAV_OFFSET = 140; // accounts for the fixed navbar
+      const top = element.getBoundingClientRect().top + window.scrollY - NAV_OFFSET;
+
+      const root = document.documentElement;
+      const prevScrollBehavior = root.style.scrollBehavior;
+      root.style.scrollBehavior = "auto";
+      window.scrollTo({ top });
+      root.style.scrollBehavior = prevScrollBehavior;
+
+      // Update URL hash without triggering another scroll
+      window.history.pushState(null, "", href);
     }
+
     setShowMenu(false);
   };
 
