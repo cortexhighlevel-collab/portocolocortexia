@@ -62,7 +62,7 @@ const ProblemaSection = () => {
   }, []);
 
   return (
-    <section id="problema" className="relative z-[60] bg-background overflow-hidden pt-16 pb-24 md:pt-24 md:pb-32 scroll-mt-32">
+    <section id="problema" className="relative z-[60] py-32 md:py-48 bg-background overflow-hidden scroll-mt-32">
       {/* Scan lines overlay */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
         backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)`
@@ -72,7 +72,7 @@ const ProblemaSection = () => {
         {/* Terminal Header */}
         <motion.div
           className="mb-20"
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 1, y: 0 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: "easeOut" }}
         >
@@ -111,7 +111,7 @@ const ProblemaSection = () => {
           {problemas.map((problema, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 1, x: 0 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.45, delay: index * 0.08, ease: "easeOut" }}
               className="group"
@@ -165,7 +165,7 @@ const ProblemaSection = () => {
         {/* System status bar */}
         <motion.div 
           className="mt-12 p-4 bg-[#0a0a0a] border border-red-500/20 rounded font-mono text-xs"
-          initial={{ opacity: 0, y: 8 }}
+          initial={{ opacity: 1, y: 0 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: "easeOut", delay: 0.2 }}
         >
