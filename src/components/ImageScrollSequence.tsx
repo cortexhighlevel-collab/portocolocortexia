@@ -123,21 +123,22 @@ const mobileFrames = [
   mobileFrame046, mobileFrame047, mobileFrame048,
 ];
 
-const SMOOTH_FACTOR = 0.15; // Lerp smoothing factor
+const SMOOTH_FACTOR = 0.15;
 
-const ImageScrollSequence = () => {
+type ImageScrollSequenceProps = {
+  children?: React.ReactNode;
+};
+
+const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isReady, setIsReady] = useState(false);
-  const [isPinned, setIsPinned] = useState(true);
   const rafIdRef = useRef<number | null>(null);
-  const currentFrameRef = useRef(0); // For smooth interpolation
+  const currentFrameRef = useRef(0);
   const isMobile = useIsMobile();
 
-  // Select frames based on device
   const frames = isMobile ? mobileFrames : desktopFrames;
 
-  // Preload all images
   useEffect(() => {
     let loadedCount = 0;
     const totalImages = frames.length;
@@ -148,20 +149,16 @@ const ImageScrollSequence = () => {
       img.src = src;
       img.onload = () => {
         loadedCount++;
-        if (loadedCount === totalImages) {
-          setIsReady(true);
-        }
+        if (loadedCount === totalImages) setIsReady(true);
       };
     });
   }, [frames]);
 
-  // Reset frame when switching between mobile/desktop
   useEffect(() => {
     currentFrameRef.current = 0;
     setCurrentFrame(0);
   }, [isMobile]);
 
-  // Scroll sync loop with lerp interpolation
   useEffect(() => {
     const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
     const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor;
@@ -173,22 +170,16 @@ const ImageScrollSequence = () => {
         return;
       }
 
-      const startY = container.offsetTop;
+      const rect = container.getBoundingClientRect();
       const containerHeight = container.offsetHeight;
-      const maxScroll = Math.max(containerHeight - window.innerHeight, 1);
-      const localScroll = window.scrollY - startY;
-      const progress = clamp(localScroll / maxScroll, 0, 1);
+      const viewportHeight = window.innerHeight;
 
-      // Check if we've scrolled past the container
-      const scrollEnd = startY + containerHeight - window.innerHeight;
-      setIsPinned(window.scrollY < scrollEnd);
+      const scrollStart = -rect.top;
+      const scrollEnd = containerHeight - viewportHeight;
+      const progress = clamp(scrollStart / Math.max(scrollEnd, 1), 0, 1);
 
-      // Target frame based on scroll progress
       const targetFrame = progress * (frames.length - 1);
-      
-      // Smooth interpolation using lerp
       currentFrameRef.current = lerp(currentFrameRef.current, targetFrame, SMOOTH_FACTOR);
-      
       const frameIndex = Math.round(currentFrameRef.current);
       setCurrentFrame(clamp(frameIndex, 0, frames.length - 1));
 
@@ -206,48 +197,38 @@ const ImageScrollSequence = () => {
   }, [frames.length]);
 
   return (
-    <div
-      ref={scrollContainerRef}
-      className="relative"
-      style={{ height: "200vh" }}
-    >
-      {/* Image sequence background */}
-      <div 
-        className="pointer-events-none overflow-hidden bg-background"
-        style={{ 
-          position: isPinned ? 'fixed' : 'absolute',
-          top: isPinned ? 0 : 'auto',
-          bottom: isPinned ? 'auto' : 0,
-          left: 0,
-          right: 0,
-          width: '100vw',
-          height: '100vh',
-          opacity: isReady ? 1 : 0,
-          transition: 'opacity 0.3s ease'
-        }}
-      >
-        {frames.map((src, index) => (
-          <img
-            key={`${isMobile ? 'mobile' : 'desktop'}-${index}`}
-            src={src}
-            alt={`Frame ${index + 1}`}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: '50%',
-              transform: isMobile ? 'translateX(-50%) scale(1.1)' : 'translateX(-50%) scale(1.1)',
-              width: isMobile ? '100%' : 'auto',
-              height: isMobile ? '100%' : '100%',
-              minWidth: isMobile ? 'auto' : '100%',
-              minHeight: '100%',
-              maxWidth: 'none',
-              objectFit: 'cover',
-              objectPosition: 'center top',
-              opacity: index === currentFrame ? 1 : 0,
-              visibility: index === currentFrame ? 'visible' : 'hidden',
-            }}
-          />
-        ))}
+    <div ref={scrollContainerRef} className="relative" style={{ height: "200vh" }}>
+      <div className="sticky top-0 h-screen w-full overflow-hidden">
+        {/* Frames */}
+        <div
+          className="pointer-events-none absolute inset-0 overflow-hidden bg-background"
+          style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease" }}
+        >
+          {frames.map((src, index) => (
+            <img
+              key={`${isMobile ? "mobile" : "desktop"}-${index}`}
+              src={src}
+              alt={`Frame ${index + 1}`}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: "50%",
+                transform: "translateX(-50%) scale(1.1)",
+                width: isMobile ? "100%" : "auto",
+                height: "100%",
+                minWidth: isMobile ? "auto" : "100%",
+                maxWidth: "none",
+                objectFit: "cover",
+                objectPosition: "center top",
+                opacity: index === currentFrame ? 1 : 0,
+                visibility: index === currentFrame ? "visible" : "hidden",
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Overlay content */}
+        <div className="relative z-10 h-full w-full">{children}</div>
       </div>
     </div>
   );
