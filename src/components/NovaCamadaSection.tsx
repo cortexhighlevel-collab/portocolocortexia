@@ -21,10 +21,10 @@ const frames = [
 const SMOOTH_FACTOR = 0.12;
 
 const NovaCamadaSection = () => {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLElement>(null);
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isReady, setIsReady] = useState(false);
-  const [isPinned, setIsPinned] = useState(true);
+  const [isPinned, setIsPinned] = useState(false);
   const rafIdRef = useRef<number | null>(null);
   const currentFrameRef = useRef(0);
 
@@ -93,7 +93,7 @@ const NovaCamadaSection = () => {
   }, []);
 
   return (
-    <div
+    <section
       ref={scrollContainerRef}
       id="nova-camada"
       className="relative"
@@ -248,7 +248,7 @@ const NovaCamadaSection = () => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
