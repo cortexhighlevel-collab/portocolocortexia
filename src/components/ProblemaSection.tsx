@@ -76,10 +76,9 @@ const CyberCard = ({
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
-      className={`relative group ${isLarge ? 'h-full' : ''}`}
+      className={`relative group ${isLarge ? "h-full" : ""}`}
     >
       {/* Outer glow border */}
       <div 
@@ -241,8 +240,7 @@ const ProblemaSection = () => {
         <motion.div
           className="mb-16"
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
           <div className="bg-zinc-950 border border-red-500/20 rounded-lg overflow-hidden max-w-3xl">
@@ -293,8 +291,7 @@ const ProblemaSection = () => {
         <motion.div
           className="mt-12 p-4 bg-zinc-950 border border-red-500/20 rounded text-xs font-mono"
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
           <div className="flex items-center justify-between flex-wrap gap-4">
