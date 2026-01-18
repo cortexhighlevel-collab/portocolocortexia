@@ -31,14 +31,14 @@ const TypingText = ({ text, delay = 0 }: { text: string; delay?: number }) => {
   }, [text, delay]);
 
   useEffect(() => {
-    const cursorInterval = setInterval(() => setShowCursor(prev => !prev), 500);
+    const cursorInterval = setInterval(() => setShowCursor((prev) => !prev), 500);
     return () => clearInterval(cursorInterval);
   }, []);
 
   return (
     <span>
       {displayText}
-      <span className={`${showCursor ? 'opacity-100' : 'opacity-0'} text-red-500`}>_</span>
+      <span className={`${showCursor ? "opacity-100" : "opacity-0"} text-destructive`}>_</span>
     </span>
   );
 };
@@ -62,11 +62,17 @@ const ProblemaSection = () => {
   }, []);
 
   return (
-    <section id="problema" className="relative z-[60] py-32 md:py-48 bg-background overflow-hidden scroll-mt-32">
+    <section
+      id="problema"
+      className="relative z-[60] py-32 md:py-48 bg-background overflow-hidden scroll-mt-32"
+    >
       {/* Scan lines overlay */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
-        backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)`
-      }} />
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{
+          backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)`,
+        }}
+      />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12">
         {/* Terminal Header */}
@@ -77,31 +83,27 @@ const ProblemaSection = () => {
           transition={{ duration: 0.45, ease: "easeOut" }}
         >
           {/* Terminal window */}
-          <div className="bg-[#0a0a0a] border border-red-500/20 rounded-lg overflow-hidden max-w-3xl">
+          <div className="bg-card border border-destructive/30 rounded-lg overflow-hidden max-w-3xl">
             {/* Terminal title bar */}
-            <div className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border-b border-red-500/20">
+            <div className="flex items-center gap-2 px-4 py-2 bg-destructive/10 border-b border-destructive/30">
               <div className="flex gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-500" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
-                <div className="w-3 h-3 rounded-full bg-green-500/30" />
+                <div className="w-3 h-3 rounded-full bg-destructive" />
+                <div className="w-3 h-3 rounded-full bg-muted" />
+                <div className="w-3 h-3 rounded-full bg-accent" />
               </div>
-              <span className="text-red-400/60 text-xs font-mono ml-4">cortex_diagnostic.exe</span>
+              <span className="text-destructive/70 text-xs font-mono ml-4">cortex_diagnostic.exe</span>
             </div>
-            
+
             {/* Terminal content */}
             <div className="p-6 font-mono text-sm">
-              <div className="text-white/40 mb-2">
-                <span className="text-red-500">$</span> ./scan --target="business_ai_status"
+              <div className="text-foreground/70 mb-2">
+                <span className="text-destructive">$</span> ./scan --target="business_ai_status"
               </div>
-              <div className="text-white/60 mb-4">
-                [SCANNING] Analyzing current market position...
-              </div>
-              <div className="text-red-400 text-2xl md:text-4xl font-bold">
+              <div className="text-foreground/70 mb-4">[SCANNING] Analyzing current market position...</div>
+              <div className="text-destructive text-2xl md:text-4xl font-bold">
                 <TypingText text="⚠ SISTEMA COMPROMETIDO" delay={500} />
               </div>
-              <div className="text-white/40 mt-4">
-                Detected: 6 critical vulnerabilities
-              </div>
+              <div className="text-foreground/70 mt-4">Detected: 6 critical vulnerabilities</div>
             </div>
           </div>
         </motion.div>
@@ -116,42 +118,44 @@ const ProblemaSection = () => {
               transition={{ duration: 0.45, delay: index * 0.08, ease: "easeOut" }}
               className="group"
             >
-              <div 
-                className={`relative p-5 bg-[#0a0a0a] border-l-4 transition-all duration-500 ${
-                  activeIndex === index 
-                    ? 'border-l-red-500 bg-red-500/5' 
-                    : 'border-l-red-500/30 hover:border-l-red-500/60'
+              <div
+                className={`relative p-5 bg-card border-l-4 transition-all duration-500 ${
+                  activeIndex === index
+                    ? "border-l-destructive bg-destructive/10"
+                    : "border-l-destructive/40 hover:border-l-destructive"
                 }`}
               >
                 {/* HUD corner brackets */}
-                <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-red-500/40" />
-                <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-red-500/40" />
-                <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-red-500/40" />
-                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-red-500/40" />
-                
+                <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-destructive/50" />
+                <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-destructive/50" />
+                <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-destructive/50" />
+                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-destructive/50" />
+
                 {/* Error ID and severity */}
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-red-500/60 font-mono text-xs">{problema.id}</span>
-                  <span className={`font-mono text-xs px-2 py-0.5 rounded ${
-                    problema.severity === 'CRITICAL' 
-                      ? 'bg-red-500/20 text-red-400 animate-pulse' 
-                      : problema.severity === 'HIGH'
-                        ? 'bg-orange-500/20 text-orange-400'
-                        : 'bg-yellow-500/20 text-yellow-400'
-                  }`}>
+                  <span className="text-destructive/70 font-mono text-xs">{problema.id}</span>
+                  <span
+                    className={`font-mono text-xs px-2 py-0.5 rounded ${
+                      problema.severity === "CRITICAL"
+                        ? "bg-destructive/25 text-destructive animate-pulse"
+                        : problema.severity === "HIGH"
+                          ? "bg-secondary text-secondary-foreground"
+                          : "bg-muted text-muted-foreground"
+                    }`}
+                  >
                     [{problema.severity}]
                   </span>
                 </div>
-                
+
                 {/* Error message */}
-                <h3 className="text-white font-medium text-lg group-hover:text-red-100 transition-colors">
+                <h3 className="text-foreground font-medium text-lg group-hover:text-foreground transition-colors">
                   {problema.titulo}
                 </h3>
 
                 {/* Active indicator - scan line */}
                 {activeIndex === index && (
-                  <motion.div 
-                    className="absolute bottom-0 left-0 h-0.5 bg-red-500"
+                  <motion.div
+                    className="absolute bottom-0 left-0 h-0.5 bg-destructive"
                     initial={{ width: 0 }}
                     animate={{ width: "100%" }}
                     transition={{ duration: 3, ease: "linear" }}
@@ -163,27 +167,24 @@ const ProblemaSection = () => {
         </div>
 
         {/* System status bar */}
-        <motion.div 
-          className="mt-12 p-4 bg-[#0a0a0a] border border-red-500/20 rounded font-mono text-xs"
+        <motion.div
+          className="mt-12 p-4 bg-card border border-border rounded font-mono text-xs"
           initial={{ opacity: 1, y: 0 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: "easeOut", delay: 0.2 }}
         >
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
-              <span className="text-red-500">●</span>
-              <span className="text-white/40">THREAT LEVEL:</span>
-              <span className="text-red-400">CRITICAL</span>
+              <span className="text-destructive">●</span>
+              <span className="text-muted-foreground">THREAT LEVEL:</span>
+              <span className="text-destructive">CRITICAL</span>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-white/40">SCAN:</span>
-              <div className="w-32 h-1 bg-white/10 rounded overflow-hidden">
-                <motion.div 
-                  className="h-full bg-red-500"
-                  style={{ width: `${scanProgress}%` }}
-                />
+              <span className="text-muted-foreground">SCAN:</span>
+              <div className="w-32 h-1 bg-muted rounded overflow-hidden">
+                <motion.div className="h-full bg-destructive" style={{ width: `${scanProgress}%` }} />
               </div>
-              <span className="text-white/40">{scanProgress}%</span>
+              <span className="text-muted-foreground">{scanProgress}%</span>
             </div>
           </div>
         </motion.div>
