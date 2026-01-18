@@ -270,13 +270,27 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     };
   }, [frames.length, isInView]);
 
+  // Primeiro frame como fallback imediato (evita tela preta)
+  const firstFrame = frames[0];
+
   return (
     <div ref={scrollContainerRef} className="relative" style={{ height: "300vh" }}>
       {/* Sticky container que fica fixo durante o scroll */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">
+        {/* Fallback: primeira imagem sempre visível como background até carregar */}
+        <div
+          className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+          style={{
+            backgroundImage: `url(${firstFrame})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center top",
+          }}
+          aria-hidden="true"
+        />
+
         {/* Frames de fundo (48 frames, na ordem) */}
         <div
-          className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-background"
+          className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
           style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease" }}
           aria-hidden="true"
         >
@@ -298,11 +312,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
                 maxWidth: "none",
                 objectFit: "cover",
                 objectPosition: "center top",
-                // Mostra o frame atual; se ele ainda não pintou por algum motivo,
-                // o frame anterior permanece por baixo (evita pisca preto, especialmente voltando o scroll)
                 opacity: index === currentFrame || index === previousFrame ? 1 : 0,
                 zIndex: index === currentFrame ? 2 : index === previousFrame ? 1 : 0,
-                // Troca instantânea entre frames (transição pode causar "pisca preto" em scroll rápido)
                 transition: "none",
                 willChange: "opacity",
                 backfaceVisibility: "hidden",
