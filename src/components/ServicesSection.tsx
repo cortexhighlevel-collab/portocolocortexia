@@ -84,7 +84,6 @@ const ServiceCard = ({
       transition={{ duration: 0.6, delay: index * 0.08 }}
       whileHover={{ scale: 1.02 }}
     >
-    >
       {/* Cyberpunk scan line effect */}
       <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-red-500/5 to-transparent animate-scan-line" />
