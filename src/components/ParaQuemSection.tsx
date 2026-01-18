@@ -1,65 +1,52 @@
 import { motion } from "framer-motion";
-import { Building2, Briefcase, Users, Lightbulb, Code } from "lucide-react";
+import { useState } from "react";
 
-const segmentos = [
-  { icon: Building2, titulo: "Empresas" },
-  { icon: Briefcase, titulo: "Agências" },
-  { icon: Lightbulb, titulo: "Infoprodutores" },
-  { icon: Users, titulo: "Times Internos" },
-  { icon: Code, titulo: "Profissionais de IA" }
+const targets = [
+  { id: "TGT_01", nome: "Empresários", desc: "Visão estratégica" },
+  { id: "TGT_02", nome: "Startups", desc: "Escala rápida" },
+  { id: "TGT_03", nome: "Agências", desc: "Automação total" },
+  { id: "TGT_04", nome: "Infoprodutores", desc: "IA no conteúdo" }
 ];
 
 const ParaQuemSection = () => {
+  const [selectedTarget, setSelectedTarget] = useState(0);
+
   return (
-    <section id="para-quem" className="relative py-40 md:py-56 bg-background">
+    <section id="para-quem" className="relative py-32 md:py-48 bg-background overflow-hidden">
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12">
-        {/* Header */}
-        <motion.div
-          className="mb-24"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-px bg-gradient-to-r from-red-500 to-transparent" />
-            <span className="text-red-500 text-sm uppercase tracking-[0.3em]">Para Quem</span>
+        <motion.div className="mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <div className="flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/30 rounded w-fit mb-6">
+            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+            <span className="text-red-400 font-mono text-xs">TARGETING SYSTEM</span>
           </div>
-          
-          <h2 className="text-4xl md:text-5xl font-bold text-white">
-            Segmentação clara
-          </h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-white">TARGET <span className="text-red-500">PROFILES</span></h2>
         </motion.div>
 
-        {/* Pills cyberpunk */}
-        <div className="flex flex-wrap gap-4">
-          {segmentos.map((segmento, index) => {
-            const Icon = segmento.icon;
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-              >
-                <motion.div 
-                  className="group flex items-center gap-4 px-8 py-5 bg-gradient-to-br from-[#0a0a0a] to-[#050505] border border-white/5 rounded-2xl hover:border-red-500/30 transition-all duration-500 cursor-default"
-                  whileHover={{ y: -5, scale: 1.02 }}
-                >
-                  {/* Glow */}
-                  <div className="absolute inset-0 rounded-2xl bg-red-500/10 blur-xl opacity-0 group-hover:opacity-50 transition-opacity" />
-                  
-                  <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center border border-red-500/20 group-hover:border-red-500/40 transition-colors">
-                    <Icon className="w-5 h-5 text-red-400" />
-                  </div>
-                  <span className="text-white/70 font-medium group-hover:text-white transition-colors">
-                    {segmento.titulo}
-                  </span>
-                </motion.div>
-              </motion.div>
-            );
-          })}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {targets.map((target, index) => (
+            <motion.button
+              key={index}
+              onClick={() => setSelectedTarget(index)}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+              className={`relative p-6 text-left transition-all duration-300 ${selectedTarget === index ? 'bg-red-500/10 border-2 border-red-500' : 'bg-[#0a0a0a] border border-white/10 hover:border-white/30'}`}
+            >
+              {selectedTarget === index && (
+                <>
+                  <div className="absolute -top-1 -left-1 w-4 h-4 border-l-2 border-t-2 border-red-500" />
+                  <div className="absolute -top-1 -right-1 w-4 h-4 border-r-2 border-t-2 border-red-500" />
+                  <div className="absolute -bottom-1 -left-1 w-4 h-4 border-l-2 border-b-2 border-red-500" />
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 border-r-2 border-b-2 border-red-500" />
+                  <span className="absolute top-2 right-2 text-red-400 font-mono text-xs">LOCKED</span>
+                </>
+              )}
+              <span className="text-red-500/60 font-mono text-xs block mb-3">{target.id}</span>
+              <h3 className={`text-xl font-semibold mb-2 ${selectedTarget === index ? 'text-white' : 'text-white/70'}`}>{target.nome}</h3>
+              <p className="text-white/40 text-sm font-mono">{target.desc}</p>
+            </motion.button>
+          ))}
         </div>
       </div>
     </section>

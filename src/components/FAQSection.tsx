@@ -1,94 +1,43 @@
 import { motion } from "framer-motion";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 const faqs = [
-  {
-    question: "O que é AEO?",
-    answer: "Answer Engine Optimization — otimização para mecanismos de resposta como ChatGPT, Gemini e Perplexity."
-  },
-  {
-    question: "Quanto tempo para ver resultados?",
-    answer: "Primeiros resultados em 30-60 dias. Melhorias contínuas ao longo de 3-6 meses."
-  },
-  {
-    question: "Trabalham com qualquer segmento?",
-    answer: "Sim. B2B, B2C, startups, e-commerces, consultorias e empresas de serviços."
-  },
-  {
-    question: "Qual o investimento?",
-    answer: "Varia conforme o escopo. Entre em contato para diagnóstico gratuito."
-  },
-  {
-    question: "Oferecem suporte contínuo?",
-    answer: "Sim. Acompanhamento mensal com monitoramento de métricas e ajustes."
-  }
+  { id: "FAQ_001", pergunta: "Como funciona a consultoria de IA?", resposta: "Analisamos seu negócio, criamos personas treinadas e implementamos agentes de IA autônomos." },
+  { id: "FAQ_002", pergunta: "Qual o prazo de implementação?", resposta: "O processo completo leva de 4 a 8 semanas." },
+  { id: "FAQ_003", pergunta: "Preciso de conhecimento técnico?", resposta: "Não. Cuidamos de toda a parte técnica." },
+  { id: "FAQ_004", pergunta: "Os agentes funcionam sozinhos?", resposta: "Sim. Operam 24/7 com monitoramento contínuo." }
 ];
 
 const FAQSection = () => {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   return (
-    <section id="faq" className="relative py-40 md:py-56 bg-background overflow-hidden">
+    <section id="faq" className="relative py-32 md:py-48 bg-background overflow-hidden">
       <div className="relative z-10 max-w-4xl mx-auto px-6 md:px-12">
-        {/* Header */}
-        <motion.div
-          className="mb-20"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-px bg-gradient-to-r from-red-500 to-transparent" />
-            <span className="text-red-500 text-sm uppercase tracking-[0.3em]">FAQ</span>
+        <motion.div className="mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-red-500 font-mono text-xs">{">"}</span>
+            <span className="text-white/40 font-mono text-xs">help --faq</span>
           </div>
-          
-          <h2 className="text-4xl md:text-5xl font-bold text-white">
-            Perguntas frequentes
-          </h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-white">PERGUNTAS <span className="text-red-500">FREQUENTES</span></h2>
         </motion.div>
 
-        {/* Accordion com visual cyberpunk */}
-        <div className="relative p-8 md:p-12 bg-gradient-to-br from-[#0a0a0a] to-[#050505] border border-white/5 rounded-3xl overflow-hidden">
-          {/* Corner accents */}
-          <div className="absolute top-0 left-0 w-12 h-12">
-            <div className="absolute top-0 left-0 w-[1px] h-full bg-gradient-to-b from-red-500/50 to-transparent" />
-            <div className="absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-red-500/50 to-transparent" />
-          </div>
-          <div className="absolute bottom-0 right-0 w-12 h-12">
-            <div className="absolute bottom-0 right-0 w-[1px] h-full bg-gradient-to-t from-red-500/50 to-transparent" />
-            <div className="absolute bottom-0 right-0 h-[1px] w-full bg-gradient-to-l from-red-500/50 to-transparent" />
-          </div>
-
-          <Accordion type="single" collapsible className="space-y-2">
-            {faqs.map((faq, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
-              >
-                <AccordionItem 
-                  value={`item-${index}`} 
-                  className="border-b border-white/5 last:border-0"
-                >
-                  <AccordionTrigger className="text-left hover:no-underline py-6 text-white/70 hover:text-white transition-colors text-lg">
-                    <div className="flex items-center gap-4">
-                      <span className="text-red-500/40 font-mono text-sm">{String(index + 1).padStart(2, '0')}</span>
-                      <span>{faq.question}</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="text-white/40 pb-6 pl-12">
-                    {faq.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              </motion.div>
-            ))}
-          </Accordion>
+        <div className="space-y-3">
+          {faqs.map((faq, index) => (
+            <motion.div key={index} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }}>
+              <button onClick={() => setOpenIndex(openIndex === index ? null : index)} className={`w-full text-left p-5 bg-[#0a0a0a] border transition-all ${openIndex === index ? 'border-red-500/50' : 'border-white/10 hover:border-white/20'}`}>
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <span className="text-red-500/50 font-mono text-xs">{faq.id}</span>
+                    <span className={openIndex === index ? 'text-white' : 'text-white/70'}>{faq.pergunta}</span>
+                  </div>
+                  <ChevronDown className={`w-5 h-5 text-red-500/50 transition-transform ${openIndex === index ? 'rotate-180' : ''}`} />
+                </div>
+                {openIndex === index && <div className="pt-4 pl-12"><div className="p-4 bg-white/5 border-l-2 border-red-500/30"><p className="text-white/50 text-sm font-mono">{faq.resposta}</p></div></div>}
+              </button>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
