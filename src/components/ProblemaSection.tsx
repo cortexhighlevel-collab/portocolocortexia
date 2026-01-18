@@ -64,7 +64,7 @@ const ProblemaSection = () => {
   return (
     <section
       id="problema"
-      className="relative z-[60] py-32 md:py-48 bg-background overflow-hidden scroll-mt-32"
+      className="relative z-[60] bg-background overflow-hidden pt-16 pb-24 md:pt-24 md:pb-32 scroll-mt-32"
     >
       {/* Scan lines overlay */}
       <div
@@ -83,27 +83,27 @@ const ProblemaSection = () => {
           transition={{ duration: 0.45, ease: "easeOut" }}
         >
           {/* Terminal window */}
-          <div className="bg-card border border-destructive/30 rounded-lg overflow-hidden max-w-3xl">
+          <div className="bg-secondary border border-destructive/25 rounded-lg overflow-hidden max-w-3xl">
             {/* Terminal title bar */}
-            <div className="flex items-center gap-2 px-4 py-2 bg-destructive/10 border-b border-destructive/30">
+            <div className="flex items-center gap-2 px-4 py-2 bg-destructive/10 border-b border-destructive/25">
               <div className="flex gap-2">
                 <div className="w-3 h-3 rounded-full bg-destructive" />
                 <div className="w-3 h-3 rounded-full bg-muted" />
                 <div className="w-3 h-3 rounded-full bg-accent" />
               </div>
-              <span className="text-destructive/70 text-xs font-mono ml-4">cortex_diagnostic.exe</span>
+              <span className="text-destructive/80 text-xs font-mono ml-4">cortex_diagnostic.exe</span>
             </div>
 
             {/* Terminal content */}
             <div className="p-6 font-mono text-sm">
-              <div className="text-foreground/70 mb-2">
+              <div className="text-foreground/80 mb-2">
                 <span className="text-destructive">$</span> ./scan --target="business_ai_status"
               </div>
-              <div className="text-foreground/70 mb-4">[SCANNING] Analyzing current market position...</div>
+              <div className="text-foreground/80 mb-4">[SCANNING] Analyzing current market position...</div>
               <div className="text-destructive text-2xl md:text-4xl font-bold">
                 <TypingText text="⚠ SISTEMA COMPROMETIDO" delay={500} />
               </div>
-              <div className="text-foreground/70 mt-4">Detected: 6 critical vulnerabilities</div>
+              <div className="text-foreground/80 mt-4">Detected: 6 critical vulnerabilities</div>
             </div>
           </div>
         </motion.div>
@@ -119,21 +119,21 @@ const ProblemaSection = () => {
               className="group"
             >
               <div
-                className={`relative p-5 bg-card border-l-4 transition-all duration-500 ${
+                className={`relative p-5 bg-secondary border-l-4 transition-all duration-500 ${
                   activeIndex === index
                     ? "border-l-destructive bg-destructive/10"
                     : "border-l-destructive/40 hover:border-l-destructive"
                 }`}
               >
                 {/* HUD corner brackets */}
-                <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-destructive/50" />
-                <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-destructive/50" />
-                <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-destructive/50" />
-                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-destructive/50" />
+                <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-destructive/60" />
+                <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-destructive/60" />
+                <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-destructive/60" />
+                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-destructive/60" />
 
                 {/* Error ID and severity */}
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-destructive/70 font-mono text-xs">{problema.id}</span>
+                  <span className="text-destructive/80 font-mono text-xs">{problema.id}</span>
                   <span
                     className={`font-mono text-xs px-2 py-0.5 rounded ${
                       problema.severity === "CRITICAL"
@@ -168,7 +168,7 @@ const ProblemaSection = () => {
 
         {/* System status bar */}
         <motion.div
-          className="mt-12 p-4 bg-card border border-border rounded font-mono text-xs"
+          className="mt-12 p-4 bg-secondary border border-destructive/25 rounded font-mono text-xs"
           initial={{ opacity: 1, y: 0 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: "easeOut", delay: 0.2 }}
@@ -176,15 +176,15 @@ const ProblemaSection = () => {
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
               <span className="text-destructive">●</span>
-              <span className="text-muted-foreground">THREAT LEVEL:</span>
+              <span className="text-foreground/80">THREAT LEVEL:</span>
               <span className="text-destructive">CRITICAL</span>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-muted-foreground">SCAN:</span>
+              <span className="text-foreground/80">SCAN:</span>
               <div className="w-32 h-1 bg-muted rounded overflow-hidden">
                 <motion.div className="h-full bg-destructive" style={{ width: `${scanProgress}%` }} />
               </div>
-              <span className="text-muted-foreground">{scanProgress}%</span>
+              <span className="text-foreground/80">{scanProgress}%</span>
             </div>
           </div>
         </motion.div>
