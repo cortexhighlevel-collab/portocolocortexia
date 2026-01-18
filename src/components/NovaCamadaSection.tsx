@@ -1,206 +1,251 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-import { Bot, BarChart3, Brain, Users, Sparkles, Search } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
-const camadas = [
-  {
-    icon: Bot,
-    titulo: "Automação com IA",
-    funcao: "Workflows inteligentes que aprendem",
-    beneficio: "Reduza 80% do trabalho operacional repetitivo"
-  },
-  {
-    icon: BarChart3,
-    titulo: "Análise Estratégica",
-    funcao: "Dados transformados em decisões",
-    beneficio: "Tome decisões baseadas em inteligência, não intuição"
-  },
-  {
-    icon: Brain,
-    titulo: "Engenharia de Prompt",
-    funcao: "Comandos precisos e estruturados",
-    beneficio: "Extraia o máximo de qualquer modelo de IA"
-  },
-  {
-    icon: Users,
-    titulo: "Personas Treinadas",
-    funcao: "IA que entende seu negócio",
-    beneficio: "Assistentes que falam a língua da sua empresa"
-  },
-  {
-    icon: Sparkles,
-    titulo: "Agentes Inteligentes",
-    funcao: "IA autônoma e especializada",
-    beneficio: "Sistemas que executam, não apenas respondem"
-  },
-  {
-    icon: Search,
-    titulo: "SEO + AEO",
-    funcao: "Otimização para humanos e IAs",
-    beneficio: "Apareça em buscas tradicionais e respostas de IA"
-  }
+// Import all frames
+import frame001 from "@/assets/nova-camada-frames/frame-001.jpg";
+import frame002 from "@/assets/nova-camada-frames/frame-002.jpg";
+import frame003 from "@/assets/nova-camada-frames/frame-003.jpg";
+import frame004 from "@/assets/nova-camada-frames/frame-004.jpg";
+import frame005 from "@/assets/nova-camada-frames/frame-005.jpg";
+import frame006 from "@/assets/nova-camada-frames/frame-006.jpg";
+import frame007 from "@/assets/nova-camada-frames/frame-007.jpg";
+import frame008 from "@/assets/nova-camada-frames/frame-008.jpg";
+import frame009 from "@/assets/nova-camada-frames/frame-009.jpg";
+import frame010 from "@/assets/nova-camada-frames/frame-010.jpg";
+
+const frames = [
+  frame001, frame002, frame003, frame004, frame005,
+  frame006, frame007, frame008, frame009, frame010,
 ];
 
-const NovaCamadaSection = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
+const SMOOTH_FACTOR = 0.12;
 
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+const NovaCamadaSection = () => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [currentFrame, setCurrentFrame] = useState(0);
+  const [isReady, setIsReady] = useState(false);
+  const [isPinned, setIsPinned] = useState(true);
+  const rafIdRef = useRef<number | null>(null);
+  const currentFrameRef = useRef(0);
+
+  // Preload all images
+  useEffect(() => {
+    let loadedCount = 0;
+    const totalImages = frames.length;
+    setIsReady(false);
+
+    frames.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        loadedCount++;
+        if (loadedCount === totalImages) {
+          setIsReady(true);
+        }
+      };
+    });
+  }, []);
+
+  // Scroll sync loop with lerp interpolation
+  useEffect(() => {
+    const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
+    const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor;
+
+    const tick = () => {
+      const container = scrollContainerRef.current;
+      if (!container) {
+        rafIdRef.current = window.requestAnimationFrame(tick);
+        return;
+      }
+
+      const startY = container.offsetTop;
+      const containerHeight = container.offsetHeight;
+      const maxScroll = Math.max(containerHeight - window.innerHeight, 1);
+      const localScroll = window.scrollY - startY;
+      const progress = clamp(localScroll / maxScroll, 0, 1);
+
+      // Check if we've scrolled past the container
+      const scrollEnd = startY + containerHeight - window.innerHeight;
+      setIsPinned(window.scrollY >= startY && window.scrollY < scrollEnd);
+
+      // Target frame based on scroll progress
+      const targetFrame = progress * (frames.length - 1);
+      
+      // Smooth interpolation using lerp
+      currentFrameRef.current = lerp(currentFrameRef.current, targetFrame, SMOOTH_FACTOR);
+      
+      const frameIndex = Math.round(currentFrameRef.current);
+      setCurrentFrame(clamp(frameIndex, 0, frames.length - 1));
+
+      rafIdRef.current = window.requestAnimationFrame(tick);
+    };
+
+    rafIdRef.current = window.requestAnimationFrame(tick);
+
+    return () => {
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
+    };
+  }, []);
 
   return (
-    <section id="nova-camada" ref={sectionRef} className="relative py-24 md:py-40 bg-background overflow-hidden">
+    <div
+      ref={scrollContainerRef}
+      id="nova-camada"
+      className="relative"
+      style={{ height: "200vh" }}
+    >
+      {/* Frame sequence background */}
+      <div 
+        className="pointer-events-none overflow-hidden bg-black"
+        style={{ 
+          position: isPinned ? 'fixed' : 'absolute',
+          top: isPinned ? 0 : 'auto',
+          bottom: isPinned ? 'auto' : 0,
+          left: 0,
+          right: 0,
+          width: '100vw',
+          height: '100vh',
+          opacity: isReady ? 1 : 0,
+          transition: 'opacity 0.5s ease',
+          zIndex: 0,
+        }}
+      >
+        {frames.map((src, index) => (
+          <img
+            key={index}
+            src={src}
+            alt={`Frame ${index + 1}`}
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 'auto',
+              height: '100%',
+              minWidth: '100%',
+              maxWidth: 'none',
+              objectFit: 'cover',
+              objectPosition: 'center',
+              opacity: index === currentFrame ? 1 : 0,
+              visibility: index === currentFrame ? 'visible' : 'hidden',
+            }}
+          />
+        ))}
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
-        {/* Header with dramatic reveal */}
-        <motion.div
-          className="text-center mb-20"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <motion.div 
-            className="inline-flex items-center gap-2 text-red-500 text-sm uppercase tracking-[0.3em] font-medium mb-8"
-            initial={{ scale: 0.8, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="w-8 h-px bg-gradient-to-r from-transparent to-red-500" />
-            <span>A Nova Camada</span>
-            <div className="w-8 h-px bg-gradient-to-l from-transparent to-red-500" />
-          </motion.div>
-          
-          {/* Statement principal with typing effect look */}
-          <div className="relative">
-            <motion.h2 
-              className="text-3xl md:text-6xl font-bold text-white leading-tight"
+        {/* Overlay gradient for readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
+        
+        {/* Content overlay */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center px-6 max-w-4xl">
+            {/* HUD frame corners */}
+            <div className="absolute top-8 left-8 w-16 h-16 border-t-2 border-l-2 border-red-500/50" />
+            <div className="absolute top-8 right-8 w-16 h-16 border-t-2 border-r-2 border-red-500/50" />
+            <div className="absolute bottom-8 left-8 w-16 h-16 border-b-2 border-l-2 border-red-500/50" />
+            <div className="absolute bottom-8 right-8 w-16 h-16 border-b-2 border-r-2 border-red-500/50" />
+
+            {/* Tag */}
+            <motion.div 
+              className="inline-flex items-center gap-3 mb-8"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.6 }}
             >
-              Não usamos IA como ferramenta.
-            </motion.h2>
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+              <span className="text-red-400 text-sm uppercase tracking-[0.4em] font-mono">
+                SYSTEM.INIT
+              </span>
+              <div className="w-12 h-px bg-gradient-to-r from-red-500 to-transparent" />
+            </motion.div>
+            
+            {/* Main headline */}
             <motion.h2 
-              className="text-3xl md:text-6xl font-bold mt-3"
+              className="text-4xl md:text-7xl font-bold text-white leading-tight mb-4"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
               style={{
-                background: 'linear-gradient(90deg, #ff4444, #ff0000, #ff2222)',
+                textShadow: '0 0 40px rgba(0,0,0,0.8), 0 0 80px rgba(239,68,68,0.3)'
+              }}
+            >
+              A Nova Camada
+            </motion.h2>
+            
+            {/* Subheadline */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
+              <p className="text-xl md:text-3xl text-white/90 font-light mb-3">
+                Não usamos IA como ferramenta.
+              </p>
+              <p className="text-xl md:text-3xl font-semibold" style={{
+                background: 'linear-gradient(90deg, #ff4444, #ff6666)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-              }}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              }}>
+                Criamos sistemas cognitivos.
+                <span className="inline-block w-0.5 h-6 md:h-8 bg-red-500 ml-2 align-middle animate-pulse" />
+              </p>
+            </motion.div>
+
+            {/* Description */}
+            <motion.p 
+              className="text-white/50 max-w-2xl mx-auto text-base md:text-lg mt-8 font-light"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
             >
-              Criamos sistemas cognitivos.
-              <motion.span
-                className="inline-block w-1 h-12 bg-red-500 ml-2 align-middle"
-                animate={{ opacity: [1, 0, 1] }}
-                transition={{ duration: 1, repeat: Infinity }}
+              Uma estrutura de inteligência aplicada que transforma operações, 
+              decisões e presença digital.
+            </motion.p>
+
+            {/* Scroll indicator */}
+            <motion.div 
+              className="absolute bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.5 }}
+            >
+              <span className="text-white/30 text-xs uppercase tracking-widest font-mono">Scroll</span>
+              <motion.div 
+                className="w-px h-8 bg-gradient-to-b from-red-500/50 to-transparent"
+                animate={{ scaleY: [1, 0.5, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
               />
-            </motion.h2>
+            </motion.div>
           </div>
+        </div>
 
-          <motion.p 
-            className="text-white/40 max-w-2xl mx-auto text-lg mt-8"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-          >
-            Uma estrutura de inteligência aplicada que transforma operações, 
-            decisões e presença digital.
-          </motion.p>
-        </motion.div>
+        {/* HUD elements */}
+        <div className="absolute top-8 left-8 text-left hidden md:block">
+          <div className="text-[10px] text-red-500/70 font-mono uppercase tracking-wider mb-1">
+            [CORTEX://AI_LAYER]
+          </div>
+          <div className="text-[9px] text-white/30 font-mono">
+            Frame: {String(currentFrame + 1).padStart(2, '0')}/{frames.length}
+          </div>
+        </div>
 
-        {/* Grid de camadas - Futuristic cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {camadas.map((camada, index) => {
-            const Icon = camada.icon;
-            return (
-              <motion.div
-                key={index}
-                className="relative group perspective-1000"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                {/* Card with 3D hover */}
-                <motion.div 
-                  className="relative h-full p-8 bg-gradient-to-br from-[#0f0f0f] via-[#0a0a0a] to-[#080808] border border-white/5 rounded-2xl overflow-hidden transition-all duration-500"
-                  whileHover={{ 
-                    borderColor: "rgba(239,68,68,0.4)",
-                    rotateY: 5,
-                    rotateX: -5,
-                    scale: 1.02
-                  }}
-                  style={{ transformStyle: "preserve-3d" }}
-                >
-                  {/* Holographic shine */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/0 via-red-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
-                  {/* Data stream effect */}
-                  <div className="absolute right-0 top-0 bottom-0 w-px overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="w-full h-8 bg-gradient-to-b from-transparent via-red-500/50 to-transparent animate-scan-line" />
-                  </div>
-                  
-                  {/* Status indicator */}
-                  <div className="absolute top-4 right-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-[9px] text-green-400 font-mono">ACTIVE</span>
-                    <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
-                  </div>
-                  
-                  {/* Icon container with ring */}
-                  <div className="relative z-10 w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500/20 to-red-500/5 flex items-center justify-center mb-6 border border-red-500/30 group-hover:border-red-400/60 transition-all duration-500">
-                    <Icon className="w-8 h-8 text-red-400 group-hover:text-red-300 transition-colors" />
-                    {/* Rotating ring */}
-                    <motion.div 
-                      className="absolute inset-0 rounded-2xl border border-red-500/20"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                      style={{ borderStyle: "dashed" }}
-                    />
-                  </div>
-                  
-                  {/* Título */}
-                  <h3 className="relative z-10 text-white font-bold text-xl mb-2 group-hover:text-red-100 transition-colors">
-                    {camada.titulo}
-                  </h3>
-                  
-                  {/* Função */}
-                  <p className="relative z-10 text-white/30 text-xs mb-4 uppercase tracking-widest font-mono">
-                    {camada.funcao}
-                  </p>
-                  
-                  {/* Benefício */}
-                  <p className="relative z-10 text-white/60 text-base leading-relaxed group-hover:text-white/80 transition-colors">
-                    {camada.beneficio}
-                  </p>
-
-                  {/* Bottom progress bar */}
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/5">
-                    <motion.div 
-                      className="h-full bg-gradient-to-r from-red-500 to-red-400"
-                      initial={{ width: "0%" }}
-                      whileInView={{ width: "100%" }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1.5, delay: 0.5 + index * 0.1 }}
-                    />
-                  </div>
-                </motion.div>
-              </motion.div>
-            );
-          })}
+        <div className="absolute top-8 right-8 text-right hidden md:block">
+          <div className="flex items-center gap-2 justify-end mb-1">
+            <span className="text-[10px] text-green-400 font-mono">ONLINE</span>
+            <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+          </div>
+          <div className="text-[9px] text-white/30 font-mono">
+            SYS.STATUS: ACTIVE
+          </div>
         </div>
       </div>
-
-    </section>
+    </div>
   );
 };
 
