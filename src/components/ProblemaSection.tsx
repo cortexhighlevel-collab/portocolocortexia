@@ -91,7 +91,7 @@ const ProblemaSection = () => {
         {/* Terminal Header */}
         <motion.div
           className="mb-16"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 0 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
@@ -128,7 +128,7 @@ const ProblemaSection = () => {
             {[problemas[0], problemas[1], problemas[4]].map((problema, i) => (
               <motion.div
                 key={problema.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 1, y: 0 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
@@ -164,7 +164,7 @@ const ProblemaSection = () => {
 
           {/* Coluna 2 - Card central maior */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 0 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -201,7 +201,7 @@ const ProblemaSection = () => {
             {[problemas[3], problemas[5]].map((problema, i) => (
               <motion.div
                 key={problema.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 1, y: 0 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: (i + 3) * 0.1 }}
@@ -239,7 +239,7 @@ const ProblemaSection = () => {
         {/* System status bar */}
         <motion.div
           className="mt-12 p-4 bg-zinc-950 border border-red-500/20 rounded text-xs"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 0 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.4 }}
