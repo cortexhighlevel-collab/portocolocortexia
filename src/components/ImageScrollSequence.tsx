@@ -186,6 +186,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor;
 
     const tick = () => {
+      if (!isInView) return;
+
       const container = scrollContainerRef.current;
       if (!container) {
         rafIdRef.current = window.requestAnimationFrame(tick);
@@ -207,6 +209,15 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       rafIdRef.current = window.requestAnimationFrame(tick);
     };
 
+    // Stop animation loop when hero is out of view (prevents any overlay/flicker and saves CPU)
+    if (!isInView) {
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
+      return;
+    }
+
     rafIdRef.current = window.requestAnimationFrame(tick);
 
     return () => {
@@ -215,7 +226,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
         rafIdRef.current = null;
       }
     };
-  }, [frames.length]);
+  }, [frames.length, isInView]);
 
   return (
     <div ref={scrollContainerRef} className="relative overflow-hidden">
