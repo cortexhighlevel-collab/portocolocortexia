@@ -195,11 +195,13 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       }
 
       const rect = container.getBoundingClientRect();
+      const containerHeight = container.offsetHeight;
+      const viewportHeight = window.innerHeight;
 
-      // Progress from 0 → 1 as the container scrolls out of view.
-      // This avoids creating an extra "blank" scroll area (previously 200vh + sticky).
-      const scrollRange = Math.max(rect.height, 1);
-      const progress = clamp(-rect.top / scrollRange, 0, 1);
+      // Progress based on scroll through the tall container
+      const scrollStart = -rect.top;
+      const scrollEnd = containerHeight - viewportHeight;
+      const progress = clamp(scrollStart / Math.max(scrollEnd, 1), 0, 1);
 
       const targetFrame = progress * (frames.length - 1);
       currentFrameRef.current = lerp(currentFrameRef.current, targetFrame, SMOOTH_FACTOR);
@@ -209,7 +211,6 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       rafIdRef.current = window.requestAnimationFrame(tick);
     };
 
-    // Stop animation loop when hero is out of view (prevents any overlay/flicker and saves CPU)
     if (!isInView) {
       if (rafIdRef.current) {
         cancelAnimationFrame(rafIdRef.current);
@@ -229,40 +230,43 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   }, [frames.length, isInView]);
 
   return (
-    <div ref={scrollContainerRef} className="relative overflow-hidden">
-      {/* Frames (apenas dentro do Hero, não cria tela preta extra) */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-background"
-        style={{ opacity: isReady && isInView ? 1 : 0, transition: "opacity 0.3s ease" }}
-        aria-hidden="true"
-      >
-        {frames.map((src, index) => (
-          <img
-            key={`${isMobile ? "mobile" : "desktop"}-${index}`}
-            src={src}
-            alt=""
-            decoding="async"
-            loading={index === 0 ? "eager" : "lazy"}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: "50%",
-              transform: "translateX(-50%) scale(1.1)",
-              width: isMobile ? "100%" : "auto",
-              height: "100%",
-              minWidth: isMobile ? "auto" : "100%",
-              maxWidth: "none",
-              objectFit: "cover",
-              objectPosition: "center top",
-              opacity: index === currentFrame ? 1 : 0,
-              visibility: index === currentFrame ? "visible" : "hidden",
-            }}
-          />
-        ))}
-      </div>
+    <div ref={scrollContainerRef} className="relative" style={{ height: "300vh" }}>
+      {/* Sticky container que fica fixo durante o scroll */}
+      <div className="sticky top-0 h-screen w-full overflow-hidden">
+        {/* Frames de fundo */}
+        <div
+          className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-background"
+          style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease" }}
+          aria-hidden="true"
+        >
+          {frames.map((src, index) => (
+            <img
+              key={`${isMobile ? "mobile" : "desktop"}-${index}`}
+              src={src}
+              alt=""
+              decoding="async"
+              loading={index === 0 ? "eager" : "lazy"}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: "50%",
+                transform: "translateX(-50%) scale(1.1)",
+                width: isMobile ? "100%" : "auto",
+                height: "100%",
+                minWidth: isMobile ? "auto" : "100%",
+                maxWidth: "none",
+                objectFit: "cover",
+                objectPosition: "center top",
+                opacity: index === currentFrame ? 1 : 0,
+                visibility: index === currentFrame ? "visible" : "hidden",
+              }}
+            />
+          ))}
+        </div>
 
-      {/* Overlay content */}
-      <div className="relative z-10">{children}</div>
+        {/* Overlay content (texto do hero) */}
+        <div className="relative z-10 h-full">{children}</div>
+      </div>
     </div>
   );
 };
