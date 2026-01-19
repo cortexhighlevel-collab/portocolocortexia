@@ -1,8 +1,7 @@
 import { motion } from "framer-motion";
 import { Bot, BarChart3, Brain, Users, Sparkles, Search } from "lucide-react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls, useGLTF } from "@react-three/drei";
-import { Suspense, useState } from "react";
+import { useState } from "react";
+import brainIcon from "@/assets/brain-icon.png";
 
 const camadas = [
   {
@@ -114,18 +113,6 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
   );
 };
 
-// Modelo 3D do cérebro
-const BrainModel = () => {
-  const { scene } = useGLTF("https://base44.app/api/apps/68fbd266005d90781c97f4b4/files/public/68fbd266005d90781c97f4b4/9fd96c84b_brainwithgears3dmodel.glb");
-  
-  return (
-    <primitive 
-      object={scene} 
-      scale={2.5}
-      position={[0, 0.3, 0]}
-    />
-  );
-};
 
 // Cérebro central com moldura animada
 const CentralBrain = () => {
@@ -392,29 +379,34 @@ const CentralBrain = () => {
         />
       </svg>
 
-      {/* Canvas 3D com o modelo por cima */}
-      <div className="absolute w-[180px] h-[180px] z-20">
-        <Canvas
-          camera={{ position: [0, 0, 4], fov: 50 }}
-          style={{ background: 'transparent' }}
-        >
-          <ambientLight intensity={2} />
-          <directionalLight position={[0, 0, 10]} intensity={3} color="#ffffff" />
-          <pointLight position={[5, 5, 5]} intensity={2} color="#a855f7" />
-          <pointLight position={[-5, 5, 5]} intensity={2} color="#ff2244" />
-          <pointLight position={[0, -5, 5]} intensity={2} color="#06b6d4" />
-          <hemisphereLight intensity={1.5} color="#ffffff" groundColor="#a855f7" />
-          <Suspense fallback={null}>
-            <BrainModel />
-          </Suspense>
-          <OrbitControls 
-            enableZoom={false} 
-            enablePan={false}
-            autoRotate 
-            autoRotateSpeed={2}
-          />
-        </Canvas>
-      </div>
+      {/* Imagem do cérebro com glow */}
+      <motion.div 
+        className="absolute z-20 flex items-center justify-center"
+        animate={{
+          filter: isHovered 
+            ? [
+                "drop-shadow(0 0 20px hsl(330 100% 60% / 0.8)) drop-shadow(0 0 40px hsl(280 80% 60% / 0.6))",
+                "drop-shadow(0 0 30px hsl(330 100% 65% / 0.9)) drop-shadow(0 0 60px hsl(280 80% 65% / 0.7))",
+                "drop-shadow(0 0 20px hsl(330 100% 60% / 0.8)) drop-shadow(0 0 40px hsl(280 80% 60% / 0.6))",
+              ]
+            : [
+                "drop-shadow(0 0 15px hsl(330 100% 55% / 0.5)) drop-shadow(0 0 30px hsl(280 80% 50% / 0.4))",
+                "drop-shadow(0 0 25px hsl(330 100% 60% / 0.6)) drop-shadow(0 0 50px hsl(280 80% 55% / 0.5))",
+                "drop-shadow(0 0 15px hsl(330 100% 55% / 0.5)) drop-shadow(0 0 30px hsl(280 80% 50% / 0.4))",
+              ]
+        }}
+        transition={{ duration: isHovered ? 1.5 : 3, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <motion.img 
+          src={brainIcon} 
+          alt="AI Brain" 
+          className="w-[120px] h-[120px] object-contain"
+          animate={{
+            scale: isHovered ? [1, 1.05, 1] : 1,
+          }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </motion.div>
     </div>
   );
 };
