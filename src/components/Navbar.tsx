@@ -120,7 +120,7 @@ function Navbar() {
           <div 
             className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
             style={{
-              top: '54px',
+              top: '55px',
               width: '27%',
               height: '1px',
               background: 'linear-gradient(90deg, transparent 0%, #ff2244 10%, #ff3355 30%, #ff4466 50%, #ff3355 70%, #ff2244 90%, transparent 100%)',
