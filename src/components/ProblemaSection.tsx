@@ -75,7 +75,8 @@ const CyberCard = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      // Failsafe: nunca começa invisível (o `whileInView` pode falhar em alguns cenários de scroll/sticky)
+      initial={{ opacity: 1, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
@@ -240,7 +241,8 @@ const ProblemaSection = () => {
         {/* Terminal Header */}
         <motion.div
           className="mb-16"
-          initial={{ opacity: 0, y: 20 }}
+          // Failsafe: evita o header ficar preso em opacity:0 se o observer do `whileInView` não disparar
+          initial={{ opacity: 1, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
@@ -292,7 +294,8 @@ const ProblemaSection = () => {
         {/* System status bar */}
         <motion.div
           className="mt-12 p-4 bg-zinc-950 border border-red-500/20 rounded text-xs font-mono"
-          initial={{ opacity: 0, y: 20 }}
+          // Failsafe: nunca fica invisível
+          initial={{ opacity: 1, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.4 }}
