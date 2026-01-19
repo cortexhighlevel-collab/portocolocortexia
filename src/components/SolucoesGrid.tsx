@@ -554,7 +554,7 @@ const SolucoesGrid = () => {
           <CircuitLines />
           
           {/* Cérebro central */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[53%] z-10">
             <CentralBrain />
           </div>
           
