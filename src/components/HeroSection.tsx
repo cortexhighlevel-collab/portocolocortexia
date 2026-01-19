@@ -37,7 +37,7 @@ const HeroSection = () => {
                   delay: 0.2
                 }}
               >
-                <h1 className="hero-headline uppercase font-bold italic text-white scale-[3] origin-left -translate-x-[40%]">
+                <h1 className="hero-headline uppercase font-bold italic text-white scale-[3] origin-left -translate-x-[60%]">
                   INTELIGÊNCIA<br />
                   ESTRATÉGICA<br />
                   COM IA
