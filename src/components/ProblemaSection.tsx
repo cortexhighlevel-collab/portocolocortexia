@@ -94,7 +94,7 @@ const CyberCard = ({
       
       {/* Main card container */}
       <div 
-        className={`relative bg-zinc-950/95 ${isLarge ? 'h-full min-h-[460px]' : 'min-h-[120px]'}`}
+        className={`relative bg-zinc-950/95 ${isLarge ? 'h-full min-h-[460px]' : 'min-h-[160px]'}`}
         style={{
           clipPath,
           margin: '1px',
