@@ -400,7 +400,7 @@ const CentralBrain = () => {
         <motion.img 
           src={brainIcon} 
           alt="AI Brain" 
-          className="w-[170px] h-[170px] object-contain"
+          className="w-[220px] h-[220px] object-contain"
           animate={{
             scale: isHovered ? [1, 1.05, 1] : 1,
           }}
