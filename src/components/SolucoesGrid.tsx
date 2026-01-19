@@ -55,10 +55,11 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
   
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={{ opacity: 1, scale: 1 }}
       whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true, amount: 0.1 }}
       transition={{ delay: index * 0.1, duration: 0.5 }}
-      className="relative group"
+      className="relative group z-20"
     >
       {/* Container principal com clip-path para cantos cortados */}
       <div 
@@ -362,7 +363,7 @@ const SolucoesGrid = () => {
           </div>
           
           {/* Cards posicionados */}
-          <div className="relative w-full grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-0">
+          <div className="relative w-full grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-0 z-20">
             {/* Coluna esquerda */}
             <div className="flex flex-col gap-8 lg:items-start lg:pt-0">
               <CyberCard camada={camadas[0]} index={0} />
