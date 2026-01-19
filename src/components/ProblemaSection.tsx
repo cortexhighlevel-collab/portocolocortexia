@@ -272,8 +272,8 @@ const ProblemaSection = () => {
           </div>
         </motion.div>
 
-        {/* Bento Grid - Matching reference layout exactly */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {/* Bento Grid - Card central mais fino */}
+        <div className="grid grid-cols-1 md:grid-cols-[1.2fr_0.8fr_1.2fr] gap-5">
           {/* Column 1 - 3 stacked cards */}
           <div className="flex flex-col gap-5">
             <CyberCard problema={problemas[0]} delay={0} />
@@ -281,7 +281,7 @@ const ProblemaSection = () => {
             <CyberCard problema={problemas[4]} delay={0.2} />
           </div>
 
-          {/* Column 2 - Large central card spanning full height */}
+          {/* Column 2 - Large central card (mais fino) */}
           <CyberCard problema={problemas[2]} isLarge={true} delay={0.15} />
 
           {/* Column 3 - 2 stacked cards */}
