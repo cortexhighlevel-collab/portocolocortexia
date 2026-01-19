@@ -161,7 +161,7 @@ const ConnectedCard = ({
   const delay = index * 0.15;
   
   return (
-    <div className="absolute" style={style}>
+    <div className="absolute z-30" style={style}>
       <div className={`flex items-center gap-0 ${isLeft ? 'flex-row' : 'flex-row-reverse'}`}>
         {/* Card de texto */}
         <TextCard camada={camada} delay={delay} side={side} />
@@ -458,18 +458,18 @@ const SolucoesGrid = () => {
         
         {/* Layout principal desktop */}
         <div className="relative min-h-[750px] md:min-h-[850px]">
-          {/* Linhas de circuito - visíveis apenas em desktop */}
-          <div className="hidden lg:block">
+          {/* Linhas de circuito - visíveis em desktop */}
+          <div className="hidden md:block">
             <CircuitLines />
           </div>
           
           {/* Cérebro central */}
-          <div className="flex justify-center lg:absolute lg:left-1/2 lg:top-[42%] lg:-translate-x-1/2 lg:-translate-y-1/2 z-20 mb-10 lg:mb-0">
+          <div className="flex justify-center md:absolute md:left-1/2 md:top-[42%] md:-translate-x-1/2 md:-translate-y-1/2 z-20 mb-10 md:mb-0">
             <CentralBrain />
           </div>
           
-          {/* Cards em grid para mobile/tablet */}
-          <div className="lg:hidden space-y-6 mt-8">
+          {/* Cards em grid para mobile */}
+          <div className="md:hidden space-y-6 mt-8">
             {camadas.map((camada, index) => (
               <motion.div
                 key={camada.titulo}
@@ -485,14 +485,14 @@ const SolucoesGrid = () => {
             ))}
           </div>
           
-          {/* Cards posicionados - visíveis apenas em desktop */}
-          <div className="hidden lg:block">
+          {/* Cards posicionados - visíveis em desktop */}
+          <div className="hidden md:block absolute inset-0">
             {/* Card 1 - Automação com IA (top-left) */}
             <ConnectedCard 
               camada={camadas[0]} 
               index={0} 
               side="left"
-              style={{ left: '2%', top: '12%' }}
+              style={{ left: '2%', top: '8%' }}
             />
             
             {/* Card 2 - Análise Estratégica (top-right) */}
@@ -500,7 +500,7 @@ const SolucoesGrid = () => {
               camada={camadas[1]} 
               index={1} 
               side="right"
-              style={{ right: '2%', top: '12%' }}
+              style={{ right: '2%', top: '8%' }}
             />
             
             {/* Card 3 - Personas Treinadas (mid-left) */}
@@ -508,7 +508,7 @@ const SolucoesGrid = () => {
               camada={camadas[3]} 
               index={3} 
               side="left"
-              style={{ left: '2%', top: '42%' }}
+              style={{ left: '2%', top: '40%' }}
             />
             
             {/* Card 4 - Engenharia de Prompt (mid-right) */}
@@ -516,7 +516,7 @@ const SolucoesGrid = () => {
               camada={camadas[2]} 
               index={2} 
               side="right"
-              style={{ right: '2%', top: '36%' }}
+              style={{ right: '2%', top: '34%' }}
             />
             
             {/* Card 5 - Agentes Inteligentes (bottom-center-left) */}
@@ -524,7 +524,7 @@ const SolucoesGrid = () => {
               camada={camadas[4]} 
               index={4} 
               side="left"
-              style={{ left: '18%', bottom: '8%' }}
+              style={{ left: '15%', bottom: '6%' }}
             />
             
             {/* Card 6 - SEO + AEO (bottom-right) */}
@@ -532,7 +532,7 @@ const SolucoesGrid = () => {
               camada={camadas[5]} 
               index={5} 
               side="right"
-              style={{ right: '2%', bottom: '12%' }}
+              style={{ right: '2%', bottom: '10%' }}
             />
           </div>
         </div>
