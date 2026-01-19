@@ -61,51 +61,46 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
       transition={{ delay: index * 0.1, duration: 0.5 }}
       className="relative group z-20"
     >
-      {/* Container principal com clip-path para cantos cortados */}
+      {/* Glow effect */}
+      <div className="absolute -inset-2 bg-gradient-to-r from-[#ff2244]/20 via-[#a855f7]/20 to-[#06b6d4]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      
+      {/* Container com borda gradiente usando p-px + bg-gradient */}
       <div 
-        className="relative bg-[#0a0a0f]/90 backdrop-blur-sm p-5 min-w-[280px] max-w-[320px]"
+        className="relative p-[1px] min-w-[280px] max-w-[320px] bg-gradient-to-br from-[#ff2244] via-[#a855f7] to-[#06b6d4]"
         style={{
           clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))",
         }}
       >
-        {/* Borda gradiente */}
+        {/* Fundo interno do card */}
         <div 
-          className="absolute inset-0 pointer-events-none"
+          className="relative bg-[#0a0a0f] backdrop-blur-sm p-5"
           style={{
-            clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))",
-            background: "linear-gradient(135deg, #ff2244 0%, #a855f7 50%, #06b6d4 100%)",
-            padding: "1px",
-            mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-            maskComposite: "xor",
-            WebkitMaskComposite: "xor",
+            clipPath: "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
           }}
-        />
-        
-        {/* Glow effect */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-[#ff2244]/20 via-[#a855f7]/20 to-[#06b6d4]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
-        
-        {/* Conteúdo */}
-        <div className="flex items-start gap-4">
-          {/* Texto */}
-          <div className="flex-1">
-            <h3 className="text-white font-bold text-lg mb-1">
-              {camada.titulo}
-            </h3>
-            <p className="text-[#ff6b8a] text-[10px] uppercase tracking-widest mb-2 font-mono">
-              {camada.funcao}
-            </p>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              {camada.beneficio}
-            </p>
-          </div>
-          
-          {/* Ícone com círculo */}
-          <div className="relative flex-shrink-0">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] border border-[#a855f7]/30 flex items-center justify-center">
-              <Icon className="w-7 h-7 text-[#a855f7]" />
+        >
+          {/* Conteúdo */}
+          <div className="relative z-10 flex items-start gap-4">
+            {/* Texto */}
+            <div className="flex-1">
+              <h3 className="text-white font-bold text-lg mb-1">
+                {camada.titulo}
+              </h3>
+              <p className="text-[#ff6b8a] text-[10px] uppercase tracking-widest mb-2 font-mono">
+                {camada.funcao}
+              </p>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                {camada.beneficio}
+              </p>
             </div>
-            {/* Brilho do ícone */}
-            <div className="absolute inset-0 rounded-full bg-[#a855f7]/20 blur-md -z-10" />
+            
+            {/* Ícone com círculo */}
+            <div className="relative flex-shrink-0">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] border border-[#a855f7]/30 flex items-center justify-center">
+                <Icon className="w-7 h-7 text-[#a855f7]" />
+              </div>
+              {/* Brilho do ícone */}
+              <div className="absolute inset-0 rounded-full bg-[#a855f7]/20 blur-md -z-10" />
+            </div>
           </div>
         </div>
       </div>
