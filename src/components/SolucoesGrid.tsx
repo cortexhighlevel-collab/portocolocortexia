@@ -364,33 +364,6 @@ const CentralBrain = () => {
           </g>
         ))}
 
-        {/* Brain */}
-        <g transform="translate(160, 155)" filter={isHovered ? "url(#glowStrong)" : "url(#glow)"}>
-          <ellipse cx="0" cy="0" rx="30" ry="25" fill="none" stroke="url(#brainGradient)" strokeWidth="2.5" />
-          <path d="M -26 -6 Q -12 -14, 0 -6 Q 12 2, 26 -6" fill="none" stroke="url(#brainGradient)" strokeWidth="1.8" strokeLinecap="round" />
-          <path d="M -24 8 Q -10 1, 0 8 Q 10 15, 24 8" fill="none" stroke="url(#brainGradient)" strokeWidth="1.8" strokeLinecap="round" />
-          <path d="M -18 18 Q -6 13, 0 18 Q 6 23, 18 18" fill="none" stroke="url(#brainGradient)" strokeWidth="1.4" strokeLinecap="round" />
-        </g>
-
-        {/* Gears */}
-        <motion.g 
-          transform="translate(145, 185)" 
-          animate={{ rotate: 360 }} 
-          transition={{ duration: isHovered ? 5 : 20, repeat: Infinity, ease: "linear" }} 
-          style={{ transformOrigin: "0 0" }}
-        >
-          <circle cx="0" cy="0" r="6" fill="hsl(260 20% 12%)" stroke="hsl(280 50% 45%)" strokeWidth="1.5" />
-          <circle cx="0" cy="0" r="2" fill="hsl(280 50% 55%)" />
-        </motion.g>
-        <motion.g 
-          transform="translate(175, 185)" 
-          animate={{ rotate: -360 }} 
-          transition={{ duration: isHovered ? 4 : 15, repeat: Infinity, ease: "linear" }} 
-          style={{ transformOrigin: "0 0" }}
-        >
-          <circle cx="0" cy="0" r="5" fill="hsl(260 20% 12%)" stroke="hsl(280 40% 40%)" strokeWidth="1" />
-          <circle cx="0" cy="0" r="1.5" fill="hsl(280 40% 50%)" />
-        </motion.g>
 
         {/* Connection lines */}
         <motion.line 
@@ -420,9 +393,9 @@ const CentralBrain = () => {
       </svg>
 
       {/* Canvas 3D com o modelo por cima */}
-      <div className="absolute w-[100px] h-[100px] z-20">
+      <div className="absolute w-[180px] h-[180px] z-20">
         <Canvas
-          camera={{ position: [0, 0, 5], fov: 45 }}
+          camera={{ position: [0, 0, 4], fov: 50 }}
           style={{ background: 'transparent' }}
         >
           <ambientLight intensity={2} />
