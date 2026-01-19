@@ -43,7 +43,7 @@ const HeroSection = () => {
                   COM IA
                 </h1>
 
-                <p className="hero-headline uppercase font-medium italic text-zinc-400 mt-32 scale-[1.36] origin-left -translate-x-[40%]" style={{
+                <p className="hero-headline uppercase font-medium italic text-zinc-400 mt-24 scale-[1.36] origin-left -translate-x-[40%]" style={{
                 fontSize: "0.55em",
                 letterSpacing: "0.05em"
               }}>
