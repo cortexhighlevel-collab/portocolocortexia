@@ -456,76 +456,20 @@ const SolucoesGrid = () => {
           </div>
         </motion.div>
         
-        {/* Layout principal */}
-        <div className="relative min-h-[750px] md:min-h-[850px] hidden lg:block">
-          {/* Linhas de circuito */}
-          <CircuitLines />
+        {/* Layout principal desktop */}
+        <div className="relative min-h-[750px] md:min-h-[850px]">
+          {/* Linhas de circuito - visíveis apenas em desktop */}
+          <div className="hidden lg:block">
+            <CircuitLines />
+          </div>
           
           {/* Cérebro central */}
-          <div className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 z-20">
+          <div className="flex justify-center lg:absolute lg:left-1/2 lg:top-[42%] lg:-translate-x-1/2 lg:-translate-y-1/2 z-20 mb-10 lg:mb-0">
             <CentralBrain />
           </div>
           
-          {/* Cards posicionados - Card circular + Card de texto */}
-          
-          {/* Card 1 - Automação com IA (top-left) */}
-          <ConnectedCard 
-            camada={camadas[0]} 
-            index={0} 
-            side="left"
-            style={{ left: '2%', top: '12%' }}
-          />
-          
-          {/* Card 2 - Análise Estratégica (top-right) */}
-          <ConnectedCard 
-            camada={camadas[1]} 
-            index={1} 
-            side="right"
-            style={{ right: '2%', top: '12%' }}
-          />
-          
-          {/* Card 3 - Personas Treinadas (mid-left) */}
-          <ConnectedCard 
-            camada={camadas[3]} 
-            index={3} 
-            side="left"
-            style={{ left: '2%', top: '42%' }}
-          />
-          
-          {/* Card 4 - Engenharia de Prompt (mid-right) */}
-          <ConnectedCard 
-            camada={camadas[2]} 
-            index={2} 
-            side="right"
-            style={{ right: '2%', top: '36%' }}
-          />
-          
-          {/* Card 5 - Agentes Inteligentes (bottom-center-left) */}
-          <ConnectedCard 
-            camada={camadas[4]} 
-            index={4} 
-            side="left"
-            style={{ left: '18%', bottom: '8%' }}
-          />
-          
-          {/* Card 6 - SEO + AEO (bottom-right) */}
-          <ConnectedCard 
-            camada={camadas[5]} 
-            index={5} 
-            side="right"
-            style={{ right: '2%', bottom: '12%' }}
-          />
-        </div>
-        
-        {/* Mobile layout - cards em grid */}
-        <div className="lg:hidden">
-          {/* Cérebro central mobile */}
-          <div className="flex justify-center mb-10">
-            <CentralBrain />
-          </div>
-          
-          {/* Cards em grid para mobile */}
-          <div className="space-y-6">
+          {/* Cards em grid para mobile/tablet */}
+          <div className="lg:hidden space-y-6 mt-8">
             {camadas.map((camada, index) => (
               <motion.div
                 key={camada.titulo}
@@ -539,6 +483,57 @@ const SolucoesGrid = () => {
                 <TextCard camada={camada} delay={0} side="left" />
               </motion.div>
             ))}
+          </div>
+          
+          {/* Cards posicionados - visíveis apenas em desktop */}
+          <div className="hidden lg:block">
+            {/* Card 1 - Automação com IA (top-left) */}
+            <ConnectedCard 
+              camada={camadas[0]} 
+              index={0} 
+              side="left"
+              style={{ left: '2%', top: '12%' }}
+            />
+            
+            {/* Card 2 - Análise Estratégica (top-right) */}
+            <ConnectedCard 
+              camada={camadas[1]} 
+              index={1} 
+              side="right"
+              style={{ right: '2%', top: '12%' }}
+            />
+            
+            {/* Card 3 - Personas Treinadas (mid-left) */}
+            <ConnectedCard 
+              camada={camadas[3]} 
+              index={3} 
+              side="left"
+              style={{ left: '2%', top: '42%' }}
+            />
+            
+            {/* Card 4 - Engenharia de Prompt (mid-right) */}
+            <ConnectedCard 
+              camada={camadas[2]} 
+              index={2} 
+              side="right"
+              style={{ right: '2%', top: '36%' }}
+            />
+            
+            {/* Card 5 - Agentes Inteligentes (bottom-center-left) */}
+            <ConnectedCard 
+              camada={camadas[4]} 
+              index={4} 
+              side="left"
+              style={{ left: '18%', bottom: '8%' }}
+            />
+            
+            {/* Card 6 - SEO + AEO (bottom-right) */}
+            <ConnectedCard 
+              camada={camadas[5]} 
+              index={5} 
+              side="right"
+              style={{ right: '2%', bottom: '12%' }}
+            />
           </div>
         </div>
       </div>
