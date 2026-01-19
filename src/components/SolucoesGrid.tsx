@@ -311,18 +311,7 @@ const BorderCircuits = () => (
 
 const SolucoesGrid = () => {
   return (
-    <section className="relative bg-[#050508] py-24 md:py-32 overflow-hidden">
-      {/* Background pattern */}
-      <div 
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `
-            linear-gradient(90deg, #a855f7 1px, transparent 1px),
-            linear-gradient(180deg, #a855f7 1px, transparent 1px)
-          `,
-          backgroundSize: '60px 60px',
-        }}
-      />
+    <section className="relative bg-black py-24 md:py-32 overflow-hidden">
       
       {/* Circuitos de borda */}
       <BorderCircuits />
