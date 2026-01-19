@@ -22,16 +22,21 @@ const HeroSection = () => {
         <div className="hero-content">
           <div className="hero-content-inner">
             <div className="hero-top-content">
-              <motion.div initial={{
-              opacity: 0,
-              y: 30
-            }} animate={{
-              opacity: 1,
-              y: 0
-            }} transition={{
-              duration: 0.8,
-              delay: 0.2
-            }}>
+              <motion.div 
+                className="scale-[1.7] origin-left"
+                initial={{
+                  opacity: 0,
+                  y: 30
+                }} 
+                animate={{
+                  opacity: 1,
+                  y: 0
+                }} 
+                transition={{
+                  duration: 0.8,
+                  delay: 0.2
+                }}
+              >
                 <h1 className="hero-headline uppercase font-bold italic text-white" style={{
                 textShadow: "0 0 10px rgba(255, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.6), 0 0 40px rgba(255, 0, 0, 0.4), 0 0 60px rgba(255, 0, 0, 0.3)"
               }}>
