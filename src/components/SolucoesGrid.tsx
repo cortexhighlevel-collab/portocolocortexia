@@ -208,27 +208,16 @@ const CentralBrain = () => {
         }}
       />
 
-      {/* Ring 5 - inner with pink glow */}
-      <motion.div
+      {/* Ring 5 - inner solid gray */}
+      <div
         className="absolute w-[125px] h-[125px] rounded-full"
         style={{
           background: "linear-gradient(180deg, hsl(220 15% 14%) 0%, hsl(220 12% 8%) 100%)",
-          border: "2px solid hsl(330 70% 40%)",
+          boxShadow: `
+            inset 0 3px 8px hsl(0 0% 0% / 0.6),
+            inset 0 -4px 10px hsl(0 0% 0% / 0.8)
+          `,
         }}
-        animate={{
-          boxShadow: isHovered 
-            ? [
-                "inset 0 3px 10px hsl(330 60% 45% / 0.6), inset 0 -4px 10px hsl(0 0% 0% / 0.8), 0 0 50px hsl(330 80% 55% / 0.5), 0 0 100px hsl(330 80% 50% / 0.3)",
-                "inset 0 3px 15px hsl(330 60% 50% / 0.7), inset 0 -4px 10px hsl(0 0% 0% / 0.8), 0 0 70px hsl(330 80% 60% / 0.6), 0 0 120px hsl(330 80% 55% / 0.4)",
-                "inset 0 3px 10px hsl(330 60% 45% / 0.6), inset 0 -4px 10px hsl(0 0% 0% / 0.8), 0 0 50px hsl(330 80% 55% / 0.5), 0 0 100px hsl(330 80% 50% / 0.3)",
-              ]
-            : [
-                "inset 0 3px 8px hsl(330 60% 35% / 0.4), inset 0 -4px 10px hsl(0 0% 0% / 0.8), 0 0 30px hsl(330 80% 45% / 0.3), 0 0 60px hsl(330 80% 40% / 0.15)",
-                "inset 0 3px 10px hsl(330 60% 40% / 0.5), inset 0 -4px 10px hsl(0 0% 0% / 0.8), 0 0 40px hsl(330 80% 50% / 0.4), 0 0 80px hsl(330 80% 45% / 0.2)",
-                "inset 0 3px 8px hsl(330 60% 35% / 0.4), inset 0 -4px 10px hsl(0 0% 0% / 0.8), 0 0 30px hsl(330 80% 45% / 0.3), 0 0 60px hsl(330 80% 40% / 0.15)",
-              ]
-        }}
-        transition={{ duration: isHovered ? 1.5 : 3, repeat: Infinity, ease: "easeInOut" }}
       />
 
       {/* SVG content */}
@@ -380,33 +369,14 @@ const CentralBrain = () => {
       </svg>
 
       {/* Imagem do cérebro com glow */}
-      <motion.div 
-        className="absolute z-20 flex items-center justify-center"
-        animate={{
-          filter: isHovered 
-            ? [
-                "drop-shadow(0 0 20px hsl(330 100% 60% / 0.8)) drop-shadow(0 0 40px hsl(280 80% 60% / 0.6))",
-                "drop-shadow(0 0 30px hsl(330 100% 65% / 0.9)) drop-shadow(0 0 60px hsl(280 80% 65% / 0.7))",
-                "drop-shadow(0 0 20px hsl(330 100% 60% / 0.8)) drop-shadow(0 0 40px hsl(280 80% 60% / 0.6))",
-              ]
-            : [
-                "drop-shadow(0 0 15px hsl(330 100% 55% / 0.5)) drop-shadow(0 0 30px hsl(280 80% 50% / 0.4))",
-                "drop-shadow(0 0 25px hsl(330 100% 60% / 0.6)) drop-shadow(0 0 50px hsl(280 80% 55% / 0.5))",
-                "drop-shadow(0 0 15px hsl(330 100% 55% / 0.5)) drop-shadow(0 0 30px hsl(280 80% 50% / 0.4))",
-              ]
-        }}
-        transition={{ duration: isHovered ? 1.5 : 3, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <motion.img 
+      {/* Imagem do cérebro sem glow */}
+      <div className="absolute z-20 flex items-center justify-center">
+        <img 
           src={brainIcon} 
           alt="AI Brain" 
           className="w-[280px] h-[280px] object-contain"
-          animate={{
-            scale: isHovered ? [1, 1.05, 1] : 1,
-          }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         />
-      </motion.div>
+      </div>
     </div>
   );
 };
