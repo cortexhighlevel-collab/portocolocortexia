@@ -1,5 +1,8 @@
 import { motion } from "framer-motion";
 import { Bot, BarChart3, Brain, Users, Sparkles, Search } from "lucide-react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, useGLTF } from "@react-three/drei";
+import { Suspense } from "react";
 
 const camadas = [
   {
@@ -115,10 +118,23 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
   );
 };
 
-// Cérebro central com anéis
+// Modelo 3D do cérebro
+const BrainModel = () => {
+  const { scene } = useGLTF("https://base44.app/api/apps/68fbd266005d90781c97f4b4/files/public/68fbd266005d90781c97f4b4/9fd96c84b_brainwithgears3dmodel.glb");
+  
+  return (
+    <primitive 
+      object={scene} 
+      scale={2.5}
+      position={[0, -0.5, 0]}
+    />
+  );
+};
+
+// Cérebro central com modelo 3D
 const CentralBrain = () => (
   <div className="relative w-64 h-64 md:w-80 md:h-80">
-    {/* Anéis externos */}
+    {/* Anéis externos animados */}
     <motion.div 
       className="absolute inset-0 rounded-full border border-[#ff2244]/30"
       animate={{ rotate: 360 }}
@@ -145,24 +161,30 @@ const CentralBrain = () => (
       <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-[#06b6d4] shadow-[0_0_10px_#06b6d4]" />
     </motion.div>
     
-    {/* Cérebro interno */}
-    <div className="absolute inset-12 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] border border-[#a855f7]/20 flex items-center justify-center overflow-hidden">
-      {/* Glow interno */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#a855f7]/20 via-transparent to-[#ff2244]/10" />
-      
-      {/* Ícone de cérebro */}
-      <Brain className="w-16 h-16 md:w-20 md:h-20 text-[#d946ef] relative z-10" />
-      
-      {/* Pulso */}
-      <motion.div 
-        className="absolute inset-0 rounded-full bg-[#a855f7]/10"
-        animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0, 0.3] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      />
+    {/* Canvas 3D com o modelo */}
+    <div className="absolute inset-12 rounded-full overflow-hidden">
+      <Canvas
+        camera={{ position: [0, 0, 5], fov: 45 }}
+        style={{ background: 'transparent' }}
+      >
+        <ambientLight intensity={0.5} />
+        <pointLight position={[10, 10, 10]} intensity={1} color="#a855f7" />
+        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#ff2244" />
+        <spotLight position={[0, 10, 0]} intensity={0.8} color="#06b6d4" />
+        <Suspense fallback={null}>
+          <BrainModel />
+        </Suspense>
+        <OrbitControls 
+          enableZoom={false} 
+          enablePan={false}
+          autoRotate 
+          autoRotateSpeed={2}
+        />
+      </Canvas>
     </div>
     
     {/* Glow exterior */}
-    <div className="absolute inset-0 rounded-full bg-[#a855f7]/5 blur-3xl" />
+    <div className="absolute inset-0 rounded-full bg-[#a855f7]/10 blur-3xl pointer-events-none" />
   </div>
 );
 
