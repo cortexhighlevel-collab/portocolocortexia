@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Bot, BarChart3, Brain, Users, Sparkles, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import SolucoesGrid from "./SolucoesGrid";
 
 // Frames (lado esquerdo do card)
 import frame001 from "@/assets/nova-camada-frames/frame-001.jpg";
@@ -257,49 +258,8 @@ const NovaCamadaSection = () => {
           </div>
         </div>
 
-      {/* Conteúdo que você pediu para voltar (cards/grid) */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-24 md:py-40">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {camadas.map((camada, index) => {
-            const Icon = camada.icon;
-            return (
-              <motion.div
-                key={index}
-                className="relative group"
-              >
-                <motion.div
-                  className="relative h-full p-8 bg-card border border-border rounded-2xl overflow-hidden transition-all duration-500"
-                  whileHover={{ rotateY: 5, rotateX: -5, scale: 1.02 }}
-                  style={{ transformStyle: "preserve-3d" }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-foreground/0 via-foreground/5 to-foreground/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                  <div className="absolute top-4 right-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-[9px] text-foreground/60 font-mono">ACTIVE</span>
-                    <div className="w-1.5 h-1.5 bg-foreground/60 rounded-full animate-pulse" />
-                  </div>
-
-                  <div className="relative z-10 w-16 h-16 rounded-2xl bg-background flex items-center justify-center mb-6 border border-border">
-                    <Icon className="w-8 h-8 text-foreground/80" />
-                  </div>
-
-                  <h3 className="relative z-10 text-foreground font-bold text-xl mb-2">
-                    {camada.titulo}
-                  </h3>
-
-                  <p className="relative z-10 text-foreground/40 text-xs mb-4 uppercase tracking-widest font-mono">
-                    {camada.funcao}
-                  </p>
-
-                  <p className="relative z-10 text-foreground/70 text-base leading-relaxed">
-                    {camada.beneficio}
-                  </p>
-                </motion.div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
+      {/* Seção Soluções com layout cyberpunk */}
+      <SolucoesGrid />
     </section>
   );
 };
