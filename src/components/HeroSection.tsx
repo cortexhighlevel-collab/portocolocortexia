@@ -1,8 +1,23 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import ImageScrollSequence from "./ImageScrollSequence";
+import { useEffect, useState } from "react";
 
 const HeroSection = () => {
+  const fullText = "Sistemas cognitivos para empresas que querem dominar a era da IA. Não ferramentas. Inteligência aplicada.";
+  const [displayedText, setDisplayedText] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (currentIndex < fullText.length) {
+      const timeout = setTimeout(() => {
+        setDisplayedText(prev => prev + fullText[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, 35);
+      return () => clearTimeout(timeout);
+    }
+  }, [currentIndex, fullText]);
+
   return (
     <ImageScrollSequence>
       <section className="hero-section" style={{ position: "relative" }}>
@@ -33,18 +48,51 @@ const HeroSection = () => {
                   AUTOMAÇÃO • ANÁLISE • AEO • SEO<br />
                   AGENTES DE IA • ENGENHARIA DE PROMPT
                 </p>
-
-                <motion.p
-                  className="text-white/60 text-sm mt-6 tracking-wide max-w-md"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.6 }}
-                >
-                  Sistemas cognitivos para empresas que querem dominar a era da IA.
-                  Não ferramentas. Inteligência aplicada.
-                </motion.p>
               </motion.div>
             </div>
+
+            {/* Terminal code editor - positioned to the right */}
+            <motion.div
+              className="absolute right-4 md:right-8 lg:right-16 top-1/2 -translate-y-1/2 w-[320px] md:w-[400px] lg:w-[480px]"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+            >
+              <div className="bg-zinc-950/95 backdrop-blur-sm border border-red-500/30 rounded-lg overflow-hidden shadow-[0_0_30px_rgba(255,0,0,0.15)]">
+                {/* Terminal header */}
+                <div className="flex items-center gap-2 px-4 py-2 bg-zinc-900/80 border-b border-red-500/20">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+                  </div>
+                  <span className="text-xs text-white/50 font-mono ml-2">cortex_vision.tsx</span>
+                </div>
+                
+                {/* Code content */}
+                <div className="p-4 font-mono text-sm">
+                  <div className="text-zinc-500 text-xs mb-2">// CORTEX AI SYSTEMS</div>
+                  <div className="text-red-400 text-xs mb-3">
+                    <span className="text-purple-400">const</span>{" "}
+                    <span className="text-blue-400">mission</span>{" "}
+                    <span className="text-white">=</span>{" "}
+                    <span className="text-green-400">{`"`}</span>
+                  </div>
+                  <div className="text-green-400/90 text-xs leading-relaxed pl-4 border-l-2 border-red-500/40">
+                    {displayedText}
+                    <span className="inline-block w-2 h-4 bg-red-500 ml-0.5 animate-pulse"></span>
+                  </div>
+                  <div className="text-green-400 text-xs mt-3">
+                    <span>{`";`}</span>
+                  </div>
+                  <div className="text-zinc-600 text-xs mt-4">
+                    <span className="text-purple-400">export</span>{" "}
+                    <span className="text-orange-400">default</span>{" "}
+                    <span className="text-blue-400">mission</span>;
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
 
