@@ -212,7 +212,7 @@ const CentralBrain = () => {
       <motion.div
         className="absolute w-[125px] h-[125px] rounded-full"
         style={{
-          background: "linear-gradient(180deg, hsl(320 25% 15%) 0%, hsl(280 20% 8%) 100%)",
+          background: "linear-gradient(180deg, hsl(220 15% 14%) 0%, hsl(220 12% 8%) 100%)",
           border: "2px solid hsl(330 70% 40%)",
         }}
         animate={{
@@ -400,7 +400,7 @@ const CentralBrain = () => {
         <motion.img 
           src={brainIcon} 
           alt="AI Brain" 
-          className="w-[220px] h-[220px] object-contain"
+          className="w-[280px] h-[280px] object-contain"
           animate={{
             scale: isHovered ? [1, 1.05, 1] : 1,
           }}
