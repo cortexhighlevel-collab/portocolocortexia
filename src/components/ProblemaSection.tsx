@@ -47,10 +47,12 @@ const TypingText = ({ text, delay = 0 }: { text: string; delay?: number }) => {
 const CyberCard = ({ 
   problema, 
   isLarge = false,
+  isMedium = false,
   delay = 0 
 }: { 
   problema: typeof problemas[0]; 
   isLarge?: boolean;
+  isMedium?: boolean;
   delay?: number;
 }) => {
   const getSeverityStyle = (severity: string) => {
@@ -94,7 +96,7 @@ const CyberCard = ({
       
       {/* Main card container */}
       <div 
-        className={`relative bg-zinc-950/95 ${isLarge ? 'h-full min-h-[460px]' : 'min-h-[160px]'}`}
+        className={`relative bg-zinc-950/95 ${isLarge ? 'h-full min-h-[460px]' : isMedium ? 'min-h-[220px]' : 'min-h-[160px]'}`}
         style={{
           clipPath,
           margin: '1px',
@@ -286,7 +288,7 @@ const ProblemaSection = () => {
 
           {/* Column 3 - 2 stacked cards */}
           <div className="flex flex-col gap-5">
-            <CyberCard problema={problemas[3]} delay={0.2} />
+            <CyberCard problema={problemas[3]} isMedium={true} delay={0.2} />
             <CyberCard problema={problemas[5]} delay={0.3} />
           </div>
         </div>
