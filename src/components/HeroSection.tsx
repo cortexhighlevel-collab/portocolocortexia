@@ -45,7 +45,7 @@ const HeroSection = () => {
                   COM IA
                 </h1>
 
-                <p className="hero-headline uppercase font-medium italic text-white/90 mt-4 scale-[1.7] origin-left translate-y-[40%]" style={{
+                <p className="hero-headline uppercase font-medium italic text-white/90 mt-4 scale-[1.7] origin-left translate-y-[80%]" style={{
                 fontSize: "0.55em",
                 letterSpacing: "0.05em"
               }}>
