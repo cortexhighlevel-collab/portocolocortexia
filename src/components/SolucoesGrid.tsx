@@ -1,139 +1,62 @@
 import { motion } from "framer-motion";
-import { Bot, BarChart3, Brain, Users, Sparkles, Search, Cog, TrendingUp, MessageSquare, Globe } from "lucide-react";
+import { Brain, Cog } from "lucide-react";
+
+// Imagens geradas para cada card
+import automacaoImg from "@/assets/solucoes/automacao-ia.png";
+import analiseImg from "@/assets/solucoes/analise-estrategica.png";
+import promptImg from "@/assets/solucoes/engenharia-prompt.png";
+import personasImg from "@/assets/solucoes/personas-treinadas.png";
+import agentesImg from "@/assets/solucoes/agentes-inteligentes.png";
+import seoImg from "@/assets/solucoes/seo-aeo.png";
 
 const camadas = [
   {
-    icon: Bot,
     titulo: "Automação com IA",
     funcao: "WORKFLOWS INTELIGENTES QUE APRENDEM",
     beneficio: "Reduza 80% do trabalho operacional repetitivo",
-    position: "top-left",
-    illustration: "robot",
+    image: automacaoImg,
   },
   {
-    icon: BarChart3,
     titulo: "Análise Estratégica",
     funcao: "DADOS TRANSFORMADOS EM DECISÕES",
     beneficio: "Tome decisões baseadas em inteligência, não intuição",
-    position: "top-right",
-    illustration: "analytics",
+    image: analiseImg,
   },
   {
-    icon: Brain,
     titulo: "Engenharia de Prompt",
     funcao: "COMANDOS PRECISOS E ESTRUTURADOS",
     beneficio: "Extraia o máximo de qualquer modelo de IA",
-    position: "mid-right",
-    illustration: "code",
+    image: promptImg,
   },
   {
-    icon: Users,
     titulo: "Personas Treinadas",
     funcao: "IA QUE ENTENDE SEU NEGÓCIO",
     beneficio: "Assistentes que falam a língua da sua empresa",
-    position: "mid-left",
-    illustration: "personas",
+    image: personasImg,
   },
   {
-    icon: Sparkles,
     titulo: "Agentes Inteligentes",
     funcao: "IA AUTÔNOMA E ESPECIALIZADA",
     beneficio: "Sistemas que executam, não apenas respondem",
-    position: "bottom-center",
-    illustration: "ai-globe",
+    image: agentesImg,
   },
   {
-    icon: Search,
     titulo: "SEO + AEO",
     funcao: "OTIMIZAÇÃO PARA HUMANOS E IAS",
     beneficio: "Apareça em buscas tradicionais e respostas de IA",
-    position: "bottom-right",
-    illustration: "browser",
+    image: seoImg,
   },
 ];
 
-// Ilustração circular para cada card
-const CardIllustration = ({ type }: { type: string }) => {
-  const getIllustration = () => {
-    switch (type) {
-      case "robot":
-        return (
-          <div className="relative w-full h-full flex items-center justify-center">
-            <Bot className="w-10 h-10 text-[#06b6d4]" />
-            <Cog className="w-5 h-5 text-[#f59e0b] absolute top-2 right-2 animate-spin" style={{ animationDuration: '4s' }} />
-            <Cog className="w-4 h-4 text-[#f59e0b] absolute bottom-3 left-3 animate-spin" style={{ animationDuration: '3s', animationDirection: 'reverse' }} />
-          </div>
-        );
-      case "analytics":
-        return (
-          <div className="relative w-full h-full flex items-center justify-center">
-            <TrendingUp className="w-10 h-10 text-[#10b981]" />
-            <BarChart3 className="w-6 h-6 text-[#a855f7] absolute bottom-2 right-2" />
-          </div>
-        );
-      case "code":
-        return (
-          <div className="relative w-full h-full flex items-center justify-center bg-[#0a0a12] rounded-lg overflow-hidden p-2">
-            <div className="text-[8px] font-mono text-left w-full space-y-0.5">
-              <div className="text-[#ff6b8a]">{"<prompt>"}</div>
-              <div className="text-[#06b6d4] pl-2">context: "..."</div>
-              <div className="text-[#f59e0b] pl-2">role: "expert"</div>
-              <div className="text-[#ff6b8a]">{"</prompt>"}</div>
-            </div>
-          </div>
-        );
-      case "personas":
-        return (
-          <div className="relative w-full h-full flex items-center justify-center">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Users className="w-8 h-8 text-[#a855f7]" />
-            </div>
-            <div className="absolute w-4 h-4 rounded-full bg-[#06b6d4] top-1 left-1/2 -translate-x-1/2 flex items-center justify-center">
-              <div className="w-2 h-2 rounded-full bg-[#0a0a0f]" />
-            </div>
-            <div className="absolute w-3 h-3 rounded-full bg-[#10b981] bottom-2 left-2 flex items-center justify-center">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#0a0a0f]" />
-            </div>
-            <div className="absolute w-3 h-3 rounded-full bg-[#f59e0b] bottom-2 right-2 flex items-center justify-center">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#0a0a0f]" />
-            </div>
-          </div>
-        );
-      case "ai-globe":
-        return (
-          <div className="relative w-full h-full flex items-center justify-center">
-            <Globe className="w-10 h-10 text-[#06b6d4]" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-[#a855f7] font-bold text-lg">AI</span>
-            </div>
-            <motion.div
-              className="absolute inset-0 rounded-full border border-[#a855f7]/30"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-            />
-          </div>
-        );
-      case "browser":
-        return (
-          <div className="relative w-full h-full flex flex-col bg-[#0a0a12] rounded-lg overflow-hidden">
-            <div className="flex items-center gap-1 px-2 py-1 bg-[#1a1a2e] border-b border-[#2a2a3e]">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#ff5f56]" />
-              <div className="w-1.5 h-1.5 rounded-full bg-[#ffbd2e]" />
-              <div className="w-1.5 h-1.5 rounded-full bg-[#27ca40]" />
-            </div>
-            <div className="flex-1 p-2 flex items-center justify-center">
-              <div className="text-[7px] font-mono text-[#06b6d4]">Google</div>
-            </div>
-          </div>
-        );
-      default:
-        return <Brain className="w-10 h-10 text-[#a855f7]" />;
-    }
-  };
-
+// Ilustração circular com imagem
+const CardIllustration = ({ image }: { image: string }) => {
   return (
     <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] border border-[#a855f7]/40 flex items-center justify-center overflow-hidden flex-shrink-0">
-      {getIllustration()}
+      <img 
+        src={image} 
+        alt="Ilustração" 
+        className="w-full h-full object-cover"
+      />
       {/* Glow */}
       <div className="absolute inset-0 rounded-full bg-gradient-to-t from-[#a855f7]/20 to-transparent pointer-events-none" />
       {/* Ring */}
@@ -182,7 +105,7 @@ const CyberCard = ({ camada, index, reverse = false }: { camada: typeof camadas[
         {/* Conteúdo */}
         <div className={`flex items-center gap-4 ${reverse ? 'flex-row-reverse' : ''}`}>
           {/* Ilustração */}
-          <CardIllustration type={camada.illustration} />
+          <CardIllustration image={camada.image} />
           
           {/* Texto */}
           <div className={`flex-1 ${reverse ? 'text-right' : ''}`}>
