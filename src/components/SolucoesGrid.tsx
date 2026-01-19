@@ -48,49 +48,75 @@ const camadas = [
   },
 ];
 
-// Ilustração circular com imagem
-const CardIllustration = ({ image }: { image: string }) => {
-  return (
-    <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] border border-[#a855f7]/40 flex items-center justify-center overflow-hidden flex-shrink-0">
-      <img 
-        src={image} 
-        alt="Ilustração" 
-        className="w-full h-full object-cover"
-      />
-      {/* Glow */}
-      <div className="absolute inset-0 rounded-full bg-gradient-to-t from-[#a855f7]/20 to-transparent pointer-events-none" />
-      {/* Ring */}
-      <div className="absolute inset-0 rounded-full border-2 border-[#ff2244]/20" />
-    </div>
-  );
-};
-
-// Card com cantos cortados estilo cyberpunk
-const CyberCard = ({ camada, index, reverse = false }: { camada: typeof camadas[0]; index: number; reverse?: boolean }) => {
+// Card circular com imagem (conectado à linha)
+const CircularImageCard = ({ image, delay }: { image: string; delay: number }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9, x: reverse ? 50 : -50 }}
-      whileInView={{ opacity: 1, scale: 1, x: 0 }}
-      transition={{ delay: index * 0.1, duration: 0.5 }}
+      initial={{ opacity: 0, scale: 0.5 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      transition={{ delay, duration: 0.5 }}
       viewport={{ once: true }}
       className="relative group"
     >
-      {/* Container principal com clip-path para cantos cortados */}
+      {/* Ring externo animado */}
+      <motion.div 
+        className="absolute -inset-1 rounded-full border-2 border-[#ff2244]/50"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+      />
+      
+      {/* Container principal circular */}
+      <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-[#a855f7]/60 bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f]">
+        <img 
+          src={image} 
+          alt="Ilustração" 
+          className="w-full h-full object-cover"
+        />
+        
+        {/* Overlay com glow */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#a855f7]/20 via-transparent to-[#ff2244]/10 pointer-events-none" />
+        
+        {/* Borda com gradiente */}
+        <div className="absolute inset-0 rounded-full border border-[#06b6d4]/40" />
+      </div>
+      
+      {/* Glow effect */}
+      <div className="absolute inset-0 rounded-full bg-[#a855f7]/30 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
+      
+      {/* Ponto de conexão brilhante */}
+      <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 rounded-full bg-[#ff2244] shadow-[0_0_8px_#ff2244,0_0_16px_#ff2244/50]" />
+    </motion.div>
+  );
+};
+
+// Card de texto com cantos cortados
+const TextCard = ({ camada, delay, side }: { camada: typeof camadas[0]; delay: number; side: 'left' | 'right' }) => {
+  const isLeft = side === 'left';
+  
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ delay: delay + 0.1, duration: 0.5 }}
+      viewport={{ once: true }}
+      className="relative group"
+    >
+      {/* Container principal com clip-path */}
       <div 
-        className="relative bg-[#0a0a0f]/95 backdrop-blur-sm p-5"
+        className="relative bg-[#0a0a0f]/95 backdrop-blur-sm px-4 py-3 md:px-5 md:py-4 max-w-[220px] md:max-w-[280px]"
         style={{
-          clipPath: reverse 
-            ? "polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)"
-            : "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))",
+          clipPath: isLeft 
+            ? "polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px))"
+            : "polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)",
         }}
       >
         {/* Borda gradiente */}
         <div 
           className="absolute inset-0 pointer-events-none"
           style={{
-            clipPath: reverse 
-              ? "polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)"
-              : "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))",
+            clipPath: isLeft 
+              ? "polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px))"
+              : "polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)",
             background: "linear-gradient(135deg, #ff2244 0%, #a855f7 50%, #06b6d4 100%)",
             padding: "1px",
             mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
@@ -99,44 +125,66 @@ const CyberCard = ({ camada, index, reverse = false }: { camada: typeof camadas[
           }}
         />
         
-        {/* Glow effect */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-[#ff2244]/20 via-[#a855f7]/20 to-[#06b6d4]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
-        
         {/* Conteúdo */}
-        <div className={`flex items-center gap-4 ${reverse ? 'flex-row-reverse' : ''}`}>
-          {/* Ilustração */}
-          <CardIllustration image={camada.image} />
-          
-          {/* Texto */}
-          <div className={`flex-1 ${reverse ? 'text-right' : ''}`}>
-            <h3 className="text-white font-bold text-lg mb-1">
-              {camada.titulo}
-            </h3>
-            <p className="text-[#ff6b8a] text-[9px] uppercase tracking-widest mb-2 font-mono">
-              {camada.funcao}
-            </p>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              {camada.beneficio}
-            </p>
-          </div>
+        <div className={isLeft ? 'text-left' : 'text-right'}>
+          <h3 className="text-white font-bold text-sm md:text-base mb-0.5">
+            {camada.titulo}
+          </h3>
+          <p className="text-[#ff6b8a] text-[8px] md:text-[9px] uppercase tracking-widest mb-1.5 font-mono">
+            {camada.funcao}
+          </p>
+          <p className="text-gray-400 text-xs md:text-sm leading-relaxed">
+            {camada.beneficio}
+          </p>
         </div>
       </div>
       
-      {/* Ponto de conexão com linha */}
-      <div className={`absolute top-1/2 -translate-y-1/2 ${reverse ? '-left-8' : '-right-8'} flex items-center ${reverse ? 'flex-row-reverse' : ''}`}>
-        <div className={`w-8 h-px ${reverse ? 'bg-gradient-to-l' : 'bg-gradient-to-r'} from-[#ff2244] to-[#ff2244]/0`} />
-        <div className="w-3 h-3 rounded-full bg-[#ff2244] shadow-[0_0_10px_#ff2244,0_0_20px_#ff2244/50]" />
-      </div>
+      {/* Glow effect */}
+      <div className="absolute -inset-2 bg-gradient-to-r from-[#ff2244]/10 via-[#a855f7]/10 to-[#06b6d4]/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
     </motion.div>
+  );
+};
+
+// Componente completo: Card circular + linha + Card de texto
+const ConnectedCard = ({ 
+  camada, 
+  index, 
+  side,
+  style 
+}: { 
+  camada: typeof camadas[0]; 
+  index: number; 
+  side: 'left' | 'right';
+  style: React.CSSProperties;
+}) => {
+  const isLeft = side === 'left';
+  const delay = index * 0.15;
+  
+  return (
+    <div className="absolute" style={style}>
+      <div className={`flex items-center gap-0 ${isLeft ? 'flex-row' : 'flex-row-reverse'}`}>
+        {/* Card de texto */}
+        <TextCard camada={camada} delay={delay} side={side} />
+        
+        {/* Linha conectora */}
+        <div className={`relative w-6 md:w-10 h-0.5 ${isLeft ? 'bg-gradient-to-r' : 'bg-gradient-to-l'} from-[#ff2244] via-[#ff2244] to-[#ff2244]/40`}>
+          {/* Ponto no início da linha */}
+          <div className={`absolute top-1/2 -translate-y-1/2 ${isLeft ? '-left-1' : '-right-1'} w-2 h-2 rounded-full bg-[#ff2244] shadow-[0_0_6px_#ff2244]`} />
+        </div>
+        
+        {/* Card circular com imagem */}
+        <CircularImageCard image={camada.image} delay={delay} />
+      </div>
+    </div>
   );
 };
 
 // Cérebro central com anéis
 const CentralBrain = () => (
-  <div className="relative w-48 h-48 md:w-64 md:h-64 lg:w-72 lg:h-72">
+  <div className="relative w-40 h-40 md:w-56 md:h-56 lg:w-64 lg:h-64">
     {/* Anel externo 1 */}
     <motion.div 
-      className="absolute inset-0 rounded-full border border-[#ff2244]/40"
+      className="absolute inset-0 rounded-full border-2 border-[#ff2244]/50"
       animate={{ rotate: 360 }}
       transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
     >
@@ -148,7 +196,7 @@ const CentralBrain = () => (
     
     {/* Anel externo 2 */}
     <motion.div 
-      className="absolute inset-3 rounded-full border border-[#a855f7]/50"
+      className="absolute inset-4 rounded-full border border-[#a855f7]/60"
       animate={{ rotate: -360 }}
       transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
     >
@@ -158,7 +206,7 @@ const CentralBrain = () => (
     
     {/* Anel interno */}
     <motion.div 
-      className="absolute inset-6 rounded-full border border-[#06b6d4]/40"
+      className="absolute inset-8 rounded-full border border-[#06b6d4]/50"
       animate={{ rotate: 360 }}
       transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
     >
@@ -166,52 +214,52 @@ const CentralBrain = () => (
     </motion.div>
     
     {/* Cérebro interno */}
-    <div className="absolute inset-10 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] border border-[#a855f7]/30 flex items-center justify-center overflow-hidden">
+    <div className="absolute inset-10 md:inset-12 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] border border-[#a855f7]/40 flex items-center justify-center overflow-hidden">
       {/* Background glow */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#d946ef]/30 via-[#a855f7]/20 to-[#ff2244]/10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#d946ef]/40 via-[#a855f7]/30 to-[#ff2244]/20" />
       
       {/* Cérebro com gradiente */}
       <div className="relative z-10">
-        <Brain className="w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 text-[#d946ef]" />
+        <Brain className="w-10 h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 text-[#d946ef]" />
       </div>
       
       {/* Pulse effect */}
       <motion.div 
         className="absolute inset-0 rounded-full bg-[#d946ef]/20"
-        animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0, 0.4] }}
+        animate={{ scale: [1, 1.4, 1], opacity: [0.5, 0, 0.5] }}
         transition={{ duration: 2, repeat: Infinity }}
       />
       
       {/* Engrenagens pequenas */}
-      <Cog className="absolute top-3 right-3 w-4 h-4 text-[#f59e0b]/60 animate-spin" style={{ animationDuration: '5s' }} />
-      <Cog className="absolute bottom-4 left-3 w-3 h-3 text-[#f59e0b]/60 animate-spin" style={{ animationDuration: '4s', animationDirection: 'reverse' }} />
+      <Cog className="absolute top-2 right-2 w-3 h-3 md:w-4 md:h-4 text-[#f59e0b]/70 animate-spin" style={{ animationDuration: '5s' }} />
+      <Cog className="absolute bottom-3 left-2 w-2.5 h-2.5 md:w-3 md:h-3 text-[#f59e0b]/70 animate-spin" style={{ animationDuration: '4s', animationDirection: 'reverse' }} />
     </div>
     
     {/* Glow exterior */}
-    <div className="absolute inset-0 rounded-full bg-[#d946ef]/10 blur-3xl -z-10" />
+    <div className="absolute inset-0 rounded-full bg-[#d946ef]/15 blur-3xl -z-10" />
   </div>
 );
 
-// Linhas de circuito SVG melhoradas
+// Linhas de circuito SVG conectando ao cérebro
 const CircuitLines = () => (
   <svg 
-    className="absolute inset-0 w-full h-full pointer-events-none hidden lg:block" 
+    className="absolute inset-0 w-full h-full pointer-events-none" 
     viewBox="0 0 1200 900"
     preserveAspectRatio="xMidYMid meet"
   >
     <defs>
       <linearGradient id="lineGradientLeft" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="0%" stopColor="#ff2244" stopOpacity="0" />
-        <stop offset="30%" stopColor="#ff2244" stopOpacity="0.6" />
-        <stop offset="100%" stopColor="#ff2244" stopOpacity="0.8" />
+        <stop offset="50%" stopColor="#ff2244" stopOpacity="0.8" />
+        <stop offset="100%" stopColor="#ff2244" stopOpacity="1" />
       </linearGradient>
       <linearGradient id="lineGradientRight" x1="100%" y1="0%" x2="0%" y2="0%">
         <stop offset="0%" stopColor="#ff2244" stopOpacity="0" />
-        <stop offset="30%" stopColor="#ff2244" stopOpacity="0.6" />
-        <stop offset="100%" stopColor="#ff2244" stopOpacity="0.8" />
+        <stop offset="50%" stopColor="#ff2244" stopOpacity="0.8" />
+        <stop offset="100%" stopColor="#ff2244" stopOpacity="1" />
       </linearGradient>
-      <linearGradient id="lineGradientDown" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stopColor="#ff2244" stopOpacity="0.8" />
+      <linearGradient id="lineGradientUp" x1="0%" y1="100%" x2="0%" y2="0%">
+        <stop offset="0%" stopColor="#ff2244" stopOpacity="1" />
         <stop offset="100%" stopColor="#ff2244" stopOpacity="0" />
       </linearGradient>
       <filter id="glow">
@@ -225,74 +273,130 @@ const CircuitLines = () => (
     
     {/* Linha vertical superior do cérebro */}
     <path 
-      d="M 600 0 L 600 350" 
-      stroke="url(#lineGradientDown)" 
+      d="M 600 0 L 600 320" 
+      stroke="url(#lineGradientUp)" 
       strokeWidth="2" 
       fill="none"
       filter="url(#glow)"
     />
     
-    {/* Conexões esquerdas */}
+    {/* Card 1 - Automação (top-left) - linha do cérebro ao card */}
     <path 
-      d="M 0 180 L 80 180 L 120 180 L 160 220 L 380 220" 
-      stroke="url(#lineGradientLeft)" 
-      strokeWidth="2" 
-      fill="none"
-      filter="url(#glow)"
-    />
-    <path 
-      d="M 0 480 L 60 480 L 100 450 L 180 450 L 380 400" 
-      stroke="url(#lineGradientLeft)" 
-      strokeWidth="2" 
-      fill="none"
-      filter="url(#glow)"
-    />
-    
-    {/* Conexões direitas */}
-    <path 
-      d="M 820 220 L 1000 220 L 1040 180 L 1120 180 L 1200 180" 
-      stroke="url(#lineGradientRight)" 
-      strokeWidth="2" 
-      fill="none"
-      filter="url(#glow)"
-    />
-    <path 
-      d="M 820 400 L 950 400 L 1000 430 L 1100 430 L 1200 430" 
-      stroke="url(#lineGradientRight)" 
-      strokeWidth="2" 
-      fill="none"
-      filter="url(#glow)"
-    />
-    <path 
-      d="M 820 680 L 920 680 L 960 700 L 1100 700 L 1200 700" 
-      stroke="url(#lineGradientRight)" 
-      strokeWidth="2" 
-      fill="none"
-      filter="url(#glow)"
-    />
-    
-    {/* Conexão inferior central */}
-    <path 
-      d="M 600 550 L 600 700 L 500 750" 
+      d="M 540 380 L 420 380 L 380 250 L 380 200" 
       stroke="#ff2244" 
       strokeWidth="2" 
       fill="none"
       filter="url(#glow)"
-      strokeOpacity="0.6"
+      strokeOpacity="0.7"
+    />
+    {/* Continuação para a borda esquerda */}
+    <path 
+      d="M 380 200 L 380 180 L 200 180 L 120 180 L 80 220 L 0 220" 
+      stroke="url(#lineGradientLeft)" 
+      strokeWidth="2" 
+      fill="none"
+      filter="url(#glow)"
     />
     
-    {/* Pontos nos cantos e conexões */}
-    <circle cx="120" cy="180" r="4" fill="#ff2244" filter="url(#glow)" />
-    <circle cx="100" cy="450" r="4" fill="#ff2244" filter="url(#glow)" />
-    <circle cx="1040" cy="180" r="4" fill="#ff2244" filter="url(#glow)" />
-    <circle cx="1000" cy="430" r="4" fill="#ff2244" filter="url(#glow)" />
-    <circle cx="960" cy="700" r="4" fill="#ff2244" filter="url(#glow)" />
+    {/* Card 2 - Análise (top-right) - linha do cérebro ao card */}
+    <path 
+      d="M 660 380 L 780 380 L 820 250 L 820 200" 
+      stroke="#ff2244" 
+      strokeWidth="2" 
+      fill="none"
+      filter="url(#glow)"
+      strokeOpacity="0.7"
+    />
+    {/* Continuação para a borda direita */}
+    <path 
+      d="M 820 200 L 820 180 L 1000 180 L 1080 180 L 1120 220 L 1200 220" 
+      stroke="url(#lineGradientRight)" 
+      strokeWidth="2" 
+      fill="none"
+      filter="url(#glow)"
+    />
+    
+    {/* Card 3 - Personas (mid-left) - linha do cérebro ao card */}
+    <path 
+      d="M 540 430 L 400 430 L 350 480" 
+      stroke="#ff2244" 
+      strokeWidth="2" 
+      fill="none"
+      filter="url(#glow)"
+      strokeOpacity="0.7"
+    />
+    {/* Continuação para a borda esquerda */}
+    <path 
+      d="M 350 480 L 180 480 L 100 520 L 0 520" 
+      stroke="url(#lineGradientLeft)" 
+      strokeWidth="2" 
+      fill="none"
+      filter="url(#glow)"
+    />
+    
+    {/* Card 4 - Engenharia (mid-right) - linha do cérebro ao card */}
+    <path 
+      d="M 660 430 L 800 430 L 850 390" 
+      stroke="#ff2244" 
+      strokeWidth="2" 
+      fill="none"
+      filter="url(#glow)"
+      strokeOpacity="0.7"
+    />
+    {/* Continuação para a borda direita */}
+    <path 
+      d="M 850 390 L 1020 390 L 1100 430 L 1200 430" 
+      stroke="url(#lineGradientRight)" 
+      strokeWidth="2" 
+      fill="none"
+      filter="url(#glow)"
+    />
+    
+    {/* Card 5 - Agentes (bottom-center) - linha do cérebro ao card */}
+    <path 
+      d="M 600 520 L 600 620 L 550 680" 
+      stroke="#ff2244" 
+      strokeWidth="2" 
+      fill="none"
+      filter="url(#glow)"
+      strokeOpacity="0.7"
+    />
+    
+    {/* Card 6 - SEO (bottom-right) - linha do cérebro ao card */}
+    <path 
+      d="M 660 480 L 780 550 L 850 600" 
+      stroke="#ff2244" 
+      strokeWidth="2" 
+      fill="none"
+      filter="url(#glow)"
+      strokeOpacity="0.7"
+    />
+    {/* Continuação para a borda direita */}
+    <path 
+      d="M 850 600 L 1000 650 L 1100 680 L 1200 680" 
+      stroke="url(#lineGradientRight)" 
+      strokeWidth="2" 
+      fill="none"
+      filter="url(#glow)"
+    />
+    
+    {/* Pontos de conexão */}
+    <circle cx="380" cy="200" r="4" fill="#ff2244" filter="url(#glow)" />
+    <circle cx="820" cy="200" r="4" fill="#ff2244" filter="url(#glow)" />
+    <circle cx="350" cy="480" r="4" fill="#ff2244" filter="url(#glow)" />
+    <circle cx="850" cy="390" r="4" fill="#ff2244" filter="url(#glow)" />
+    <circle cx="550" cy="680" r="4" fill="#ff2244" filter="url(#glow)" />
+    <circle cx="850" cy="600" r="4" fill="#ff2244" filter="url(#glow)" />
     
     {/* Linhas decorativas nas bordas */}
-    <path d="M 0 0 L 100 0 L 120 20" stroke="#a855f7" strokeWidth="1" strokeOpacity="0.3" fill="none" />
-    <path d="M 1200 0 L 1100 0 L 1080 20" stroke="#a855f7" strokeWidth="1" strokeOpacity="0.3" fill="none" />
-    <path d="M 0 900 L 100 900 L 120 880" stroke="#a855f7" strokeWidth="1" strokeOpacity="0.3" fill="none" />
-    <path d="M 1200 900 L 1100 900 L 1080 880" stroke="#a855f7" strokeWidth="1" strokeOpacity="0.3" fill="none" />
+    <path d="M 0 0 L 100 0 L 120 20" stroke="#a855f7" strokeWidth="1" strokeOpacity="0.4" fill="none" />
+    <path d="M 1200 0 L 1100 0 L 1080 20" stroke="#a855f7" strokeWidth="1" strokeOpacity="0.4" fill="none" />
+    <path d="M 0 900 L 100 900 L 120 880" stroke="#a855f7" strokeWidth="1" strokeOpacity="0.4" fill="none" />
+    <path d="M 1200 900 L 1100 900 L 1080 880" stroke="#a855f7" strokeWidth="1" strokeOpacity="0.4" fill="none" />
+    
+    {/* Mais detalhes de circuito nas bordas */}
+    <path d="M 0 400 L 40 400 L 60 380 L 80 380" stroke="#a855f7" strokeWidth="1" strokeOpacity="0.3" fill="none" />
+    <path d="M 1200 500 L 1160 500 L 1140 520 L 1120 520" stroke="#a855f7" strokeWidth="1" strokeOpacity="0.3" fill="none" />
   </svg>
 );
 
@@ -300,22 +404,22 @@ const CircuitLines = () => (
 const BorderCircuits = () => (
   <>
     {/* Circuitos superiores */}
-    <div className="absolute top-0 left-0 w-32 h-px bg-gradient-to-r from-[#a855f7]/50 to-transparent" />
-    <div className="absolute top-0 left-0 w-px h-24 bg-gradient-to-b from-[#a855f7]/50 to-transparent" />
-    <div className="absolute top-0 right-0 w-32 h-px bg-gradient-to-l from-[#a855f7]/50 to-transparent" />
-    <div className="absolute top-0 right-0 w-px h-24 bg-gradient-to-b from-[#a855f7]/50 to-transparent" />
+    <div className="absolute top-0 left-0 w-40 h-px bg-gradient-to-r from-[#a855f7]/60 to-transparent" />
+    <div className="absolute top-0 left-0 w-px h-32 bg-gradient-to-b from-[#a855f7]/60 to-transparent" />
+    <div className="absolute top-0 right-0 w-40 h-px bg-gradient-to-l from-[#a855f7]/60 to-transparent" />
+    <div className="absolute top-0 right-0 w-px h-32 bg-gradient-to-b from-[#a855f7]/60 to-transparent" />
     
     {/* Circuitos inferiores */}
-    <div className="absolute bottom-0 left-0 w-32 h-px bg-gradient-to-r from-[#ff2244]/50 to-transparent" />
-    <div className="absolute bottom-0 left-0 w-px h-24 bg-gradient-to-t from-[#ff2244]/50 to-transparent" />
-    <div className="absolute bottom-0 right-0 w-32 h-px bg-gradient-to-l from-[#ff2244]/50 to-transparent" />
-    <div className="absolute bottom-0 right-0 w-px h-24 bg-gradient-to-t from-[#ff2244]/50 to-transparent" />
+    <div className="absolute bottom-0 left-0 w-40 h-px bg-gradient-to-r from-[#ff2244]/60 to-transparent" />
+    <div className="absolute bottom-0 left-0 w-px h-32 bg-gradient-to-t from-[#ff2244]/60 to-transparent" />
+    <div className="absolute bottom-0 right-0 w-40 h-px bg-gradient-to-l from-[#ff2244]/60 to-transparent" />
+    <div className="absolute bottom-0 right-0 w-px h-32 bg-gradient-to-t from-[#ff2244]/60 to-transparent" />
   </>
 );
 
 const SolucoesGrid = () => {
   return (
-    <section className="relative bg-[#050508] py-20 md:py-28 overflow-hidden">
+    <section className="relative bg-[#050508] py-16 md:py-24 overflow-hidden">
       {/* Background grid pattern */}
       <div 
         className="absolute inset-0 opacity-[0.03]"
@@ -324,7 +428,7 @@ const SolucoesGrid = () => {
             linear-gradient(90deg, #a855f7 1px, transparent 1px),
             linear-gradient(180deg, #a855f7 1px, transparent 1px)
           `,
-          backgroundSize: '80px 80px',
+          backgroundSize: '60px 60px',
         }}
       />
       
@@ -337,7 +441,7 @@ const SolucoesGrid = () => {
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex justify-center mb-12 md:mb-16"
+          className="flex justify-center mb-8 md:mb-12"
         >
           <div 
             className="relative px-8 py-3 bg-[#0a0a0f] border border-[#ff2244]/60"
@@ -352,55 +456,97 @@ const SolucoesGrid = () => {
           </div>
         </motion.div>
         
-        {/* Layout principal - posicionamento orgânico */}
-        <div className="relative min-h-[800px] md:min-h-[900px]">
+        {/* Layout principal */}
+        <div className="relative min-h-[750px] md:min-h-[850px] hidden lg:block">
           {/* Linhas de circuito */}
           <CircuitLines />
           
           {/* Cérebro central */}
-          <div className="absolute left-1/2 top-[35%] md:top-[40%] -translate-x-1/2 -translate-y-1/2 z-20">
+          <div className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 z-20">
             <CentralBrain />
           </div>
           
-          {/* Cards posicionados absolutamente para layout orgânico */}
-          <div className="relative w-full h-full">
-            {/* Card 1 - Automação com IA (top-left) */}
-            <div className="absolute left-0 top-[5%] md:left-[2%] md:top-[8%] w-[90%] md:w-auto">
-              <CyberCard camada={camadas[0]} index={0} reverse={false} />
-            </div>
-            
-            {/* Card 2 - Análise Estratégica (top-right) */}
-            <div className="absolute right-0 top-[18%] md:right-[2%] md:top-[8%] w-[90%] md:w-auto">
-              <CyberCard camada={camadas[1]} index={1} reverse={true} />
-            </div>
-            
-            {/* Card 3 - Personas Treinadas (mid-left) */}
-            <div className="absolute left-0 top-[31%] md:left-[2%] md:top-[38%] w-[90%] md:w-auto">
-              <CyberCard camada={camadas[3]} index={3} reverse={false} />
-            </div>
-            
-            {/* Card 4 - Engenharia de Prompt (mid-right) */}
-            <div className="absolute right-0 top-[44%] md:right-[2%] md:top-[32%] w-[90%] md:w-auto">
-              <CyberCard camada={camadas[2]} index={2} reverse={true} />
-            </div>
-            
-            {/* Card 5 - Agentes Inteligentes (bottom-center-left) */}
-            <div className="absolute left-0 bottom-[18%] md:left-[15%] md:bottom-[8%] w-[90%] md:w-auto">
-              <CyberCard camada={camadas[4]} index={4} reverse={false} />
-            </div>
-            
-            {/* Card 6 - SEO + AEO (bottom-right) */}
-            <div className="absolute right-0 bottom-[5%] md:right-[2%] md:bottom-[8%] w-[90%] md:w-auto">
-              <CyberCard camada={camadas[5]} index={5} reverse={true} />
-            </div>
+          {/* Cards posicionados - Card circular + Card de texto */}
+          
+          {/* Card 1 - Automação com IA (top-left) */}
+          <ConnectedCard 
+            camada={camadas[0]} 
+            index={0} 
+            side="left"
+            style={{ left: '2%', top: '12%' }}
+          />
+          
+          {/* Card 2 - Análise Estratégica (top-right) */}
+          <ConnectedCard 
+            camada={camadas[1]} 
+            index={1} 
+            side="right"
+            style={{ right: '2%', top: '12%' }}
+          />
+          
+          {/* Card 3 - Personas Treinadas (mid-left) */}
+          <ConnectedCard 
+            camada={camadas[3]} 
+            index={3} 
+            side="left"
+            style={{ left: '2%', top: '42%' }}
+          />
+          
+          {/* Card 4 - Engenharia de Prompt (mid-right) */}
+          <ConnectedCard 
+            camada={camadas[2]} 
+            index={2} 
+            side="right"
+            style={{ right: '2%', top: '36%' }}
+          />
+          
+          {/* Card 5 - Agentes Inteligentes (bottom-center-left) */}
+          <ConnectedCard 
+            camada={camadas[4]} 
+            index={4} 
+            side="left"
+            style={{ left: '18%', bottom: '8%' }}
+          />
+          
+          {/* Card 6 - SEO + AEO (bottom-right) */}
+          <ConnectedCard 
+            camada={camadas[5]} 
+            index={5} 
+            side="right"
+            style={{ right: '2%', bottom: '12%' }}
+          />
+        </div>
+        
+        {/* Mobile layout - cards em grid */}
+        <div className="lg:hidden">
+          {/* Cérebro central mobile */}
+          <div className="flex justify-center mb-10">
+            <CentralBrain />
+          </div>
+          
+          {/* Cards em grid para mobile */}
+          <div className="space-y-6">
+            {camadas.map((camada, index) => (
+              <motion.div
+                key={camada.titulo}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="flex items-center gap-4"
+              >
+                <CircularImageCard image={camada.image} delay={0} />
+                <TextCard camada={camada} delay={0} side="left" />
+              </motion.div>
+            ))}
           </div>
         </div>
       </div>
       
       {/* Glow effects */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#d946ef]/8 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute top-1/4 left-1/4 w-[250px] h-[250px] bg-[#ff2244]/5 rounded-full blur-[80px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-[250px] h-[250px] bg-[#06b6d4]/5 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#d946ef]/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-[200px] h-[200px] bg-[#ff2244]/8 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[200px] h-[200px] bg-[#06b6d4]/8 rounded-full blur-[80px] pointer-events-none" />
     </section>
   );
 };
