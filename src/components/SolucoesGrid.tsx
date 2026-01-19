@@ -126,7 +126,7 @@ const BrainModel = () => {
     <primitive 
       object={scene} 
       scale={2.5}
-      position={[0, -0.5, 0]}
+      position={[0, 0.3, 0]}
     />
   );
 };
