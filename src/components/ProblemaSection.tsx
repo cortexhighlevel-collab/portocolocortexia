@@ -249,7 +249,7 @@ const ProblemaSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <div className="bg-zinc-950 border border-red-500/20 rounded-lg overflow-hidden max-w-3xl">
+          <div className="bg-zinc-950 border border-red-500/20 rounded-lg overflow-hidden max-w-3xl mx-auto">
             {/* Terminal title bar */}
             <div className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border-b border-red-500/20">
               <div className="flex gap-2">
