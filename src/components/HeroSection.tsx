@@ -37,7 +37,7 @@ const HeroSection = () => {
                   delay: 0.2
                 }}
               >
-                <h1 className="hero-headline uppercase font-bold italic text-white" style={{
+                <h1 className="hero-headline uppercase font-bold italic text-white scale-[1.7] origin-left" style={{
                 textShadow: "0 0 10px rgba(255, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.6), 0 0 40px rgba(255, 0, 0, 0.4), 0 0 60px rgba(255, 0, 0, 0.3)"
               }}>
                   INTELIGÊNCIA<br />
