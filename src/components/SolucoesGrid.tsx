@@ -167,10 +167,33 @@ const CentralBrain = () => (
         camera={{ position: [0, 0, 5], fov: 45 }}
         style={{ background: 'transparent' }}
       >
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} intensity={1} color="#a855f7" />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#ff2244" />
-        <spotLight position={[0, 10, 0]} intensity={0.8} color="#06b6d4" />
+        {/* Iluminação ambiente forte */}
+        <ambientLight intensity={2} />
+        
+        {/* Luz principal frontal */}
+        <directionalLight position={[0, 0, 10]} intensity={3} color="#ffffff" />
+        
+        {/* Luzes coloridas de destaque */}
+        <pointLight position={[5, 5, 5]} intensity={2} color="#a855f7" />
+        <pointLight position={[-5, 5, 5]} intensity={2} color="#ff2244" />
+        <pointLight position={[0, -5, 5]} intensity={2} color="#06b6d4" />
+        
+        {/* Luzes de preenchimento traseiras */}
+        <pointLight position={[5, -5, -5]} intensity={1.5} color="#ff6b8a" />
+        <pointLight position={[-5, -5, -5]} intensity={1.5} color="#8b5cf6" />
+        
+        {/* Spotlight de cima */}
+        <spotLight 
+          position={[0, 10, 5]} 
+          intensity={2} 
+          color="#ffffff" 
+          angle={0.5}
+          penumbra={1}
+        />
+        
+        {/* Hemisphere light para iluminação global suave */}
+        <hemisphereLight intensity={1.5} color="#ffffff" groundColor="#a855f7" />
+        
         <Suspense fallback={null}>
           <BrainModel />
         </Suspense>
