@@ -110,8 +110,8 @@ function Navbar() {
 
   return (
     <MobileMenuContext.Provider value={{ showMenu, setShowMenu }}>
-      <nav className="fixed left-0 right-0 top-0 z-[100] px-4 lg:px-8 pt-6 lg:pt-8">
-        <div ref={navRef} className="h-12 mt-4 mx-2 lg:-mt-px lg:-mx-px w-full relative top-0 inset-x-0 z-40">
+      <nav className="fixed left-0 right-0 top-0 z-[100] px-4 lg:px-8 pt-2 lg:pt-3">
+        <div ref={navRef} className="h-12 mt-1 mx-2 lg:-mt-1 lg:-mx-px w-full relative top-0 inset-x-0 z-40">
           <div className="absolute inset-0 w-full h-full z-10">
             <NavbarGlassBackdrop className="z-0" path={mainFramePath[0].path} />
             <Frame className="z-10" paths={mainFramePath} />
