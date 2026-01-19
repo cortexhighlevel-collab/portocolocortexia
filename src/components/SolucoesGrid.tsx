@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Bot, BarChart3, Brain, Users, Sparkles, Search } from "lucide-react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 
 const camadas = [
   {
@@ -127,85 +127,324 @@ const BrainModel = () => {
   );
 };
 
-// Cérebro central com modelo 3D
-const CentralBrain = () => (
-  <div className="relative w-64 h-64 md:w-80 md:h-80">
-    {/* Anéis externos animados */}
-    <motion.div 
-      className="absolute inset-0 rounded-full border border-[#ff2244]/30"
-      animate={{ rotate: 360 }}
-      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+// Cérebro central com moldura animada
+const CentralBrain = () => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <div 
+      className="relative flex items-center justify-center w-[320px] h-[320px] cursor-pointer"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#ff2244] shadow-[0_0_10px_#ff2244]" />
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-3 h-3 rounded-full bg-[#ff2244] shadow-[0_0_10px_#ff2244]" />
-    </motion.div>
-    
-    <motion.div 
-      className="absolute inset-4 rounded-full border border-[#a855f7]/40"
-      animate={{ rotate: -360 }}
-      transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-    >
-      <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-[#a855f7] shadow-[0_0_10px_#a855f7]" />
-      <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-[#a855f7] shadow-[0_0_10px_#a855f7]" />
-    </motion.div>
-    
-    <motion.div 
-      className="absolute inset-8 rounded-full border border-[#06b6d4]/50"
-      animate={{ rotate: 360 }}
-      transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-    >
-      <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-[#06b6d4] shadow-[0_0_10px_#06b6d4]" />
-    </motion.div>
-    
-    {/* Canvas 3D com o modelo */}
-    <div className="absolute inset-12 rounded-full overflow-hidden">
-      <Canvas
-        camera={{ position: [0, 0, 5], fov: 45 }}
-        style={{ background: 'transparent' }}
-      >
-        {/* Iluminação ambiente forte */}
-        <ambientLight intensity={2} />
-        
-        {/* Luz principal frontal */}
-        <directionalLight position={[0, 0, 10]} intensity={3} color="#ffffff" />
-        
-        {/* Luzes coloridas de destaque */}
-        <pointLight position={[5, 5, 5]} intensity={2} color="#a855f7" />
-        <pointLight position={[-5, 5, 5]} intensity={2} color="#ff2244" />
-        <pointLight position={[0, -5, 5]} intensity={2} color="#06b6d4" />
-        
-        {/* Luzes de preenchimento traseiras */}
-        <pointLight position={[5, -5, -5]} intensity={1.5} color="#ff6b8a" />
-        <pointLight position={[-5, -5, -5]} intensity={1.5} color="#8b5cf6" />
-        
-        {/* Spotlight de cima */}
-        <spotLight 
-          position={[0, 10, 5]} 
-          intensity={2} 
-          color="#ffffff" 
-          angle={0.5}
-          penumbra={1}
+      {/* Ambient glow */}
+      <motion.div
+        className="absolute w-[250px] h-[250px] rounded-full"
+        style={{
+          background: "radial-gradient(circle, hsl(330 100% 50% / 0.2) 0%, transparent 60%)",
+          filter: "blur(30px)",
+        }}
+        animate={{ 
+          scale: isHovered ? [1.1, 1.3, 1.1] : [1, 1.15, 1], 
+          opacity: isHovered ? [0.5, 0.8, 0.5] : [0.4, 0.6, 0.4] 
+        }}
+        transition={{ duration: isHovered ? 2 : 4, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* Light beams */}
+      <div className="absolute -top-[50px] left-1/2 -translate-x-1/2 flex gap-[2px] z-30">
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            style={{
+              width: i === 2 ? "2px" : "1px",
+              height: i === 2 ? "60px" : `${30 + Math.abs(2 - i) * 8}px`,
+              background: `linear-gradient(to top, hsl(330 100% 55%), transparent)`,
+            }}
+            animate={{ opacity: [0.3, 0.7, 0.3] }}
+            transition={{ duration: 2, repeat: Infinity, delay: i * 0.1 }}
+          />
+        ))}
+      </div>
+
+      {/* Ring 1 - Outermost */}
+      <div
+        className="absolute w-[280px] h-[280px] rounded-full"
+        style={{
+          background: "linear-gradient(180deg, hsl(220 15% 18%) 0%, hsl(220 12% 10%) 100%)",
+          boxShadow: `
+            inset 0 2px 4px hsl(220 20% 30% / 0.5),
+            inset 0 -4px 8px hsl(0 0% 0% / 0.8),
+            0 8px 32px hsl(0 0% 0% / 0.6),
+            0 2px 8px hsl(0 0% 0% / 0.4)
+          `,
+        }}
+      />
+
+      {/* Ring 2 */}
+      <div
+        className="absolute w-[245px] h-[245px] rounded-full"
+        style={{
+          background: "linear-gradient(180deg, hsl(220 12% 22%) 0%, hsl(220 10% 12%) 100%)",
+          boxShadow: `
+            inset 0 2px 3px hsl(220 15% 28% / 0.6),
+            inset 0 -3px 6px hsl(0 0% 0% / 0.7),
+            0 6px 20px hsl(0 0% 0% / 0.5)
+          `,
+        }}
+      />
+
+      {/* Ring 3 */}
+      <div
+        className="absolute w-[205px] h-[205px] rounded-full"
+        style={{
+          background: "linear-gradient(180deg, hsl(225 15% 16%) 0%, hsl(230 12% 8%) 100%)",
+          boxShadow: `
+            inset 0 3px 6px hsl(220 20% 25% / 0.5),
+            inset 0 -5px 10px hsl(0 0% 0% / 0.9),
+            0 10px 30px hsl(0 0% 0% / 0.7),
+            0 4px 12px hsl(330 80% 30% / 0.1)
+          `,
+        }}
+      />
+
+      {/* Ring 4 */}
+      <div
+        className="absolute w-[165px] h-[165px] rounded-full"
+        style={{
+          background: "linear-gradient(180deg, hsl(220 10% 12%) 0%, hsl(230 15% 6%) 100%)",
+          boxShadow: `
+            inset 0 4px 8px hsl(0 0% 0% / 0.9),
+            inset 0 -2px 4px hsl(220 15% 20% / 0.3),
+            0 -2px 6px hsl(220 15% 25% / 0.2)
+          `,
+        }}
+      />
+
+      {/* Ring 5 - inner with pink glow */}
+      <motion.div
+        className="absolute w-[125px] h-[125px] rounded-full"
+        style={{
+          background: "linear-gradient(180deg, hsl(320 25% 15%) 0%, hsl(280 20% 8%) 100%)",
+          border: "2px solid hsl(330 70% 40%)",
+        }}
+        animate={{
+          boxShadow: isHovered 
+            ? [
+                "inset 0 3px 10px hsl(330 60% 45% / 0.6), inset 0 -4px 10px hsl(0 0% 0% / 0.8), 0 0 50px hsl(330 80% 55% / 0.5), 0 0 100px hsl(330 80% 50% / 0.3)",
+                "inset 0 3px 15px hsl(330 60% 50% / 0.7), inset 0 -4px 10px hsl(0 0% 0% / 0.8), 0 0 70px hsl(330 80% 60% / 0.6), 0 0 120px hsl(330 80% 55% / 0.4)",
+                "inset 0 3px 10px hsl(330 60% 45% / 0.6), inset 0 -4px 10px hsl(0 0% 0% / 0.8), 0 0 50px hsl(330 80% 55% / 0.5), 0 0 100px hsl(330 80% 50% / 0.3)",
+              ]
+            : [
+                "inset 0 3px 8px hsl(330 60% 35% / 0.4), inset 0 -4px 10px hsl(0 0% 0% / 0.8), 0 0 30px hsl(330 80% 45% / 0.3), 0 0 60px hsl(330 80% 40% / 0.15)",
+                "inset 0 3px 10px hsl(330 60% 40% / 0.5), inset 0 -4px 10px hsl(0 0% 0% / 0.8), 0 0 40px hsl(330 80% 50% / 0.4), 0 0 80px hsl(330 80% 45% / 0.2)",
+                "inset 0 3px 8px hsl(330 60% 35% / 0.4), inset 0 -4px 10px hsl(0 0% 0% / 0.8), 0 0 30px hsl(330 80% 45% / 0.3), 0 0 60px hsl(330 80% 40% / 0.15)",
+              ]
+        }}
+        transition={{ duration: isHovered ? 1.5 : 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* SVG content */}
+      <svg viewBox="0 0 320 320" className="absolute w-full h-full z-10">
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <filter id="glowStrong" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <linearGradient id="brainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="hsl(330 100% 80%)" />
+            <stop offset="100%" stopColor="hsl(280 80% 65%)" />
+          </linearGradient>
+        </defs>
+
+        {/* Rotating arc group */}
+        <motion.g
+          style={{ transformOrigin: "160px 160px" }}
+          animate={{ rotate: isHovered ? 360 : 0 }}
+          transition={{ 
+            duration: isHovered ? 8 : 0, 
+            repeat: isHovered ? Infinity : 0, 
+            ease: "linear" 
+          }}
+        >
+          {/* Arc 1 - Outer ring (radius 140) */}
+          <motion.path
+            d={`M ${160 + 140 * Math.cos(-70 * Math.PI / 180)} ${160 + 140 * Math.sin(-70 * Math.PI / 180)} 
+                A 140 140 0 0 1 ${160 + 140 * Math.cos(-20 * Math.PI / 180)} ${160 + 140 * Math.sin(-20 * Math.PI / 180)}`}
+            fill="none" 
+            stroke="hsl(340 100% 50%)" 
+            strokeWidth={isHovered ? 5 : 4} 
+            strokeLinecap="round" 
+            filter={isHovered ? "url(#glowStrong)" : "url(#glow)"}
+            animate={{ opacity: [0.8, 1, 0.8] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          />
+          {/* Arc 2 - Second ring (radius 122) */}
+          <motion.path
+            d={`M ${160 + 122 * Math.cos(20 * Math.PI / 180)} ${160 + 122 * Math.sin(20 * Math.PI / 180)} 
+                A 122 122 0 0 1 ${160 + 122 * Math.cos(70 * Math.PI / 180)} ${160 + 122 * Math.sin(70 * Math.PI / 180)}`}
+            fill="none" 
+            stroke="hsl(330 100% 55%)" 
+            strokeWidth={isHovered ? 4 : 3} 
+            strokeLinecap="round" 
+            filter={isHovered ? "url(#glowStrong)" : "url(#glow)"}
+            animate={{ opacity: [0.6, 1, 0.6] }}
+            transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
+          />
+          {/* Arc 3 - Third ring (radius 102) */}
+          <motion.path
+            d={`M ${160 + 102 * Math.cos(120 * Math.PI / 180)} ${160 + 102 * Math.sin(120 * Math.PI / 180)} 
+                A 102 102 0 0 1 ${160 + 102 * Math.cos(170 * Math.PI / 180)} ${160 + 102 * Math.sin(170 * Math.PI / 180)}`}
+            fill="none" 
+            stroke="hsl(340 100% 50%)" 
+            strokeWidth={isHovered ? 5 : 4} 
+            strokeLinecap="round" 
+            filter={isHovered ? "url(#glowStrong)" : "url(#glow)"}
+            animate={{ opacity: [0.8, 1, 0.8] }}
+            transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
+          />
+          {/* Arc 4 - Outer ring opposite side (radius 140) */}
+          <motion.path
+            d={`M ${160 + 140 * Math.cos(200 * Math.PI / 180)} ${160 + 140 * Math.sin(200 * Math.PI / 180)} 
+                A 140 140 0 0 1 ${160 + 140 * Math.cos(250 * Math.PI / 180)} ${160 + 140 * Math.sin(250 * Math.PI / 180)}`}
+            fill="none" 
+            stroke="hsl(330 100% 50%)" 
+            strokeWidth={isHovered ? 4 : 3} 
+            strokeLinecap="round" 
+            filter={isHovered ? "url(#glowStrong)" : "url(#glow)"}
+            animate={{ opacity: [0.6, 1, 0.6] }}
+            transition={{ duration: 1.5, repeat: Infinity, delay: 0.7 }}
+          />
+          {/* Arc 5 - Second ring opposite (radius 122) */}
+          <motion.path
+            d={`M ${160 + 122 * Math.cos(-160 * Math.PI / 180)} ${160 + 122 * Math.sin(-160 * Math.PI / 180)} 
+                A 122 122 0 0 1 ${160 + 122 * Math.cos(-110 * Math.PI / 180)} ${160 + 122 * Math.sin(-110 * Math.PI / 180)}`}
+            fill="none" 
+            stroke="hsl(335 100% 52%)" 
+            strokeWidth={isHovered ? 3 : 2} 
+            strokeLinecap="round" 
+            filter={isHovered ? "url(#glowStrong)" : "url(#glow)"}
+            animate={{ opacity: [0.5, 0.9, 0.5] }}
+            transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
+          />
+        </motion.g>
+
+        {/* Connection nodes */}
+        {[
+          { x: 160, y: 20 },
+          { x: 300, y: 160 },
+          { x: 160, y: 300 },
+          { x: 20, y: 160 },
+        ].map((pos, i) => (
+          <g key={i}>
+            <circle cx={pos.x} cy={pos.y} r={12} fill="hsl(230 20% 12%)" 
+              style={{ filter: "drop-shadow(0 2px 4px hsl(0 0% 0% / 0.5))" }} />
+            <circle cx={pos.x} cy={pos.y} r={10} fill="none" stroke="hsl(330 50% 35%)" strokeWidth="2" />
+            <motion.circle
+              cx={pos.x} cy={pos.y} r={5}
+              fill="hsl(330 100% 55%)"
+              filter={isHovered ? "url(#glowStrong)" : "url(#glow)"}
+              animate={{ 
+                opacity: [0.7, 1, 0.7],
+                scale: isHovered ? [1, 1.3, 1] : [1, 1.1, 1]
+              }}
+              transition={{ duration: isHovered ? 1 : 2, repeat: Infinity, delay: i * 0.15 }}
+            />
+          </g>
+        ))}
+
+        {/* Brain */}
+        <g transform="translate(160, 155)" filter={isHovered ? "url(#glowStrong)" : "url(#glow)"}>
+          <ellipse cx="0" cy="0" rx="30" ry="25" fill="none" stroke="url(#brainGradient)" strokeWidth="2.5" />
+          <path d="M -26 -6 Q -12 -14, 0 -6 Q 12 2, 26 -6" fill="none" stroke="url(#brainGradient)" strokeWidth="1.8" strokeLinecap="round" />
+          <path d="M -24 8 Q -10 1, 0 8 Q 10 15, 24 8" fill="none" stroke="url(#brainGradient)" strokeWidth="1.8" strokeLinecap="round" />
+          <path d="M -18 18 Q -6 13, 0 18 Q 6 23, 18 18" fill="none" stroke="url(#brainGradient)" strokeWidth="1.4" strokeLinecap="round" />
+        </g>
+
+        {/* Gears */}
+        <motion.g 
+          transform="translate(145, 185)" 
+          animate={{ rotate: 360 }} 
+          transition={{ duration: isHovered ? 5 : 20, repeat: Infinity, ease: "linear" }} 
+          style={{ transformOrigin: "0 0" }}
+        >
+          <circle cx="0" cy="0" r="6" fill="hsl(260 20% 12%)" stroke="hsl(280 50% 45%)" strokeWidth="1.5" />
+          <circle cx="0" cy="0" r="2" fill="hsl(280 50% 55%)" />
+        </motion.g>
+        <motion.g 
+          transform="translate(175, 185)" 
+          animate={{ rotate: -360 }} 
+          transition={{ duration: isHovered ? 4 : 15, repeat: Infinity, ease: "linear" }} 
+          style={{ transformOrigin: "0 0" }}
+        >
+          <circle cx="0" cy="0" r="5" fill="hsl(260 20% 12%)" stroke="hsl(280 40% 40%)" strokeWidth="1" />
+          <circle cx="0" cy="0" r="1.5" fill="hsl(280 40% 50%)" />
+        </motion.g>
+
+        {/* Connection lines */}
+        <motion.line 
+          x1="312" y1="160" x2="320" y2="160" 
+          stroke="hsl(330 100% 50%)" 
+          strokeWidth="2" 
+          filter="url(#glow)"
+          animate={{ opacity: isHovered ? [0.8, 1, 0.8] : 1 }}
+          transition={{ duration: 0.5, repeat: Infinity }}
         />
-        
-        {/* Hemisphere light para iluminação global suave */}
-        <hemisphereLight intensity={1.5} color="#ffffff" groundColor="#a855f7" />
-        
-        <Suspense fallback={null}>
-          <BrainModel />
-        </Suspense>
-        <OrbitControls 
-          enableZoom={false} 
-          enablePan={false}
-          autoRotate 
-          autoRotateSpeed={2}
+        <motion.line 
+          x1="8" y1="160" x2="0" y2="160" 
+          stroke="hsl(330 100% 50%)" 
+          strokeWidth="2" 
+          filter="url(#glow)"
+          animate={{ opacity: isHovered ? [0.8, 1, 0.8] : 1 }}
+          transition={{ duration: 0.5, repeat: Infinity, delay: 0.2 }}
         />
-      </Canvas>
+        <motion.line 
+          x1="160" y1="8" x2="160" y2="0" 
+          stroke="hsl(330 100% 50%)" 
+          strokeWidth="2" 
+          filter="url(#glow)"
+          animate={{ opacity: isHovered ? [0.8, 1, 0.8] : 1 }}
+          transition={{ duration: 0.5, repeat: Infinity, delay: 0.4 }}
+        />
+      </svg>
+
+      {/* Canvas 3D com o modelo por cima */}
+      <div className="absolute w-[100px] h-[100px] z-20">
+        <Canvas
+          camera={{ position: [0, 0, 5], fov: 45 }}
+          style={{ background: 'transparent' }}
+        >
+          <ambientLight intensity={2} />
+          <directionalLight position={[0, 0, 10]} intensity={3} color="#ffffff" />
+          <pointLight position={[5, 5, 5]} intensity={2} color="#a855f7" />
+          <pointLight position={[-5, 5, 5]} intensity={2} color="#ff2244" />
+          <pointLight position={[0, -5, 5]} intensity={2} color="#06b6d4" />
+          <hemisphereLight intensity={1.5} color="#ffffff" groundColor="#a855f7" />
+          <Suspense fallback={null}>
+            <BrainModel />
+          </Suspense>
+          <OrbitControls 
+            enableZoom={false} 
+            enablePan={false}
+            autoRotate 
+            autoRotateSpeed={2}
+          />
+        </Canvas>
+      </div>
     </div>
-    
-    {/* Glow exterior */}
-    <div className="absolute inset-0 rounded-full bg-[#a855f7]/10 blur-3xl pointer-events-none" />
-  </div>
-);
+  );
+};
 
 // Linhas de circuito SVG
 const CircuitLines = () => (
