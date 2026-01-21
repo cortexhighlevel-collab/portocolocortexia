@@ -605,26 +605,35 @@ const CentralBrain = () => {
   );
 };
 
-// Linhas de circuito SVG
-const CircuitLines = () => (
+// Linhas neurálgicas conectando cards ao cérebro central
+const NeuralConnections = () => (
   <svg 
-    className="absolute inset-0 w-full h-full pointer-events-none hidden lg:block" 
+    className="absolute inset-0 w-full h-full pointer-events-none hidden lg:block z-0" 
     viewBox="0 0 1200 800"
-    preserveAspectRatio="xMidYMid meet"
+    preserveAspectRatio="xMidYMid slice"
   >
     <defs>
-      <linearGradient id="lineGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stopColor="#ff2244" stopOpacity="0" />
-        <stop offset="50%" stopColor="#ff2244" stopOpacity="0.8" />
-        <stop offset="100%" stopColor="#a855f7" stopOpacity="0.8" />
+      <linearGradient id="neuralGradientLeft" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stopColor="#ff2244" />
+        <stop offset="100%" stopColor="#a855f7" />
       </linearGradient>
-      <linearGradient id="lineGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stopColor="#a855f7" stopOpacity="0.8" />
-        <stop offset="50%" stopColor="#ff2244" stopOpacity="0.8" />
-        <stop offset="100%" stopColor="#ff2244" stopOpacity="0" />
+      <linearGradient id="neuralGradientRight" x1="100%" y1="0%" x2="0%" y2="0%">
+        <stop offset="0%" stopColor="#a855f7" />
+        <stop offset="100%" stopColor="#ff2244" />
       </linearGradient>
-      <filter id="glow">
-        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <linearGradient id="neuralGradientDown" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stopColor="#ff2244" />
+        <stop offset="100%" stopColor="#a855f7" />
+      </linearGradient>
+      <filter id="neuralGlow">
+        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+        <feMerge>
+          <feMergeNode in="coloredBlur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <filter id="dotGlow">
+        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
         <feMerge>
           <feMergeNode in="coloredBlur"/>
           <feMergeNode in="SourceGraphic"/>
@@ -632,61 +641,266 @@ const CircuitLines = () => (
       </filter>
     </defs>
     
-    {/* Linhas esquerdas */}
-    <path 
-      d="M 0 150 L 100 150 L 150 150 L 200 200 L 350 200" 
-      stroke="url(#lineGradient1)" 
+    {/* ===== CARD TOP-LEFT (Automação com IA) → Centro ===== */}
+    {/* Linha: sai do card → desce → vai pro centro */}
+    <motion.path 
+      d="M 330 145 L 500 145 L 500 280 L 600 280" 
+      stroke="url(#neuralGradientLeft)" 
       strokeWidth="2" 
       fill="none"
-      filter="url(#glow)"
+      filter="url(#neuralGlow)"
+      initial={{ pathLength: 0, opacity: 0 }}
+      whileInView={{ pathLength: 1, opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 1.2, delay: 0.2 }}
     />
-    <path 
-      d="M 0 450 L 80 450 L 130 400 L 200 400 L 350 350" 
-      stroke="url(#lineGradient1)" 
-      strokeWidth="2" 
-      fill="none"
-      filter="url(#glow)"
+    {/* Ponto de conexão no card */}
+    <motion.circle 
+      cx="330" cy="145" r="6" 
+      fill="#ff2244" 
+      filter="url(#dotGlow)"
+      initial={{ scale: 0 }}
+      whileInView={{ scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3, delay: 0.1 }}
     />
-    
-    {/* Linhas direitas */}
-    <path 
-      d="M 850 200 L 1000 200 L 1050 150 L 1100 150 L 1200 150" 
-      stroke="url(#lineGradient2)" 
-      strokeWidth="2" 
-      fill="none"
-      filter="url(#glow)"
+    {/* Ponto de conexão no centro */}
+    <motion.circle 
+      cx="600" cy="280" r="6" 
+      fill="#a855f7" 
+      filter="url(#dotGlow)"
+      initial={{ scale: 0 }}
+      whileInView={{ scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3, delay: 1.3 }}
     />
-    <path 
-      d="M 850 350 L 950 350 L 1000 380 L 1100 380 L 1200 380" 
-      stroke="url(#lineGradient2)" 
+
+    {/* ===== CARD MID-LEFT (Personas Treinadas) → Centro ===== */}
+    <motion.path 
+      d="M 330 420 L 450 420 L 450 400 L 560 400" 
+      stroke="url(#neuralGradientLeft)" 
       strokeWidth="2" 
       fill="none"
-      filter="url(#glow)"
+      filter="url(#neuralGlow)"
+      initial={{ pathLength: 0, opacity: 0 }}
+      whileInView={{ pathLength: 1, opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 1.2, delay: 0.4 }}
     />
-    <path 
-      d="M 850 550 L 950 550 L 1000 580 L 1100 580 L 1200 580" 
-      stroke="url(#lineGradient2)" 
-      strokeWidth="2" 
-      fill="none"
-      filter="url(#glow)"
+    <motion.circle 
+      cx="330" cy="420" r="6" 
+      fill="#ff2244" 
+      filter="url(#dotGlow)"
+      initial={{ scale: 0 }}
+      whileInView={{ scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3, delay: 0.3 }}
     />
-    
-    {/* Linha inferior central */}
-    <path 
-      d="M 600 520 L 600 600 L 500 650" 
-      stroke="#ff2244" 
+    <motion.circle 
+      cx="560" cy="400" r="6" 
+      fill="#a855f7" 
+      filter="url(#dotGlow)"
+      initial={{ scale: 0 }}
+      whileInView={{ scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3, delay: 1.5 }}
+    />
+
+    {/* ===== CARD TOP-RIGHT (Análise Estratégica) → Centro ===== */}
+    <motion.path 
+      d="M 870 145 L 700 145 L 700 280 L 600 280" 
+      stroke="url(#neuralGradientRight)" 
       strokeWidth="2" 
       fill="none"
-      filter="url(#glow)"
+      filter="url(#neuralGlow)"
+      initial={{ pathLength: 0, opacity: 0 }}
+      whileInView={{ pathLength: 1, opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 1.2, delay: 0.3 }}
+    />
+    <motion.circle 
+      cx="870" cy="145" r="6" 
+      fill="#a855f7" 
+      filter="url(#dotGlow)"
+      initial={{ scale: 0 }}
+      whileInView={{ scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3, delay: 0.2 }}
+    />
+
+    {/* ===== CARD MID-RIGHT (Engenharia de Prompt) → Centro ===== */}
+    <motion.path 
+      d="M 870 340 L 750 340 L 750 400 L 640 400" 
+      stroke="url(#neuralGradientRight)" 
+      strokeWidth="2" 
+      fill="none"
+      filter="url(#neuralGlow)"
+      initial={{ pathLength: 0, opacity: 0 }}
+      whileInView={{ pathLength: 1, opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 1.2, delay: 0.5 }}
+    />
+    <motion.circle 
+      cx="870" cy="340" r="6" 
+      fill="#a855f7" 
+      filter="url(#dotGlow)"
+      initial={{ scale: 0 }}
+      whileInView={{ scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3, delay: 0.4 }}
+    />
+    <motion.circle 
+      cx="640" cy="400" r="6" 
+      fill="#ff2244" 
+      filter="url(#dotGlow)"
+      initial={{ scale: 0 }}
+      whileInView={{ scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3, delay: 1.6 }}
+    />
+
+    {/* ===== CARD BOTTOM-CENTER (Agentes Inteligentes) → Centro ===== */}
+    <motion.path 
+      d="M 600 590 L 600 520" 
+      stroke="url(#neuralGradientDown)" 
+      strokeWidth="2" 
+      fill="none"
+      filter="url(#neuralGlow)"
+      initial={{ pathLength: 0, opacity: 0 }}
+      whileInView={{ pathLength: 1, opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, delay: 0.6 }}
+    />
+    <motion.circle 
+      cx="600" cy="590" r="6" 
+      fill="#ff2244" 
+      filter="url(#dotGlow)"
+      initial={{ scale: 0 }}
+      whileInView={{ scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3, delay: 0.5 }}
+    />
+    <motion.circle 
+      cx="600" cy="520" r="6" 
+      fill="#a855f7" 
+      filter="url(#dotGlow)"
+      initial={{ scale: 0 }}
+      whileInView={{ scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3, delay: 1.3 }}
+    />
+
+    {/* ===== CARD BOTTOM-RIGHT (SEO + AEO) → Centro ===== */}
+    <motion.path 
+      d="M 870 540 L 750 540 L 750 480 L 640 480" 
+      stroke="url(#neuralGradientRight)" 
+      strokeWidth="2" 
+      fill="none"
+      filter="url(#neuralGlow)"
+      initial={{ pathLength: 0, opacity: 0 }}
+      whileInView={{ pathLength: 1, opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 1.2, delay: 0.7 }}
+    />
+    <motion.circle 
+      cx="870" cy="540" r="6" 
+      fill="#a855f7" 
+      filter="url(#dotGlow)"
+      initial={{ scale: 0 }}
+      whileInView={{ scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3, delay: 0.6 }}
+    />
+    <motion.circle 
+      cx="640" cy="480" r="6" 
+      fill="#ff2244" 
+      filter="url(#dotGlow)"
+      initial={{ scale: 0 }}
+      whileInView={{ scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.3, delay: 1.8 }}
+    />
+
+    {/* ===== LINHAS DECORATIVAS NAS BORDAS (estilo circuito) ===== */}
+    {/* Esquerda superior */}
+    <motion.path 
+      d="M 0 120 L 80 120 L 120 160 L 180 160" 
+      stroke="url(#neuralGradientLeft)" 
+      strokeWidth="1.5" 
+      fill="none"
+      filter="url(#neuralGlow)"
       strokeOpacity="0.6"
+      initial={{ pathLength: 0 }}
+      whileInView={{ pathLength: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 1, delay: 0.8 }}
     />
-    
-    {/* Pontos de conexão */}
-    <circle cx="150" cy="150" r="4" fill="#ff2244" filter="url(#glow)" />
-    <circle cx="130" cy="400" r="4" fill="#ff2244" filter="url(#glow)" />
-    <circle cx="1050" cy="150" r="4" fill="#a855f7" filter="url(#glow)" />
-    <circle cx="1000" cy="380" r="4" fill="#a855f7" filter="url(#glow)" />
-    <circle cx="1000" cy="580" r="4" fill="#a855f7" filter="url(#glow)" />
+    <motion.circle cx="180" cy="160" r="4" fill="#a855f7" filter="url(#dotGlow)" 
+      initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 1.7 }} />
+
+    {/* Esquerda inferior */}
+    <motion.path 
+      d="M 0 500 L 60 500 L 100 460 L 160 460" 
+      stroke="url(#neuralGradientLeft)" 
+      strokeWidth="1.5" 
+      fill="none"
+      filter="url(#neuralGlow)"
+      strokeOpacity="0.6"
+      initial={{ pathLength: 0 }}
+      whileInView={{ pathLength: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 1, delay: 1 }}
+    />
+    <motion.circle cx="160" cy="460" r="4" fill="#a855f7" filter="url(#dotGlow)" 
+      initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 1.9 }} />
+
+    {/* Direita superior */}
+    <motion.path 
+      d="M 1200 120 L 1120 120 L 1080 160 L 1020 160" 
+      stroke="url(#neuralGradientRight)" 
+      strokeWidth="1.5" 
+      fill="none"
+      filter="url(#neuralGlow)"
+      strokeOpacity="0.6"
+      initial={{ pathLength: 0 }}
+      whileInView={{ pathLength: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 1, delay: 0.9 }}
+    />
+    <motion.circle cx="1020" cy="160" r="4" fill="#ff2244" filter="url(#dotGlow)" 
+      initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 1.8 }} />
+
+    {/* Direita média */}
+    <motion.path 
+      d="M 1200 380 L 1100 380 L 1060 420 L 1000 420" 
+      stroke="url(#neuralGradientRight)" 
+      strokeWidth="1.5" 
+      fill="none"
+      filter="url(#neuralGlow)"
+      strokeOpacity="0.6"
+      initial={{ pathLength: 0 }}
+      whileInView={{ pathLength: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 1, delay: 1.1 }}
+    />
+    <motion.circle cx="1000" cy="420" r="4" fill="#ff2244" filter="url(#dotGlow)" 
+      initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 2 }} />
+
+    {/* Direita inferior */}
+    <motion.path 
+      d="M 1200 580 L 1100 580 L 1060 540 L 1000 540" 
+      stroke="url(#neuralGradientRight)" 
+      strokeWidth="1.5" 
+      fill="none"
+      filter="url(#neuralGlow)"
+      strokeOpacity="0.6"
+      initial={{ pathLength: 0 }}
+      whileInView={{ pathLength: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 1, delay: 1.2 }}
+    />
+    <motion.circle cx="1000" cy="540" r="4" fill="#ff2244" filter="url(#dotGlow)" 
+      initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 2.1 }} />
   </svg>
 );
 
@@ -735,7 +949,8 @@ const SolucoesGrid = () => {
         
         {/* Layout principal */}
         <div className="relative min-h-[700px] flex items-center justify-center">
-          {/* (removido) Linhas de circuito */}
+          {/* Linhas neurálgicas conectando cards ao centro */}
+          <NeuralConnections />
           
           {/* Cérebro central */}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[55%] z-10">
