@@ -55,8 +55,11 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
   const isRight = camada.position.includes("right");
   const isLeft = camada.position.includes("left");
   const isCenter = camada.position.includes("center");
+  const isMidLeft = camada.position === "mid-left";
   const usesLeftFrame = !isRight && (isLeft || camada.position.includes("center"));
   const isBottomRight = camada.position === "bottom-right";
+
+  const translateClass = isCenter ? "translate-y-[50%]" : isMidLeft ? "translate-y-[30%]" : "";
 
   const LeftCardFrameSvg = () => (
     <svg
@@ -208,7 +211,7 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
   );
   
   return (
-    <div className={`relative group z-20 ${isCenter ? "translate-y-[50%]" : ""}`}>
+    <div className={`relative group z-20 ${translateClass}`}>
       <motion.div
         initial={{ opacity: 1, scale: 1 }}
         whileInView={{ opacity: 1, scale: 1 }}
