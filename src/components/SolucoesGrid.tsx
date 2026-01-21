@@ -212,7 +212,7 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true, amount: 0.1 }}
       transition={{ delay: index * 0.1, duration: 0.5 }}
-      className="relative group z-20"
+      className={`relative group z-20 ${camada.position.includes("center") ? "lg:translate-y-[30%]" : ""}`}
     >
       {/* Glow effect */}
       <div className="absolute -inset-2 bg-gradient-to-r from-[#ff2244]/20 via-[#a855f7]/20 to-[#06b6d4]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
