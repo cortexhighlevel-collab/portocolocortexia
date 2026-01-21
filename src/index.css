@@ -57,6 +57,10 @@
     --hero-text: 0 0% 96%;
     --hero-name: 0 0% 100%;
 
+    /* Cyber frames (SVG strokes) */
+    --frame-red: 350 95% 50%;
+    --frame-purple: 280 85% 60%;
+
     --sidebar-background: 0 0% 10%;
     --sidebar-foreground: 0 0% 85%;
     --sidebar-primary: 0 0% 98%;
