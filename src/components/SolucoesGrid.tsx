@@ -55,6 +55,7 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
   const isRight = camada.position.includes("right");
   const isLeft = camada.position.includes("left");
   const usesLeftFrame = !isRight && (isLeft || camada.position.includes("center"));
+  const isBottomRight = camada.position === "bottom-right";
 
   const LeftCardFrameSvg = () => (
     <svg
@@ -158,6 +159,52 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
       <g id="svg-effects-group" />
     </svg>
   );
+
+  const BottomRightCardFrameSvg = () => (
+    <svg
+      className="absolute inset-0 h-full w-full"
+      width="100%"
+      height="100%"
+      viewBox="0 0 548 308"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="xMidYMid meet"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <g id="svg-bg-group">
+        <rect id="svg-bg-base-01" x="0" y="0" width="548" height="308" fill="transparent" />
+      </g>
+
+      <g id="svg-decor-group" />
+
+      <g id="svg-main-group">
+        <rect
+          id="svg-main-shape-01"
+          x="0.5"
+          y="0.5"
+          width="547"
+          height="307"
+          rx="39.5"
+          stroke="hsl(var(--foreground))"
+          vectorEffect="non-scaling-stroke"
+        />
+        <rect
+          id="svg-main-shape-02"
+          x="4.5"
+          y="4.5"
+          width="539"
+          height="298"
+          rx="39.5"
+          stroke="hsl(var(--foreground))"
+          vectorEffect="non-scaling-stroke"
+        />
+      </g>
+
+      <g id="svg-content-group" />
+      <g id="svg-effects-group" />
+    </svg>
+  );
   
   return (
     <motion.div
@@ -173,29 +220,44 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
       {isRight ? (
         <section className="relative min-w-[280px] max-w-[420px] w-full aspect-[731/267]">
           <div className="absolute inset-0 pointer-events-none">
-            <RightCardFrameSvg />
+            {isBottomRight ? <BottomRightCardFrameSvg /> : <RightCardFrameSvg />}
           </div>
 
-          {/* Ícone no círculo esquerdo do SVG */}
-          <div className="absolute left-8 top-1/2 -translate-y-1/2 z-10">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] border border-[#a855f7]/30 flex items-center justify-center">
-              <Icon className="w-7 h-7 text-[#a855f7]" />
-            </div>
-            <div className="absolute inset-0 rounded-full bg-[#a855f7]/20 blur-md -z-10" />
-          </div>
+          {isBottomRight ? (
+            <>
+              {/* Ícone (layout retangular) */}
+              <div className="absolute left-6 top-6 z-10">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] border border-[#a855f7]/30 flex items-center justify-center">
+                  <Icon className="w-6 h-6 text-[#a855f7]" />
+                </div>
+                <div className="absolute inset-0 rounded-full bg-[#a855f7]/20 blur-md -z-10" />
+              </div>
 
-          {/* Conteúdo (mantém texto original) */}
-          <div className="relative z-10 h-full w-full pl-[210px] pr-6 py-5">
-            <h3 className="text-white font-bold text-lg leading-tight mb-1">
-              {camada.titulo}
-            </h3>
-            <p className="text-[#ff6b8a] text-[10px] uppercase tracking-widest mb-2 font-mono">
-              {camada.funcao}
-            </p>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              {camada.beneficio}
-            </p>
-          </div>
+              {/* Conteúdo (mantém texto original) */}
+              <div className="relative z-10 h-full w-full pl-[92px] pr-6 py-6">
+                <h3 className="text-white font-bold text-lg leading-tight mb-1">{camada.titulo}</h3>
+                <p className="text-[#ff6b8a] text-[10px] uppercase tracking-widest mb-2 font-mono">{camada.funcao}</p>
+                <p className="text-gray-400 text-sm leading-relaxed">{camada.beneficio}</p>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Ícone no círculo esquerdo do SVG */}
+              <div className="absolute left-8 top-1/2 -translate-y-1/2 z-10">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] border border-[#a855f7]/30 flex items-center justify-center">
+                  <Icon className="w-7 h-7 text-[#a855f7]" />
+                </div>
+                <div className="absolute inset-0 rounded-full bg-[#a855f7]/20 blur-md -z-10" />
+              </div>
+
+              {/* Conteúdo (mantém texto original) */}
+              <div className="relative z-10 h-full w-full pl-[210px] pr-6 py-5">
+                <h3 className="text-white font-bold text-lg leading-tight mb-1">{camada.titulo}</h3>
+                <p className="text-[#ff6b8a] text-[10px] uppercase tracking-widest mb-2 font-mono">{camada.funcao}</p>
+                <p className="text-gray-400 text-sm leading-relaxed">{camada.beneficio}</p>
+              </div>
+            </>
+          )}
         </section>
       ) : usesLeftFrame ? (
         <section className="relative min-w-[280px] max-w-[360px] w-full aspect-[661/276]">
