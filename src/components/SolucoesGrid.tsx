@@ -329,11 +329,7 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
         </div>
         )}
         
-        {/* Ponto de conexão */}
-        <div className="absolute w-3 h-3 rounded-full bg-[#ff2244] border-2 border-[#ff2244]/50 shadow-[0_0_10px_#ff2244] 
-          top-1/2 -translate-y-1/2 
-          ${camada.position.includes('left') ? '-right-1.5' : '-left-1.5'}
-        " />
+        {/* (removido) Ponto de conexão */}
       </motion.div>
     </div>
   );
@@ -364,21 +360,7 @@ const CentralBrain = () => {
         transition={{ duration: isHovered ? 2 : 4, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Light beams */}
-      <div className="absolute -top-[50px] left-1/2 -translate-x-1/2 flex gap-[2px] z-30">
-        {[...Array(5)].map((_, i) => (
-          <motion.div
-            key={i}
-            style={{
-              width: i === 2 ? "2px" : "1px",
-              height: i === 2 ? "60px" : `${30 + Math.abs(2 - i) * 8}px`,
-              background: `linear-gradient(to top, hsl(330 100% 55%), transparent)`,
-            }}
-            animate={{ opacity: [0.3, 0.7, 0.3] }}
-            transition={{ duration: 2, repeat: Infinity, delay: i * 0.1 }}
-          />
-        ))}
-      </div>
+      {/* (removido) Light beams */}
 
       {/* Ring 1 - Outermost */}
       <div
@@ -567,31 +549,7 @@ const CentralBrain = () => {
         ))}
 
 
-        {/* Connection lines */}
-        <motion.line 
-          x1="312" y1="160" x2="320" y2="160" 
-          stroke="hsl(330 100% 50%)" 
-          strokeWidth="2" 
-          filter="url(#glow)"
-          animate={{ opacity: isHovered ? [0.8, 1, 0.8] : 1 }}
-          transition={{ duration: 0.5, repeat: Infinity }}
-        />
-        <motion.line 
-          x1="8" y1="160" x2="0" y2="160" 
-          stroke="hsl(330 100% 50%)" 
-          strokeWidth="2" 
-          filter="url(#glow)"
-          animate={{ opacity: isHovered ? [0.8, 1, 0.8] : 1 }}
-          transition={{ duration: 0.5, repeat: Infinity, delay: 0.2 }}
-        />
-        <motion.line 
-          x1="160" y1="8" x2="160" y2="0" 
-          stroke="hsl(330 100% 50%)" 
-          strokeWidth="2" 
-          filter="url(#glow)"
-          animate={{ opacity: isHovered ? [0.8, 1, 0.8] : 1 }}
-          transition={{ duration: 0.5, repeat: Infinity, delay: 0.4 }}
-        />
+        {/* (removido) Connection lines */}
       </svg>
 
       {/* Imagem do cérebro com glow */}
@@ -712,9 +670,7 @@ const BorderCircuits = () => (
 const SolucoesGrid = () => {
   return (
     <section id="solucoes" className="relative bg-black py-24 md:py-32 overflow-hidden">
-      
-      {/* Circuitos de borda */}
-      <BorderCircuits />
+      {/* (removido) Circuitos de borda */}
       
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
         {/* Título */}
@@ -739,8 +695,7 @@ const SolucoesGrid = () => {
         
         {/* Layout principal */}
         <div className="relative min-h-[700px] flex items-center justify-center">
-          {/* Linhas de circuito */}
-          <CircuitLines />
+          {/* (removido) Linhas de circuito */}
           
           {/* Cérebro central */}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[55%] z-10">
