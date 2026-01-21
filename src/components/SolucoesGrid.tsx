@@ -254,9 +254,15 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
                 <div className="absolute inset-0 rounded-full bg-[#a855f7]/20 blur-md -z-10" />
               </div>
 
-              {/* Conteúdo (mantém texto original) */}
-               <div className="relative z-10 h-full w-full pl-[210px] pr-10 py-4 flex flex-col justify-center gap-1">
-                 <h3 className="text-white font-bold text-base leading-tight break-words">{camada.titulo}</h3>
+               {/* Conteúdo (mantém texto original) */}
+                <div className="relative z-10 h-full w-full pl-[210px] pr-10 py-4 flex flex-col justify-center gap-1">
+                  <h3
+                    className={`text-white font-bold leading-tight break-words ${
+                      camada.position === "top-right" ? "whitespace-nowrap text-[15px]" : "text-base"
+                    }`}
+                  >
+                    {camada.titulo}
+                  </h3>
                  <p className="text-[#ff6b8a] text-[8px] uppercase tracking-widest font-mono leading-snug break-words">
                    {camada.funcao}
                  </p>
