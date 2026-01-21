@@ -80,7 +80,7 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
         </linearGradient>
       </defs>
       <g id="svg-bg-group">
-        <rect id="svg-bg-base-01" x="0" y="0" width="661" height="276" fill="transparent" />
+        <rect id="svg-bg-base-01" x="0" y="0" width="661" height="276" fill="hsl(var(--frame-panel))" fillOpacity="0.92" />
       </g>
 
       <g id="svg-decor-group">
@@ -137,7 +137,7 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
         </linearGradient>
       </defs>
       <g id="svg-bg-group">
-        <rect id="svg-bg-base-01" x="0" y="0" width="731" height="267" fill="transparent" />
+        <rect id="svg-bg-base-01" x="0" y="0" width="731" height="267" fill="hsl(var(--frame-panel))" fillOpacity="0.92" />
       </g>
 
       <g id="svg-decor-group" />
@@ -195,7 +195,7 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
         </linearGradient>
       </defs>
       <g id="svg-bg-group">
-        <rect id="svg-bg-base-01" x="0" y="0" width="548" height="308" fill="transparent" />
+        <rect id="svg-bg-base-01" x="0" y="0" width="548" height="308" fill="hsl(var(--frame-panel))" fillOpacity="0.92" />
       </g>
 
       <g id="svg-decor-group" />
