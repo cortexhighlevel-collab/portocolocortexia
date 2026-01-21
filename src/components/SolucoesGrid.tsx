@@ -52,47 +52,50 @@ const camadas = [
 const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number }) => {
   const Icon = camada.icon;
 
-  const CardFrameSvg = () => (
+  const isRight = camada.position.includes("right");
+
+  const RightCardFrameSvg = () => (
     <svg
       className="absolute inset-0 h-full w-full"
       width="100%"
       height="100%"
-      viewBox="0 0 661 276"
+      viewBox="0 0 731 267"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMidYMid meet"
       aria-hidden="true"
-      focusable={false as any}
+      focusable="false"
     >
       <g id="svg-bg-group">
-        <rect id="svg-bg-base-01" x="0" y="0" width="661" height="276" fill="transparent" />
+        <rect id="svg-bg-base-01" x="0" y="0" width="731" height="267" fill="transparent" />
       </g>
 
-      <g id="svg-decor-group">
-        <path
-          id="svg-decor-stroke-01"
-          d="M472 260H159H46.5L15 228V56.5L49 22.5H456L462.5 18.5H461"
-          stroke="hsl(var(--foreground))"
-          vectorEffect="non-scaling-stroke"
-        />
-        <path
-          id="svg-decor-stroke-02"
-          d="M480.5 263.457H158.999L149.469 275H39.6233L0.5 233.845V184.158L9.52845 177.634V106.868L0.5 97.834V50.1547L41.6296 9H148.466L157.495 18.034H463"
-          stroke="hsl(var(--foreground))"
-          vectorEffect="non-scaling-stroke"
-        />
-      </g>
+      <g id="svg-decor-group" />
 
       <g id="svg-main-group">
-        <path
-          id="svg-main-ring-01"
-          d="M528 0.5C600.888 0.5 660 61.3752 660 136.5C660 211.625 600.888 272.5 528 272.5C455.112 272.5 396 211.625 396 136.5C396 61.3752 455.112 0.5 528 0.5Z"
+        <circle
+          id="svg-main-shape-01"
+          cx="133.5"
+          cy="133.5"
+          r="133"
           stroke="hsl(var(--foreground))"
           vectorEffect="non-scaling-stroke"
         />
         <path
-          id="svg-main-ring-02"
-          d="M528 23.5C589.85 23.5 640 74.3094 640 137C640 199.691 589.85 250.5 528 250.5C466.15 250.5 416 199.691 416 137C416 74.3094 466.15 23.5 528 23.5Z"
+          id="svg-main-shape-02"
+          d="M133.5 21.5C195.358 21.5 245.5 71.4223 245.5 133C245.5 194.578 195.358 244.5 133.5 244.5C71.642 244.5 21.5 194.578 21.5 133C21.5 71.4223 71.642 21.5 133.5 21.5Z"
+          stroke="hsl(var(--foreground))"
+          vectorEffect="non-scaling-stroke"
+        />
+        <path
+          id="svg-main-shape-03"
+          d="M180.501 258H690C712.091 258 730 240.091 730 218V49C730 26.9086 712.091 9 690 9H180.5"
+          stroke="hsl(var(--foreground))"
+          vectorEffect="non-scaling-stroke"
+        />
+        <path
+          id="svg-main-shape-04"
+          d="M192 253H685.499C707.591 253 725.499 235.091 725.499 213V53C725.499 30.9086 707.591 13 685.499 13H190"
           stroke="hsl(var(--foreground))"
           vectorEffect="non-scaling-stroke"
         />
@@ -114,33 +117,55 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
       {/* Glow effect */}
       <div className="absolute -inset-2 bg-gradient-to-r from-[#ff2244]/20 via-[#a855f7]/20 to-[#06b6d4]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       
-      {/* Card com frame em SVG (inline) */}
-      <section className="relative min-w-[280px] max-w-[360px] w-full aspect-[661/276]">
-        <div className="absolute inset-0 pointer-events-none">
-          <CardFrameSvg />
-        </div>
-
-        {/* Conteúdo (mantém texto original) */}
-        <div className="relative z-10 h-full w-full px-6 py-5 pr-[118px]">
-          <h3 className="text-white font-bold text-lg leading-tight mb-1">
-            {camada.titulo}
-          </h3>
-          <p className="text-[#ff6b8a] text-[10px] uppercase tracking-widest mb-2 font-mono">
-            {camada.funcao}
-          </p>
-          <p className="text-gray-400 text-sm leading-relaxed">
-            {camada.beneficio}
-          </p>
-        </div>
-
-        {/* Ícone no círculo direito do SVG */}
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 z-10">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] border border-[#a855f7]/30 flex items-center justify-center">
-            <Icon className="w-7 h-7 text-[#a855f7]" />
+      {isRight ? (
+        <section className="relative min-w-[280px] max-w-[420px] w-full aspect-[731/267]">
+          <div className="absolute inset-0 pointer-events-none">
+            <RightCardFrameSvg />
           </div>
-          <div className="absolute inset-0 rounded-full bg-[#a855f7]/20 blur-md -z-10" />
+
+          {/* Ícone no círculo esquerdo do SVG */}
+          <div className="absolute left-8 top-1/2 -translate-y-1/2 z-10">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] border border-[#a855f7]/30 flex items-center justify-center">
+              <Icon className="w-7 h-7 text-[#a855f7]" />
+            </div>
+            <div className="absolute inset-0 rounded-full bg-[#a855f7]/20 blur-md -z-10" />
+          </div>
+
+          {/* Conteúdo (mantém texto original) */}
+          <div className="relative z-10 h-full w-full pl-[210px] pr-6 py-5">
+            <h3 className="text-white font-bold text-lg leading-tight mb-1">
+              {camada.titulo}
+            </h3>
+            <p className="text-[#ff6b8a] text-[10px] uppercase tracking-widest mb-2 font-mono">
+              {camada.funcao}
+            </p>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              {camada.beneficio}
+            </p>
+          </div>
+        </section>
+      ) : (
+        <div className="relative p-[1px] min-w-[280px] max-w-[320px] bg-gradient-to-br from-[#ff2244] via-[#a855f7] to-[#06b6d4] rounded-xl">
+          <div className="relative bg-[#0a0a0f] backdrop-blur-sm p-5 rounded-[11px]">
+            <div className="relative z-10 flex items-start gap-4">
+              <div className="flex-1">
+                <h3 className="text-white font-bold text-lg mb-1">{camada.titulo}</h3>
+                <p className="text-[#ff6b8a] text-[10px] uppercase tracking-widest mb-2 font-mono">
+                  {camada.funcao}
+                </p>
+                <p className="text-gray-400 text-sm leading-relaxed">{camada.beneficio}</p>
+              </div>
+
+              <div className="relative flex-shrink-0">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] border border-[#a855f7]/30 flex items-center justify-center">
+                  <Icon className="w-7 h-7 text-[#a855f7]" />
+                </div>
+                <div className="absolute inset-0 rounded-full bg-[#a855f7]/20 blur-md -z-10" />
+              </div>
+            </div>
+          </div>
         </div>
-      </section>
+      )}
       
       {/* Ponto de conexão */}
       <div className="absolute w-3 h-3 rounded-full bg-[#ff2244] border-2 border-[#ff2244]/50 shadow-[0_0_10px_#ff2244] 
