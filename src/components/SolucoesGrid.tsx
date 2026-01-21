@@ -59,7 +59,7 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
   const usesLeftFrame = !isRight && (isLeft || camada.position.includes("center"));
   const isBottomRight = camada.position === "bottom-right";
 
-  const translateClass = isCenter ? "translate-y-[50%]" : isMidLeft ? "translate-y-[30%]" : "";
+  const translateClass = isCenter ? "translate-y-[50%]" : isMidLeft ? "translate-y-[50%]" : "";
 
   const LeftCardFrameSvg = () => (
     <svg
