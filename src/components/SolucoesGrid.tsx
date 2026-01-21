@@ -608,8 +608,7 @@ const CentralBrain = () => {
 // Linhas neurálgicas conectando cards ao cérebro central
 const NeuralConnections = () => (
   <svg 
-    className="absolute inset-0 w-full h-full pointer-events-none" 
-    style={{ zIndex: 5 }}
+    className="absolute inset-0 w-full h-full pointer-events-none z-30 mix-blend-screen"
     viewBox="0 0 1000 700"
     preserveAspectRatio="none"
     aria-hidden="true"
