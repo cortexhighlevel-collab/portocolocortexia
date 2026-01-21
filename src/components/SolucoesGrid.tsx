@@ -79,10 +79,10 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
           <stop offset="0%" stopColor="hsl(var(--frame-red))" />
           <stop offset="100%" stopColor="hsl(var(--frame-purple))" />
         </linearGradient>
-        {/* Clip para impedir o fundo de "vazar" fora da moldura (retângulo + círculo) */}
+        {/* Clip para impedir o fundo de "vazar" fora da moldura - silhueta exata */}
         <clipPath id={`cardClipLeft-${svgId}`} clipPathUnits="userSpaceOnUse">
-          {/* Parte retangular (com chanfro à esquerda + degraus perto do encaixe do círculo) */}
-          <path d="M44 0 H420 V18 H461 V258 H420 V276 H44 L0 232 V44 Z" />
+          {/* Silhueta exata da moldura: chanfro esquerdo + degraus + encaixe circular */}
+          <path d="M41.6 9 H148.5 L157.5 18 H463 V263 H149.5 L149.5 275 H39.6 L0.5 233.8 V184.2 L9.5 177.6 V106.9 L0.5 97.8 V50.2 L41.6 9 Z" />
           {/* Parte circular (anel à direita) */}
           <circle cx="528" cy="136.5" r="136" />
         </clipPath>
