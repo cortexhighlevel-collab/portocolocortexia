@@ -271,7 +271,11 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
             <LeftCardFrameSvg />
           </div>
 
-           <div className="relative z-10 h-full w-full px-6 py-4 pr-[118px] flex flex-col justify-center gap-1">
+           <div
+             className={`relative z-10 h-full w-full px-6 py-4 flex flex-col justify-center gap-1 ${
+               camada.position === "mid-left" ? "pr-[160px]" : "pr-[118px]"
+             }`}
+           >
              <h3 className="text-white font-bold text-base leading-tight break-words">{camada.titulo}</h3>
              <p className="text-[#ff6b8a] text-[9px] uppercase tracking-widest font-mono leading-snug break-words">
                {camada.funcao}
