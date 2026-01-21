@@ -78,9 +78,16 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
           <stop offset="0%" stopColor="hsl(var(--frame-red))" />
           <stop offset="100%" stopColor="hsl(var(--frame-purple))" />
         </linearGradient>
+        {/* Clip para impedir o fundo de "vazar" fora da moldura */}
+        <clipPath id="cardClipLeft">
+          {/* Retângulo com chanfros (aproxima o recorte do frame) */}
+          <path d="M32 0 H629 L661 32 V244 L629 276 H32 L0 244 V32 Z" />
+        </clipPath>
       </defs>
       <g id="svg-bg-group">
-        <rect id="svg-bg-base-01" x="0" y="0" width="661" height="276" fill="hsl(var(--frame-panel))" fillOpacity="0.92" />
+        <g clipPath="url(#cardClipLeft)">
+          <rect id="svg-bg-base-01" x="0" y="0" width="661" height="276" fill="hsl(var(--frame-panel))" fillOpacity="0.92" />
+        </g>
       </g>
 
       <g id="svg-decor-group">
@@ -135,9 +142,15 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
           <stop offset="0%" stopColor="hsl(var(--frame-red))" />
           <stop offset="100%" stopColor="hsl(var(--frame-purple))" />
         </linearGradient>
+        <clipPath id="cardClipRight">
+          {/* Retângulo arredondado do card direito */}
+          <rect x="9" y="9" width="712" height="249" rx="40" ry="40" />
+        </clipPath>
       </defs>
       <g id="svg-bg-group">
-        <rect id="svg-bg-base-01" x="0" y="0" width="731" height="267" fill="hsl(var(--frame-panel))" fillOpacity="0.92" />
+        <g clipPath="url(#cardClipRight)">
+          <rect id="svg-bg-base-01" x="0" y="0" width="731" height="267" fill="hsl(var(--frame-panel))" fillOpacity="0.92" />
+        </g>
       </g>
 
       <g id="svg-decor-group" />
@@ -193,9 +206,14 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
           <stop offset="0%" stopColor="hsl(var(--frame-red))" />
           <stop offset="100%" stopColor="hsl(var(--frame-purple))" />
         </linearGradient>
+        <clipPath id="cardClipBottomRight">
+          <rect x="4.5" y="4.5" width="539" height="298" rx="39.5" ry="39.5" />
+        </clipPath>
       </defs>
       <g id="svg-bg-group">
-        <rect id="svg-bg-base-01" x="0" y="0" width="548" height="308" fill="hsl(var(--frame-panel))" fillOpacity="0.92" />
+        <g clipPath="url(#cardClipBottomRight)">
+          <rect id="svg-bg-base-01" x="0" y="0" width="548" height="308" fill="hsl(var(--frame-panel))" fillOpacity="0.92" />
+        </g>
       </g>
 
       <g id="svg-decor-group" />
