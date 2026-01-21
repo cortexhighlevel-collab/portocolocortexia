@@ -241,7 +241,17 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
                  <p className="text-[#ff6b8a] text-[8px] uppercase tracking-widest font-mono leading-snug break-words">
                    {camada.funcao}
                  </p>
-                  <p className="text-gray-400 text-xs leading-snug break-words max-w-[260px]">{camada.beneficio}</p>
+                   <p className="text-gray-400 text-xs leading-snug break-words max-w-[260px]">
+                     {camada.position === "bottom-right" && camada.titulo === "SEO + AEO" ? (
+                       <>
+                         Apareça em buscas tradicionais
+                         <br />
+                         e respostas de IA
+                       </>
+                     ) : (
+                       camada.beneficio
+                     )}
+                   </p>
               </div>
             </>
           ) : (
