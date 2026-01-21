@@ -65,17 +65,11 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
       
       {/* Container com borda gradiente usando p-px + bg-gradient */}
       <div 
-        className="relative p-[1px] min-w-[280px] max-w-[320px] bg-gradient-to-br from-[#ff2244] via-[#a855f7] to-[#06b6d4]"
-        style={{
-          clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))",
-        }}
+        className="relative p-[1px] min-w-[280px] max-w-[320px] bg-gradient-to-br from-[#ff2244] via-[#a855f7] to-[#06b6d4] rounded-xl"
       >
         {/* Fundo interno do card */}
         <div 
-          className="relative bg-[#0a0a0f] backdrop-blur-sm p-5"
-          style={{
-            clipPath: "polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px))",
-          }}
+          className="relative bg-[#0a0a0f] backdrop-blur-sm p-5 rounded-[11px]"
         >
           {/* Conteúdo */}
           <div className="relative z-10 flex items-start gap-4">
