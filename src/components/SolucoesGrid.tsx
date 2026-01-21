@@ -608,22 +608,24 @@ const CentralBrain = () => {
 // Linhas neurálgicas conectando cards ao cérebro central
 const NeuralConnections = () => (
   <svg 
-    className="absolute inset-0 w-full h-full pointer-events-none hidden lg:block" 
+    className="absolute inset-0 w-full h-full pointer-events-none" 
     style={{ zIndex: 5 }}
+    viewBox="0 0 1000 700"
     preserveAspectRatio="none"
+    aria-hidden="true"
   >
     <defs>
       <linearGradient id="neuralGradientLeft" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stopColor="#ff2244" />
-        <stop offset="100%" stopColor="#a855f7" />
+        <stop offset="0%" stopColor="hsl(var(--frame-red))" />
+        <stop offset="100%" stopColor="hsl(var(--frame-purple))" />
       </linearGradient>
       <linearGradient id="neuralGradientRight" x1="100%" y1="0%" x2="0%" y2="0%">
-        <stop offset="0%" stopColor="#a855f7" />
-        <stop offset="100%" stopColor="#ff2244" />
+        <stop offset="0%" stopColor="hsl(var(--frame-purple))" />
+        <stop offset="100%" stopColor="hsl(var(--frame-red))" />
       </linearGradient>
       <linearGradient id="neuralGradientDown" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stopColor="#ff2244" />
-        <stop offset="100%" stopColor="#a855f7" />
+        <stop offset="0%" stopColor="hsl(var(--frame-red))" />
+        <stop offset="100%" stopColor="hsl(var(--frame-purple))" />
       </linearGradient>
       <filter id="neuralGlow">
         <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
@@ -643,256 +645,245 @@ const NeuralConnections = () => (
     
     {/* ===== CARD TOP-LEFT (Automação com IA) → Centro ===== */}
     <motion.path 
-      d="M 28% 18% L 38% 18% L 38% 35% L 50% 35%"
+      d="M 280 126 L 380 126 L 380 245 L 500 245"
       stroke="url(#neuralGradientLeft)" 
       strokeWidth="2" 
       fill="none"
       filter="url(#neuralGlow)"
+      vectorEffect="non-scaling-stroke"
       initial={{ pathLength: 0, opacity: 0 }}
-      whileInView={{ pathLength: 1, opacity: 1 }}
-      viewport={{ once: true }}
+      animate={{ pathLength: 1, opacity: 1 }}
       transition={{ duration: 1.2, delay: 0.2 }}
     />
     <motion.circle 
-      cx="28%" cy="18%" r="6" 
-      fill="#ff2244" 
+      cx={280} cy={126} r={6}
+      fill="hsl(var(--frame-red))" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
-      whileInView={{ scale: 1 }}
-      viewport={{ once: true }}
+      animate={{ scale: 1 }}
       transition={{ duration: 0.3, delay: 0.1 }}
     />
     <motion.circle 
-      cx="50%" cy="35%" r="6" 
-      fill="#a855f7" 
+      cx={500} cy={245} r={6}
+      fill="hsl(var(--frame-purple))" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
-      whileInView={{ scale: 1 }}
-      viewport={{ once: true }}
+      animate={{ scale: 1 }}
       transition={{ duration: 0.3, delay: 1.3 }}
     />
 
     {/* ===== CARD MID-LEFT (Personas Treinadas) → Centro ===== */}
     <motion.path 
-      d="M 28% 58% L 38% 58% L 38% 50% L 48% 50%"
+      d="M 280 406 L 380 406 L 380 350 L 480 350"
       stroke="url(#neuralGradientLeft)" 
       strokeWidth="2" 
       fill="none"
       filter="url(#neuralGlow)"
+      vectorEffect="non-scaling-stroke"
       initial={{ pathLength: 0, opacity: 0 }}
-      whileInView={{ pathLength: 1, opacity: 1 }}
-      viewport={{ once: true }}
+      animate={{ pathLength: 1, opacity: 1 }}
       transition={{ duration: 1.2, delay: 0.4 }}
     />
     <motion.circle 
-      cx="28%" cy="58%" r="6" 
-      fill="#ff2244" 
+      cx={280} cy={406} r={6}
+      fill="hsl(var(--frame-red))" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
-      whileInView={{ scale: 1 }}
-      viewport={{ once: true }}
+      animate={{ scale: 1 }}
       transition={{ duration: 0.3, delay: 0.3 }}
     />
     <motion.circle 
-      cx="48%" cy="50%" r="6" 
-      fill="#a855f7" 
+      cx={480} cy={350} r={6}
+      fill="hsl(var(--frame-purple))" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
-      whileInView={{ scale: 1 }}
-      viewport={{ once: true }}
+      animate={{ scale: 1 }}
       transition={{ duration: 0.3, delay: 1.5 }}
     />
 
     {/* ===== CARD TOP-RIGHT (Análise Estratégica) → Centro ===== */}
     <motion.path 
-      d="M 72% 18% L 62% 18% L 62% 35% L 52% 35%"
+      d="M 720 126 L 620 126 L 620 245 L 520 245"
       stroke="url(#neuralGradientRight)" 
       strokeWidth="2" 
       fill="none"
       filter="url(#neuralGlow)"
+      vectorEffect="non-scaling-stroke"
       initial={{ pathLength: 0, opacity: 0 }}
-      whileInView={{ pathLength: 1, opacity: 1 }}
-      viewport={{ once: true }}
+      animate={{ pathLength: 1, opacity: 1 }}
       transition={{ duration: 1.2, delay: 0.3 }}
     />
     <motion.circle 
-      cx="72%" cy="18%" r="6" 
-      fill="#a855f7" 
+      cx={720} cy={126} r={6}
+      fill="hsl(var(--frame-purple))" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
-      whileInView={{ scale: 1 }}
-      viewport={{ once: true }}
+      animate={{ scale: 1 }}
       transition={{ duration: 0.3, delay: 0.2 }}
     />
 
     {/* ===== CARD MID-RIGHT (Engenharia de Prompt) → Centro ===== */}
     <motion.path 
-      d="M 72% 42% L 62% 42% L 62% 50% L 54% 50%"
+      d="M 720 294 L 620 294 L 620 350 L 540 350"
       stroke="url(#neuralGradientRight)" 
       strokeWidth="2" 
       fill="none"
       filter="url(#neuralGlow)"
+      vectorEffect="non-scaling-stroke"
       initial={{ pathLength: 0, opacity: 0 }}
-      whileInView={{ pathLength: 1, opacity: 1 }}
-      viewport={{ once: true }}
+      animate={{ pathLength: 1, opacity: 1 }}
       transition={{ duration: 1.2, delay: 0.5 }}
     />
     <motion.circle 
-      cx="72%" cy="42%" r="6" 
-      fill="#a855f7" 
+      cx={720} cy={294} r={6}
+      fill="hsl(var(--frame-purple))" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
-      whileInView={{ scale: 1 }}
-      viewport={{ once: true }}
+      animate={{ scale: 1 }}
       transition={{ duration: 0.3, delay: 0.4 }}
     />
     <motion.circle 
-      cx="54%" cy="50%" r="6" 
-      fill="#ff2244" 
+      cx={540} cy={350} r={6}
+      fill="hsl(var(--frame-red))" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
-      whileInView={{ scale: 1 }}
-      viewport={{ once: true }}
+      animate={{ scale: 1 }}
       transition={{ duration: 0.3, delay: 1.6 }}
     />
 
     {/* ===== CARD BOTTOM-CENTER (Agentes Inteligentes) → Centro ===== */}
     <motion.path 
-      d="M 50% 78% L 50% 65%"
+      d="M 500 546 L 500 455"
       stroke="url(#neuralGradientDown)" 
       strokeWidth="2" 
       fill="none"
       filter="url(#neuralGlow)"
+      vectorEffect="non-scaling-stroke"
       initial={{ pathLength: 0, opacity: 0 }}
-      whileInView={{ pathLength: 1, opacity: 1 }}
-      viewport={{ once: true }}
+      animate={{ pathLength: 1, opacity: 1 }}
       transition={{ duration: 0.8, delay: 0.6 }}
     />
     <motion.circle 
-      cx="50%" cy="78%" r="6" 
-      fill="#ff2244" 
+      cx={500} cy={546} r={6}
+      fill="hsl(var(--frame-red))" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
-      whileInView={{ scale: 1 }}
-      viewport={{ once: true }}
+      animate={{ scale: 1 }}
       transition={{ duration: 0.3, delay: 0.5 }}
     />
     <motion.circle 
-      cx="50%" cy="65%" r="6" 
-      fill="#a855f7" 
+      cx={500} cy={455} r={6}
+      fill="hsl(var(--frame-purple))" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
-      whileInView={{ scale: 1 }}
-      viewport={{ once: true }}
+      animate={{ scale: 1 }}
       transition={{ duration: 0.3, delay: 1.3 }}
     />
 
     {/* ===== CARD BOTTOM-RIGHT (SEO + AEO) → Centro ===== */}
     <motion.path 
-      d="M 72% 68% L 62% 68% L 62% 58% L 54% 58%"
+      d="M 720 476 L 620 476 L 620 406 L 540 406"
       stroke="url(#neuralGradientRight)" 
       strokeWidth="2" 
       fill="none"
       filter="url(#neuralGlow)"
+      vectorEffect="non-scaling-stroke"
       initial={{ pathLength: 0, opacity: 0 }}
-      whileInView={{ pathLength: 1, opacity: 1 }}
-      viewport={{ once: true }}
+      animate={{ pathLength: 1, opacity: 1 }}
       transition={{ duration: 1.2, delay: 0.7 }}
     />
     <motion.circle 
-      cx="72%" cy="68%" r="6" 
-      fill="#a855f7" 
+      cx={720} cy={476} r={6}
+      fill="hsl(var(--frame-purple))" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
-      whileInView={{ scale: 1 }}
-      viewport={{ once: true }}
+      animate={{ scale: 1 }}
       transition={{ duration: 0.3, delay: 0.6 }}
     />
     <motion.circle 
-      cx="54%" cy="58%" r="6" 
-      fill="#ff2244" 
+      cx={540} cy={406} r={6}
+      fill="hsl(var(--frame-red))" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
-      whileInView={{ scale: 1 }}
-      viewport={{ once: true }}
+      animate={{ scale: 1 }}
       transition={{ duration: 0.3, delay: 1.8 }}
     />
 
     {/* ===== LINHAS DECORATIVAS NAS BORDAS ===== */}
     <motion.path 
-      d="M 0% 15% L 8% 15% L 12% 20% L 18% 20%"
+      d="M 0 105 L 80 105 L 120 140 L 180 140"
       stroke="url(#neuralGradientLeft)" 
       strokeWidth="1.5" 
       fill="none"
       filter="url(#neuralGlow)"
       strokeOpacity="0.6"
+      vectorEffect="non-scaling-stroke"
       initial={{ pathLength: 0 }}
-      whileInView={{ pathLength: 1 }}
-      viewport={{ once: true }}
+      animate={{ pathLength: 1 }}
       transition={{ duration: 1, delay: 0.8 }}
     />
-    <motion.circle cx="18%" cy="20%" r="4" fill="#a855f7" filter="url(#dotGlow)" 
-      initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 1.7 }} />
+    <motion.circle cx={180} cy={140} r={4} fill="hsl(var(--frame-purple))" filter="url(#dotGlow)" 
+      initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.7 }} />
 
     <motion.path 
-      d="M 0% 65% L 6% 65% L 10% 60% L 16% 60%"
+      d="M 0 455 L 60 455 L 100 420 L 160 420"
       stroke="url(#neuralGradientLeft)" 
       strokeWidth="1.5" 
       fill="none"
       filter="url(#neuralGlow)"
       strokeOpacity="0.6"
+      vectorEffect="non-scaling-stroke"
       initial={{ pathLength: 0 }}
-      whileInView={{ pathLength: 1 }}
-      viewport={{ once: true }}
+      animate={{ pathLength: 1 }}
       transition={{ duration: 1, delay: 1 }}
     />
-    <motion.circle cx="16%" cy="60%" r="4" fill="#a855f7" filter="url(#dotGlow)" 
-      initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 1.9 }} />
+    <motion.circle cx={160} cy={420} r={4} fill="hsl(var(--frame-purple))" filter="url(#dotGlow)" 
+      initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.9 }} />
 
     <motion.path 
-      d="M 100% 15% L 92% 15% L 88% 20% L 82% 20%"
+      d="M 1000 105 L 920 105 L 880 140 L 820 140"
       stroke="url(#neuralGradientRight)" 
       strokeWidth="1.5" 
       fill="none"
       filter="url(#neuralGlow)"
       strokeOpacity="0.6"
+      vectorEffect="non-scaling-stroke"
       initial={{ pathLength: 0 }}
-      whileInView={{ pathLength: 1 }}
-      viewport={{ once: true }}
+      animate={{ pathLength: 1 }}
       transition={{ duration: 1, delay: 0.9 }}
     />
-    <motion.circle cx="82%" cy="20%" r="4" fill="#ff2244" filter="url(#dotGlow)" 
-      initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 1.8 }} />
+    <motion.circle cx={820} cy={140} r={4} fill="hsl(var(--frame-red))" filter="url(#dotGlow)" 
+      initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.8 }} />
 
     <motion.path 
-      d="M 100% 48% L 92% 48% L 88% 52% L 82% 52%"
+      d="M 1000 336 L 920 336 L 880 364 L 820 364"
       stroke="url(#neuralGradientRight)" 
       strokeWidth="1.5" 
       fill="none"
       filter="url(#neuralGlow)"
       strokeOpacity="0.6"
+      vectorEffect="non-scaling-stroke"
       initial={{ pathLength: 0 }}
-      whileInView={{ pathLength: 1 }}
-      viewport={{ once: true }}
+      animate={{ pathLength: 1 }}
       transition={{ duration: 1, delay: 1.1 }}
     />
-    <motion.circle cx="82%" cy="52%" r="4" fill="#ff2244" filter="url(#dotGlow)" 
-      initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 2 }} />
+    <motion.circle cx={820} cy={364} r={4} fill="hsl(var(--frame-red))" filter="url(#dotGlow)" 
+      initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2 }} />
 
     <motion.path 
-      d="M 100% 72% L 92% 72% L 88% 68% L 82% 68%"
+      d="M 1000 504 L 920 504 L 880 476 L 820 476"
       stroke="url(#neuralGradientRight)" 
       strokeWidth="1.5" 
       fill="none"
       filter="url(#neuralGlow)"
       strokeOpacity="0.6"
+      vectorEffect="non-scaling-stroke"
       initial={{ pathLength: 0 }}
-      whileInView={{ pathLength: 1 }}
-      viewport={{ once: true }}
+      animate={{ pathLength: 1 }}
       transition={{ duration: 1, delay: 1.2 }}
     />
-    <motion.circle cx="82%" cy="68%" r="4" fill="#ff2244" filter="url(#dotGlow)" 
-      initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 2.1 }} />
+    <motion.circle cx={820} cy={476} r={4} fill="hsl(var(--frame-red))" filter="url(#dotGlow)" 
+      initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 2.1 }} />
   </svg>
 );
 
