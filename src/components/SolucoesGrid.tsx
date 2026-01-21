@@ -208,7 +208,7 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
   );
   
   return (
-    <div className={`relative group z-20 ${isCenter ? "translate-y-[30%]" : ""}`}>
+    <div className={`relative group z-20 ${isCenter ? "translate-y-[50%]" : ""}`}>
       <motion.div
         initial={{ opacity: 1, scale: 1 }}
         whileInView={{ opacity: 1, scale: 1 }}
