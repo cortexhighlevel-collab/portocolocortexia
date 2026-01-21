@@ -54,6 +54,7 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
 
   const isRight = camada.position.includes("right");
   const isLeft = camada.position.includes("left");
+  const isCenter = camada.position.includes("center");
   const usesLeftFrame = !isRight && (isLeft || camada.position.includes("center"));
   const isBottomRight = camada.position === "bottom-right";
 
@@ -207,17 +208,18 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
   );
   
   return (
-    <motion.div
-      initial={{ opacity: 1, scale: 1 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true, amount: 0.1 }}
-      transition={{ delay: index * 0.1, duration: 0.5 }}
-      className={`relative group z-20 ${camada.position.includes("center") ? "lg:translate-y-[30%]" : ""}`}
-    >
-      {/* Glow effect */}
-      <div className="absolute -inset-2 bg-gradient-to-r from-[#ff2244]/20 via-[#a855f7]/20 to-[#06b6d4]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      
-      {isRight ? (
+    <div className={`relative group z-20 ${isCenter ? "translate-y-[30%]" : ""}`}>
+      <motion.div
+        initial={{ opacity: 1, scale: 1 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, amount: 0.1 }}
+        transition={{ delay: index * 0.1, duration: 0.5 }}
+        className="relative"
+      >
+        {/* Glow effect */}
+        <div className="absolute -inset-2 bg-gradient-to-r from-[#ff2244]/20 via-[#a855f7]/20 to-[#06b6d4]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        
+        {isRight ? (
         <section className="relative min-w-[280px] max-w-[420px] w-full aspect-[731/267]">
           <div className="absolute inset-0 pointer-events-none">
             {isBottomRight ? <BottomRightCardFrameSvg /> : <RightCardFrameSvg />}
@@ -299,14 +301,15 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
             </div>
           </div>
         </div>
-      )}
-      
-      {/* Ponto de conexão */}
-      <div className="absolute w-3 h-3 rounded-full bg-[#ff2244] border-2 border-[#ff2244]/50 shadow-[0_0_10px_#ff2244] 
-        top-1/2 -translate-y-1/2 
-        ${camada.position.includes('left') ? '-right-1.5' : '-left-1.5'}
-      " />
-    </motion.div>
+        )}
+        
+        {/* Ponto de conexão */}
+        <div className="absolute w-3 h-3 rounded-full bg-[#ff2244] border-2 border-[#ff2244]/50 shadow-[0_0_10px_#ff2244] 
+          top-1/2 -translate-y-1/2 
+          ${camada.position.includes('left') ? '-right-1.5' : '-left-1.5'}
+        " />
+      </motion.div>
+    </div>
   );
 };
 
