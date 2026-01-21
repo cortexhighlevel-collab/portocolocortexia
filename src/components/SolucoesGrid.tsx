@@ -236,9 +236,9 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
               </div>
 
               {/* Conteúdo (mantém texto original) */}
-               <div className="relative z-10 h-full w-full pl-[92px] pr-6 py-5 flex flex-col justify-center gap-1">
+               <div className="relative z-10 h-full w-full pl-[92px] pr-8 py-5 flex flex-col justify-center gap-1">
                  <h3 className="text-white font-bold text-base leading-tight break-words">{camada.titulo}</h3>
-                 <p className="text-[#ff6b8a] text-[9px] uppercase tracking-widest font-mono leading-snug break-words">
+                 <p className="text-[#ff6b8a] text-[8px] uppercase tracking-widest font-mono leading-snug break-words">
                    {camada.funcao}
                  </p>
                  <p className="text-gray-400 text-xs leading-snug break-words">{camada.beneficio}</p>
@@ -255,9 +255,9 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
               </div>
 
               {/* Conteúdo (mantém texto original) */}
-               <div className="relative z-10 h-full w-full pl-[210px] pr-6 py-4 flex flex-col justify-center gap-1">
+               <div className="relative z-10 h-full w-full pl-[210px] pr-10 py-4 flex flex-col justify-center gap-1">
                  <h3 className="text-white font-bold text-base leading-tight break-words">{camada.titulo}</h3>
-                 <p className="text-[#ff6b8a] text-[9px] uppercase tracking-widest font-mono leading-snug break-words">
+                 <p className="text-[#ff6b8a] text-[8px] uppercase tracking-widest font-mono leading-snug break-words">
                    {camada.funcao}
                  </p>
                  <p className="text-gray-400 text-xs leading-snug break-words">{camada.beneficio}</p>
@@ -271,13 +271,9 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
             <LeftCardFrameSvg />
           </div>
 
-           <div
-             className={`relative z-10 h-full w-full px-6 py-4 flex flex-col justify-center gap-1 ${
-               camada.position === "mid-left" ? "pr-[160px]" : "pr-[118px]"
-             }`}
-           >
+           <div className="relative z-10 h-full w-full px-6 py-4 pr-[168px] flex flex-col justify-center gap-1">
              <h3 className="text-white font-bold text-base leading-tight break-words">{camada.titulo}</h3>
-             <p className="text-[#ff6b8a] text-[9px] uppercase tracking-widest font-mono leading-snug break-words">
+             <p className="text-[#ff6b8a] text-[8px] uppercase tracking-widest font-mono leading-snug break-words">
                {camada.funcao}
              </p>
              <p className="text-gray-400 text-xs leading-snug break-words">{camada.beneficio}</p>
