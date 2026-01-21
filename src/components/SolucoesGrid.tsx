@@ -80,8 +80,8 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
         </linearGradient>
         {/* Clip para impedir o fundo de "vazar" fora da moldura */}
         <clipPath id="cardClipLeft">
-          {/* Retângulo com chanfros (aproxima o recorte do frame) */}
-          <path d="M32 0 H629 L661 32 V244 L629 276 H32 L0 244 V32 Z" />
+          {/* Retângulo com chanfros (recorte do card, evitando vazamento nas quinas) */}
+          <path d="M44 0 H617 L661 44 V232 L617 276 H44 L0 232 V44 Z" />
         </clipPath>
       </defs>
       <g id="svg-bg-group">
