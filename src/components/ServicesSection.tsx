@@ -144,6 +144,6 @@ const ServicePill = ({
     <span className="service-pill-text group-hover:text-red-100 transition-colors duration-300">{label}</span>
   </motion.div>;
 const ServicesSection = () => {
-  return;
+  return null;
 };
 export default ServicesSection;

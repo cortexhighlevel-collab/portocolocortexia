@@ -30,9 +30,9 @@ const EntregasSection = () => {
         {/* HUD Header */}
         <motion.div
           className="mb-16"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.1 }}
         >
           {/* Top status bar */}
           <div className="flex items-center justify-between mb-8 font-mono text-xs text-white/40">
@@ -56,9 +56,9 @@ const EntregasSection = () => {
           {entregas.map((entrega, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 1, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
@@ -132,9 +132,9 @@ const EntregasSection = () => {
         {/* Bottom HUD info */}
         <motion.div 
           className="mt-12 flex items-center justify-center gap-8 font-mono text-xs text-white/30"
-          initial={{ opacity: 0 }}
+          initial={{ opacity: 1 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.1 }}
         >
           <span>6 MODULES LOADED</span>
           <span className="text-red-500">|</span>

@@ -15,12 +15,12 @@ const ComoIAEntendeSection = () => {
     <section id="como-ia-entende" className="relative py-32 md:py-48 bg-background overflow-hidden">
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+          <motion.div initial={{ opacity: 1, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.1 }}>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Como a IA<span className="text-red-500 block">entende você</span></h2>
             <p className="text-white/50 text-lg">Treinamos modelos para interpretar seu negócio e operar de forma autônoma.</p>
           </motion.div>
 
-          <motion.div className="bg-[#0a0a0a] border border-white/10 rounded-lg overflow-hidden" initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} onViewportEnter={() => { let i = 0; const interval = setInterval(() => { if (i < codeLines.length) { setVisibleLines(i + 1); i++; } else clearInterval(interval); }, 600); }}>
+          <motion.div className="bg-[#0a0a0a] border border-white/10 rounded-lg overflow-hidden" initial={{ opacity: 1, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.1 }} onViewportEnter={() => { let i = 0; const interval = setInterval(() => { if (i < codeLines.length) { setVisibleLines(i + 1); i++; } else clearInterval(interval); }, 600); }}>
             <div className="flex items-center gap-2 px-4 py-3 bg-white/5 border-b border-white/10">
               <div className="flex gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />

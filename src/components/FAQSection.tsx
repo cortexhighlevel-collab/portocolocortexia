@@ -15,7 +15,7 @@ const FAQSection = () => {
   return (
     <section id="faq" className="relative py-32 md:py-48 bg-background overflow-hidden">
       <div className="relative z-10 max-w-4xl mx-auto px-6 md:px-12">
-        <motion.div className="mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+        <motion.div className="mb-16" initial={{ opacity: 1, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }}>
           <div className="flex items-center gap-3 mb-6">
             <span className="text-red-500 font-mono text-xs">{">"}</span>
             <span className="text-white/40 font-mono text-xs">help --faq</span>
@@ -25,7 +25,7 @@ const FAQSection = () => {
 
         <div className="space-y-3">
           {faqs.map((faq, index) => (
-            <motion.div key={index} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }}>
+            <motion.div key={index} initial={{ opacity: 1, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ delay: index * 0.1 }}>
               <button onClick={() => setOpenIndex(openIndex === index ? null : index)} className={`w-full text-left p-5 bg-[#0a0a0a] border transition-all ${openIndex === index ? 'border-red-500/50' : 'border-white/10 hover:border-white/20'}`}>
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
