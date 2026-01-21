@@ -54,6 +54,7 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
 
   const isRight = camada.position.includes("right");
   const isLeft = camada.position.includes("left");
+  const usesLeftFrame = !isRight && (isLeft || camada.position.includes("center"));
 
   const LeftCardFrameSvg = () => (
     <svg
@@ -196,7 +197,7 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
             </p>
           </div>
         </section>
-      ) : isLeft ? (
+      ) : usesLeftFrame ? (
         <section className="relative min-w-[280px] max-w-[360px] w-full aspect-[661/276]">
           <div className="absolute inset-0 pointer-events-none">
             <LeftCardFrameSvg />
