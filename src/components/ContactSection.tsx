@@ -4,7 +4,7 @@ const ContactSection = () => {
   return (
     <section id="contact" className="relative py-32 md:py-48 bg-background overflow-hidden">
       <div className="relative z-10 max-w-4xl mx-auto px-6 md:px-12">
-        <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+        <motion.div className="text-center mb-16" initial={{ opacity: 1, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }}>
           <div className="inline-flex items-center gap-3 mb-6 px-4 py-2 bg-[#0a0a0a] border border-white/10 rounded">
             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
             <span className="font-mono text-xs text-green-400">CHANNEL OPEN</span>
@@ -12,7 +12,7 @@ const ContactSection = () => {
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">INICIAR <span className="text-red-500">CONTATO</span></h2>
         </motion.div>
 
-        <motion.div className="bg-[#0a0a0a] border border-white/10 rounded-lg overflow-hidden" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+        <motion.div className="bg-[#0a0a0a] border border-white/10 rounded-lg overflow-hidden" initial={{ opacity: 1, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }}>
           <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border-b border-white/10">
             <div className="flex gap-1.5">
               <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />

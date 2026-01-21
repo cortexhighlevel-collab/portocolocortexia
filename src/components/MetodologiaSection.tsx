@@ -38,9 +38,9 @@ const MetodologiaSection = () => {
         {/* Header with live terminal */}
         <div className="grid lg:grid-cols-2 gap-12 mb-16">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.1 }}
           >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-px bg-gradient-to-r from-red-500 to-transparent" />
@@ -58,9 +58,9 @@ const MetodologiaSection = () => {
           {/* Live terminal */}
           <motion.div
             className="bg-[#0a0a0a] border border-white/10 rounded-lg overflow-hidden"
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 1, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.1 }}
           >
             <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border-b border-white/10">
               <div className="flex gap-1.5">
@@ -103,9 +103,9 @@ const MetodologiaSection = () => {
             {etapas.map((etapa, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 1, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
                 className={`relative pl-12 md:pl-0 ${index >= 4 ? 'md:mt-16' : ''}`}
               >
@@ -139,9 +139,9 @@ const MetodologiaSection = () => {
         {/* Current step display */}
         <motion.div 
           className="mt-16 text-center"
-          initial={{ opacity: 0 }}
+          initial={{ opacity: 1 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.1 }}
         >
           <div className="inline-flex items-center gap-4 px-6 py-3 bg-red-500/10 border border-red-500/30 rounded-full">
             <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />

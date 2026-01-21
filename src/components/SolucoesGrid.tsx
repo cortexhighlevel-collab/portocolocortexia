@@ -493,8 +493,9 @@ const SolucoesGrid = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
         {/* Título */}
         <motion.div 
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 1, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.1 }}
           className="flex justify-center mb-16"
         >
           <div 

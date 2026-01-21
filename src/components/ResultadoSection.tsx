@@ -82,9 +82,9 @@ const ResultadoSection = () => {
         {/* Header */}
         <motion.div
           className="text-center mb-20"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.1 }}
         >
           <div className="inline-flex items-center gap-3 mb-6 px-4 py-2 border border-green-500/30 bg-green-500/5 rounded-full">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
@@ -103,9 +103,9 @@ const ResultadoSection = () => {
           {resultados.map((resultado, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 1, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="group"
             >
@@ -148,9 +148,9 @@ const ResultadoSection = () => {
         {/* Final statement - Holographic card */}
         <motion.div
           className="relative"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.1 }}
         >
           <div className="relative p-12 md:p-16 bg-gradient-to-br from-[#0a0a0a] to-[#050505] border border-white/10 overflow-hidden group hover:border-red-500/30 transition-all">
             {/* Animated scan line */}

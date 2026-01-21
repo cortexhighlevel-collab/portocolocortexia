@@ -14,7 +14,7 @@ const ParaQuemSection = () => {
   return (
     <section id="para-quem" className="relative py-32 md:py-48 bg-background overflow-hidden">
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12">
-        <motion.div className="mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+        <motion.div className="mb-16" initial={{ opacity: 1, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }}>
           <div className="flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/30 rounded w-fit mb-6">
             <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
             <span className="text-red-400 font-mono text-xs">TARGETING SYSTEM</span>
@@ -27,9 +27,9 @@ const ParaQuemSection = () => {
             <motion.button
               key={index}
               onClick={() => setSelectedTarget(index)}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 1, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
               className={`relative p-6 text-left transition-all duration-300 ${selectedTarget === index ? 'bg-red-500/10 border-2 border-red-500' : 'bg-[#0a0a0a] border border-white/10 hover:border-white/30'}`}
             >

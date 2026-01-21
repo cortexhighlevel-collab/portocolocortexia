@@ -4,7 +4,7 @@ const AEOSection = () => {
   return (
     <section id="aeo" className="relative py-32 md:py-48 bg-background overflow-hidden">
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12">
-        <motion.div className="text-center mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+        <motion.div className="text-center mb-16" initial={{ opacity: 1, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }}>
           <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-white/5 border border-white/10 rounded">
             <span className="font-mono text-xs text-white/40">SYSTEM COMPARISON</span>
           </div>
@@ -12,7 +12,7 @@ const AEOSection = () => {
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          <motion.div className="relative p-8 bg-[#0a0a0a] border border-white/10" initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+          <motion.div className="relative p-8 bg-[#0a0a0a] border border-white/10" initial={{ opacity: 1, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.1 }}>
             <div className="absolute top-4 right-4 flex items-center gap-2">
               <span className="w-2 h-2 bg-yellow-500/60 rounded-full" />
               <span className="text-yellow-500/60 font-mono text-xs">DEPRECATED</span>
@@ -25,7 +25,7 @@ const AEOSection = () => {
             </ul>
           </motion.div>
 
-          <motion.div className="relative p-8 bg-[#0a0a0a] border-2 border-red-500/50 shadow-[0_0_30px_rgba(239,68,68,0.1)]" initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+          <motion.div className="relative p-8 bg-[#0a0a0a] border-2 border-red-500/50 shadow-[0_0_30px_rgba(239,68,68,0.1)]" initial={{ opacity: 1, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.1 }}>
             <div className="absolute top-4 right-4 flex items-center gap-2">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
               <span className="text-green-400 font-mono text-xs">ACTIVE</span>
