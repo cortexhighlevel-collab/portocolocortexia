@@ -239,10 +239,20 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
               </div>
 
               {/* Conteúdo (mantém texto original) */}
-              <div className="relative z-10 h-full w-full pl-[92px] pr-6 py-6">
-                <h3 className="text-white font-bold text-lg leading-tight mb-1">{camada.titulo}</h3>
-                <p className="text-[#ff6b8a] text-[10px] uppercase tracking-widest mb-2 font-mono">{camada.funcao}</p>
-                <p className="text-gray-400 text-sm leading-relaxed">{camada.beneficio}</p>
+               <div className="relative z-10 h-full w-full pl-[92px] pr-6 py-6 overflow-hidden flex flex-col justify-center">
+                 <h3 className="text-white font-bold text-base lg:text-lg leading-tight mb-1 truncate">{camada.titulo}</h3>
+                 <p className="text-[#ff6b8a] text-[10px] uppercase tracking-widest mb-2 font-mono truncate">{camada.funcao}</p>
+                 <p
+                   className="text-gray-400 text-xs lg:text-sm leading-snug"
+                   style={{
+                     display: "-webkit-box",
+                     WebkitLineClamp: 2,
+                     WebkitBoxOrient: "vertical",
+                     overflow: "hidden",
+                   }}
+                 >
+                   {camada.beneficio}
+                 </p>
               </div>
             </>
           ) : (
@@ -256,10 +266,20 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
               </div>
 
               {/* Conteúdo (mantém texto original) */}
-              <div className="relative z-10 h-full w-full pl-[210px] pr-6 py-5">
-                <h3 className="text-white font-bold text-lg leading-tight mb-1">{camada.titulo}</h3>
-                <p className="text-[#ff6b8a] text-[10px] uppercase tracking-widest mb-2 font-mono">{camada.funcao}</p>
-                <p className="text-gray-400 text-sm leading-relaxed">{camada.beneficio}</p>
+               <div className="relative z-10 h-full w-full pl-[210px] pr-6 py-5 overflow-hidden flex flex-col justify-center">
+                 <h3 className="text-white font-bold text-base lg:text-lg leading-tight mb-1 truncate">{camada.titulo}</h3>
+                 <p className="text-[#ff6b8a] text-[10px] uppercase tracking-widest mb-2 font-mono truncate">{camada.funcao}</p>
+                 <p
+                   className="text-gray-400 text-xs lg:text-sm leading-snug"
+                   style={{
+                     display: "-webkit-box",
+                     WebkitLineClamp: 2,
+                     WebkitBoxOrient: "vertical",
+                     overflow: "hidden",
+                   }}
+                 >
+                   {camada.beneficio}
+                 </p>
               </div>
             </>
           )}
@@ -270,10 +290,20 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
             <LeftCardFrameSvg />
           </div>
 
-          <div className="relative z-10 h-full w-full px-6 py-5 pr-[118px]">
-            <h3 className="text-white font-bold text-lg leading-tight mb-1">{camada.titulo}</h3>
-            <p className="text-[#ff6b8a] text-[10px] uppercase tracking-widest mb-2 font-mono">{camada.funcao}</p>
-            <p className="text-gray-400 text-sm leading-relaxed">{camada.beneficio}</p>
+           <div className="relative z-10 h-full w-full px-6 py-5 pr-[118px] overflow-hidden flex flex-col justify-center">
+             <h3 className="text-white font-bold text-base lg:text-lg leading-tight mb-1 truncate">{camada.titulo}</h3>
+             <p className="text-[#ff6b8a] text-[10px] uppercase tracking-widest mb-2 font-mono truncate">{camada.funcao}</p>
+             <p
+               className="text-gray-400 text-xs lg:text-sm leading-snug"
+               style={{
+                 display: "-webkit-box",
+                 WebkitLineClamp: 2,
+                 WebkitBoxOrient: "vertical",
+                 overflow: "hidden",
+               }}
+             >
+               {camada.beneficio}
+             </p>
           </div>
 
           <div className="absolute right-6 top-1/2 -translate-y-1/2 z-10">
