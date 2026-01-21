@@ -60,6 +60,7 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
   const isBottomRight = camada.position === "bottom-right";
 
   const translateClass = isCenter ? "translate-y-[50%]" : isMidLeft ? "translate-y-[50%]" : "";
+  const svgId = `cybercard-${camada.position}-${index}`;
 
   const LeftCardFrameSvg = () => (
     <svg
@@ -74,18 +75,20 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
       focusable="false"
     >
       <defs>
-        <linearGradient id="frameGradientLeft" x1="0%" y1="0%" x2="100%" y2="0%">
+        <linearGradient id={`frameGradientLeft-${svgId}`} x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="hsl(var(--frame-red))" />
           <stop offset="100%" stopColor="hsl(var(--frame-purple))" />
         </linearGradient>
-        {/* Clip para impedir o fundo de "vazar" fora da moldura */}
-        <clipPath id="cardClipLeft">
-          {/* Retângulo com chanfros (recorte do card, evitando vazamento nas quinas) */}
-          <path d="M44 0 H617 L661 44 V232 L617 276 H44 L0 232 V44 Z" />
+        {/* Clip para impedir o fundo de "vazar" fora da moldura (retângulo + círculo) */}
+        <clipPath id={`cardClipLeft-${svgId}`} clipPathUnits="userSpaceOnUse">
+          {/* Parte retangular com chanfros */}
+          <path d="M32 0 H396 V276 H32 L0 244 V32 Z" />
+          {/* Parte circular (anel) */}
+          <circle cx="528" cy="136.5" r="136" />
         </clipPath>
       </defs>
       <g id="svg-bg-group">
-        <g clipPath="url(#cardClipLeft)">
+        <g clipPath={`url(#cardClipLeft-${svgId})`}>
           <rect id="svg-bg-base-01" x="0" y="0" width="661" height="276" fill="hsl(var(--frame-panel))" fillOpacity="0.92" />
         </g>
       </g>
@@ -94,13 +97,13 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
         <path
           id="svg-decor-stroke-01"
           d="M472 260H159H46.5L15 228V56.5L49 22.5H456L462.5 18.5H461"
-          stroke="url(#frameGradientLeft)"
+          stroke={`url(#frameGradientLeft-${svgId})`}
           vectorEffect="non-scaling-stroke"
         />
         <path
           id="svg-decor-stroke-02"
           d="M480.5 263.457H158.999L149.469 275H39.6233L0.5 233.845V184.158L9.52845 177.634V106.868L0.5 97.834V50.1547L41.6296 9H148.466L157.495 18.034H463"
-          stroke="url(#frameGradientLeft)"
+          stroke={`url(#frameGradientLeft-${svgId})`}
           vectorEffect="non-scaling-stroke"
         />
       </g>
@@ -109,13 +112,13 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
         <path
           id="svg-main-ring-01"
           d="M528 0.5C600.888 0.5 660 61.3752 660 136.5C660 211.625 600.888 272.5 528 272.5C455.112 272.5 396 211.625 396 136.5C396 61.3752 455.112 0.5 528 0.5Z"
-          stroke="url(#frameGradientLeft)"
+          stroke={`url(#frameGradientLeft-${svgId})`}
           vectorEffect="non-scaling-stroke"
         />
         <path
           id="svg-main-ring-02"
           d="M528 23.5C589.85 23.5 640 74.3094 640 137C640 199.691 589.85 250.5 528 250.5C466.15 250.5 416 199.691 416 137C416 74.3094 466.15 23.5 528 23.5Z"
-          stroke="url(#frameGradientLeft)"
+          stroke={`url(#frameGradientLeft-${svgId})`}
           vectorEffect="non-scaling-stroke"
         />
       </g>
@@ -138,17 +141,18 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
       focusable="false"
     >
       <defs>
-        <linearGradient id="frameGradientRight" x1="0%" y1="0%" x2="100%" y2="0%">
+        <linearGradient id={`frameGradientRight-${svgId}`} x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="hsl(var(--frame-red))" />
           <stop offset="100%" stopColor="hsl(var(--frame-purple))" />
         </linearGradient>
-        <clipPath id="cardClipRight">
-          {/* Retângulo arredondado do card direito */}
-          <rect x="9" y="9" width="712" height="249" rx="40" ry="40" />
+        <clipPath id={`cardClipRight-${svgId}`} clipPathUnits="userSpaceOnUse">
+          {/* Círculo + retângulo arredondado (silhueta total do card) */}
+          <circle cx="133.5" cy="133.5" r="133" />
+          <rect x="180.5" y="9" width="549.5" height="249" rx="40" ry="40" />
         </clipPath>
       </defs>
       <g id="svg-bg-group">
-        <g clipPath="url(#cardClipRight)">
+        <g clipPath={`url(#cardClipRight-${svgId})`}>
           <rect id="svg-bg-base-01" x="0" y="0" width="731" height="267" fill="hsl(var(--frame-panel))" fillOpacity="0.92" />
         </g>
       </g>
@@ -161,25 +165,25 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
           cx="133.5"
           cy="133.5"
           r="133"
-          stroke="url(#frameGradientRight)"
+          stroke={`url(#frameGradientRight-${svgId})`}
           vectorEffect="non-scaling-stroke"
         />
         <path
           id="svg-main-shape-02"
           d="M133.5 21.5C195.358 21.5 245.5 71.4223 245.5 133C245.5 194.578 195.358 244.5 133.5 244.5C71.642 244.5 21.5 194.578 21.5 133C21.5 71.4223 71.642 21.5 133.5 21.5Z"
-          stroke="url(#frameGradientRight)"
+          stroke={`url(#frameGradientRight-${svgId})`}
           vectorEffect="non-scaling-stroke"
         />
         <path
           id="svg-main-shape-03"
           d="M180.501 258H690C712.091 258 730 240.091 730 218V49C730 26.9086 712.091 9 690 9H180.5"
-          stroke="url(#frameGradientRight)"
+          stroke={`url(#frameGradientRight-${svgId})`}
           vectorEffect="non-scaling-stroke"
         />
         <path
           id="svg-main-shape-04"
           d="M192 253H685.499C707.591 253 725.499 235.091 725.499 213V53C725.499 30.9086 707.591 13 685.499 13H190"
-          stroke="url(#frameGradientRight)"
+          stroke={`url(#frameGradientRight-${svgId})`}
           vectorEffect="non-scaling-stroke"
         />
       </g>
@@ -202,16 +206,16 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
       focusable="false"
     >
       <defs>
-        <linearGradient id="frameGradientBottomRight" x1="0%" y1="0%" x2="100%" y2="0%">
+        <linearGradient id={`frameGradientBottomRight-${svgId}`} x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="hsl(var(--frame-red))" />
           <stop offset="100%" stopColor="hsl(var(--frame-purple))" />
         </linearGradient>
-        <clipPath id="cardClipBottomRight">
+        <clipPath id={`cardClipBottomRight-${svgId}`} clipPathUnits="userSpaceOnUse">
           <rect x="4.5" y="4.5" width="539" height="298" rx="39.5" ry="39.5" />
         </clipPath>
       </defs>
       <g id="svg-bg-group">
-        <g clipPath="url(#cardClipBottomRight)">
+        <g clipPath={`url(#cardClipBottomRight-${svgId})`}>
           <rect id="svg-bg-base-01" x="0" y="0" width="548" height="308" fill="hsl(var(--frame-panel))" fillOpacity="0.92" />
         </g>
       </g>
@@ -226,7 +230,7 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
           width="547"
           height="307"
           rx="39.5"
-          stroke="url(#frameGradientBottomRight)"
+          stroke={`url(#frameGradientBottomRight-${svgId})`}
           vectorEffect="non-scaling-stroke"
         />
         <rect
@@ -236,7 +240,7 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
           width="539"
           height="298"
           rx="39.5"
-          stroke="url(#frameGradientBottomRight)"
+          stroke={`url(#frameGradientBottomRight-${svgId})`}
           vectorEffect="non-scaling-stroke"
         />
       </g>
