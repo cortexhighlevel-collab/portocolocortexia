@@ -60,6 +60,7 @@
     /* Cyber frames (SVG strokes) */
     --frame-red: 350 95% 50%;
     --frame-purple: 280 85% 60%;
+    --frame-panel: 220 14% 12%;
 
     --sidebar-background: 0 0% 10%;
     --sidebar-foreground: 0 0% 85%;
