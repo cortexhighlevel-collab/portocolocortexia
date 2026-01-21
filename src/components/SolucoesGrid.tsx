@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { Bot, BarChart3, Brain, Users, Sparkles, Search } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import brainIcon from "@/assets/brain-icon.png";
+import { SolucoesNeuralConnections } from "@/components/SolucoesNeuralConnections";
 
 const camadas = [
   {
@@ -49,7 +50,15 @@ const camadas = [
 ];
 
 // Card com cantos cortados estilo cyberpunk
-const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number }) => {
+const CyberCard = ({
+  camada,
+  index,
+  setEl,
+}: {
+  camada: (typeof camadas)[0];
+  index: number;
+  setEl?: (el: HTMLDivElement | null) => void;
+}) => {
   const Icon = camada.icon;
 
   const isRight = camada.position.includes("right");
@@ -251,7 +260,7 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
   );
   
   return (
-    <div className={`relative group z-20 ${translateClass}`}>
+    <div ref={setEl} className={`relative group z-20 ${translateClass}`}>
       <motion.div
         initial={{ opacity: 1, scale: 1 }}
         whileInView={{ opacity: 1, scale: 1 }}
@@ -904,6 +913,10 @@ const BorderCircuits = () => (
 );
 
 const SolucoesGrid = () => {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const brainRef = useRef<HTMLDivElement | null>(null);
+  const cardElsRef = useRef<Array<HTMLDivElement | null>>([]);
+
   return (
     <section id="solucoes" className="relative bg-black py-24 md:py-32 overflow-hidden">
       {/* (removido) Circuitos de borda */}
@@ -930,12 +943,20 @@ const SolucoesGrid = () => {
         </motion.div>
         
         {/* Layout principal */}
-        <div className="relative min-h-[700px] flex items-center justify-center">
-          {/* Linhas neurálgicas conectando cards ao centro */}
-          <NeuralConnections />
+        <div ref={containerRef} className="relative min-h-[700px] flex items-center justify-center">
+          {/* Linhas neurálgicas (posicionamento real via DOM) */}
+          <SolucoesNeuralConnections
+            containerRef={containerRef}
+            brainRef={brainRef}
+            cardElsRef={cardElsRef}
+            positions={camadas.map((c) => c.position)}
+          />
           
           {/* Cérebro central */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[55%] z-10">
+          <div
+            ref={brainRef}
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[55%] z-10"
+          >
             <CentralBrain />
           </div>
           
@@ -943,20 +964,20 @@ const SolucoesGrid = () => {
           <div className="relative w-full grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-0 z-20">
             {/* Coluna esquerda */}
             <div className="flex flex-col gap-8 lg:items-start lg:pt-0">
-              <CyberCard camada={camadas[0]} index={0} />
-              <CyberCard camada={camadas[3]} index={3} />
+              <CyberCard camada={camadas[0]} index={0} setEl={(el) => (cardElsRef.current[0] = el)} />
+              <CyberCard camada={camadas[3]} index={3} setEl={(el) => (cardElsRef.current[3] = el)} />
             </div>
             
             {/* Coluna central (espaço para o cérebro + card inferior) */}
             <div className="flex flex-col items-center justify-end lg:pt-[400px]">
-              <CyberCard camada={camadas[4]} index={4} />
+              <CyberCard camada={camadas[4]} index={4} setEl={(el) => (cardElsRef.current[4] = el)} />
             </div>
             
             {/* Coluna direita */}
             <div className="flex flex-col gap-8 lg:items-end lg:pt-0 lg:translate-x-[20%]">
-              <CyberCard camada={camadas[1]} index={1} />
-              <CyberCard camada={camadas[2]} index={2} />
-              <CyberCard camada={camadas[5]} index={5} />
+              <CyberCard camada={camadas[1]} index={1} setEl={(el) => (cardElsRef.current[1] = el)} />
+              <CyberCard camada={camadas[2]} index={2} setEl={(el) => (cardElsRef.current[2] = el)} />
+              <CyberCard camada={camadas[5]} index={5} setEl={(el) => (cardElsRef.current[5] = el)} />
             </div>
           </div>
         </div>
