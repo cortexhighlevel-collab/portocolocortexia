@@ -608,9 +608,9 @@ const CentralBrain = () => {
 // Linhas neurálgicas conectando cards ao cérebro central
 const NeuralConnections = () => (
   <svg 
-    className="absolute inset-0 w-full h-full pointer-events-none hidden lg:block z-0" 
-    viewBox="0 0 1200 800"
-    preserveAspectRatio="xMidYMid slice"
+    className="absolute inset-0 w-full h-full pointer-events-none hidden lg:block" 
+    style={{ zIndex: 5 }}
+    preserveAspectRatio="none"
   >
     <defs>
       <linearGradient id="neuralGradientLeft" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -642,9 +642,8 @@ const NeuralConnections = () => (
     </defs>
     
     {/* ===== CARD TOP-LEFT (Automação com IA) → Centro ===== */}
-    {/* Linha: sai do card → desce → vai pro centro */}
     <motion.path 
-      d="M 330 145 L 500 145 L 500 280 L 600 280" 
+      d="M 28% 18% L 38% 18% L 38% 35% L 50% 35%"
       stroke="url(#neuralGradientLeft)" 
       strokeWidth="2" 
       fill="none"
@@ -654,9 +653,8 @@ const NeuralConnections = () => (
       viewport={{ once: true }}
       transition={{ duration: 1.2, delay: 0.2 }}
     />
-    {/* Ponto de conexão no card */}
     <motion.circle 
-      cx="330" cy="145" r="6" 
+      cx="28%" cy="18%" r="6" 
       fill="#ff2244" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
@@ -664,9 +662,8 @@ const NeuralConnections = () => (
       viewport={{ once: true }}
       transition={{ duration: 0.3, delay: 0.1 }}
     />
-    {/* Ponto de conexão no centro */}
     <motion.circle 
-      cx="600" cy="280" r="6" 
+      cx="50%" cy="35%" r="6" 
       fill="#a855f7" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
@@ -677,7 +674,7 @@ const NeuralConnections = () => (
 
     {/* ===== CARD MID-LEFT (Personas Treinadas) → Centro ===== */}
     <motion.path 
-      d="M 330 420 L 450 420 L 450 400 L 560 400" 
+      d="M 28% 58% L 38% 58% L 38% 50% L 48% 50%"
       stroke="url(#neuralGradientLeft)" 
       strokeWidth="2" 
       fill="none"
@@ -688,7 +685,7 @@ const NeuralConnections = () => (
       transition={{ duration: 1.2, delay: 0.4 }}
     />
     <motion.circle 
-      cx="330" cy="420" r="6" 
+      cx="28%" cy="58%" r="6" 
       fill="#ff2244" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
@@ -697,7 +694,7 @@ const NeuralConnections = () => (
       transition={{ duration: 0.3, delay: 0.3 }}
     />
     <motion.circle 
-      cx="560" cy="400" r="6" 
+      cx="48%" cy="50%" r="6" 
       fill="#a855f7" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
@@ -708,7 +705,7 @@ const NeuralConnections = () => (
 
     {/* ===== CARD TOP-RIGHT (Análise Estratégica) → Centro ===== */}
     <motion.path 
-      d="M 870 145 L 700 145 L 700 280 L 600 280" 
+      d="M 72% 18% L 62% 18% L 62% 35% L 52% 35%"
       stroke="url(#neuralGradientRight)" 
       strokeWidth="2" 
       fill="none"
@@ -719,7 +716,7 @@ const NeuralConnections = () => (
       transition={{ duration: 1.2, delay: 0.3 }}
     />
     <motion.circle 
-      cx="870" cy="145" r="6" 
+      cx="72%" cy="18%" r="6" 
       fill="#a855f7" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
@@ -730,7 +727,7 @@ const NeuralConnections = () => (
 
     {/* ===== CARD MID-RIGHT (Engenharia de Prompt) → Centro ===== */}
     <motion.path 
-      d="M 870 340 L 750 340 L 750 400 L 640 400" 
+      d="M 72% 42% L 62% 42% L 62% 50% L 54% 50%"
       stroke="url(#neuralGradientRight)" 
       strokeWidth="2" 
       fill="none"
@@ -741,7 +738,7 @@ const NeuralConnections = () => (
       transition={{ duration: 1.2, delay: 0.5 }}
     />
     <motion.circle 
-      cx="870" cy="340" r="6" 
+      cx="72%" cy="42%" r="6" 
       fill="#a855f7" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
@@ -750,7 +747,7 @@ const NeuralConnections = () => (
       transition={{ duration: 0.3, delay: 0.4 }}
     />
     <motion.circle 
-      cx="640" cy="400" r="6" 
+      cx="54%" cy="50%" r="6" 
       fill="#ff2244" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
@@ -761,7 +758,7 @@ const NeuralConnections = () => (
 
     {/* ===== CARD BOTTOM-CENTER (Agentes Inteligentes) → Centro ===== */}
     <motion.path 
-      d="M 600 590 L 600 520" 
+      d="M 50% 78% L 50% 65%"
       stroke="url(#neuralGradientDown)" 
       strokeWidth="2" 
       fill="none"
@@ -772,7 +769,7 @@ const NeuralConnections = () => (
       transition={{ duration: 0.8, delay: 0.6 }}
     />
     <motion.circle 
-      cx="600" cy="590" r="6" 
+      cx="50%" cy="78%" r="6" 
       fill="#ff2244" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
@@ -781,7 +778,7 @@ const NeuralConnections = () => (
       transition={{ duration: 0.3, delay: 0.5 }}
     />
     <motion.circle 
-      cx="600" cy="520" r="6" 
+      cx="50%" cy="65%" r="6" 
       fill="#a855f7" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
@@ -792,7 +789,7 @@ const NeuralConnections = () => (
 
     {/* ===== CARD BOTTOM-RIGHT (SEO + AEO) → Centro ===== */}
     <motion.path 
-      d="M 870 540 L 750 540 L 750 480 L 640 480" 
+      d="M 72% 68% L 62% 68% L 62% 58% L 54% 58%"
       stroke="url(#neuralGradientRight)" 
       strokeWidth="2" 
       fill="none"
@@ -803,7 +800,7 @@ const NeuralConnections = () => (
       transition={{ duration: 1.2, delay: 0.7 }}
     />
     <motion.circle 
-      cx="870" cy="540" r="6" 
+      cx="72%" cy="68%" r="6" 
       fill="#a855f7" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
@@ -812,7 +809,7 @@ const NeuralConnections = () => (
       transition={{ duration: 0.3, delay: 0.6 }}
     />
     <motion.circle 
-      cx="640" cy="480" r="6" 
+      cx="54%" cy="58%" r="6" 
       fill="#ff2244" 
       filter="url(#dotGlow)"
       initial={{ scale: 0 }}
@@ -821,10 +818,9 @@ const NeuralConnections = () => (
       transition={{ duration: 0.3, delay: 1.8 }}
     />
 
-    {/* ===== LINHAS DECORATIVAS NAS BORDAS (estilo circuito) ===== */}
-    {/* Esquerda superior */}
+    {/* ===== LINHAS DECORATIVAS NAS BORDAS ===== */}
     <motion.path 
-      d="M 0 120 L 80 120 L 120 160 L 180 160" 
+      d="M 0% 15% L 8% 15% L 12% 20% L 18% 20%"
       stroke="url(#neuralGradientLeft)" 
       strokeWidth="1.5" 
       fill="none"
@@ -835,12 +831,11 @@ const NeuralConnections = () => (
       viewport={{ once: true }}
       transition={{ duration: 1, delay: 0.8 }}
     />
-    <motion.circle cx="180" cy="160" r="4" fill="#a855f7" filter="url(#dotGlow)" 
+    <motion.circle cx="18%" cy="20%" r="4" fill="#a855f7" filter="url(#dotGlow)" 
       initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 1.7 }} />
 
-    {/* Esquerda inferior */}
     <motion.path 
-      d="M 0 500 L 60 500 L 100 460 L 160 460" 
+      d="M 0% 65% L 6% 65% L 10% 60% L 16% 60%"
       stroke="url(#neuralGradientLeft)" 
       strokeWidth="1.5" 
       fill="none"
@@ -851,12 +846,11 @@ const NeuralConnections = () => (
       viewport={{ once: true }}
       transition={{ duration: 1, delay: 1 }}
     />
-    <motion.circle cx="160" cy="460" r="4" fill="#a855f7" filter="url(#dotGlow)" 
+    <motion.circle cx="16%" cy="60%" r="4" fill="#a855f7" filter="url(#dotGlow)" 
       initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 1.9 }} />
 
-    {/* Direita superior */}
     <motion.path 
-      d="M 1200 120 L 1120 120 L 1080 160 L 1020 160" 
+      d="M 100% 15% L 92% 15% L 88% 20% L 82% 20%"
       stroke="url(#neuralGradientRight)" 
       strokeWidth="1.5" 
       fill="none"
@@ -867,12 +861,11 @@ const NeuralConnections = () => (
       viewport={{ once: true }}
       transition={{ duration: 1, delay: 0.9 }}
     />
-    <motion.circle cx="1020" cy="160" r="4" fill="#ff2244" filter="url(#dotGlow)" 
+    <motion.circle cx="82%" cy="20%" r="4" fill="#ff2244" filter="url(#dotGlow)" 
       initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 1.8 }} />
 
-    {/* Direita média */}
     <motion.path 
-      d="M 1200 380 L 1100 380 L 1060 420 L 1000 420" 
+      d="M 100% 48% L 92% 48% L 88% 52% L 82% 52%"
       stroke="url(#neuralGradientRight)" 
       strokeWidth="1.5" 
       fill="none"
@@ -883,12 +876,11 @@ const NeuralConnections = () => (
       viewport={{ once: true }}
       transition={{ duration: 1, delay: 1.1 }}
     />
-    <motion.circle cx="1000" cy="420" r="4" fill="#ff2244" filter="url(#dotGlow)" 
+    <motion.circle cx="82%" cy="52%" r="4" fill="#ff2244" filter="url(#dotGlow)" 
       initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 2 }} />
 
-    {/* Direita inferior */}
     <motion.path 
-      d="M 1200 580 L 1100 580 L 1060 540 L 1000 540" 
+      d="M 100% 72% L 92% 72% L 88% 68% L 82% 68%"
       stroke="url(#neuralGradientRight)" 
       strokeWidth="1.5" 
       fill="none"
@@ -899,7 +891,7 @@ const NeuralConnections = () => (
       viewport={{ once: true }}
       transition={{ duration: 1, delay: 1.2 }}
     />
-    <motion.circle cx="1000" cy="540" r="4" fill="#ff2244" filter="url(#dotGlow)" 
+    <motion.circle cx="82%" cy="68%" r="4" fill="#ff2244" filter="url(#dotGlow)" 
       initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: 2.1 }} />
   </svg>
 );
