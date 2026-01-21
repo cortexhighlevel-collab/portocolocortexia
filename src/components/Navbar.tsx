@@ -5,7 +5,7 @@ import NavbarGlassBackdrop from "@/components/NavbarGlassBackdrop";
 
 const navLinks = [
   { label: "PROBLEMA", href: "#problema" },
-  { label: "SOLUÇÕES", href: "#services" },
+  { label: "SOLUÇÕES", href: "#solucoes" },
   { label: "MÉTODO", href: "#process" },
   { label: "CASOS", href: "#projects" },
   { label: "FAQ", href: "#faq" },

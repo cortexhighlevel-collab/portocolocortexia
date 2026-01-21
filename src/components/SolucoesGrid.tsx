@@ -485,7 +485,7 @@ const BorderCircuits = () => (
 
 const SolucoesGrid = () => {
   return (
-    <section className="relative bg-black py-24 md:py-32 overflow-hidden">
+    <section id="solucoes" className="relative bg-black py-24 md:py-32 overflow-hidden">
       
       {/* Circuitos de borda */}
       <BorderCircuits />
