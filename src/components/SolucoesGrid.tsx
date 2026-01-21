@@ -81,9 +81,9 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
         </linearGradient>
         {/* Clip para impedir o fundo de "vazar" fora da moldura (retângulo + círculo) */}
         <clipPath id={`cardClipLeft-${svgId}`} clipPathUnits="userSpaceOnUse">
-          {/* Parte retangular com chanfros */}
-          <path d="M32 0 H396 V276 H32 L0 244 V32 Z" />
-          {/* Parte circular (anel) */}
+          {/* Parte retangular (com chanfro à esquerda, alinhado ao frame) */}
+          <path d="M44 0 H461 V276 H44 L0 232 V44 Z" />
+          {/* Parte circular (anel à direita) */}
           <circle cx="528" cy="136.5" r="136" />
         </clipPath>
       </defs>
