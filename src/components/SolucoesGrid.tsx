@@ -761,7 +761,7 @@ const SolucoesGrid = () => {
             </div>
             
             {/* Coluna direita */}
-            <div className="flex flex-col gap-8 lg:items-end lg:pt-0">
+            <div className="flex flex-col gap-8 lg:items-end lg:pt-0 lg:translate-x-[20%]">
               <CyberCard camada={camadas[1]} index={1} />
               <CyberCard camada={camadas[2]} index={2} />
               <CyberCard camada={camadas[5]} index={5} />
