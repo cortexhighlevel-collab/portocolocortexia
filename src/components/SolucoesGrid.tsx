@@ -221,8 +221,8 @@ const CyberCard = ({ camada, index }: { camada: typeof camadas[0]; index: number
       >
         {isRight ? (
         <section
-          className={`relative min-w-[280px] max-w-[420px] w-full ${
-            isBottomRight ? "aspect-[548/308]" : "aspect-[731/267]"
+          className={`relative min-w-[280px] w-full ${
+            isBottomRight ? "max-w-[390px] aspect-[548/308]" : "max-w-[420px] aspect-[731/267]"
           }`}
         >
           <div className="absolute inset-0 pointer-events-none">
