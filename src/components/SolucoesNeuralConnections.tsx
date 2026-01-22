@@ -147,9 +147,9 @@ export function SolucoesNeuralConnections(props: {
           ax = r.left;
           ay = r.top + r.height * 0.22;
         } else {
-          // bottom-center: borda superior, centro horizontal
-          ax = r.left + r.width * 0.5;
-          ay = r.top;
+          // bottom-center: borda direita do ícone (mesmo padrão horizontal das outras)
+          ax = r.right;
+          ay = r.top + r.height * 0.5;
         }
 
         const start: Point = {
@@ -163,9 +163,8 @@ export function SolucoesNeuralConnections(props: {
           y: target.y,
         };
 
-        // bottom-center usa direção vertical (sobe pro cérebro), demais horizontal
-        const direction = pos === "bottom-center" ? "vertical" : "horizontal";
-        const d = roundedOrthoPath(start, end, direction, 24);
+        // Todas as linhas usam direção horizontal (reta → curva → sobe → curva → conecta)
+        const d = roundedOrthoPath(start, end, "horizontal", 24);
 
         conns.push({
           key: `${pos}-${idx}`,
