@@ -937,27 +937,34 @@ const MobileLayout = ({
     // Empurra um pouco mais pra esquerda para não ficar escondido atrás do círculo
     const trunkX = Math.max(12, minCircleLeft - 36);
 
-    // Âncora no cérebro: quadrante inferior-esquerdo do círculo
+    // Âncora no cérebro: lado ESQUERDO (para o primeiro card, separado)
+    const brainAnchorLeft = {
+      x: brainRect.left - wrapperRect.left + brainRect.width * 0.15,
+      y: brainRect.top - wrapperRect.top + brainRect.height * 0.72
+    };
+    
+    // Âncora no cérebro: lado DIREITO (para o tronco principal dos outros cards)
     const brainAnchor = {
-      x: brainRect.left - wrapperRect.left + brainRect.width * 0.28,
+      x: brainRect.left - wrapperRect.left + brainRect.width * 0.85,
       y: brainRect.top - wrapperRect.top + brainRect.height * 0.72
     };
 
-    // Primeiro card vai direto ao cérebro (separado)
-    // Os outros cards (2 ao último) conectam ao tronco
-    const firstCardY = Math.min(...anchors.map((a) => a.y));
-    const lastCardY = Math.max(...anchors.map((a) => a.y));
-    
-    // Pega o segundo card como início do tronco (se existir)
+    // Primeiro card vai separado pelo lado esquerdo
+    // Cards 2 ao último conectam ao tronco (lado direito)
+    const firstCardY = anchors[0]?.y || 0;
     const secondCardY = anchors.length > 1 ? anchors[1].y : firstCardY;
+    const lastCardY = Math.max(...anchors.map((a) => a.y));
 
     const curveR = 14;
 
-    // O tronco começa no segundo card e termina no último
+    // Tronco principal: do segundo card até o último (todos curvam pra cima)
     const trunkYTop = secondCardY - curveR;
-    const trunkYBottom = lastCardY;
+    const trunkYBottom = lastCardY - curveR;
 
-    // Hooks: primeiro card vai separado pro cérebro, os outros vão pro tronco
+    // Posição X do tronco do primeiro card (lado esquerdo, separado)
+    const firstTrunkX = trunkX - 30;
+
+    // Hooks: primeiro card vai separado pelo lado esquerdo, outros vão pro tronco direito
     const hooks = anchors.map((a, i) => {
       const startX = a.circleLeftEdge;
       const y = a.y;
@@ -965,20 +972,19 @@ const MobileLayout = ({
       const isLast = i === anchors.length - 1;
       
       if (isFirst) {
-        // Primeiro card: vai direto pro cérebro com curva
-        // Sai horizontal, curva pra cima, sobe reto, curva pra direita, vai pro cérebro
+        // Primeiro card: caminho separado pelo lado ESQUERDO do cérebro
         const d = `M ${startX} ${y}
-                   L ${trunkX + curveR} ${y}
-                   Q ${trunkX} ${y} ${trunkX} ${y - curveR}
-                   L ${trunkX} ${brainAnchor.y + curveR}
-                   Q ${trunkX} ${brainAnchor.y} ${trunkX + curveR} ${brainAnchor.y}
-                   L ${brainAnchor.x} ${brainAnchor.y}`;
+                   L ${firstTrunkX + curveR} ${y}
+                   Q ${firstTrunkX} ${y} ${firstTrunkX} ${y - curveR}
+                   L ${firstTrunkX} ${brainAnchorLeft.y + curveR}
+                   Q ${firstTrunkX} ${brainAnchorLeft.y} ${firstTrunkX + curveR} ${brainAnchorLeft.y}
+                   L ${brainAnchorLeft.x} ${brainAnchorLeft.y}`;
         return { d, isFirst: true };
       } else if (isLast) {
-        // Último card: curva de 90° no final (desce um pouco e para)
+        // Último card: curva de 90° pra CIMA (conecta no tronco junto com os outros)
         const d = `M ${startX} ${y}
                    L ${trunkX + curveR} ${y}
-                   Q ${trunkX} ${y} ${trunkX} ${y + curveR}`;
+                   Q ${trunkX} ${y} ${trunkX} ${y - curveR}`;
         return { d, isFirst: false };
       } else {
         // Cards do meio: curva que sobe para o tronco
@@ -1056,7 +1062,17 @@ const MobileLayout = ({
             strokeLinecap="round"
           />
 
-          {/* A conexão ao cérebro agora é feita pelo primeiro hook (primeiro card) */}
+          {/* Conexão do tronco principal ao cérebro (lado direito) */}
+          <path
+            d={`M ${layout.trunkX} ${layout.trunkYTop}
+                L ${layout.trunkX} ${layout.brainAnchor.y + layout.curveR}
+                Q ${layout.trunkX} ${layout.brainAnchor.y} ${layout.trunkX + layout.curveR} ${layout.brainAnchor.y}
+                L ${layout.brainAnchor.x} ${layout.brainAnchor.y}`}
+            stroke="url(#mobileConnectionGradLayout)"
+            strokeWidth={3}
+            fill="none"
+            strokeLinecap="round"
+          />
 
           {/* Hooks de cada card */}
           {layout.hooks.map((h, i) => (
