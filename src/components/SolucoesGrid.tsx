@@ -860,10 +860,7 @@ const MobileSvgCard = ({
           <g id="svg-effects-group" />
         </svg>
         
-        {/* Ícone dentro do círculo */}
-        <div className="absolute left-[8%] top-1/2 -translate-y-1/2 w-[28%] flex items-center justify-center">
-          <Icon className="w-6 h-6 text-[#ff6b8a]" />
-        </div>
+        {/* Ícone removido do círculo */}
         
         {/* Conteúdo de texto - posicionado igual ao desktop */}
         <div className="absolute left-[38%] right-[5%] top-1/2 -translate-y-1/2">
