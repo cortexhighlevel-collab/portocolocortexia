@@ -13,6 +13,11 @@ const ParaQuemSection = () => {
   const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLElement | null>(null);
 
+  // Mobile tuning: controla quando o highlight começa/termina dentro da seção.
+  // Valores menores deixam "mais adiantado"; maiores deixam "mais atrasado".
+  const MOBILE_SCROLL_START = 0.12;
+  const MOBILE_SCROLL_END = 0.88;
+
   // Desktop: o destaque segue o hover; quando não há hover, volta ao primeiro card.
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
@@ -25,8 +30,18 @@ const ParaQuemSection = () => {
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     if (!isMobile) return;
-    const clamped = Math.max(0, Math.min(0.9999, v));
-    const idx = Math.max(0, Math.min(targets.length - 1, Math.floor(clamped * targets.length)));
+
+    // Normaliza para uma janela de scroll (evita trocar muito cedo/tarde no mobile).
+    const clamped = Math.max(0, Math.min(1, v));
+    const windowed = (clamped - MOBILE_SCROLL_START) / (MOBILE_SCROLL_END - MOBILE_SCROLL_START);
+    const normalized = Math.max(0, Math.min(1, windowed));
+
+    // `round` deixa a troca mais centralizada por card (menos sensação de atraso/adianto).
+    const idx = Math.max(
+      0,
+      Math.min(targets.length - 1, Math.round(normalized * (targets.length - 1)))
+    );
+
     setScrollIndex(idx);
   });
 
