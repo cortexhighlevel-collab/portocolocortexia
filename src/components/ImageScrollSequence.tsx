@@ -123,9 +123,10 @@ const mobileFrames = [
   mobileFrame046, mobileFrame047, mobileFrame048,
 ];
 
-const SMOOTH_FACTOR = 0.12;
 // Número de frames vizinhos a manter carregados (para trás e para frente)
-const FRAME_BUFFER = 8;
+const FRAME_BUFFER = 10;
+// Máximo de frames que pode pular por tick (previne saltos)
+const MAX_STEP = 2;
 
 type ImageScrollSequenceProps = {
   children?: React.ReactNode;
@@ -138,11 +139,9 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const [isReady, setIsReady] = useState(false);
   const [isInView, setIsInView] = useState(true);
   const rafIdRef = useRef<number | null>(null);
-  const currentFrameRef = useRef(0);
-  const committedFrameRef = useRef(0);
-  const loadedFramesRef = useRef<Set<number>>(new Set());
+  const displayedFrameRef = useRef(0);
+  const loadedFramesRef = useRef<Set<number>>(new Set([0]));
   const loadingFramesRef = useRef<Set<number>>(new Set());
-  const lastScrollTopRef = useRef(0);
   const isMobile = useIsMobile();
 
   const frames = isMobile ? mobileFrames : desktopFrames;
@@ -205,23 +204,29 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
   // Reset quando muda entre mobile/desktop
   useEffect(() => {
-    loadedFramesRef.current = new Set();
+    loadedFramesRef.current = new Set([0]);
     loadingFramesRef.current = new Set();
-    currentFrameRef.current = 0;
-    committedFrameRef.current = 0;
-    lastScrollTopRef.current = 0;
+    displayedFrameRef.current = 0;
     setCurrentFrame(0);
     setPreviousFrame(0);
     setIsReady(false);
 
-    // Carregar apenas os primeiros frames necessários
-    loadFrame(0).then(() => setIsReady(true));
-    loadNearbyFrames(0);
+    // Pré-carregar os primeiros frames
+    const preloadInitial = async () => {
+      const initialFramesToLoad = Math.min(FRAME_BUFFER, frames.length);
+      const promises: Promise<void>[] = [];
+      for (let i = 0; i < initialFramesToLoad; i++) {
+        promises.push(loadFrame(i));
+      }
+      await Promise.all(promises);
+      setIsReady(true);
+    };
+
+    preloadInitial();
   }, [isMobile, frames]);
 
   useEffect(() => {
     const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
-    const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor;
 
     const tick = () => {
       if (!isInView) {
@@ -238,42 +243,47 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       const rect = container.getBoundingClientRect();
       const containerHeight = container.offsetHeight;
       const viewportHeight = window.innerHeight;
-
-      // Calcular progresso do scroll de forma mais estável
-      const scrollStart = Math.max(0, -rect.top);
       const scrollRange = containerHeight - viewportHeight;
-      
-      // Prevenir divisão por zero e valores inválidos
+
       if (scrollRange <= 0) {
         rafIdRef.current = window.requestAnimationFrame(tick);
         return;
       }
 
-      // Clamp do progresso para garantir que fique entre 0 e 1
-      const rawProgress = scrollStart / scrollRange;
-      const progress = clamp(rawProgress, 0, 1);
+      // Calcular progresso direto do scroll
+      const scrollStart = Math.max(0, -rect.top);
+      const progress = clamp(scrollStart / scrollRange, 0, 1);
 
-      // Calcular frame alvo com suavização
-      const targetFrame = progress * (frames.length - 1);
-      
-      // Suavização mais agressiva para evitar pulos
-      const diff = Math.abs(targetFrame - currentFrameRef.current);
-      const adaptiveFactor = diff > 5 ? 0.25 : SMOOTH_FACTOR;
-      
-      currentFrameRef.current = lerp(currentFrameRef.current, targetFrame, adaptiveFactor);
-      
-      // Garantir que o frame final seja válido
-      const nextFrame = clamp(Math.round(currentFrameRef.current), 0, frames.length - 1);
+      // Frame alvo baseado no progresso
+      const targetFrame = Math.round(progress * (frames.length - 1));
+      const current = displayedFrameRef.current;
 
-      // Carregar frames próximos
-      loadNearbyFrames(nextFrame);
+      // Pré-carregar frames próximos do target
+      loadNearbyFrames(targetFrame);
 
-      if (
-        loadedFramesRef.current.has(nextFrame) &&
-        nextFrame !== committedFrameRef.current
-      ) {
-        const prev = committedFrameRef.current;
-        committedFrameRef.current = nextFrame;
+      // Se já está no frame correto, não faz nada
+      if (targetFrame === current) {
+        rafIdRef.current = window.requestAnimationFrame(tick);
+        return;
+      }
+
+      // Calcular próximo frame com limite de step (progressão sequencial)
+      let nextFrame: number;
+      if (targetFrame > current) {
+        // Scrollando para baixo
+        nextFrame = Math.min(current + MAX_STEP, targetFrame);
+      } else {
+        // Scrollando para cima
+        nextFrame = Math.max(current - MAX_STEP, targetFrame);
+      }
+
+      // Garantir bounds
+      nextFrame = clamp(nextFrame, 0, frames.length - 1);
+
+      // Só atualiza se o frame estiver carregado
+      if (loadedFramesRef.current.has(nextFrame)) {
+        const prev = displayedFrameRef.current;
+        displayedFrameRef.current = nextFrame;
         setPreviousFrame(prev);
         setCurrentFrame(nextFrame);
       }
@@ -293,11 +303,12 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
   const firstFrame = frames[0];
 
-  // Determinar quais frames renderizar (apenas os próximos ao atual)
+  // Determinar quais frames renderizar (apenas os próximos ao atual para performance)
   const visibleFrameIndices = new Set<number>();
   visibleFrameIndices.add(currentFrame);
   visibleFrameIndices.add(previousFrame);
-  for (let i = Math.max(0, currentFrame - 2); i <= Math.min(frames.length - 1, currentFrame + 2); i++) {
+  // Adicionar alguns frames extras para transição suave
+  for (let i = Math.max(0, currentFrame - 3); i <= Math.min(frames.length - 1, currentFrame + 3); i++) {
     visibleFrameIndices.add(i);
   }
 
