@@ -712,14 +712,18 @@ const BorderCircuits = () => <>
     <div className="absolute bottom-0 left-0 w-48 h-px bg-gradient-to-r from-transparent via-[#ff2244]/50 to-transparent" />
     <div className="absolute bottom-0 right-0 w-48 h-px bg-gradient-to-r from-transparent via-[#ff2244]/50 to-transparent" />
   </>;
+// Ordem dos cards no mobile (cérebro primeiro, depois todos os cards em sequência)
+const mobileOrder = [0, 3, 4, 1, 2, 5]; // Automação, Personas, Agentes, Análise, Engenharia, SEO
+
 const SolucoesGrid = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const brainRef = useRef<HTMLDivElement | null>(null);
   const cardElsRef = useRef<Array<HTMLDivElement | null>>([]);
+  
   return <section id="solucoes" className="relative bg-black py-24 md:py-32 overflow-hidden">
       {/* (removido) Circuitos de borda */}
       
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-12">
         {/* Título */}
         <motion.div initial={{
         opacity: 1,
@@ -730,7 +734,7 @@ const SolucoesGrid = () => {
       }} viewport={{
         once: true,
         amount: 0.1
-      }} className="flex justify-center mb-16">
+      }} className="flex justify-center mb-12 lg:mb-16">
           <div className="relative px-8 py-3 bg-[#0a0a0f] border border-[#ff2244]/50" style={{
           clipPath: "polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px)"
         }}>
@@ -741,8 +745,23 @@ const SolucoesGrid = () => {
           </div>
         </motion.div>
         
-        {/* Layout principal */}
-        <div ref={containerRef} className="relative min-h-[700px] flex items-center justify-center">
+        {/* ===== LAYOUT MOBILE ===== */}
+        <div className="lg:hidden flex flex-col items-center gap-6">
+          {/* Cérebro centralizado no topo */}
+          <div ref={brainRef} className="relative z-10 mb-4">
+            <CentralBrain />
+          </div>
+          
+          {/* Cards empilhados verticalmente */}
+          {mobileOrder.map((idx, i) => (
+            <div key={camadas[idx].position} className="w-full max-w-[340px]">
+              <MobileCard camada={camadas[idx]} index={i} />
+            </div>
+          ))}
+        </div>
+        
+        {/* ===== LAYOUT DESKTOP ===== */}
+        <div ref={containerRef} className="relative min-h-[700px] hidden lg:flex items-center justify-center">
           {/* Linhas neurálgicas (posicionamento real via DOM) */}
           <SolucoesNeuralConnections containerRef={containerRef} brainRef={brainRef} cardElsRef={cardElsRef} positions={camadas.map(c => c.position)} />
           
@@ -752,20 +771,20 @@ const SolucoesGrid = () => {
           </div>
           
           {/* Cards posicionados */}
-          <div className="relative w-full grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-0 z-20">
+          <div className="relative w-full grid grid-cols-3 gap-0 z-20">
             {/* Coluna esquerda */}
-            <div className="flex flex-col gap-8 lg:items-start lg:pt-0">
+            <div className="flex flex-col gap-8 items-start pt-0">
               <CyberCard camada={camadas[0]} index={0} setEl={el => cardElsRef.current[0] = el} />
               <CyberCard camada={camadas[3]} index={3} setEl={el => cardElsRef.current[3] = el} />
             </div>
             
             {/* Coluna central (espaço para o cérebro + card inferior) */}
-            <div className="flex flex-col items-center justify-end lg:pt-[400px]">
+            <div className="flex flex-col items-center justify-end pt-[400px]">
               <CyberCard camada={camadas[4]} index={4} setEl={el => cardElsRef.current[4] = el} />
             </div>
             
             {/* Coluna direita */}
-            <div className="flex flex-col gap-8 lg:items-end lg:pt-0 lg:translate-x-[20%]">
+            <div className="flex flex-col gap-8 items-end pt-0 translate-x-[20%]">
               <CyberCard camada={camadas[1]} index={1} setEl={el => cardElsRef.current[1] = el} />
               <CyberCard camada={camadas[2]} index={2} setEl={el => cardElsRef.current[2] = el} />
               <CyberCard camada={camadas[5]} index={5} setEl={el => cardElsRef.current[5] = el} />
@@ -780,4 +799,55 @@ const SolucoesGrid = () => {
       <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-[#06b6d4]/5 rounded-full blur-[80px] pointer-events-none" />
     </section>;
 };
+
+// Card simplificado para mobile (sem os SVGs complexos, usa layout limpo com círculo + texto)
+const MobileCard = ({
+  camada,
+  index
+}: {
+  camada: (typeof camadas)[0];
+  index: number;
+}) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ delay: index * 0.1, duration: 0.4 }}
+      className="relative"
+    >
+      {/* Linha de conexão vertical (exceto no primeiro card) */}
+      {index > 0 && (
+        <div className="absolute left-1/2 -top-6 w-0.5 h-6 bg-gradient-to-b from-[#ff2244] to-[#a855f7]" />
+      )}
+      
+      {/* Card container */}
+      <div className="relative flex items-center gap-4 p-4 rounded-xl border border-[#a855f7]/40 bg-[hsl(220_14%_12%/0.92)]">
+        {/* Círculo do ícone à esquerda */}
+        <div className="relative flex-shrink-0">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] border-2 border-[#a855f7]/50 flex items-center justify-center">
+            <camada.icon className="w-7 h-7 text-[#a855f7]" />
+          </div>
+          {/* Anel externo decorativo */}
+          <div className="absolute inset-[-4px] rounded-full border border-[#ff2244]/40" />
+          <div className="absolute inset-[-8px] rounded-full border border-[#a855f7]/20" />
+        </div>
+        
+        {/* Conteúdo de texto */}
+        <div className="flex-1 min-w-0">
+          <h3 className="text-white font-bold text-base leading-tight mb-1">
+            {camada.titulo}
+          </h3>
+          <p className="text-[#ff6b8a] text-[9px] uppercase tracking-widest font-mono leading-snug mb-1">
+            {camada.funcao}
+          </p>
+          <p className="text-gray-400 text-xs leading-snug">
+            {camada.beneficio}
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 export default SolucoesGrid;
