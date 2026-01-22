@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"; 
+import { useEffect, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { isIOSDevice } from "@/lib/platform";
 
@@ -22,17 +22,17 @@ const mobileFrames = toSortedFrameList(
   import.meta.glob("/src/assets/hero-frames-mobile/frame-*.jpg", { eager: true, import: "default" })
 );
 
-// Buffer padrão (desktop). No iPhone vamos reduzir isso dinamicamente.
-const FRAME_BUFFER = 10;
 // Step padrão (mobile). No desktop o step vira “livre” (mapeamento direto).
 const MAX_STEP = 2;
 
 // Desktop: suavização via interpolação (lerp) em RAF.
-// Valores menores = mais suave (mas mais “atraso”); maiores = mais responsivo.
-const DESKTOP_SMOOTH_FACTOR = 0.08;
+// Valores maiores = mais responsivo.
+const DESKTOP_SMOOTH_FACTOR = 0.30;
 
-// CRITICAL (mobile/iPhone): manter poucos <img> no DOM evita estouro de memória/GPU.
-// Pool fixo: reaproveita N elementos e só troca o src conforme o frame muda.
+// Mobile (Android): mantendo comportamento consistente com o prompt.
+const MOBILE_SMOOTH_FACTOR = 0.30;
+
+// Pool legado (mantido como fallback / referência). No modo canvas não usamos o pool.
 const POOL_SIZE = 7;
 
 // Placeholder leve para evitar src="" (Safari pode tentar carregar a URL da página)
@@ -40,6 +40,8 @@ const TRANSPARENT_1PX =
   "data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=";
 
 type FrameLoadMode = "near" | "background";
+
+type RenderMode = "canvas" | "pool";
 
 type ImageScrollSequenceProps = {
   children?: React.ReactNode;
@@ -59,6 +61,12 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const loadedFramesRef = useRef<Set<number>>(new Set());
   const decodedFramesRef = useRef<Set<number>>(new Set());
   const loadingFramesRef = useRef<Set<number>>(new Set());
+
+  // Canvas renderer
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const canvasSizeRef = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
+  const imgCacheRef = useRef<Map<number, HTMLImageElement>>(new Map());
+
   const poolElsRef = useRef<Array<HTMLImageElement | null>>([]);
   const poolFrameIndexRef = useRef<number[]>(Array.from({ length: POOL_SIZE }, () => -1));
   const isMobile = useIsMobile();
@@ -66,10 +74,12 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
   const frames = isMobile ? mobileFrames : desktopFrames;
 
-  // DEBUG/ISOLATION MODE: no mobile, o Hero fica estático (sem sequência de frames)
-  // para isolarmos se o crash no iOS vem do Hero.
+  // Preferimos canvas para suavidade/performance (principalmente no scroll rápido).
+  const renderMode: RenderMode = "canvas";
+
   // IMPORTANTE: não faça return cedo aqui — isso quebra a ordem de hooks.
-  const renderStaticMobile = isMobile;
+  // Mobile: usuário pediu animado. Mantemos um failsafe: iOS continua estático para evitar crash WebKit.
+  const renderStaticMobile = isIOS;
 
   // Desktop: prioriza fidelidade e responsividade em scroll rápido.
   // A principal diferença entre Preview vs Published costuma ser latência/cache: no publicado, os JPGs podem demorar
@@ -92,6 +102,55 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     if (poolFrameIndexRef.current.length !== POOL_SIZE) {
       poolFrameIndexRef.current = Array.from({ length: POOL_SIZE }, () => -1);
     }
+  };
+
+  const computeCoverDraw = (
+    imgW: number,
+    imgH: number,
+    canvasW: number,
+    canvasH: number
+  ) => {
+    const imgRatio = imgW / imgH;
+    const canvasRatio = canvasW / canvasH;
+    let drawW = canvasW;
+    let drawH = canvasH;
+    let dx = 0;
+    let dy = 0;
+
+    if (imgRatio > canvasRatio) {
+      // imagem mais “larga”: aumenta largura, corta laterais
+      drawH = canvasH;
+      drawW = canvasH * imgRatio;
+      dx = (canvasW - drawW) / 2;
+      dy = 0;
+    } else {
+      // imagem mais “alta”: aumenta altura, corta topo/baixo
+      drawW = canvasW;
+      drawH = canvasW / imgRatio;
+      dx = 0;
+      dy = (canvasH - drawH) / 2;
+    }
+    return { dx, dy, dw: drawW, dh: drawH };
+  };
+
+  const drawFrameToCanvas = (frameIndex: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const img = imgCacheRef.current.get(frameIndex);
+    if (!img || !img.complete) return;
+
+    const { width: cw, height: ch } = canvas;
+    if (!cw || !ch) return;
+
+    // clear
+    ctx.clearRect(0, 0, cw, ch);
+
+    // cover draw
+    const { dx, dy, dw, dh } = computeCoverDraw(img.naturalWidth || img.width, img.naturalHeight || img.height, cw, ch);
+    ctx.drawImage(img, dx, dy, dw, dh);
   };
 
   const setPoolSlot = (slot: number, frameIndex: number, opacity: number, zIndex: number) => {
@@ -139,7 +198,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     }
   };
 
-  // Função para carregar um frame específico
+  // Função para carregar um frame específico (cacheada)
   const loadFrame = (index: number, mode: FrameLoadMode = "near"): Promise<void> => {
     return new Promise((resolve) => {
       if (index < 0 || index >= frames.length) {
@@ -147,15 +206,19 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
         return;
       }
 
-      if (loadedFramesRef.current.has(index) || loadingFramesRef.current.has(index)) {
-        // Se estiver carregado mas não decodificado e for prioritário, tenta decodificar em background
-        // (no pool, nem sempre teremos um <img> específico por frame)
+      if (loadedFramesRef.current.has(index)) {
+        resolve();
+        return;
+      }
+
+      if (loadingFramesRef.current.has(index)) {
         resolve();
         return;
       }
 
       loadingFramesRef.current.add(index);
-      const img = new Image();
+      const img = imgCacheRef.current.get(index) ?? new Image();
+      imgCacheRef.current.set(index, img);
       img.src = frames[index];
 
       const onComplete = () => {
@@ -166,6 +229,11 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       img.onload = () => {
         // IMPORTANT: marca como carregado no onload (não bloqueia na decode), para não “travar” frames.
         loadedFramesRef.current.add(index);
+
+        // Se esse frame estiver na tela, tenta desenhar imediatamente.
+        if (renderMode === "canvas" && displayedFrameRef.current === index) {
+          drawFrameToCanvas(index);
+        }
 
         // Tenta decodificar em background para suavidade
         const maybeDecode = () => {
@@ -203,6 +271,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   };
 
   useEffect(() => {
+    // IntersectionObserver é ok para todos (inclusive mobile animado), mas não precisamos no modo estático iOS.
     if (renderStaticMobile) return;
     const el = scrollContainerRef.current;
     if (!el) return;
@@ -227,6 +296,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     currentFrameFloatRef.current = 0;
     lastPreloadCenterRef.current = -999;
     lastTargetFrameIntRef.current = 0;
+    imgCacheRef.current = new Map<number, HTMLImageElement>();
     setIsReady(false);
 
     // Mobile estático: não faz preload/tick, só marca como pronto.
@@ -251,6 +321,11 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       }
       await Promise.all(promises);
       setIsReady(true);
+
+      // no canvas, desenha o frame inicial assim que estiver pronto
+      if (renderMode === "canvas") {
+        drawFrameToCanvas(0);
+      }
 
       // Background preload:
       // No iPhone, decodificar TUDO tende a travar (memória/GPU). Mantemos um preload progressivo e leve.
@@ -289,6 +364,28 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     preloadInitial();
   }, [isMobile, renderStaticMobile]);
 
+  // Resize do canvas (cover) + redraw
+  useEffect(() => {
+    if (renderStaticMobile) return;
+    if (renderMode !== "canvas") return;
+
+    const onResize = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      if (canvasSizeRef.current.w === w && canvasSizeRef.current.h === h) return;
+      canvasSizeRef.current = { w, h };
+      canvas.width = w;
+      canvas.height = h;
+      drawFrameToCanvas(displayedFrameRef.current);
+    };
+
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [renderStaticMobile]);
+
   useEffect(() => {
     if (renderStaticMobile) return;
     const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
@@ -325,7 +422,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       const targetFrameInt = clamp(Math.round(targetFloat), 0, frames.length - 1);
 
       // Suavização (lerp) do frame atual em direção ao alvo
-      const smoothFactor = isMobile ? 0.3 : DESKTOP_SMOOTH_FACTOR;
+      const smoothFactor = isMobile ? MOBILE_SMOOTH_FACTOR : DESKTOP_SMOOTH_FACTOR;
       const prevFloat = currentFrameFloatRef.current;
       const nextFloat = lerp(prevFloat, targetFloat, smoothFactor);
       currentFrameFloatRef.current = nextFloat;
@@ -396,7 +493,12 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
           const newCurrent = bestCandidate;
           previousDisplayedFrameRef.current = newPrev;
           displayedFrameRef.current = newCurrent;
-          renderPoolForFrames(newCurrent, newPrev);
+
+          if (renderMode === "canvas") {
+            drawFrameToCanvas(newCurrent);
+          } else {
+            renderPoolForFrames(newCurrent, newPrev);
+          }
         }
       } else {
         const oldCurrent = displayedFrameRef.current;
@@ -406,8 +508,12 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
         previousDisplayedFrameRef.current = newPrev;
         displayedFrameRef.current = newCurrent;
-        // Renderiza via pool (7 imgs), reduzindo memória e travadas no iPhone
-        renderPoolForFrames(newCurrent, newPrev);
+        if (renderMode === "canvas") {
+          drawFrameToCanvas(newCurrent);
+        } else {
+          // Renderiza via pool (7 imgs)
+          renderPoolForFrames(newCurrent, newPrev);
+        }
       }
 
       rafIdRef.current = window.requestAnimationFrame(tick);
@@ -463,43 +569,49 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
           aria-hidden="true"
         />
 
-        {/* Apenas frames visíveis/próximos são renderizados */}
-        <div
-          className="pointer-events-none absolute inset-0 z-0"
-          style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease" }}
-          aria-hidden="true"
-        >
-          {Array.from({ length: POOL_SIZE }).map((_, slot) => (
-            <img
-              key={`${isMobile ? "mobile" : "desktop"}-pool-${slot}`}
-              ref={(el) => {
-                poolElsRef.current[slot] = el;
-              }}
-              // src será gerenciado via renderPoolForFrames() (pool)
-              // Mantemos sempre um src válido e LEVE para não disparar request do documento (src="") no Safari.
-              // Slot 0 começa com o frame 0; os demais começam com um placeholder.
-              src={slot === 0 ? firstFrame : TRANSPARENT_1PX}
-              alt=""
-              decoding="async"
-              loading={slot === 0 ? "eager" : "lazy"}
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                objectPosition: "center center",
-                transform: "scale(1.15)",
-                transformOrigin: "center center",
-                opacity: slot === 0 ? 1 : 0,
-                zIndex: slot === 0 ? 2 : 0,
-                transition: "none",
-                willChange: "opacity",
-              }}
-            />
-          ))}
-        </div>
+        {renderMode === "canvas" ? (
+          <canvas
+            ref={canvasRef}
+            className="pointer-events-none absolute inset-0 z-0"
+            style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease", transform: "scale(1.15)", transformOrigin: "center" }}
+            aria-hidden="true"
+          />
+        ) : (
+          /* Fallback pool */
+          <div
+            className="pointer-events-none absolute inset-0 z-0"
+            style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease" }}
+            aria-hidden="true"
+          >
+            {Array.from({ length: POOL_SIZE }).map((_, slot) => (
+              <img
+                key={`${isMobile ? "mobile" : "desktop"}-pool-${slot}`}
+                ref={(el) => {
+                  poolElsRef.current[slot] = el;
+                }}
+                src={slot === 0 ? firstFrame : TRANSPARENT_1PX}
+                alt=""
+                decoding="async"
+                loading={slot === 0 ? "eager" : "lazy"}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  objectPosition: "center center",
+                  transform: "scale(1.15)",
+                  transformOrigin: "center center",
+                  opacity: slot === 0 ? 1 : 0,
+                  zIndex: slot === 0 ? 2 : 0,
+                  transition: "none",
+                  willChange: "opacity",
+                }}
+              />
+            ))}
+          </div>
+        )}
 
         <div className="relative z-10 h-full">{children}</div>
       </div>
