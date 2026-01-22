@@ -747,21 +747,21 @@ const SolucoesGrid = () => {
         {/* ===== LAYOUT MOBILE ===== */}
         <div className="lg:hidden flex flex-col items-center">
           {/* Cérebro centralizado no topo (tamanho reduzido) */}
-          <div className="relative z-10 mb-2 scale-[0.65] origin-center">
+          <div className="relative z-10 mb-0 scale-[0.5] origin-center">
             <CentralBrain />
           </div>
           
           {/* Linha vertical do cérebro até o primeiro card */}
-          <div className="w-0.5 h-8 bg-gradient-to-b from-[#a855f7] to-[#ff2244]" />
+          <div className="w-0.5 h-6 bg-gradient-to-b from-[#a855f7] to-[#ff2244]" />
           
           {/* Cards empilhados verticalmente com linhas */}
           <div className="flex flex-col items-center w-full px-4">
-            {mobileOrder.map((idx, i) => <div key={camadas[idx].position} className="relative w-full max-w-[380px]">
-                {/* Linha de conexão vertical entre cards */}
-                {i > 0 && <div className="absolute left-[68px] -top-4 w-0.5 h-4 bg-gradient-to-b from-[#ff2244] to-[#a855f7]" />}
+            {mobileOrder.map((idx, i) => <div key={camadas[idx].position} className="relative w-full max-w-[280px]">
+                {/* Linha de conexão vertical entre cards - começa na borda externa do círculo (à esquerda do card) */}
+                {i > 0 && <div className="absolute left-[37px] -top-3 w-0.5 h-3 bg-gradient-to-b from-[#ff2244] to-[#a855f7]" />}
                 <MobileSvgCard camada={camadas[idx]} index={i} />
-                {/* Linha após o card (exceto último) */}
-                {i < mobileOrder.length - 1 && <div className="absolute left-[68px] -bottom-4 w-0.5 h-4 bg-gradient-to-b from-[#a855f7] to-[#ff2244]" />}
+                {/* Linha após o card (exceto último) - termina na borda externa do círculo */}
+                {i < mobileOrder.length - 1 && <div className="absolute left-[37px] -bottom-3 w-0.5 h-3 bg-gradient-to-b from-[#a855f7] to-[#ff2244]" />}
               </div>)}
           </div>
         </div>
@@ -823,8 +823,8 @@ const MobileSvgCard = ({
   }} viewport={{
     once: true,
     amount: 0.1
-  }} className="relative w-full my-4">
-      {/* Container do card */}
+  }} className="relative w-full my-3">
+      {/* Container do card - menor */}
       <div className="relative w-full aspect-[380/110]">
         {/* SVG Frame */}
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 380 110" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
@@ -848,23 +848,20 @@ const MobileSvgCard = ({
           <circle cx="55" cy="55" r="54" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1" fill="none" />
           <circle cx="55" cy="55" r="48" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1" fill="none" />
           
-          {/* Retângulo arredondado */}
-          <rect x="75" y="4" width="301" height="102" rx="18" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1" fill="none" />
-          <rect x="79" y="8" width="293" height="94" rx="14" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1" fill="none" />
+          {/* Retângulo arredondado - borda externa NÃO passa pelo círculo */}
+          <rect x="100" y="4" width="276" height="102" rx="18" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1" fill="none" />
+          <rect x="104" y="8" width="268" height="94" rx="14" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1" fill="none" />
         </svg>
         
-        {/* Ícone no círculo */}
-        
-        
-        {/* Conteúdo de texto */}
-        <div className="absolute left-[120px] right-4 top-1/2 -translate-y-1/2">
-          <h3 className="text-white font-bold text-sm leading-tight mb-0.5">
+        {/* Conteúdo de texto - ajustado para novo layout */}
+        <div className="absolute left-[32%] right-3 top-1/2 -translate-y-1/2">
+          <h3 className="text-white font-bold text-xs leading-tight mb-0.5">
             {camada.titulo}
           </h3>
-          <p className="text-[#ff6b8a] text-[8px] uppercase tracking-widest font-mono leading-snug mb-0.5">
+          <p className="text-[#ff6b8a] text-[7px] uppercase tracking-widest font-mono leading-snug mb-0.5">
             {camada.funcao}
           </p>
-          <p className="text-gray-400 text-[11px] leading-snug">
+          <p className="text-gray-400 text-[10px] leading-snug">
             {camada.beneficio}
           </p>
         </div>
