@@ -999,7 +999,18 @@ const MobileLayout = ({
           preserveAspectRatio="none"
         >
           <defs>
-            <linearGradient id="mobileConnectionGradLayout" x1="0%" y1="0%" x2="0%" y2="100%">
+            {/*
+              IMPORTANTE: para a linha vertical (x1===x2), gradiente em objectBoundingBox pode “sumir”
+              em alguns browsers. Por isso usamos userSpaceOnUse com y2 baseado na altura real.
+            */}
+            <linearGradient
+              id="mobileConnectionGradLayout"
+              gradientUnits="userSpaceOnUse"
+              x1={0}
+              y1={0}
+              x2={0}
+              y2={layout.h}
+            >
               <stop offset="0%" stopColor="hsl(var(--frame-purple))" />
               <stop offset="50%" stopColor="hsl(var(--frame-red))" />
               <stop offset="100%" stopColor="hsl(var(--frame-purple))" />
@@ -1013,7 +1024,7 @@ const MobileLayout = ({
             x2={layout.trunkX}
             y2={layout.trunkYBottom}
             stroke="url(#mobileConnectionGradLayout)"
-            strokeWidth={2}
+            strokeWidth={3}
             strokeLinecap="round"
           />
 
@@ -1023,7 +1034,7 @@ const MobileLayout = ({
                 Q ${(layout.trunkX + layout.brainAnchor.x) / 2} ${layout.trunkYTop - 22}
                   ${layout.brainAnchor.x} ${layout.brainAnchor.y}`}
             stroke="url(#mobileConnectionGradLayout)"
-            strokeWidth={2}
+            strokeWidth={3}
             fill="none"
             strokeLinecap="round"
           />
@@ -1034,7 +1045,7 @@ const MobileLayout = ({
               key={`hook-${i}`}
               d={h.d}
               stroke="url(#mobileConnectionGradLayout)"
-              strokeWidth={2}
+              strokeWidth={3}
               fill="none"
               strokeLinecap="round"
             />
