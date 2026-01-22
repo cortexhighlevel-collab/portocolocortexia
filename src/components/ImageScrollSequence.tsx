@@ -64,7 +64,10 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const effectiveMaxStep = isMobile ? MAX_STEP : frames.length; // desktop volta a seguir o scroll sem limitação
   const allowBackgroundPreload = !isIOS;
   const allowDecode = !isIOS;
-  const gateOnLoaded = !isIOS; // no iOS: não bloqueia troca de frame esperando preload
+  // Desktop: NUNCA pode “travar” esperando preload (senão parece que o scroll-frame sumiu).
+  // Mobile (não-iOS): mantém gate para evitar flashes/ghosting.
+  // iOS: sem gate para reduzir main thread e evitar loop pesado.
+  const gateOnLoaded = isMobile && !isIOS;
 
   const ensurePoolSize = () => {
     if (poolElsRef.current.length !== POOL_SIZE) {
