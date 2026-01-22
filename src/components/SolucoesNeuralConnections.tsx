@@ -114,37 +114,32 @@ export function SolucoesNeuralConnections(props: {
         y: bRect.top + bRect.height / 2 - cRect.top,
       };
 
-      // Raio até os connection nodes (pontinhos rosa na borda)
-      // O anel externo tem 230px, mas os nodes estão um pouco além (no SVG em 260px viewBox)
-      const brainRadius = bRect.width / 2 + 15; // Adiciona offset para alcançar os nodes
+      // Raio até a BORDA EXTERNA do círculo central (anel externo visível).
+      // O wrapper do cérebro é 260px, mas o anel externo é 230px (diferença 30px => 15px por lado).
+      const brainRadius = Math.max(1, bRect.width / 2 - 15) + 1; // +1 para encostar visualmente na borda
 
-      // Alvos nos CONNECTION NODES (pontinhos rosa) - 4 pontos cardeais
-      const brainTargetsByPos: Record<string, Point> = {
-        "top-left": { 
-          x: brainCenter.x, 
-          y: brainCenter.y - brainRadius  // Node TOPO
-        },
-        "mid-left": { 
-          x: brainCenter.x - brainRadius, 
-          y: brainCenter.y  // Node ESQUERDA
-        },
-        "bottom-center": { 
-          x: brainCenter.x, 
-          y: brainCenter.y + brainRadius  // Node BAIXO
-        },
-        "top-right": { 
-          x: brainCenter.x, 
-          y: brainCenter.y - brainRadius  // Node TOPO
-        },
-        "mid-right": { 
-          x: brainCenter.x + brainRadius, 
-          y: brainCenter.y  // Node DIREITA
-        },
-        "bottom-right": { 
-          x: brainCenter.x + brainRadius, 
-          y: brainCenter.y  // Node DIREITA
-        },
+      const angleDegByPos: Record<string, number> = {
+        // Distribui em ângulos diferentes para não “conectar” linhas entre si
+        "top-left": -150,      // ~10h
+        "mid-left": 180,       // 9h
+        "bottom-center": 90,   // 6h
+        "top-right": -30,      // ~2h
+        "mid-right": 0,        // 3h
+        "bottom-right": 30,    // ~4h
       };
+
+      const brainTargetsByPos: Record<string, Point> = Object.fromEntries(
+        Object.entries(angleDegByPos).map(([pos, deg]) => {
+          const rad = (deg * Math.PI) / 180;
+          return [
+            pos,
+            {
+              x: brainCenter.x + brainRadius * Math.cos(rad),
+              y: brainCenter.y + brainRadius * Math.sin(rad),
+            },
+          ];
+        }),
+      );
 
       const conns: Connection[] = [];
 
@@ -189,12 +184,25 @@ export function SolucoesNeuralConnections(props: {
           y: target.y,
         };
 
-        // Para bottom-center: forçar a linha a sair para a DIREITA primeiro (lead-out)
-        // antes de subir, assim não entra no card. Mantém curto para não encostar no SEO+AEO.
+        // Ajuste de pivotX (coluna do "sobe/desce") para evitar que as linhas
+        // encostem/pareçam se conectar umas nas outras.
         let pivotX: number | undefined;
+        const nearCircleGap = 36;
+
         if (pos === "bottom-center") {
-          const leadOut = Math.min(16, w * 0.02);
-          pivotX = start.x + leadOut;
+          // Sai só um pouco pra direita antes de subir (sem tocar o SEO)
+          const leadOut = Math.min(12, w * 0.015);
+          pivotX = clamp(start.x + leadOut, 0, w);
+        } else if (pos === "top-left") {
+          pivotX = clamp(end.x - nearCircleGap - 24, 0, w);
+        } else if (pos === "mid-left") {
+          pivotX = clamp(end.x - nearCircleGap, 0, w);
+        } else if (pos === "top-right") {
+          pivotX = clamp(end.x + nearCircleGap + 24, 0, w);
+        } else if (pos === "mid-right") {
+          pivotX = clamp(end.x + nearCircleGap, 0, w);
+        } else if (pos === "bottom-right") {
+          pivotX = clamp(end.x + nearCircleGap + 40, 0, w);
         }
 
         const d = roundedOrthoPath(start, end, "horizontal", 24, pivotX);
