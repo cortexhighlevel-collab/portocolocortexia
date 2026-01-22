@@ -88,7 +88,7 @@ const HeroSection = () => {
                     ? "fixed inset-x-0 flex flex-col items-center justify-center text-center z-40 px-4" 
                     : "scale-[1.7] origin-left"
                   }
-                  style={isMobile ? { top: "55%", transform: "translateY(-50%)" } : {}}
+                  style={isMobile ? { top: "62%", transform: "translateY(-50%)" } : {}}
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.2 }}
