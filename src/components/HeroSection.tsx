@@ -5,7 +5,7 @@ import ImageScrollSequence from "./ImageScrollSequence";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 // Ajuste de tamanho do CTA
-const CTA_DESKTOP_SCALE = 0.35;
+const CTA_DESKTOP_SCALE = 0.50;
 
 const HeroSection = () => {
   const isMobile = useIsMobile();
