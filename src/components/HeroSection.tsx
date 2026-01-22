@@ -88,20 +88,22 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.6 }}
         >
           <div className="relative group rounded-full overflow-visible shrink-0">
-            {/* Static shine effect on border - red glow at top */}
+            {/* Rotating shine effect on border */}
             <div 
-              className="absolute -inset-[1px] rounded-full pointer-events-none z-20"
+              className="absolute -inset-[1px] rounded-full pointer-events-none overflow-hidden"
               style={{
-                background: "linear-gradient(180deg, rgba(255,60,60,1) 0%, rgba(255,30,30,0.8) 5%, transparent 15%, transparent 100%)",
+                padding: "7px",
+                background: "linear-gradient(90deg, transparent, transparent)",
               }}
-            />
-            {/* Secondary glow for more intensity */}
-            <div 
-              className="absolute -inset-[3px] rounded-full pointer-events-none blur-[2px]"
-              style={{
-                background: "linear-gradient(180deg, rgba(255,0,0,0.7) 0%, transparent 20%, transparent 100%)",
-              }}
-            />
+            >
+              <div 
+                className="absolute inset-0 rounded-full"
+                style={{
+                  background: "conic-gradient(from 0deg, transparent 0deg, transparent 300deg, rgba(255,50,50,1) 330deg, rgba(255,100,100,1) 345deg, rgba(255,50,50,1) 360deg)",
+                  animation: "spin 3s linear infinite",
+                }}
+              />
+            </div>
             <button
               className="relative z-10 flex items-center justify-between w-[1008px] h-[92px] px-8 gap-6 bg-gradient-to-b from-[#2a2a2a] via-[#0a0a0a] to-[#1a1a1a] text-white rounded-full border-[7px] border-[#3a3a3a] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_4px_20px_-5px_rgba(0,0,0,0.8)] transition-transform active:scale-[0.98] overflow-hidden"
             >
