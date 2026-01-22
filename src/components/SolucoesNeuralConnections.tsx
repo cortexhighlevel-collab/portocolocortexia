@@ -122,23 +122,34 @@ export function SolucoesNeuralConnections(props: {
         if (!el) return;
         const r = el.getBoundingClientRect();
 
-        // âncora no card (aproxima o centro do anel/ícone)
-        let ax = r.left + r.width / 2;
-        let ay = r.top + r.height / 2;
+        // Âncora na BORDA do card (não dentro) - linha para exatamente na borda
+        let ax: number;
+        let ay: number;
 
-        if (pos.includes("left")) {
-          ax = r.left + r.width * 0.82;
-        } else if (pos.includes("right")) {
-          ax = r.left + r.width * 0.18;
-        }
-
-        if (pos === "bottom-right") {
-          ax = r.left + r.width * 0.12;
-          ay = r.top + r.height * 0.28;
-        }
-
-        if (pos === "bottom-center") {
+        if (pos === "top-left") {
+          // Borda direita do card, centralizado verticalmente no anel
+          ax = r.right;
+          ay = r.top + r.height * 0.38;
+        } else if (pos === "mid-left") {
+          // Borda direita do card
+          ax = r.right;
+          ay = r.top + r.height * 0.5;
+        } else if (pos === "top-right") {
+          // Borda esquerda do card
+          ax = r.left;
+          ay = r.top + r.height * 0.5;
+        } else if (pos === "mid-right") {
+          // Borda esquerda do card
+          ax = r.left;
+          ay = r.top + r.height * 0.5;
+        } else if (pos === "bottom-right") {
+          // Borda esquerda, no topo onde fica o ícone
+          ax = r.left;
           ay = r.top + r.height * 0.22;
+        } else {
+          // bottom-center: borda superior, centro horizontal
+          ax = r.left + r.width * 0.5;
+          ay = r.top;
         }
 
         const start: Point = {
@@ -152,8 +163,9 @@ export function SolucoesNeuralConnections(props: {
           y: target.y,
         };
 
-        // Todas as linhas começam horizontal e seguem o mesmo padrão
-        const d = roundedOrthoPath(start, end, "horizontal", 24);
+        // bottom-center usa direção vertical (sobe pro cérebro), demais horizontal
+        const direction = pos === "bottom-center" ? "vertical" : "horizontal";
+        const d = roundedOrthoPath(start, end, direction, 24);
 
         conns.push({
           key: `${pos}-${idx}`,
