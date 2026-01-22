@@ -190,9 +190,8 @@ export function SolucoesNeuralConnections(props: {
         const nearCircleGap = 36;
 
         if (pos === "bottom-center") {
-          // Sai só um pouco pra direita antes de subir (sem tocar o SEO)
-          const leadOut = Math.min(12, w * 0.015);
-          pivotX = clamp(start.x + leadOut, 0, w);
+          // Linha do Agentes Inteligentes: bem curta pra não encostar no SEO+AEO
+          pivotX = undefined; // Usa o midX padrão (meio entre start e end)
         } else if (pos === "top-left") {
           pivotX = clamp(end.x - nearCircleGap - 24, 0, w);
         } else if (pos === "mid-left") {
@@ -200,7 +199,8 @@ export function SolucoesNeuralConnections(props: {
         } else if (pos === "top-right") {
           pivotX = clamp(end.x + nearCircleGap + 24, 0, w);
         } else if (pos === "mid-right") {
-          pivotX = clamp(end.x + nearCircleGap, 0, w);
+          // Engenharia de Prompt: pivot mais afastado pra curva ficar visível
+          pivotX = clamp(end.x + nearCircleGap + 60, 0, w);
         } else if (pos === "bottom-right") {
           pivotX = clamp(end.x + nearCircleGap + 40, 0, w);
         }
