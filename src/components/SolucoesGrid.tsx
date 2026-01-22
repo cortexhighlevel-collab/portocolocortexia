@@ -819,8 +819,9 @@ const MobileSvgCard = ({
   const Icon = camada.icon;
   const svgId = `mobile-card-${index}`;
   
-  // Dimensões: círculo em x=40, raio externo=40, então borda externa está em x=80
-  // Retângulo começa em x=80 (exatamente na borda externa do círculo, sem passar por dentro)
+  // O círculo fica sobreposto ao retângulo (círculo na frente, retângulo começa por baixo)
+  // Círculo: centro x=45, raio=42 -> borda externa em x=87
+  // Retângulo: começa em x=20 (passa por baixo do círculo)
   
   return (
     <motion.div 
@@ -830,11 +831,11 @@ const MobileSvgCard = ({
       className="relative w-full my-2"
     >
       {/* Container do card */}
-      <div className="relative w-full aspect-[340/90]">
+      <div className="relative w-full aspect-[340/100]">
         {/* SVG Frame */}
         <svg 
           className="absolute inset-0 w-full h-full" 
-          viewBox="0 0 340 90" 
+          viewBox="0 0 340 100" 
           fill="none" 
           xmlns="http://www.w3.org/2000/svg" 
           preserveAspectRatio="xMidYMid meet"
@@ -844,33 +845,42 @@ const MobileSvgCard = ({
               <stop offset="0%" stopColor="hsl(var(--frame-red))" />
               <stop offset="100%" stopColor="hsl(var(--frame-purple))" />
             </linearGradient>
-            <clipPath id={`mobileClip-${svgId}`}>
-              <circle cx="40" cy="45" r="38" />
-              <rect x="80" y="6" width="254" height="78" rx="14" />
+            {/* Clip path para o background do retângulo (não inclui área do círculo) */}
+            <clipPath id={`mobileRectClip-${svgId}`}>
+              <rect x="85" y="8" width="247" height="84" rx="14" />
+            </clipPath>
+            {/* Clip path para o background do círculo */}
+            <clipPath id={`mobileCircleClip-${svgId}`}>
+              <circle cx="45" cy="50" r="40" />
             </clipPath>
           </defs>
           
-          {/* Background */}
-          <g clipPath={`url(#mobileClip-${svgId})`}>
-            <rect x="0" y="0" width="340" height="90" fill="hsl(var(--frame-panel))" fillOpacity="0.92" />
+          {/* 1. Retângulo (camada de trás) */}
+          {/* Background do retângulo */}
+          <g clipPath={`url(#mobileRectClip-${svgId})`}>
+            <rect x="0" y="0" width="340" height="100" fill="hsl(var(--frame-panel))" fillOpacity="0.92" />
           </g>
+          {/* Bordas do retângulo */}
+          <rect x="85" y="5" width="250" height="90" rx="16" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1.5" fill="none" />
+          <rect x="89" y="9" width="242" height="82" rx="12" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1" fill="none" />
           
-          {/* Círculos - centro em x=40, raio externo=40 (borda externa em x=80) */}
-          <circle cx="40" cy="45" r="40" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1.5" fill="none" />
-          <circle cx="40" cy="45" r="34" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1" fill="none" />
-          
-          {/* Retângulo - começa em x=80 (exatamente na borda externa do círculo) */}
-          <rect x="80" y="3" width="257" height="84" rx="16" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1.5" fill="none" />
-          <rect x="84" y="7" width="249" height="76" rx="12" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1" fill="none" />
+          {/* 2. Círculo (camada da frente - sobrepõe o retângulo) */}
+          {/* Background do círculo */}
+          <g clipPath={`url(#mobileCircleClip-${svgId})`}>
+            <rect x="0" y="0" width="100" height="100" fill="hsl(var(--frame-panel))" fillOpacity="0.95" />
+          </g>
+          {/* Bordas do círculo (desenhadas por cima) */}
+          <circle cx="45" cy="50" r="42" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1.5" fill="none" />
+          <circle cx="45" cy="50" r="36" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1" fill="none" />
         </svg>
         
         {/* Ícone dentro do círculo */}
-        <div className="absolute left-[4%] top-1/2 -translate-y-1/2 w-[20%] flex items-center justify-center">
+        <div className="absolute left-[5%] top-1/2 -translate-y-1/2 w-[22%] flex items-center justify-center">
           <Icon className="w-5 h-5 text-[#ff6b8a]" />
         </div>
         
         {/* Conteúdo de texto - começa após o círculo */}
-        <div className="absolute left-[28%] right-2 top-1/2 -translate-y-1/2">
+        <div className="absolute left-[30%] right-2 top-1/2 -translate-y-1/2">
           <h3 className="text-white font-bold text-[11px] leading-tight mb-0.5">
             {camada.titulo}
           </h3>
