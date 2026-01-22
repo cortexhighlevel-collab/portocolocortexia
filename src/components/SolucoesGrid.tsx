@@ -913,7 +913,7 @@ const MobileLayout = ({
     const brainRect = brainRef.current.getBoundingClientRect();
 
     const w = wrapperRect.width;
-    const h = wrapperRef.current.scrollHeight;
+    const h = wrapperRect.height;
 
     const cardGeoms = cardRefs.current
       .map((el) => (el ? el.getBoundingClientRect() : null))
@@ -933,7 +933,8 @@ const MobileLayout = ({
 
     // Tronco (linha vertical) fica no "gutter" à esquerda do card
     const minCircleLeft = Math.min(...anchors.map((a) => a.circleLeftEdge));
-    const trunkX = Math.max(10, minCircleLeft - 18);
+    // Empurra um pouco mais pra esquerda para não ficar escondido atrás do círculo
+    const trunkX = Math.max(12, minCircleLeft - 36);
 
     // Âncora no cérebro: quadrante inferior-esquerdo do círculo
     const brainAnchor = {
@@ -941,22 +942,23 @@ const MobileLayout = ({
       y: brainRect.top - wrapperRect.top + brainRect.height * 0.72
     };
 
-    // O tronco vertical vai do primeiro card até o último
+    // O tronco vertical vai do cérebro até o último card (passando por todos)
     const firstCardY = Math.min(...anchors.map((a) => a.y));
     const lastCardY = Math.max(...anchors.map((a) => a.y));
-    
-    const trunkYTop = firstCardY - 20; // Um pouco acima do primeiro card
+
+    // Começa um pouco abaixo do cérebro (para ficar visível acima do primeiro card)
+    const trunkYTop = Math.min(firstCardY - 20, brainAnchor.y + 50);
     const trunkYBottom = lastCardY + 10;
 
     const curveR = 12;
 
-    // Hooks: saem da borda do círculo, fazem curva e encostam no tronco
+    // Hooks: saem da borda do círculo, fazem curva e ENCOSTAM no tronco
     const hooks = anchors.map((a) => {
       const startX = a.circleLeftEdge;
       const y = a.y;
       const d = `M ${startX} ${y}
                  L ${trunkX + curveR} ${y}
-                 Q ${trunkX} ${y} ${trunkX} ${y - curveR}`;
+                 Q ${trunkX} ${y} ${trunkX} ${y}`;
       return { d };
     });
 
