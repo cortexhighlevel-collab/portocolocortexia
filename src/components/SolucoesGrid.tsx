@@ -747,21 +747,72 @@ const SolucoesGrid = () => {
         {/* ===== LAYOUT MOBILE ===== */}
         <div className="lg:hidden flex flex-col items-center">
           {/* Cérebro centralizado no topo (tamanho reduzido) */}
-          <div className="relative z-10 mb-0 scale-[0.5] origin-center">
+          <div className="relative z-10 mb-6 scale-[0.5] origin-center">
             <CentralBrain />
           </div>
           
-          {/* Container dos cards com linha vertical única à esquerda */}
-          <div className="relative flex flex-col items-start w-full pl-8 pr-4">
-            {/* Linha vertical única conectando cérebro aos cards */}
-            <div 
-              className="absolute left-[52px] top-0 w-0.5 bg-gradient-to-b from-[#a855f7] via-[#ff2244] to-[#a855f7]" 
-              style={{ height: 'calc(100% - 40px)' }}
-            />
+          {/* Container dos cards com SVG de conexões */}
+          <div className="relative flex flex-col items-start w-full pl-16 pr-4">
+            {/* SVG das linhas de conexão - curvas saindo dos cards para linha vertical */}
+            <svg 
+              className="absolute left-0 top-[-20px] w-24 pointer-events-none z-0"
+              style={{ height: 'calc(100% + 20px)' }}
+              preserveAspectRatio="none"
+            >
+              <defs>
+                <linearGradient id="mobileConnectionGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#a855f7" />
+                  <stop offset="50%" stopColor="#ff2244" />
+                  <stop offset="100%" stopColor="#a855f7" />
+                </linearGradient>
+              </defs>
+              
+              {/* Linha vertical principal (espinha dorsal) */}
+              <line 
+                x1="20" 
+                y1="0" 
+                x2="20" 
+                y2="100%" 
+                stroke="url(#mobileConnectionGrad)" 
+                strokeWidth="2"
+              />
+              
+              {/* Curvas de conexão para cada card - saem horizontal, curvam e sobem */}
+              {mobileOrder.map((_, i) => {
+                // Altura do card baseada no aspect ratio 731/267
+                // Com max-width de 280px: height = 280 * (267/731) ≈ 102px
+                // my-1 = 4px cada lado = 8px total entre cards
+                const cardHeight = 102;
+                const cardSpacing = 8;
+                const totalCardHeight = cardHeight + cardSpacing;
+                
+                // Centro vertical do círculo do card (o círculo está no meio verticalmente)
+                // +20px para compensar o offset do SVG
+                const cardCenterY = 20 + (i * totalCardHeight) + (cardHeight / 2);
+                
+                // Posições X
+                const lineX = 20; // Linha vertical principal
+                const cardCircleEdge = 60; // Borda esquerda do círculo do card
+                const curveRadius = 15;
+                
+                // Curva: sai horizontal do círculo, faz curva de 90°, e conecta na linha vertical
+                return (
+                  <path
+                    key={`curve-${i}`}
+                    d={`M ${cardCircleEdge} ${cardCenterY}
+                        L ${lineX + curveRadius} ${cardCenterY}
+                        Q ${lineX} ${cardCenterY} ${lineX} ${cardCenterY - curveRadius}`}
+                    stroke="url(#mobileConnectionGrad)"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                );
+              })}
+            </svg>
             
             {/* Cards empilhados */}
             {mobileOrder.map((idx, i) => (
-              <div key={camadas[idx].position} className="relative w-full max-w-[320px] ml-4">
+              <div key={camadas[idx].position} className="relative w-full max-w-[280px] ml-2 z-10">
                 <MobileSvgCard camada={camadas[idx]} index={i} />
               </div>
             ))}
