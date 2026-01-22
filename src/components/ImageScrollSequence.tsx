@@ -125,13 +125,8 @@ const mobileFrames = [
 
 // Número de frames vizinhos a manter carregados (para trás e para frente)
 const FRAME_BUFFER = 10;
-// Quantos frames ao redor do frame "iminente" devemos tentar decodificar (evita explodir memória no mobile)
-const DECODE_BUFFER = 2;
 // Máximo de frames que pode pular por tick (previne saltos)
 const MAX_STEP = 2;
-
-// Evita trabalho pesado de preload a cada RAF (especialmente em mobile)
-const PRELOAD_THROTTLE_MS = 80;
 
 type FrameLoadMode = "near" | "background";
 
@@ -149,74 +144,66 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const loadedFramesRef = useRef<Set<number>>(new Set());
   const decodedFramesRef = useRef<Set<number>>(new Set());
   const loadingFramesRef = useRef<Set<number>>(new Set());
-  const lastPreloadCenterRef = useRef<number>(-1);
-  const lastPreloadAtRef = useRef<number>(0);
-
-  // IMPORTANTE (mobile): não renderizar 48 imgs simultâneas, isso estoura memória e pode “derrubar” o browser.
-  const SLOT_COUNT = 7;
-  const slotElsRef = useRef<Array<HTMLImageElement | null>>(Array(SLOT_COUNT).fill(null));
-  const slotFrameIndexRef = useRef<Array<number>>(Array(SLOT_COUNT).fill(-1));
+  const frameElsRef = useRef<Array<HTMLImageElement | null>>([]);
   const isMobile = useIsMobile();
 
   const frames = isMobile ? mobileFrames : desktopFrames;
 
-  const setSlotStyles = (slot: number, nextOpacity: number, nextZ: number) => {
-    const el = slotElsRef.current[slot];
+  const ensureFrameElsSize = () => {
+    if (frameElsRef.current.length !== frames.length) {
+      frameElsRef.current = Array.from({ length: frames.length }, (_, i) => frameElsRef.current[i] ?? null);
+    }
+  };
+
+  const setFrameStyles = (index: number, nextOpacity: number, nextZ: number) => {
+    const el = frameElsRef.current[index];
     if (!el) return;
+    // Evita write no DOM se já estiver correto (reduz layout/paint churn)
     const op = String(nextOpacity);
     const z = String(nextZ);
     if (el.style.opacity !== op) el.style.opacity = op;
     if (el.style.zIndex !== z) el.style.zIndex = z;
   };
 
-  const computeWantedFrames = (current: number, prev: number) => {
-    const wanted = new Set<number>();
-    wanted.add(current);
-    wanted.add(prev);
-    for (let i = current - 2; i <= current + 2; i++) {
-      if (i >= 0 && i < frames.length) wanted.add(i);
-    }
-    // garante tamanho máximo
-    return Array.from(wanted).slice(0, SLOT_COUNT);
-  };
+  const applyFrameVisibility = (
+    newCurrent: number,
+    newPrev: number,
+    oldCurrent: number,
+    oldPrev: number,
+  ) => {
+    ensureFrameElsSize();
 
-  const applySlots = (newCurrent: number, newPrev: number) => {
-    const wanted = computeWantedFrames(newCurrent, newPrev);
+    const keep = new Set([newCurrent, newPrev]);
 
-    // 1) Atualiza/realoca slots para as fontes necessárias
-    for (let i = 0; i < wanted.length; i++) {
-      const frameIdx = wanted[i];
-      const el = slotElsRef.current[i];
-      if (!el) continue;
+    // Esconde o que não faz mais parte do par (current/prev)
+    if (!keep.has(oldCurrent)) setFrameStyles(oldCurrent, 0, 0);
+    if (!keep.has(oldPrev)) setFrameStyles(oldPrev, 0, 0);
 
-      if (slotFrameIndexRef.current[i] !== frameIdx) {
-        slotFrameIndexRef.current[i] = frameIdx;
-        if (el.src !== frames[frameIdx]) el.src = frames[frameIdx];
-      }
-    }
-
-    // 2) Slots extras ficam invisíveis
-    for (let i = wanted.length; i < SLOT_COUNT; i++) {
-      slotFrameIndexRef.current[i] = -1;
-      setSlotStyles(i, 0, 0);
-    }
-
-    // 3) Define opacidade/zIndex: current por cima, prev logo abaixo, demais off
-    for (let i = 0; i < wanted.length; i++) {
-      const idx = slotFrameIndexRef.current[i];
-      if (idx === -1) continue;
-      if (idx === newCurrent) setSlotStyles(i, 1, 2);
-      else if (idx === newPrev) setSlotStyles(i, 1, 1);
-      else setSlotStyles(i, 0, 0);
-    }
+    // Mostra prev e current (apenas 2 frames visíveis, sem re-render React)
+    if (newPrev !== newCurrent) setFrameStyles(newPrev, 1, 1);
+    setFrameStyles(newCurrent, 1, 2);
   };
 
   // Função para carregar um frame específico
   const loadFrame = (index: number, mode: FrameLoadMode = "near"): Promise<void> => {
-    if (index < 0 || index >= frames.length) return Promise.resolve();
-    if (loadedFramesRef.current.has(index) || loadingFramesRef.current.has(index)) return Promise.resolve();
-
     return new Promise((resolve) => {
+      if (index < 0 || index >= frames.length) {
+        resolve();
+        return;
+      }
+
+      if (loadedFramesRef.current.has(index) || loadingFramesRef.current.has(index)) {
+        // Se estiver carregado mas não decodificado e for prioritário, tenta decodificar em background
+        if (mode === "near" && loadedFramesRef.current.has(index) && !decodedFramesRef.current.has(index)) {
+          const el = frameElsRef.current[index];
+          if (el?.decode) {
+            el.decode().then(() => decodedFramesRef.current.add(index)).catch(() => void 0);
+          }
+        }
+        resolve();
+        return;
+      }
+
       loadingFramesRef.current.add(index);
       const img = new Image();
       img.src = frames[index];
@@ -230,15 +217,22 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
         // IMPORTANT: marca como carregado no onload (não bloqueia na decode), para não “travar” frames.
         loadedFramesRef.current.add(index);
 
-        // Decode é best-effort. Em mobile, decodificar muitos frames em sequência costuma “derrubar” o browser.
-        // Portanto, só decodificamos quando mode === "near" (janela pequena e iminente).
-        if (mode === "near") {
-          if (!decodedFramesRef.current.has(index) && img.decode) {
-            img
-              .decode()
-              .then(() => decodedFramesRef.current.add(index))
-              .catch(() => void 0);
+        // Tenta decodificar em background para suavidade
+        const maybeDecode = () => {
+          if (decodedFramesRef.current.has(index)) return;
+          // Preferir decode do elemento real (quando existir), senão do Image()
+          const el = frameElsRef.current[index];
+          const decoder = el?.decode ? el : img;
+          if (decoder.decode) {
+            decoder.decode().then(() => decodedFramesRef.current.add(index)).catch(() => void 0);
           }
+        };
+
+        if (mode === "near") {
+          maybeDecode();
+        } else {
+          // background: dá uma folga pro main thread
+          window.setTimeout(maybeDecode, 0);
         }
 
         onComplete();
@@ -253,28 +247,12 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   };
 
   // Carregar frames próximos ao frame atual
-  // - Faz preload de um "corredor" na direção do scroll (evita ficar esperando frames intermediários)
-  // - Decodifica somente uma janela pequena (DECODE_BUFFER) ao redor do frame iminente
-  const loadNearbyFrames = (centerFrame: number, decodeCenter: number) => {
-    const now = performance.now();
-    if (
-      lastPreloadCenterRef.current === centerFrame &&
-      now - lastPreloadAtRef.current < PRELOAD_THROTTLE_MS
-    ) {
-      return;
-    }
-    lastPreloadCenterRef.current = centerFrame;
-    lastPreloadAtRef.current = now;
-
+  const loadNearbyFrames = (centerFrame: number) => {
     const start = Math.max(0, centerFrame - FRAME_BUFFER);
     const end = Math.min(frames.length - 1, centerFrame + FRAME_BUFFER);
 
-    const decodeStart = Math.max(0, decodeCenter - DECODE_BUFFER);
-    const decodeEnd = Math.min(frames.length - 1, decodeCenter + DECODE_BUFFER);
-
     for (let i = start; i <= end; i++) {
-      const shouldDecode = i >= decodeStart && i <= decodeEnd;
-      loadFrame(i, shouldDecode ? "near" : "background");
+      loadFrame(i, "near");
     }
   };
 
@@ -300,12 +278,9 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     previousDisplayedFrameRef.current = 0;
     setIsReady(false);
 
-    // Estado visual inicial (frame 0)
-    slotFrameIndexRef.current = Array(SLOT_COUNT).fill(-1);
-    applySlots(0, 0);
-
-    lastPreloadCenterRef.current = -1;
-    lastPreloadAtRef.current = 0;
+    // Ajusta array de refs e garante estado visual inicial (frame 0)
+    ensureFrameElsSize();
+    applyFrameVisibility(0, 0, 0, 0);
 
     // Pré-carregar os primeiros frames
     const preloadInitial = async () => {
@@ -316,6 +291,17 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       }
       await Promise.all(promises);
       setIsReady(true);
+
+      // Pré-carregar o resto em background (elimina travadas em scroll rápido)
+      const preloadAll = () => {
+        for (let i = 0; i < frames.length; i++) loadFrame(i, "background");
+      };
+
+      const requestIdleCallback = (window as unknown as { requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number })
+        .requestIdleCallback;
+
+      if (requestIdleCallback) requestIdleCallback(preloadAll, { timeout: 1500 });
+      else window.setTimeout(preloadAll, 0);
     };
 
     preloadInitial();
@@ -326,12 +312,6 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
     const tick = () => {
       if (!isInView) {
-        rafIdRef.current = window.requestAnimationFrame(tick);
-        return;
-      }
-
-      // Pausa quando a aba está em background (reduz chance de crash por uso contínuo de CPU/mem em mobile)
-      if (document.visibilityState === "hidden") {
         rafIdRef.current = window.requestAnimationFrame(tick);
         return;
       }
@@ -360,19 +340,11 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       const targetFrame = Math.round(progress * (frames.length - 1));
       const current = displayedFrameRef.current;
 
-      // Escolhe um centro de preload que favorece o "caminho" entre current -> target.
-      // Isso evita que, num scroll rápido, a gente pré-carregue só perto do target e fique sem os frames intermediários.
-      const delta = targetFrame - current;
-      const dir = delta === 0 ? 0 : delta > 0 ? 1 : -1;
-      const corridorCenter =
-        Math.abs(delta) > FRAME_BUFFER
-          ? clamp(current + dir * FRAME_BUFFER, 0, frames.length - 1)
-          : targetFrame;
+      // Pré-carregar frames próximos do target
+      loadNearbyFrames(targetFrame);
 
       // Se já está no frame correto, não faz nada
       if (targetFrame === current) {
-        // Mesmo parado, mantém preload do corredor atualizado (especialmente quando o usuário volta a mexer)
-        loadNearbyFrames(corridorCenter, current);
         rafIdRef.current = window.requestAnimationFrame(tick);
         return;
       }
@@ -390,21 +362,19 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       // Garantir bounds
       nextFrame = clamp(nextFrame, 0, frames.length - 1);
 
-      // Pré-carregar (corredor + decode em volta do frame iminente)
-      loadNearbyFrames(corridorCenter, nextFrame);
-
       // Atualiza sem setState (evita re-render do Hero e elimina flicker/travadas)
       // Se o frame ainda não estiver carregado, força carga e mantém o atual até ter ao menos "loaded".
       if (!loadedFramesRef.current.has(nextFrame)) {
         loadFrame(nextFrame, "near");
       } else {
         const oldCurrent = displayedFrameRef.current;
+        const oldPrev = previousDisplayedFrameRef.current;
         const newPrev = oldCurrent;
         const newCurrent = nextFrame;
 
         previousDisplayedFrameRef.current = newPrev;
         displayedFrameRef.current = newCurrent;
-        applySlots(newCurrent, newPrev);
+        applyFrameVisibility(newCurrent, newPrev, oldCurrent, oldPrev);
       }
 
       rafIdRef.current = window.requestAnimationFrame(tick);
@@ -444,16 +414,16 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
           style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease" }}
           aria-hidden="true"
         >
-          {Array.from({ length: SLOT_COUNT }).map((_, slot) => (
+          {frames.map((src, index) => (
             <img
-              key={`${isMobile ? "mobile" : "desktop"}-slot-${slot}`}
+              key={`${isMobile ? "mobile" : "desktop"}-${index}`}
               ref={(el) => {
-                slotElsRef.current[slot] = el;
+                frameElsRef.current[index] = el;
               }}
-              src={firstFrame}
+              src={src}
               alt=""
               decoding="async"
-              loading={slot === 0 ? "eager" : "lazy"}
+              loading="eager"
               style={{
                 position: "absolute",
                 top: 0,
@@ -464,8 +434,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
                 objectPosition: "center center",
                 transform: "scale(1.15)",
                 transformOrigin: "center center",
-                opacity: slot === 0 ? 1 : 0,
-                zIndex: slot === 0 ? 2 : 0,
+                opacity: index === 0 ? 1 : 0,
+                zIndex: index === 0 ? 2 : 0,
                 transition: "none",
                 willChange: "opacity",
               }}
