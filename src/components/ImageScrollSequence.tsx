@@ -124,6 +124,8 @@ const mobileFrames = [
 ];
 
 const SMOOTH_FACTOR = 0.15;
+// Número de frames vizinhos a manter carregados (para trás e para frente)
+const FRAME_BUFFER = 5;
 
 type ImageScrollSequenceProps = {
   children?: React.ReactNode;
@@ -132,18 +134,52 @@ type ImageScrollSequenceProps = {
 const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentFrame, setCurrentFrame] = useState(0);
-  // Mantém o último frame válido como “fallback” para que nunca apareça o fundo (pisca preto)
   const [previousFrame, setPreviousFrame] = useState(0);
   const [isReady, setIsReady] = useState(false);
   const [isInView, setIsInView] = useState(true);
   const rafIdRef = useRef<number | null>(null);
   const currentFrameRef = useRef(0);
-  // Frame atualmente "commitado" na UI (evita setState a cada RAF e reduz flicker)
   const committedFrameRef = useRef(0);
-  const loadedFramesRef = useRef<boolean[]>([]);
+  const loadedFramesRef = useRef<Set<number>>(new Set());
+  const loadingFramesRef = useRef<Set<number>>(new Set());
   const isMobile = useIsMobile();
 
   const frames = isMobile ? mobileFrames : desktopFrames;
+
+  // Função para carregar um frame específico
+  const loadFrame = (index: number): Promise<void> => {
+    return new Promise((resolve) => {
+      if (loadedFramesRef.current.has(index) || loadingFramesRef.current.has(index)) {
+        resolve();
+        return;
+      }
+
+      loadingFramesRef.current.add(index);
+      const img = new Image();
+      img.src = frames[index];
+
+      const onComplete = () => {
+        loadedFramesRef.current.add(index);
+        loadingFramesRef.current.delete(index);
+        resolve();
+      };
+
+      img.onload = () => {
+        img.decode?.().then(onComplete).catch(onComplete);
+      };
+      img.onerror = onComplete;
+    });
+  };
+
+  // Carregar frames próximos ao frame atual
+  const loadNearbyFrames = (centerFrame: number) => {
+    const start = Math.max(0, centerFrame - FRAME_BUFFER);
+    const end = Math.min(frames.length - 1, centerFrame + FRAME_BUFFER);
+
+    for (let i = start; i <= end; i++) {
+      loadFrame(i);
+    }
+  };
 
   useEffect(() => {
     const el = scrollContainerRef.current;
@@ -158,58 +194,20 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     return () => obs.disconnect();
   }, []);
 
+  // Reset quando muda entre mobile/desktop
   useEffect(() => {
-    let cancelled = false;
-    let loadedCount = 0;
-
-    // Reset load tracking when the frame-set changes (mobile/desktop)
-    loadedFramesRef.current = new Array(frames.length).fill(false);
-
-    // We only need the FIRST frame to be ready to avoid a black flash.
-    // The rest can continue loading in the background.
-    setIsReady(false);
-
-    frames.forEach((src, index) => {
-      const img = new Image();
-      img.src = src;
-
-      const markLoaded = () => {
-        if (cancelled) return;
-        if (!loadedFramesRef.current[index]) {
-          loadedFramesRef.current[index] = true;
-          loadedCount++;
-          if (loadedCount === 1) setIsReady(true);
-        }
-      };
-
-      // Prefer decode for smoother swapping (avoids a black flash on some browsers)
-      img.onload = () => {
-        // decode() resolves when the image is ready to be painted.
-        // Some browsers may not support it; fallback to markLoaded.
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        img
-          .decode?.()
-          .then(markLoaded)
-          .catch(markLoaded);
-      };
-
-      img.onerror = () => {
-        // Don't block the sequence if one frame fails
-        markLoaded();
-      };
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [frames]);
-
-  useEffect(() => {
+    loadedFramesRef.current = new Set();
+    loadingFramesRef.current = new Set();
     currentFrameRef.current = 0;
     committedFrameRef.current = 0;
     setCurrentFrame(0);
     setPreviousFrame(0);
-  }, [isMobile]);
+    setIsReady(false);
+
+    // Carregar apenas os primeiros frames necessários
+    loadFrame(0).then(() => setIsReady(true));
+    loadNearbyFrames(0);
+  }, [isMobile, frames]);
 
   useEffect(() => {
     const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
@@ -228,7 +226,6 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       const containerHeight = container.offsetHeight;
       const viewportHeight = window.innerHeight;
 
-      // Progress based on scroll through the tall container
       const scrollStart = -rect.top;
       const scrollEnd = containerHeight - viewportHeight;
       const progress = clamp(scrollStart / Math.max(scrollEnd, 1), 0, 1);
@@ -237,10 +234,11 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       currentFrameRef.current = lerp(currentFrameRef.current, targetFrame, SMOOTH_FACTOR);
       const nextFrame = clamp(Math.round(currentFrameRef.current), 0, frames.length - 1);
 
-      // Evita "piscada preta": só troca para um frame que já foi carregado/decodado.
-      // E garante que SEMPRE exista pelo menos um frame visível (mantém o anterior como fallback).
+      // Carregar frames próximos
+      loadNearbyFrames(nextFrame);
+
       if (
-        loadedFramesRef.current[nextFrame] &&
+        loadedFramesRef.current.has(nextFrame) &&
         nextFrame !== committedFrameRef.current
       ) {
         const prev = committedFrameRef.current;
@@ -270,14 +268,20 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     };
   }, [frames.length, isInView]);
 
-  // Primeiro frame como fallback imediato (evita tela preta)
   const firstFrame = frames[0];
+
+  // Determinar quais frames renderizar (apenas os próximos ao atual)
+  const visibleFrameIndices = new Set<number>();
+  visibleFrameIndices.add(currentFrame);
+  visibleFrameIndices.add(previousFrame);
+  for (let i = Math.max(0, currentFrame - 2); i <= Math.min(frames.length - 1, currentFrame + 2); i++) {
+    visibleFrameIndices.add(i);
+  }
 
   return (
     <div ref={scrollContainerRef} className="relative" style={{ height: "300vh" }}>
-      {/* Sticky container que fica fixo durante o scroll */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        {/* Fallback: primeira imagem sempre visível como background até carregar */}
+        {/* Fallback: primeira imagem sempre visível */}
         <div
           className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
           style={{
@@ -288,16 +292,16 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
           aria-hidden="true"
         />
 
-        {/* Frames de fundo (48 frames, na ordem) */}
+        {/* Apenas frames visíveis/próximos são renderizados */}
         <div
           className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
           style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease" }}
           aria-hidden="true"
         >
-          {frames.map((src, index) => (
+          {Array.from(visibleFrameIndices).map((index) => (
             <img
               key={`${isMobile ? "mobile" : "desktop"}-${index}`}
-              src={src}
+              src={frames[index]}
               alt=""
               decoding="async"
               loading="eager"
@@ -322,7 +326,6 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
           ))}
         </div>
 
-        {/* Overlay content (texto do hero) */}
         <div className="relative z-10 h-full">{children}</div>
       </div>
     </div>
