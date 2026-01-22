@@ -82,9 +82,12 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     );
   }
 
-  // Desktop: prioriza fidelidade (nunca mostrar frame não-carregado → evita “trava e pula” em scroll rápido)
+  // Desktop: prioriza fidelidade e responsividade em scroll rápido.
+  // A principal diferença entre Preview vs Published costuma ser latência/cache: no publicado, os JPGs podem demorar
+  // mais a chegar, então precisamos de um preload inicial maior + fallback mais esperto quando o frame alvo não carregou.
   // Mobile: manter otimizações (mas no momento está em modo estático acima).
-  const effectiveFrameBuffer = isIOS ? 2 : isMobile ? 6 : FRAME_BUFFER;
+  const DESKTOP_FRAME_BUFFER = 16;
+  const effectiveFrameBuffer = isIOS ? 2 : isMobile ? 6 : DESKTOP_FRAME_BUFFER;
   const effectiveMaxStep = isMobile ? MAX_STEP : frames.length;
   const allowBackgroundPreload = !isIOS;
   const allowDecode = !isIOS;
@@ -235,7 +238,11 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
     // Pré-carregar os primeiros frames
     const preloadInitial = async () => {
-      const initialFramesToLoad = Math.min(effectiveFrameBuffer + 1, frames.length);
+      // Desktop: carrega mais frames iniciais para evitar “trava e pula” no primeiro scroll (principalmente no Published).
+      const initialFramesToLoad = Math.min(
+        (isMobile ? effectiveFrameBuffer + 1 : Math.max(effectiveFrameBuffer + 1, 20)),
+        frames.length
+      );
       const promises: Promise<void>[] = [];
       for (let i = 0; i < initialFramesToLoad; i++) {
         promises.push(loadFrame(i, "near"));
@@ -336,27 +343,47 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       nextFrame = clamp(nextFrame, 0, frames.length - 1);
 
       // Evitar “pulo” no desktop: se o frame alvo não estiver carregado, não troca.
-      // Em vez disso, tenta aproximar por um frame já carregado (progressão suave) ou mantém o atual.
+      // Em vez disso, escolhe o melhor frame já carregado mais próximo do frame alvo e continua carregando o caminho.
       if (gateOnLoaded && !loadedFramesRef.current.has(nextFrame)) {
         loadFrame(nextFrame, "near");
 
+        // 1) Pré-carrega também um “corredor” em direção ao alvo (capped), porque scroll rápido cria buracos.
         const dir = nextFrame > current ? 1 : -1;
-        let candidate = current;
-        // procura até MAX_STEP (mobile) ou até um pequeno limite no desktop
-        const searchLimit = isMobile ? MAX_STEP : 6;
-        for (let step = 1; step <= searchLimit; step++) {
+        const corridorLimit = isMobile ? MAX_STEP : 12;
+        for (let step = 1; step <= corridorLimit; step++) {
           const idx = current + dir * step;
           if (idx < 0 || idx >= frames.length) break;
-          if (loadedFramesRef.current.has(idx)) {
-            candidate = idx;
-          } else {
-            loadFrame(idx, "near");
+          if (!loadedFramesRef.current.has(idx)) loadFrame(idx, "near");
+        }
+
+        // 2) Escolhe o frame carregado mais próximo do ALVO (não do current), para reduzir “saltos” quando destrava.
+        const radius = isMobile ? MAX_STEP : 8;
+        let bestCandidate = current;
+        let bestDistance = Number.POSITIVE_INFINITY;
+        for (let offset = 1; offset <= radius; offset++) {
+          const left = nextFrame - offset;
+          const right = nextFrame + offset;
+          if (left >= 0) {
+            if (loadedFramesRef.current.has(left) && offset < bestDistance) {
+              bestCandidate = left;
+              bestDistance = offset;
+            } else {
+              loadFrame(left, "near");
+            }
+          }
+          if (right < frames.length) {
+            if (loadedFramesRef.current.has(right) && offset < bestDistance) {
+              bestCandidate = right;
+              bestDistance = offset;
+            } else {
+              loadFrame(right, "near");
+            }
           }
         }
 
-        if (candidate !== current) {
+        if (bestCandidate !== current) {
           const newPrev = current;
-          const newCurrent = candidate;
+          const newCurrent = bestCandidate;
           previousDisplayedFrameRef.current = newPrev;
           displayedFrameRef.current = newCurrent;
           renderPoolForFrames(newCurrent, newPrev);
