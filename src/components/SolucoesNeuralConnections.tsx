@@ -114,17 +114,34 @@ export function SolucoesNeuralConnections(props: {
         y: bRect.top + bRect.height / 2 - cRect.top,
       };
 
-      const bw = bRect.width;
-      const bh = bRect.height;
+      const brainRadius = bRect.width / 2; // Raio externo do círculo central
 
-      // Alvos no cérebro (aprox. nos "pinos" visualmente)
+      // Alvos na BORDA EXTERNA do círculo central (raio 100% do anel)
       const brainTargetsByPos: Record<string, Point> = {
-        "top-left": { x: brainCenter.x - bw * 0.38, y: brainCenter.y - bh * 0.18 },
-        "mid-left": { x: brainCenter.x - bw * 0.4, y: brainCenter.y + bh * 0.1 },
-        "bottom-center": { x: brainCenter.x, y: brainCenter.y + bh * 0.4 },
-        "top-right": { x: brainCenter.x + bw * 0.38, y: brainCenter.y - bh * 0.18 },
-        "mid-right": { x: brainCenter.x + bw * 0.4, y: brainCenter.y + bh * 0.06 },
-        "bottom-right": { x: brainCenter.x + bw * 0.34, y: brainCenter.y + bh * 0.26 },
+        "top-left": { 
+          x: brainCenter.x - brainRadius * 0.85, 
+          y: brainCenter.y - brainRadius * 0.52 
+        },
+        "mid-left": { 
+          x: brainCenter.x - brainRadius, 
+          y: brainCenter.y + brainRadius * 0.15 
+        },
+        "bottom-center": { 
+          x: brainCenter.x, 
+          y: brainCenter.y + brainRadius 
+        },
+        "top-right": { 
+          x: brainCenter.x + brainRadius * 0.85, 
+          y: brainCenter.y - brainRadius * 0.52 
+        },
+        "mid-right": { 
+          x: brainCenter.x + brainRadius, 
+          y: brainCenter.y + brainRadius * 0.1 
+        },
+        "bottom-right": { 
+          x: brainCenter.x + brainRadius * 0.7, 
+          y: brainCenter.y + brainRadius * 0.7 
+        },
       };
 
       const conns: Connection[] = [];
