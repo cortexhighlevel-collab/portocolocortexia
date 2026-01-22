@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { isIOSDevice } from "@/lib/platform";
 
 const problemas = [
   { id: "ERR_001", titulo: "IA usada de forma rasa", severity: "CRITICAL" },
@@ -75,6 +76,11 @@ const CyberCard = ({
 
   const cornerSize = isLarge ? 30 : 20;
 
+  const isIOSMobile =
+    typeof window !== "undefined" &&
+    window.innerWidth < 768 &&
+    isIOSDevice();
+
   return (
     <motion.div
       // Failsafe: nunca começa invisível (o `whileInView` pode falhar em alguns cenários de scroll/sticky)
@@ -90,7 +96,8 @@ const CyberCard = ({
         style={{
           clipPath,
           background: 'linear-gradient(135deg, rgba(239,68,68,0.6) 0%, rgba(239,68,68,0.2) 50%, rgba(239,68,68,0.6) 100%)',
-          filter: 'blur(1px)',
+          // iOS/WebKit: blur em elementos grandes pode custar caro e derrubar a aba.
+          filter: isIOSMobile ? "none" : 'blur(1px)',
         }}
       />
       

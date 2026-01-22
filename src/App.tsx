@@ -7,11 +7,31 @@ import { useState, useEffect } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import LoadingScreen from "./components/LoadingScreen";
+import { isIOSDevice } from "@/lib/platform";
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // iOS (iPhone): aplica um “modo leve” via classe global para desativar filtros/glows pesados.
+    // Importante: somente mobile (breakpoint do hook useIsMobile).
+    const apply = () => {
+      if (typeof window === "undefined") return;
+      const isMobile = window.innerWidth < 768;
+      const enabled = isMobile && isIOSDevice();
+      document.documentElement.classList.toggle("ios-mobile", enabled);
+    };
+
+    apply();
+    window.addEventListener("resize", apply);
+    window.addEventListener("orientationchange", apply);
+    return () => {
+      window.removeEventListener("resize", apply);
+      window.removeEventListener("orientationchange", apply);
+    };
+  }, []);
 
   useEffect(() => {
     // Aguardar o DOM estar pronto e recursos básicos carregados
