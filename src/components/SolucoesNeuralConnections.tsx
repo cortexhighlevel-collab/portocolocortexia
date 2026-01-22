@@ -152,9 +152,8 @@ export function SolucoesNeuralConnections(props: {
           y: target.y,
         };
 
-        // Direção inicial: cards laterais começam horizontal, card de baixo começa vertical
-        const direction = pos === "bottom-center" ? "vertical" : "horizontal";
-        const d = roundedOrthoPath(start, end, direction, 24);
+        // Todas as linhas começam horizontal e seguem o mesmo padrão
+        const d = roundedOrthoPath(start, end, "horizontal", 24);
 
         conns.push({
           key: `${pos}-${idx}`,
@@ -235,14 +234,6 @@ export function SolucoesNeuralConnections(props: {
             fill="none"
             filter={`url(#${glowId})`}
             vectorEffect="non-scaling-stroke"
-          />
-          {/* Apenas círculo no cérebro (end), removido do card (start) */}
-          <circle
-            cx={c.end.x}
-            cy={c.end.y}
-            r={5.5}
-            fill="hsl(var(--frame-purple))"
-            filter={`url(#${dotGlowId})`}
           />
         </g>
       ))}
