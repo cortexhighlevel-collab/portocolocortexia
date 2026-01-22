@@ -16,6 +16,11 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const isMobile = useIsMobile();
   const framesStackRef = useRef<FramesStackHandle>(null);
   const activeIndexRef = useRef(0);
+  const metricsRef = useRef<{ startY: number; scrollRange: number }>({ startY: 0, scrollRange: 1 });
+  const rafIdRef = useRef<number>(0);
+  const tickingRef = useRef(false);
+  const lastScrollYRef = useRef(0);
+  const stableFramesRef = useRef(0);
 
   const frames = isMobile ? mobileFrames : desktopFrames;
 
@@ -26,18 +31,9 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     await new Promise<void>((resolve) => {
       const img = new Image();
       img.src = frames[index];
-      img.onload = async () => {
-        try {
-          // decode() evita “travadinhas” no primeiro swap de frame
-          // (nem todos os browsers suportam 100%, então é best-effort)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          await (img as any).decode?.();
-        } catch {
-          // ignore
-        } finally {
-          loadedFramesRef.current.add(index);
-          resolve();
-        }
+      img.onload = () => {
+        loadedFramesRef.current.add(index);
+        resolve();
       };
       img.onerror = () => {
         loadedFramesRef.current.add(index);
@@ -67,58 +63,109 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMobile]);
 
-  // Atualização por RAF contínuo (em vez de depender 100% de scroll events)
-  // Isso evita o “parar de passar frames” em alguns devices/browsers durante momentum scroll.
+  // Atualização orientada a scroll (sem RAF contínuo):
+  // RAF permanente + getBoundingClientRect a cada frame pesa e deixa os frames “fantasmando”.
   useEffect(() => {
     if (!isReady) return;
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    let rafId = 0;
-    let isActive = true;
+    const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 
-    const update = () => {
-      if (!isActive) return;
-
+    const measure = () => {
       const rect = container.getBoundingClientRect();
-      const containerHeight = container.offsetHeight;
-      const viewportHeight = window.innerHeight;
-      const scrollRange = containerHeight - viewportHeight;
+      const startY = rect.top + window.scrollY;
+      const scrollRange = Math.max(1, container.offsetHeight - window.innerHeight);
+      metricsRef.current = { startY, scrollRange };
+    };
 
-      if (scrollRange > 0) {
-        const scrollStart = Math.max(0, -rect.top);
-        const progress = Math.max(0, Math.min(1, scrollStart / scrollRange));
-        const nextIndex = Math.round(progress * (frames.length - 1));
+    const updateFrame = () => {
+      const { startY, scrollRange } = metricsRef.current;
+      const progress = clamp01((window.scrollY - startY) / scrollRange);
 
-        if (nextIndex !== activeIndexRef.current) {
-          activeIndexRef.current = nextIndex;
-          framesStackRef.current?.setActiveIndex(nextIndex);
-        }
+      // floor evita “vai e volta” perto do limiar (round causa oscillation e ghosting)
+      const nextIndex = Math.max(
+        0,
+        Math.min(frames.length - 1, Math.floor(progress * (frames.length - 1) + 1e-6))
+      );
+
+      if (nextIndex !== activeIndexRef.current) {
+        activeIndexRef.current = nextIndex;
+        framesStackRef.current?.setActiveIndex(nextIndex);
       }
+    };
 
-      rafId = requestAnimationFrame(update);
+    const tick = () => {
+      updateFrame();
+
+      const y = window.scrollY;
+      if (Math.abs(y - lastScrollYRef.current) < 0.5) {
+        stableFramesRef.current += 1;
+      } else {
+        stableFramesRef.current = 0;
+      }
+      lastScrollYRef.current = y;
+
+      if (stableFramesRef.current < 6) {
+        rafIdRef.current = requestAnimationFrame(tick);
+      } else {
+        tickingRef.current = false;
+      }
+    };
+
+    const startTick = () => {
+      stableFramesRef.current = 0;
+      if (tickingRef.current) return;
+      tickingRef.current = true;
+      lastScrollYRef.current = window.scrollY;
+      rafIdRef.current = requestAnimationFrame(tick);
+    };
+
+    const onScroll = () => startTick();
+    const onResize = () => {
+      measure();
+      startTick();
+    };
+
+    measure();
+
+    const addListeners = () => {
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onResize);
+      window.addEventListener("orientationchange", onResize);
+      // iOS: garante updates enquanto o dedo está na tela
+      window.addEventListener("touchmove", onScroll, { passive: true });
+      window.addEventListener("touchstart", onScroll, { passive: true });
+    };
+
+    const removeListeners = () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
+      window.removeEventListener("touchmove", onScroll);
+      window.removeEventListener("touchstart", onScroll);
     };
 
     const io = new IntersectionObserver(
       ([entry]) => {
-        const shouldRun = entry.isIntersecting;
-        if (shouldRun && !isActive) {
-          isActive = true;
-          rafId = requestAnimationFrame(update);
-        } else if (!shouldRun && isActive) {
-          isActive = false;
-          cancelAnimationFrame(rafId);
+        if (entry.isIntersecting) {
+          addListeners();
+          startTick();
+        } else {
+          removeListeners();
+          cancelAnimationFrame(rafIdRef.current);
+          tickingRef.current = false;
         }
       },
       { threshold: 0.01 }
     );
 
     io.observe(container);
-    rafId = requestAnimationFrame(update);
 
     return () => {
-      isActive = false;
-      cancelAnimationFrame(rafId);
+      removeListeners();
+      cancelAnimationFrame(rafIdRef.current);
+      tickingRef.current = false;
       io.disconnect();
     };
   }, [isReady, frames.length]);
