@@ -123,9 +123,9 @@ const mobileFrames = [
   mobileFrame046, mobileFrame047, mobileFrame048,
 ];
 
-const SMOOTH_FACTOR = 0.15;
+const SMOOTH_FACTOR = 0.12;
 // Número de frames vizinhos a manter carregados (para trás e para frente)
-const FRAME_BUFFER = 5;
+const FRAME_BUFFER = 8;
 
 type ImageScrollSequenceProps = {
   children?: React.ReactNode;
@@ -142,6 +142,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const committedFrameRef = useRef(0);
   const loadedFramesRef = useRef<Set<number>>(new Set());
   const loadingFramesRef = useRef<Set<number>>(new Set());
+  const lastScrollTopRef = useRef(0);
   const isMobile = useIsMobile();
 
   const frames = isMobile ? mobileFrames : desktopFrames;
@@ -149,6 +150,10 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   // Função para carregar um frame específico
   const loadFrame = (index: number): Promise<void> => {
     return new Promise((resolve) => {
+      if (index < 0 || index >= frames.length) {
+        resolve();
+        return;
+      }
       if (loadedFramesRef.current.has(index) || loadingFramesRef.current.has(index)) {
         resolve();
         return;
@@ -165,7 +170,11 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       };
 
       img.onload = () => {
-        img.decode?.().then(onComplete).catch(onComplete);
+        if (img.decode) {
+          img.decode().then(onComplete).catch(onComplete);
+        } else {
+          onComplete();
+        }
       };
       img.onerror = onComplete;
     });
@@ -200,6 +209,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     loadingFramesRef.current = new Set();
     currentFrameRef.current = 0;
     committedFrameRef.current = 0;
+    lastScrollTopRef.current = 0;
     setCurrentFrame(0);
     setPreviousFrame(0);
     setIsReady(false);
@@ -214,7 +224,10 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor;
 
     const tick = () => {
-      if (!isInView) return;
+      if (!isInView) {
+        rafIdRef.current = window.requestAnimationFrame(tick);
+        return;
+      }
 
       const container = scrollContainerRef.current;
       if (!container) {
@@ -226,12 +239,30 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       const containerHeight = container.offsetHeight;
       const viewportHeight = window.innerHeight;
 
-      const scrollStart = -rect.top;
-      const scrollEnd = containerHeight - viewportHeight;
-      const progress = clamp(scrollStart / Math.max(scrollEnd, 1), 0, 1);
+      // Calcular progresso do scroll de forma mais estável
+      const scrollStart = Math.max(0, -rect.top);
+      const scrollRange = containerHeight - viewportHeight;
+      
+      // Prevenir divisão por zero e valores inválidos
+      if (scrollRange <= 0) {
+        rafIdRef.current = window.requestAnimationFrame(tick);
+        return;
+      }
 
+      // Clamp do progresso para garantir que fique entre 0 e 1
+      const rawProgress = scrollStart / scrollRange;
+      const progress = clamp(rawProgress, 0, 1);
+
+      // Calcular frame alvo com suavização
       const targetFrame = progress * (frames.length - 1);
-      currentFrameRef.current = lerp(currentFrameRef.current, targetFrame, SMOOTH_FACTOR);
+      
+      // Suavização mais agressiva para evitar pulos
+      const diff = Math.abs(targetFrame - currentFrameRef.current);
+      const adaptiveFactor = diff > 5 ? 0.25 : SMOOTH_FACTOR;
+      
+      currentFrameRef.current = lerp(currentFrameRef.current, targetFrame, adaptiveFactor);
+      
+      // Garantir que o frame final seja válido
       const nextFrame = clamp(Math.round(currentFrameRef.current), 0, frames.length - 1);
 
       // Carregar frames próximos
@@ -249,14 +280,6 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
       rafIdRef.current = window.requestAnimationFrame(tick);
     };
-
-    if (!isInView) {
-      if (rafIdRef.current) {
-        cancelAnimationFrame(rafIdRef.current);
-        rafIdRef.current = null;
-      }
-      return;
-    }
 
     rafIdRef.current = window.requestAnimationFrame(tick);
 
