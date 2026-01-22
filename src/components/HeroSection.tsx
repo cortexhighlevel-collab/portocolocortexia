@@ -56,7 +56,7 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <div className="relative group rounded-full p-[6px] overflow-hidden">
+          <div className="relative group rounded-full p-[4px] overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-[#2a2a2a] via-[#555555] to-[#1a1a1a]"></div>
             <div className="absolute inset-[-100%] animate-spin-slow bg-[conic-gradient(from_0deg,transparent_0_250deg,#ff0000_360deg)] opacity-100 blur-md"></div>
             <div className="absolute inset-[-100%] animate-spin-slow bg-[conic-gradient(from_0deg,transparent_0_340deg,#ffffff_360deg)] opacity-40 mix-blend-overlay"></div>
