@@ -114,33 +114,35 @@ export function SolucoesNeuralConnections(props: {
         y: bRect.top + bRect.height / 2 - cRect.top,
       };
 
-      const brainRadius = bRect.width / 2; // Raio externo do círculo central
+      // Raio até os connection nodes (pontinhos rosa na borda)
+      // O anel externo tem 230px, mas os nodes estão um pouco além (no SVG em 260px viewBox)
+      const brainRadius = bRect.width / 2 + 15; // Adiciona offset para alcançar os nodes
 
-      // Alvos na BORDA EXTERNA do círculo central (raio 100% do anel)
+      // Alvos nos CONNECTION NODES (pontinhos rosa) - 4 pontos cardeais
       const brainTargetsByPos: Record<string, Point> = {
         "top-left": { 
-          x: brainCenter.x - brainRadius * 0.85, 
-          y: brainCenter.y - brainRadius * 0.52 
+          x: brainCenter.x, 
+          y: brainCenter.y - brainRadius  // Node TOPO
         },
         "mid-left": { 
           x: brainCenter.x - brainRadius, 
-          y: brainCenter.y + brainRadius * 0.15 
+          y: brainCenter.y  // Node ESQUERDA
         },
         "bottom-center": { 
           x: brainCenter.x, 
-          y: brainCenter.y + brainRadius 
+          y: brainCenter.y + brainRadius  // Node BAIXO
         },
         "top-right": { 
-          x: brainCenter.x + brainRadius * 0.85, 
-          y: brainCenter.y - brainRadius * 0.52 
+          x: brainCenter.x, 
+          y: brainCenter.y - brainRadius  // Node TOPO
         },
         "mid-right": { 
           x: brainCenter.x + brainRadius, 
-          y: brainCenter.y + brainRadius * 0.1 
+          y: brainCenter.y  // Node DIREITA
         },
         "bottom-right": { 
-          x: brainCenter.x + brainRadius * 0.7, 
-          y: brainCenter.y + brainRadius * 0.7 
+          x: brainCenter.x + brainRadius, 
+          y: brainCenter.y  // Node DIREITA
         },
       };
 
