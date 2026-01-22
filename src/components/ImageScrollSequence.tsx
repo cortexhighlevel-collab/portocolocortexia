@@ -16,11 +16,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const isMobile = useIsMobile();
   const framesStackRef = useRef<FramesStackHandle>(null);
   const activeIndexRef = useRef(0);
-  const metricsRef = useRef<{ startY: number; scrollRange: number }>({ startY: 0, scrollRange: 1 });
-  const rafIdRef = useRef<number>(0);
-  const tickingRef = useRef(false);
-  const lastScrollYRef = useRef(0);
-  const stableFramesRef = useRef(0);
+  const metricsRef = useRef<{ startY: number }>({ startY: 0 });
 
   const frames = isMobile ? mobileFrames : desktopFrames;
 
@@ -63,110 +59,87 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMobile]);
 
-  // Atualização orientada a scroll (sem RAF contínuo):
-  // RAF permanente + getBoundingClientRect a cada frame pesa e deixa os frames “fantasmando”.
+  // Atualização por RAF enquanto o hero estiver visível:
+  // - evita “congelar” durante momentum scroll (iOS/Android)
+  // - evita depender de scroll events (que podem falhar)
+  // - sem getBoundingClientRect em loop (medimos só quando necessário)
   useEffect(() => {
     if (!isReady) return;
     const container = scrollContainerRef.current;
     if (!container) return;
 
     const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+    const MAX_STEP = isMobile ? 2 : 2;
+
+    let rafId = 0;
+    let isActive = false;
 
     const measure = () => {
       const rect = container.getBoundingClientRect();
-      const startY = rect.top + window.scrollY;
-      const scrollRange = Math.max(1, container.offsetHeight - window.innerHeight);
-      metricsRef.current = { startY, scrollRange };
+      metricsRef.current.startY = rect.top + window.scrollY;
     };
 
-    const updateFrame = () => {
-      const { startY, scrollRange } = metricsRef.current;
+    const computeTargetIndex = () => {
+      const startY = metricsRef.current.startY;
+      const containerHeight = container.offsetHeight;
+      const scrollRange = Math.max(1, containerHeight - window.innerHeight);
       const progress = clamp01((window.scrollY - startY) / scrollRange);
 
-      // floor evita “vai e volta” perto do limiar (round causa oscillation e ghosting)
-      const nextIndex = Math.max(
-        0,
-        Math.min(frames.length - 1, Math.floor(progress * (frames.length - 1) + 1e-6))
-      );
-
-      if (nextIndex !== activeIndexRef.current) {
-        activeIndexRef.current = nextIndex;
-        framesStackRef.current?.setActiveIndex(nextIndex);
-      }
+      // Segmentação estável (evita “vai e volta” por arredondamento)
+      const idx = Math.floor(progress * frames.length);
+      return Math.max(0, Math.min(frames.length - 1, idx));
     };
 
-    const tick = () => {
-      updateFrame();
+    const update = () => {
+      if (!isActive) return;
 
-      const y = window.scrollY;
-      if (Math.abs(y - lastScrollYRef.current) < 0.5) {
-        stableFramesRef.current += 1;
-      } else {
-        stableFramesRef.current = 0;
-      }
-      lastScrollYRef.current = y;
+      const target = computeTargetIndex();
+      const current = activeIndexRef.current;
 
-      if (stableFramesRef.current < 6) {
-        rafIdRef.current = requestAnimationFrame(tick);
-      } else {
-        tickingRef.current = false;
+      if (target !== current) {
+        const diff = target - current;
+        const step = Math.sign(diff) * Math.min(Math.abs(diff), MAX_STEP);
+        const next = current + step;
+        activeIndexRef.current = next;
+        framesStackRef.current?.setActiveIndex(next);
       }
+
+      rafId = requestAnimationFrame(update);
     };
 
-    const startTick = () => {
-      stableFramesRef.current = 0;
-      if (tickingRef.current) return;
-      tickingRef.current = true;
-      lastScrollYRef.current = window.scrollY;
-      rafIdRef.current = requestAnimationFrame(tick);
+    const start = () => {
+      if (isActive) return;
+      isActive = true;
+      measure();
+      rafId = requestAnimationFrame(update);
     };
 
-    const onScroll = () => startTick();
+    const stop = () => {
+      isActive = false;
+      cancelAnimationFrame(rafId);
+    };
+
     const onResize = () => {
       measure();
-      startTick();
-    };
-
-    measure();
-
-    const addListeners = () => {
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("resize", onResize);
-      window.addEventListener("orientationchange", onResize);
-      // iOS: garante updates enquanto o dedo está na tela
-      window.addEventListener("touchmove", onScroll, { passive: true });
-      window.addEventListener("touchstart", onScroll, { passive: true });
-    };
-
-    const removeListeners = () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("orientationchange", onResize);
-      window.removeEventListener("touchmove", onScroll);
-      window.removeEventListener("touchstart", onScroll);
     };
 
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          addListeners();
-          startTick();
-        } else {
-          removeListeners();
-          cancelAnimationFrame(rafIdRef.current);
-          tickingRef.current = false;
-        }
+        if (entry.isIntersecting) start();
+        else stop();
       },
       { threshold: 0.01 }
     );
 
     io.observe(container);
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
 
     return () => {
-      removeListeners();
-      cancelAnimationFrame(rafIdRef.current);
-      tickingRef.current = false;
+      stop();
       io.disconnect();
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
     };
   }, [isReady, frames.length]);
 
