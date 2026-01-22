@@ -421,11 +421,11 @@
     }
 
     .cyberpunk-cta-wrapper {
-      /* Mobile: botão original (escala aplicada via Framer Motion no componente) */
+      /* Mobile: botão fixo fora do overflow:hidden */
       position: fixed;
       display: flex;
       top: auto;
-      bottom: calc(env(safe-area-inset-bottom) + 20px);
+      bottom: calc(env(safe-area-inset-bottom) + 40px);
       left: 0;
       right: 0;
       justify-content: center;
