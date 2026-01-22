@@ -903,6 +903,7 @@ const MobileLayout = ({
     trunkYBottom: number;
     brainAnchor: { x: number; y: number };
     hooks: Array<{ d: string }>;
+    firstCardY: number;
   } | null>(null);
 
   const calculate = useCallback(() => {
@@ -940,8 +941,12 @@ const MobileLayout = ({
       y: brainRect.top - wrapperRect.top + brainRect.height * 0.72
     };
 
-    const trunkYTop = brainAnchor.y;
-    const trunkYBottom = Math.max(...anchors.map((a) => a.y)) + 20;
+    // O tronco vertical vai do primeiro card até o último
+    const firstCardY = Math.min(...anchors.map((a) => a.y));
+    const lastCardY = Math.max(...anchors.map((a) => a.y));
+    
+    const trunkYTop = firstCardY - 20; // Um pouco acima do primeiro card
+    const trunkYBottom = lastCardY + 10;
 
     const curveR = 12;
 
@@ -962,7 +967,8 @@ const MobileLayout = ({
       trunkYTop,
       trunkYBottom,
       brainAnchor,
-      hooks
+      hooks,
+      firstCardY
     });
   }, []);
 
