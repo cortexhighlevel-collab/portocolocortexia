@@ -56,11 +56,15 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <div className="relative group rounded-full overflow-hidden" style={{ padding: '3px' }}>
-            <div className="absolute inset-0 bg-[#3a3a3a] rounded-full"></div>
+          <div className="relative group rounded-full overflow-hidden p-[3px]">
+            <div className="absolute inset-0 bg-[#3a3a3a] rounded-full" />
 
             <button
-              className="relative z-10 flex items-center justify-between gap-6 bg-gradient-to-b from-[#2a2a2a] via-[#0a0a0a] to-[#1a1a1a] text-white rounded-full shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_4px_20px_-5px_rgba(0,0,0,0.8)] transition-transform active:scale-[0.98] overflow-hidden w-[1008px] h-[92px] px-8"
+              className={`relative z-10 flex items-center justify-between gap-6 bg-gradient-to-b from-[#2a2a2a] via-[#0a0a0a] to-[#1a1a1a] text-white rounded-full transition-transform active:scale-[0.98] overflow-hidden w-[1008px] h-[92px] px-8 ${
+                isMobile
+                  ? "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
+                  : "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_4px_20px_-5px_rgba(0,0,0,0.8)]"
+              }`}
             >
               <div
                 className="absolute inset-0 bg-gradient-to-b from-[#333333] via-[#0a0a0a] to-[#222222] pointer-events-none opacity-80"
