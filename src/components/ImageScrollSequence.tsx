@@ -128,32 +128,78 @@ const FRAME_BUFFER = 10;
 // Máximo de frames que pode pular por tick (previne saltos)
 const MAX_STEP = 2;
 
+type FrameLoadMode = "near" | "background";
+
 type ImageScrollSequenceProps = {
   children?: React.ReactNode;
 };
 
 const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [currentFrame, setCurrentFrame] = useState(0);
-  const [previousFrame, setPreviousFrame] = useState(0);
   const [isReady, setIsReady] = useState(false);
   const [isInView, setIsInView] = useState(true);
   const rafIdRef = useRef<number | null>(null);
   const displayedFrameRef = useRef(0);
-  const loadedFramesRef = useRef<Set<number>>(new Set([0]));
+  const previousDisplayedFrameRef = useRef(0);
+  const loadedFramesRef = useRef<Set<number>>(new Set());
+  const decodedFramesRef = useRef<Set<number>>(new Set());
   const loadingFramesRef = useRef<Set<number>>(new Set());
+  const frameElsRef = useRef<Array<HTMLImageElement | null>>([]);
   const isMobile = useIsMobile();
 
   const frames = isMobile ? mobileFrames : desktopFrames;
 
+  const ensureFrameElsSize = () => {
+    if (frameElsRef.current.length !== frames.length) {
+      frameElsRef.current = Array.from({ length: frames.length }, (_, i) => frameElsRef.current[i] ?? null);
+    }
+  };
+
+  const setFrameStyles = (index: number, nextOpacity: number, nextZ: number) => {
+    const el = frameElsRef.current[index];
+    if (!el) return;
+    // Evita write no DOM se já estiver correto (reduz layout/paint churn)
+    const op = String(nextOpacity);
+    const z = String(nextZ);
+    if (el.style.opacity !== op) el.style.opacity = op;
+    if (el.style.zIndex !== z) el.style.zIndex = z;
+  };
+
+  const applyFrameVisibility = (
+    newCurrent: number,
+    newPrev: number,
+    oldCurrent: number,
+    oldPrev: number,
+  ) => {
+    ensureFrameElsSize();
+
+    const keep = new Set([newCurrent, newPrev]);
+
+    // Esconde o que não faz mais parte do par (current/prev)
+    if (!keep.has(oldCurrent)) setFrameStyles(oldCurrent, 0, 0);
+    if (!keep.has(oldPrev)) setFrameStyles(oldPrev, 0, 0);
+
+    // Mostra prev e current (apenas 2 frames visíveis, sem re-render React)
+    if (newPrev !== newCurrent) setFrameStyles(newPrev, 1, 1);
+    setFrameStyles(newCurrent, 1, 2);
+  };
+
   // Função para carregar um frame específico
-  const loadFrame = (index: number): Promise<void> => {
+  const loadFrame = (index: number, mode: FrameLoadMode = "near"): Promise<void> => {
     return new Promise((resolve) => {
       if (index < 0 || index >= frames.length) {
         resolve();
         return;
       }
+
       if (loadedFramesRef.current.has(index) || loadingFramesRef.current.has(index)) {
+        // Se estiver carregado mas não decodificado e for prioritário, tenta decodificar em background
+        if (mode === "near" && loadedFramesRef.current.has(index) && !decodedFramesRef.current.has(index)) {
+          const el = frameElsRef.current[index];
+          if (el?.decode) {
+            el.decode().then(() => decodedFramesRef.current.add(index)).catch(() => void 0);
+          }
+        }
         resolve();
         return;
       }
@@ -163,19 +209,40 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       img.src = frames[index];
 
       const onComplete = () => {
-        loadedFramesRef.current.add(index);
         loadingFramesRef.current.delete(index);
         resolve();
       };
 
       img.onload = () => {
-        if (img.decode) {
-          img.decode().then(onComplete).catch(onComplete);
+        // IMPORTANT: marca como carregado no onload (não bloqueia na decode), para não “travar” frames.
+        loadedFramesRef.current.add(index);
+
+        // Tenta decodificar em background para suavidade
+        const maybeDecode = () => {
+          if (decodedFramesRef.current.has(index)) return;
+          // Preferir decode do elemento real (quando existir), senão do Image()
+          const el = frameElsRef.current[index];
+          const decoder = el?.decode ? el : img;
+          if (decoder.decode) {
+            decoder.decode().then(() => decodedFramesRef.current.add(index)).catch(() => void 0);
+          }
+        };
+
+        if (mode === "near") {
+          maybeDecode();
         } else {
-          onComplete();
+          // background: dá uma folga pro main thread
+          window.setTimeout(maybeDecode, 0);
         }
+
+        onComplete();
       };
-      img.onerror = onComplete;
+
+      img.onerror = () => {
+        // Evita loop infinito de tentativas
+        loadedFramesRef.current.add(index);
+        onComplete();
+      };
     });
   };
 
@@ -185,7 +252,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     const end = Math.min(frames.length - 1, centerFrame + FRAME_BUFFER);
 
     for (let i = start; i <= end; i++) {
-      loadFrame(i);
+      loadFrame(i, "near");
     }
   };
 
@@ -204,26 +271,41 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
   // Reset quando muda entre mobile/desktop
   useEffect(() => {
-    loadedFramesRef.current = new Set([0]);
+    loadedFramesRef.current = new Set();
+    decodedFramesRef.current = new Set();
     loadingFramesRef.current = new Set();
     displayedFrameRef.current = 0;
-    setCurrentFrame(0);
-    setPreviousFrame(0);
+    previousDisplayedFrameRef.current = 0;
     setIsReady(false);
+
+    // Ajusta array de refs e garante estado visual inicial (frame 0)
+    ensureFrameElsSize();
+    applyFrameVisibility(0, 0, 0, 0);
 
     // Pré-carregar os primeiros frames
     const preloadInitial = async () => {
       const initialFramesToLoad = Math.min(FRAME_BUFFER, frames.length);
       const promises: Promise<void>[] = [];
       for (let i = 0; i < initialFramesToLoad; i++) {
-        promises.push(loadFrame(i));
+        promises.push(loadFrame(i, "near"));
       }
       await Promise.all(promises);
       setIsReady(true);
+
+      // Pré-carregar o resto em background (elimina travadas em scroll rápido)
+      const preloadAll = () => {
+        for (let i = 0; i < frames.length; i++) loadFrame(i, "background");
+      };
+
+      const requestIdleCallback = (window as unknown as { requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number })
+        .requestIdleCallback;
+
+      if (requestIdleCallback) requestIdleCallback(preloadAll, { timeout: 1500 });
+      else window.setTimeout(preloadAll, 0);
     };
 
     preloadInitial();
-  }, [isMobile, frames]);
+  }, [isMobile]);
 
   useEffect(() => {
     const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
@@ -280,12 +362,19 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       // Garantir bounds
       nextFrame = clamp(nextFrame, 0, frames.length - 1);
 
-      // Só atualiza se o frame estiver carregado
-      if (loadedFramesRef.current.has(nextFrame)) {
-        const prev = displayedFrameRef.current;
-        displayedFrameRef.current = nextFrame;
-        setPreviousFrame(prev);
-        setCurrentFrame(nextFrame);
+      // Atualiza sem setState (evita re-render do Hero e elimina flicker/travadas)
+      // Se o frame ainda não estiver carregado, força carga e mantém o atual até ter ao menos "loaded".
+      if (!loadedFramesRef.current.has(nextFrame)) {
+        loadFrame(nextFrame, "near");
+      } else {
+        const oldCurrent = displayedFrameRef.current;
+        const oldPrev = previousDisplayedFrameRef.current;
+        const newPrev = oldCurrent;
+        const newCurrent = nextFrame;
+
+        previousDisplayedFrameRef.current = newPrev;
+        displayedFrameRef.current = newCurrent;
+        applyFrameVisibility(newCurrent, newPrev, oldCurrent, oldPrev);
       }
 
       rafIdRef.current = window.requestAnimationFrame(tick);
@@ -299,18 +388,9 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
         rafIdRef.current = null;
       }
     };
-  }, [frames.length, isInView]);
+  }, [frames, isInView]);
 
   const firstFrame = frames[0];
-
-  // Determinar quais frames renderizar (apenas os próximos ao atual para performance)
-  const visibleFrameIndices = new Set<number>();
-  visibleFrameIndices.add(currentFrame);
-  visibleFrameIndices.add(previousFrame);
-  // Adicionar alguns frames extras para transição suave
-  for (let i = Math.max(0, currentFrame - 3); i <= Math.min(frames.length - 1, currentFrame + 3); i++) {
-    visibleFrameIndices.add(i);
-  }
 
   return (
     <div ref={scrollContainerRef} className="relative" style={{ height: "300vh" }}>
@@ -334,10 +414,13 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
           style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease" }}
           aria-hidden="true"
         >
-          {Array.from(visibleFrameIndices).map((index) => (
+          {frames.map((src, index) => (
             <img
               key={`${isMobile ? "mobile" : "desktop"}-${index}`}
-              src={frames[index]}
+              ref={(el) => {
+                frameElsRef.current[index] = el;
+              }}
+              src={src}
               alt=""
               decoding="async"
               loading="eager"
@@ -351,8 +434,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
                 objectPosition: "center center",
                 transform: "scale(1.15)",
                 transformOrigin: "center center",
-                opacity: index === currentFrame || index === previousFrame ? 1 : 0,
-                zIndex: index === currentFrame ? 2 : index === previousFrame ? 1 : 0,
+                opacity: index === 0 ? 1 : 0,
+                zIndex: index === 0 ? 2 : 0,
                 transition: "none",
                 willChange: "opacity",
               }}
