@@ -974,12 +974,12 @@ const MobileLayout = ({
       
       if (isFirst) {
         // Primeiro card: passa POR DENTRO, conecta no centro inferior do cérebro
-        // Curvas de 90° corretas: horizontal curta → curva pra cima → sobe → curva pra esquerda → vai ao centro
+        // Curvas de 90° corretas: horizontal curta → curva pra cima → sobe → curva pra DIREITA → vai ao centro
         const d = `M ${startX} ${y}
                    L ${firstTrunkX + curveR} ${y}
                    Q ${firstTrunkX} ${y} ${firstTrunkX} ${y - curveR}
                    L ${firstTrunkX} ${brainAnchorBottom.y + curveR}
-                   Q ${firstTrunkX} ${brainAnchorBottom.y} ${firstTrunkX - curveR} ${brainAnchorBottom.y}
+                   Q ${firstTrunkX} ${brainAnchorBottom.y} ${firstTrunkX + curveR} ${brainAnchorBottom.y}
                    L ${brainAnchorBottom.x} ${brainAnchorBottom.y}`;
         return { d, isFirst: true };
       } else if (isLast) {
