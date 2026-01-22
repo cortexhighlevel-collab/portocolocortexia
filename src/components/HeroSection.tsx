@@ -88,22 +88,24 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.6 }}
         >
           <div className="relative group rounded-full overflow-visible shrink-0">
-            {/* Rotating shine effect on border */}
+            {/* Rotating shine effect on border - bright red */}
             <div 
-              className="absolute -inset-[1px] rounded-full pointer-events-none overflow-hidden"
+              className="absolute -inset-[7px] rounded-full pointer-events-none"
               style={{
-                padding: "7px",
-                background: "linear-gradient(90deg, transparent, transparent)",
+                background: "conic-gradient(from 0deg, transparent 0deg, transparent 270deg, #ff0000 300deg, #ff4444 330deg, #ff6666 345deg, #ff4444 355deg, transparent 360deg)",
+                animation: "spin 3s linear infinite",
+                filter: "blur(1px)",
               }}
-            >
-              <div 
-                className="absolute inset-0 rounded-full"
-                style={{
-                  background: "conic-gradient(from 0deg, transparent 0deg, transparent 300deg, rgba(255,50,50,1) 330deg, rgba(255,100,100,1) 345deg, rgba(255,50,50,1) 360deg)",
-                  animation: "spin 3s linear infinite",
-                }}
-              />
-            </div>
+            />
+            {/* Extra glow layer */}
+            <div 
+              className="absolute -inset-[10px] rounded-full pointer-events-none"
+              style={{
+                background: "conic-gradient(from 0deg, transparent 0deg, transparent 280deg, rgba(255,0,0,0.8) 310deg, rgba(255,100,100,0.9) 340deg, rgba(255,0,0,0.8) 350deg, transparent 360deg)",
+                animation: "spin 3s linear infinite",
+                filter: "blur(8px)",
+              }}
+            />
             <button
               className="relative z-10 flex items-center justify-between w-[1008px] h-[92px] px-8 gap-6 bg-gradient-to-b from-[#2a2a2a] via-[#0a0a0a] to-[#1a1a1a] text-white rounded-full border-[7px] border-[#3a3a3a] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_4px_20px_-5px_rgba(0,0,0,0.8)] transition-transform active:scale-[0.98] overflow-hidden"
             >
