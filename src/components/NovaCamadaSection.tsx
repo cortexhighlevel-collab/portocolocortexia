@@ -6,9 +6,7 @@ import { isIOSDevice } from "@/lib/platform";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 import novaCamadaMobileVideo from "@/assets/nova-camada-mobile.webm";
-
-// Fallback estático (iOS não toca .webm)
-import novaCamadaPoster from "@/assets/nova-camada-frames/frame-001.jpg";
+import novaCamadaMobileVideoMp4 from "@/assets/nova-camada-mobile.mp4";
 
 // (Mobile) vídeo substitui os frames no autoplay para reduzir memória.
 
@@ -54,6 +52,15 @@ const camadas = [
 const NovaCamadaSection = () => {
   const isMobile = useIsMobile();
   const isIOS = isIOSDevice();
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Mobile: deixar o vídeo um pouco mais lento.
+  useEffect(() => {
+    if (!isMobile) return;
+    const v = videoRef.current;
+    if (!v) return;
+    v.playbackRate = 0.75;
+  }, [isMobile]);
 
   return (
     <section id="nova-camada" className="relative bg-background py-24 md:py-32">
@@ -77,37 +84,24 @@ const NovaCamadaSection = () => {
                     className="absolute inset-0"
                     style={{ opacity: 1, transition: "opacity 0.4s ease" }}
                   >
-                    {isMobile ? (
-                      isIOS ? (
-                        <img
-                          src={novaCamadaPoster}
-                          alt="Visual da seção A Nova Camada"
-                          className="absolute inset-0 w-full h-full object-cover"
-                          decoding="async"
-                          loading="eager"
-                        />
-                      ) : (
-                        <video
-                          className="absolute inset-0 w-full h-full object-cover"
-                          autoPlay
-                          muted
-                          loop
-                          playsInline
-                          preload="metadata"
-                          poster={novaCamadaPoster}
-                        >
-                          <source src={novaCamadaMobileVideo} type="video/webm" />
-                        </video>
-                      )
-                    ) : (
-                      <img
-                        src={novaCamadaPoster}
-                        alt="Visual da seção A Nova Camada"
-                        className="absolute inset-0 w-full h-full object-cover"
-                        decoding="async"
-                        loading="eager"
-                      />
-                    )}
+                    <video
+                      ref={videoRef}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      preload={isMobile ? "metadata" : "auto"}
+                      onLoadedMetadata={() => {
+                        // Garantia extra (iOS às vezes ignora o primeiro set)
+                        if (isMobile && videoRef.current) videoRef.current.playbackRate = 0.75;
+                      }}
+                    >
+                      {/* iOS/Safari: preferir MP4 */}
+                      <source src={novaCamadaMobileVideoMp4} type="video/mp4" />
+                      {/* Android/Chrome: WebM ok */}
+                      <source src={novaCamadaMobileVideo} type="video/webm" />
+                    </video>
                     <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
                   </div>
 
