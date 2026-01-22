@@ -123,7 +123,9 @@ const mobileFrames = [
   mobileFrame046, mobileFrame047, mobileFrame048,
 ];
 
-const SMOOTH_FACTOR = 0.12;
+// Fator de suavização - mais responsivo no mobile
+const SMOOTH_FACTOR_DESKTOP = 0.12;
+const SMOOTH_FACTOR_MOBILE = 0.25; // Mais responsivo no mobile
 // Número de frames vizinhos a manter carregados (para trás e para frente)
 const FRAME_BUFFER = 8;
 
@@ -142,10 +144,12 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const committedFrameRef = useRef(0);
   const loadedFramesRef = useRef<Set<number>>(new Set());
   const loadingFramesRef = useRef<Set<number>>(new Set());
-  const lastScrollTopRef = useRef(0);
   const isMobile = useIsMobile();
+  const lastScrollYRef = useRef(0);
+  const scrollVelocityRef = useRef(0);
 
   const frames = isMobile ? mobileFrames : desktopFrames;
+  const smoothFactor = isMobile ? SMOOTH_FACTOR_MOBILE : SMOOTH_FACTOR_DESKTOP;
 
   // Função para carregar um frame específico
   const loadFrame = (index: number): Promise<void> => {
@@ -190,13 +194,21 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     }
   };
 
+  // Pré-carregar todos os frames no mobile para evitar travamentos
+  useEffect(() => {
+    if (isMobile) {
+      // Carregar todos os frames em paralelo no mobile
+      frames.forEach((_, index) => loadFrame(index));
+    }
+  }, [isMobile, frames]);
+
   useEffect(() => {
     const el = scrollContainerRef.current;
     if (!el) return;
 
     const obs = new IntersectionObserver(
       ([entry]) => setIsInView(entry.isIntersecting),
-      { threshold: 0 },
+      { threshold: 0.01 },
     );
 
     obs.observe(el);
@@ -209,12 +221,13 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     loadingFramesRef.current = new Set();
     currentFrameRef.current = 0;
     committedFrameRef.current = 0;
-    lastScrollTopRef.current = 0;
+    lastScrollYRef.current = window.scrollY;
+    scrollVelocityRef.current = 0;
     setCurrentFrame(0);
     setPreviousFrame(0);
     setIsReady(false);
 
-    // Carregar apenas os primeiros frames necessários
+    // Carregar primeiros frames
     loadFrame(0).then(() => setIsReady(true));
     loadNearbyFrames(0);
   }, [isMobile, frames]);
@@ -223,7 +236,12 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
     const lerp = (start: number, end: number, factor: number) => start + (end - start) * factor;
 
-    const tick = () => {
+    let lastTime = performance.now();
+
+    const tick = (currentTime: number) => {
+      const deltaTime = Math.min((currentTime - lastTime) / 16.67, 2); // Normalizar para ~60fps, cap em 2
+      lastTime = currentTime;
+
       if (!isInView) {
         rafIdRef.current = window.requestAnimationFrame(tick);
         return;
@@ -239,35 +257,63 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       const containerHeight = container.offsetHeight;
       const viewportHeight = window.innerHeight;
 
-      // Calcular progresso do scroll de forma mais estável
+      // Calcular progresso do scroll
       const scrollStart = Math.max(0, -rect.top);
       const scrollRange = containerHeight - viewportHeight;
       
-      // Prevenir divisão por zero e valores inválidos
       if (scrollRange <= 0) {
         rafIdRef.current = window.requestAnimationFrame(tick);
         return;
       }
 
+      // Calcular velocidade do scroll para adaptar suavização
+      const currentScrollY = window.scrollY;
+      const scrollDelta = Math.abs(currentScrollY - lastScrollYRef.current);
+      scrollVelocityRef.current = scrollDelta;
+      lastScrollYRef.current = currentScrollY;
+
       // Clamp do progresso para garantir que fique entre 0 e 1
       const rawProgress = scrollStart / scrollRange;
       const progress = clamp(rawProgress, 0, 1);
 
-      // Calcular frame alvo com suavização
+      // Calcular frame alvo
       const targetFrame = progress * (frames.length - 1);
       
-      // Suavização mais agressiva para evitar pulos
+      // Suavização adaptativa baseada na velocidade e diferença
       const diff = Math.abs(targetFrame - currentFrameRef.current);
-      const adaptiveFactor = diff > 5 ? 0.25 : SMOOTH_FACTOR;
       
-      currentFrameRef.current = lerp(currentFrameRef.current, targetFrame, adaptiveFactor);
+      // No mobile, ser mais direto quando há movimento rápido
+      let adaptiveFactor: number;
+      if (isMobile) {
+        // Mobile: resposta mais direta
+        if (scrollVelocityRef.current > 50 || diff > 3) {
+          adaptiveFactor = 0.5; // Muito responsivo
+        } else if (diff > 1) {
+          adaptiveFactor = 0.35;
+        } else {
+          adaptiveFactor = smoothFactor;
+        }
+      } else {
+        // Desktop: suavização normal
+        adaptiveFactor = diff > 5 ? 0.25 : smoothFactor;
+      }
+      
+      // Aplicar suavização com compensação de deltaTime
+      currentFrameRef.current = lerp(
+        currentFrameRef.current, 
+        targetFrame, 
+        clamp(adaptiveFactor * deltaTime, 0, 1)
+      );
       
       // Garantir que o frame final seja válido
       const nextFrame = clamp(Math.round(currentFrameRef.current), 0, frames.length - 1);
 
-      // Carregar frames próximos
-      loadNearbyFrames(nextFrame);
+      // Carregar frames próximos (menos agressivo no mobile já que pré-carregamos)
+      if (!isMobile) {
+        loadNearbyFrames(nextFrame);
+      }
 
+      // Atualizar frame se mudou e está carregado
       if (
         loadedFramesRef.current.has(nextFrame) &&
         nextFrame !== committedFrameRef.current
@@ -276,6 +322,32 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
         committedFrameRef.current = nextFrame;
         setPreviousFrame(prev);
         setCurrentFrame(nextFrame);
+      } else if (!loadedFramesRef.current.has(nextFrame) && isMobile) {
+        // No mobile, se o frame não carregou, usar o mais próximo disponível
+        for (let offset = 1; offset <= 5; offset++) {
+          const fallbackLower = nextFrame - offset;
+          const fallbackHigher = nextFrame + offset;
+          
+          if (fallbackLower >= 0 && loadedFramesRef.current.has(fallbackLower)) {
+            if (fallbackLower !== committedFrameRef.current) {
+              const prev = committedFrameRef.current;
+              committedFrameRef.current = fallbackLower;
+              setPreviousFrame(prev);
+              setCurrentFrame(fallbackLower);
+            }
+            break;
+          }
+          
+          if (fallbackHigher < frames.length && loadedFramesRef.current.has(fallbackHigher)) {
+            if (fallbackHigher !== committedFrameRef.current) {
+              const prev = committedFrameRef.current;
+              committedFrameRef.current = fallbackHigher;
+              setPreviousFrame(prev);
+              setCurrentFrame(fallbackHigher);
+            }
+            break;
+          }
+        }
       }
 
       rafIdRef.current = window.requestAnimationFrame(tick);
@@ -289,7 +361,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
         rafIdRef.current = null;
       }
     };
-  }, [frames.length, isInView]);
+  }, [frames.length, isInView, isMobile, smoothFactor]);
 
   const firstFrame = frames[0];
 
