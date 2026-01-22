@@ -421,28 +421,34 @@
     }
 
     .cyberpunk-cta-wrapper {
-      display: block;
+      /* Mobile: evitar cortes por safe-area/URL bar e evitar translate/scale que conflitam com framer-motion */
+      display: flex;
       top: auto;
-      bottom: 12%;
-      left: 50%;
-      translate: -50% 0;
+      bottom: calc(env(safe-area-inset-bottom) + 18px);
+      left: 0;
+      right: 0;
+      translate: 0 0;
       scale: 1;
       transform-origin: center;
+      justify-content: center;
+      padding: 0 14px;
     }
   }
 
   /* Cyberpunk CTA Button */
-  .cyberpunk-cta-wrapper {
-    position: fixed;
-    left: 50%;
-    top: 72%;
-    translate: -50% -50%;
-    scale: 0.5;
-    transform-origin: center;
-    z-index: 50;
-    pointer-events: auto;
-    display: flex;
-    justify-content: center;
+  @media (min-width: 769px) {
+    .cyberpunk-cta-wrapper {
+      position: fixed;
+      left: 50%;
+      top: 72%;
+      translate: -50% -50%;
+      scale: 0.5;
+      transform-origin: center;
+      z-index: 50;
+      pointer-events: auto;
+      display: flex;
+      justify-content: center;
+    }
   }
 
   .cyberpunk-cta-button {
