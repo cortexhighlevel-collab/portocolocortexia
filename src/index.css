@@ -2256,16 +2256,16 @@
     90deg,
     transparent 0%,
     transparent 40%,
-    #ff0000 45%,
-    #ff4444 50%,
-    #ff6666 52%,
-    #ff4444 55%,
-    #ff0000 60%,
+    rgba(255,0,0,0.7) 45%,
+    rgba(255,68,68,0.7) 50%,
+    rgba(255,102,102,0.7) 52%,
+    rgba(255,68,68,0.7) 55%,
+    rgba(255,0,0,0.7) 60%,
     transparent 65%,
     transparent 100%
   );
   background-size: 200% 100%;
-  animation: border-shine-run 2s linear infinite;
+  animation: border-shine-run 4s linear infinite;
   -webkit-mask: 
     linear-gradient(#fff 0 0) content-box, 
     linear-gradient(#fff 0 0);
@@ -2287,14 +2287,14 @@
     90deg,
     transparent 0%,
     transparent 38%,
-    rgba(255,0,0,0.6) 45%,
-    rgba(255,100,100,0.8) 50%,
-    rgba(255,0,0,0.6) 55%,
+    rgba(255,0,0,0.42) 45%,
+    rgba(255,100,100,0.56) 50%,
+    rgba(255,0,0,0.42) 55%,
     transparent 62%,
     transparent 100%
   );
   background-size: 200% 100%;
-  animation: border-shine-run 2s linear infinite;
+  animation: border-shine-run 4s linear infinite;
   filter: blur(6px);
   -webkit-mask: 
     linear-gradient(#fff 0 0) content-box, 
