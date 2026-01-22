@@ -13,18 +13,55 @@ function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
 }
 
-function curvePath(start: Point, end: Point, curvature = 0.4) {
-  // Smooth Bezier curve path from start to end
-  const dx = end.x - start.x;
-  const dy = end.y - start.y;
+function roundedOrthoPath(start: Point, end: Point, direction: "horizontal" | "vertical", radius = 20) {
+  // Orthogonal path with rounded corners
+  // direction = first segment direction from the card
   
-  // Control points for smooth S-curve
-  const cp1x = start.x + dx * curvature;
-  const cp1y = start.y;
-  const cp2x = end.x - dx * curvature;
-  const cp2y = end.y;
-  
-  return `M ${start.x} ${start.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${end.x} ${end.y}`;
+  if (direction === "horizontal") {
+    // Start horizontal, then vertical to end
+    const midX = (start.x + end.x) / 2;
+    const goingUp = end.y < start.y;
+    const goingRight = end.x > start.x;
+    
+    // Arc sweep flags
+    const sweep1 = (goingRight && goingUp) || (!goingRight && !goingUp) ? 0 : 1;
+    const sweep2 = (goingRight && goingUp) || (!goingRight && !goingUp) ? 1 : 0;
+    
+    const r = Math.min(radius, Math.abs(end.y - start.y) / 2, Math.abs(midX - start.x));
+    
+    const arc1StartX = midX + (goingRight ? -r : r);
+    const arc1EndY = start.y + (goingUp ? -r : r);
+    
+    const arc2StartY = end.y + (goingUp ? r : -r);
+    const arc2EndX = midX + (goingRight ? r : -r);
+    
+    return `M ${start.x} ${start.y} 
+            L ${arc1StartX} ${start.y} 
+            Q ${midX} ${start.y}, ${midX} ${arc1EndY}
+            L ${midX} ${arc2StartY}
+            Q ${midX} ${end.y}, ${arc2EndX} ${end.y}
+            L ${end.x} ${end.y}`;
+  } else {
+    // Start vertical, then horizontal to end
+    const midY = (start.y + end.y) / 2;
+    const goingUp = end.y < start.y;
+    const goingRight = end.x > start.x;
+    
+    const r = Math.min(radius, Math.abs(end.x - start.x) / 2, Math.abs(midY - start.y));
+    
+    const arc1StartY = midY + (goingUp ? r : -r);
+    const arc1EndX = start.x + (goingRight ? r : -r);
+    
+    const arc2StartX = end.x + (goingRight ? -r : r);
+    const arc2EndY = midY + (goingUp ? -r : r);
+    
+    return `M ${start.x} ${start.y}
+            L ${start.x} ${arc1StartY}
+            Q ${start.x} ${midY}, ${arc1EndX} ${midY}
+            L ${arc2StartX} ${midY}
+            Q ${end.x} ${midY}, ${end.x} ${arc2EndY}
+            L ${end.x} ${end.y}`;
+  }
 }
 
 export function SolucoesNeuralConnections(props: {
@@ -115,9 +152,9 @@ export function SolucoesNeuralConnections(props: {
           y: target.y,
         };
 
-        // Curvatura variada por posição para visual orgânico
-        const curvature = pos === "bottom-center" ? 0.5 : pos.includes("left") ? 0.35 : 0.45;
-        const d = curvePath(start, end, curvature);
+        // Direção inicial: cards laterais começam horizontal, card de baixo começa vertical
+        const direction = pos === "bottom-center" ? "vertical" : "horizontal";
+        const d = roundedOrthoPath(start, end, direction, 24);
 
         conns.push({
           key: `${pos}-${idx}`,
@@ -199,13 +236,7 @@ export function SolucoesNeuralConnections(props: {
             filter={`url(#${glowId})`}
             vectorEffect="non-scaling-stroke"
           />
-          <circle
-            cx={c.start.x}
-            cy={c.start.y}
-            r={5.5}
-            fill="hsl(var(--frame-red))"
-            filter={`url(#${dotGlowId})`}
-          />
+          {/* Apenas círculo no cérebro (end), removido do card (start) */}
           <circle
             cx={c.end.x}
             cy={c.end.y}
