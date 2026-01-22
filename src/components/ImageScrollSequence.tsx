@@ -125,8 +125,13 @@ const mobileFrames = [
 
 // Número de frames vizinhos a manter carregados (para trás e para frente)
 const FRAME_BUFFER = 10;
+// Quantos frames ao redor do frame "iminente" devemos tentar decodificar (evita explodir memória no mobile)
+const DECODE_BUFFER = 2;
 // Máximo de frames que pode pular por tick (previne saltos)
 const MAX_STEP = 2;
+
+// Evita trabalho pesado de preload a cada RAF (especialmente em mobile)
+const PRELOAD_THROTTLE_MS = 80;
 
 type FrameLoadMode = "near" | "background";
 
@@ -144,6 +149,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const loadedFramesRef = useRef<Set<number>>(new Set());
   const decodedFramesRef = useRef<Set<number>>(new Set());
   const loadingFramesRef = useRef<Set<number>>(new Set());
+  const lastPreloadCenterRef = useRef<number>(-1);
+  const lastPreloadAtRef = useRef<number>(0);
 
   // IMPORTANTE (mobile): não renderizar 48 imgs simultâneas, isso estoura memória e pode “derrubar” o browser.
   const SLOT_COUNT = 7;
@@ -206,19 +213,10 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
   // Função para carregar um frame específico
   const loadFrame = (index: number, mode: FrameLoadMode = "near"): Promise<void> => {
+    if (index < 0 || index >= frames.length) return Promise.resolve();
+    if (loadedFramesRef.current.has(index) || loadingFramesRef.current.has(index)) return Promise.resolve();
+
     return new Promise((resolve) => {
-      if (index < 0 || index >= frames.length) {
-        resolve();
-        return;
-      }
-
-      if (loadedFramesRef.current.has(index) || loadingFramesRef.current.has(index)) {
-        // Se estiver carregado mas não decodificado e for prioritário, tenta decodificar em background
-        // decode é best-effort (não bloqueia rendering)
-        resolve();
-        return;
-      }
-
       loadingFramesRef.current.add(index);
       const img = new Image();
       img.src = frames[index];
@@ -232,17 +230,15 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
         // IMPORTANT: marca como carregado no onload (não bloqueia na decode), para não “travar” frames.
         loadedFramesRef.current.add(index);
 
-        // Tenta decodificar em background para suavidade
-        const maybeDecode = () => {
-          if (decodedFramesRef.current.has(index)) return;
-          if (img.decode) img.decode().then(() => decodedFramesRef.current.add(index)).catch(() => void 0);
-        };
-
+        // Decode é best-effort. Em mobile, decodificar muitos frames em sequência costuma “derrubar” o browser.
+        // Portanto, só decodificamos quando mode === "near" (janela pequena e iminente).
         if (mode === "near") {
-          maybeDecode();
-        } else {
-          // background: dá uma folga pro main thread
-          window.setTimeout(maybeDecode, 0);
+          if (!decodedFramesRef.current.has(index) && img.decode) {
+            img
+              .decode()
+              .then(() => decodedFramesRef.current.add(index))
+              .catch(() => void 0);
+          }
         }
 
         onComplete();
@@ -257,12 +253,28 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   };
 
   // Carregar frames próximos ao frame atual
-  const loadNearbyFrames = (centerFrame: number) => {
+  // - Faz preload de um "corredor" na direção do scroll (evita ficar esperando frames intermediários)
+  // - Decodifica somente uma janela pequena (DECODE_BUFFER) ao redor do frame iminente
+  const loadNearbyFrames = (centerFrame: number, decodeCenter: number) => {
+    const now = performance.now();
+    if (
+      lastPreloadCenterRef.current === centerFrame &&
+      now - lastPreloadAtRef.current < PRELOAD_THROTTLE_MS
+    ) {
+      return;
+    }
+    lastPreloadCenterRef.current = centerFrame;
+    lastPreloadAtRef.current = now;
+
     const start = Math.max(0, centerFrame - FRAME_BUFFER);
     const end = Math.min(frames.length - 1, centerFrame + FRAME_BUFFER);
 
+    const decodeStart = Math.max(0, decodeCenter - DECODE_BUFFER);
+    const decodeEnd = Math.min(frames.length - 1, decodeCenter + DECODE_BUFFER);
+
     for (let i = start; i <= end; i++) {
-      loadFrame(i, "near");
+      const shouldDecode = i >= decodeStart && i <= decodeEnd;
+      loadFrame(i, shouldDecode ? "near" : "background");
     }
   };
 
@@ -292,6 +304,9 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     slotFrameIndexRef.current = Array(SLOT_COUNT).fill(-1);
     applySlots(0, 0);
 
+    lastPreloadCenterRef.current = -1;
+    lastPreloadAtRef.current = 0;
+
     // Pré-carregar os primeiros frames
     const preloadInitial = async () => {
       const initialFramesToLoad = Math.min(FRAME_BUFFER, frames.length);
@@ -311,6 +326,12 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
     const tick = () => {
       if (!isInView) {
+        rafIdRef.current = window.requestAnimationFrame(tick);
+        return;
+      }
+
+      // Pausa quando a aba está em background (reduz chance de crash por uso contínuo de CPU/mem em mobile)
+      if (document.visibilityState === "hidden") {
         rafIdRef.current = window.requestAnimationFrame(tick);
         return;
       }
@@ -339,11 +360,19 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       const targetFrame = Math.round(progress * (frames.length - 1));
       const current = displayedFrameRef.current;
 
-      // Pré-carregar frames próximos do target
-      loadNearbyFrames(targetFrame);
+      // Escolhe um centro de preload que favorece o "caminho" entre current -> target.
+      // Isso evita que, num scroll rápido, a gente pré-carregue só perto do target e fique sem os frames intermediários.
+      const delta = targetFrame - current;
+      const dir = delta === 0 ? 0 : delta > 0 ? 1 : -1;
+      const corridorCenter =
+        Math.abs(delta) > FRAME_BUFFER
+          ? clamp(current + dir * FRAME_BUFFER, 0, frames.length - 1)
+          : targetFrame;
 
       // Se já está no frame correto, não faz nada
       if (targetFrame === current) {
+        // Mesmo parado, mantém preload do corredor atualizado (especialmente quando o usuário volta a mexer)
+        loadNearbyFrames(corridorCenter, current);
         rafIdRef.current = window.requestAnimationFrame(tick);
         return;
       }
@@ -360,6 +389,9 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
       // Garantir bounds
       nextFrame = clamp(nextFrame, 0, frames.length - 1);
+
+      // Pré-carregar (corredor + decode em volta do frame iminente)
+      loadNearbyFrames(corridorCenter, nextFrame);
 
       // Atualiza sem setState (evita re-render do Hero e elimina flicker/travadas)
       // Se o frame ainda não estiver carregado, força carga e mantém o atual até ter ao menos "loaded".
