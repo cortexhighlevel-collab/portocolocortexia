@@ -168,9 +168,14 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     if (!el) return;
 
     const nextSrc = frameIndex >= 0 && frameIndex < frames.length ? frames[frameIndex] : "";
-    if (poolFrameIndexRef.current[slot] !== frameIndex && nextSrc) {
-      // Troca src só quando necessário (reduz trabalho do Safari)
-      el.src = nextSrc;
+    if (nextSrc) {
+      // IMPORTANT (Safari/iPhone): nunca use src="" e não confie só no nosso ref,
+      // porque React pode re-renderizar e sobrescrever o atributo src.
+      // Sempre valide o atributo atual antes de trocar.
+      const currentAttr = el.getAttribute("src") ?? "";
+      if (currentAttr !== nextSrc) {
+        el.setAttribute("src", nextSrc);
+      }
       poolFrameIndexRef.current[slot] = frameIndex;
     }
 
@@ -446,10 +451,11 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
                 poolElsRef.current[slot] = el;
               }}
               // src será gerenciado via renderPoolForFrames() (pool)
-              src={slot === 0 ? firstFrame : ""}
+              // Mantemos sempre um src válido para não disparar request do documento (src="") no Safari.
+              src={firstFrame}
               alt=""
               decoding="async"
-              loading={slot === 0 ? "eager" : "lazy"}
+              loading="eager"
               style={{
                 position: "absolute",
                 top: 0,
