@@ -311,6 +311,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
             backgroundImage: `url(${firstFrame})`,
             backgroundSize: "cover",
             backgroundPosition: "center center",
+            transform: "scale(1.15)",
+            transformOrigin: "center center",
           }}
           aria-hidden="true"
         />
@@ -336,6 +338,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
                 height: "100%",
                 objectFit: "cover",
                 objectPosition: "center center",
+                transform: "scale(1.15)",
+                transformOrigin: "center center",
                 opacity: index === currentFrame || index === previousFrame ? 1 : 0,
                 zIndex: index === currentFrame ? 2 : index === previousFrame ? 1 : 0,
                 transition: "none",
