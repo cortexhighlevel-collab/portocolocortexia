@@ -81,7 +81,10 @@ function Navbar() {
   const topInset = 2;
   const ledStartX = sideOffset;
   const ledEndX = `100% - ${sideOffset}`;
+  
+  const isMobileNav = navWidth < 640;
 
+  // Mobile: navbar invertido (laterais no topo, tab central embaixo)
   const mainFramePath: Paths = [
     {
       show: true,
@@ -92,7 +95,21 @@ function Navbar() {
         strokeLinejoin: "round",
         strokeLinecap: "round",
       },
-      path: [
+      path: isMobileNav ? [
+        // Mobile: laterais no topo, tab no fundo
+        ["M", sideOffset, 12],
+        ["L", `${topOffset + topCorner}`, `100% - ${topCorner + topInset}`],
+        ["Q", topOffset, `100% - ${topInset}`, `${topOffset + topCorner * 2}`, `100% - ${topInset}`],
+        ["L", `100% - ${topOffset + topCorner * 2}`, `100% - ${topInset}`],
+        ["Q", `100% - ${topOffset}`, `100% - ${topInset}`, `100% - ${topOffset + topCorner}`, `100% - ${topCorner + topInset}`],
+        ["L", `100% - ${sideOffset}`, 12],
+        ["L", `50% + ${halfTab + 30}`, 12],
+        ["L", `50% + ${halfTab}`, -14],
+        ["L", `50% - ${halfTab}`, -14],
+        ["L", `50% - ${halfTab + 30}`, 12],
+        ["Z"],
+      ] : [
+        // Desktop: original
         ["M", sideOffset, `100% - 12`],
         ["L", `${topOffset + topCorner}`, `${topCorner + topInset}`],
         ["Q", topOffset, `${topInset}`, `${topOffset + topCorner * 2}`, `${topInset}`],
@@ -118,9 +135,21 @@ function Navbar() {
           </div>
 
           <div 
-            className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
+            className="absolute left-1/2 -translate-x-1/2 pointer-events-none hidden lg:block"
             style={{
               top: '55px',
+              width: '27%',
+              height: '1px',
+              background: 'linear-gradient(90deg, transparent 0%, #ff2244 10%, #ff3355 30%, #ff4466 50%, #ff3355 70%, #ff2244 90%, transparent 100%)',
+              boxShadow: '0 0 3px 1px rgba(255, 34, 68, 0.3), 0 0 6px 2px rgba(255, 34, 68, 0.2), 0 0 10px 3px rgba(255, 34, 68, 0.1)',
+              zIndex: 25,
+            }}
+          />
+          {/* Mobile: linha vermelha no topo */}
+          <div 
+            className="absolute left-1/2 -translate-x-1/2 pointer-events-none lg:hidden"
+            style={{
+              top: '-15px',
               width: '27%',
               height: '1px',
               background: 'linear-gradient(90deg, transparent 0%, #ff2244 10%, #ff3355 30%, #ff4466 50%, #ff3355 70%, #ff2244 90%, transparent 100%)',
@@ -139,7 +168,13 @@ function Navbar() {
                     stroke: "url(#ledGradientLeft)", 
                     fill: "transparent",
                   },
-                  path: [
+                  path: isMobileNav ? [
+                    // Mobile: LED no topo
+                    ["M", ledStartX, 0],
+                    ["L", `50% - ${halfTab + 35}`, 0],
+                    ["L", `50% - ${halfTab}`, -26],
+                  ] : [
+                    // Desktop: LED embaixo
                     ["M", ledStartX, "100%"],
                     ["L", `50% - ${halfTab + 35}`, "100%"],
                     ["L", `50% - ${halfTab}`, "100% + 26"],
@@ -159,7 +194,13 @@ function Navbar() {
                     stroke: "url(#ledGradientRight)", 
                     fill: "transparent",
                   },
-                  path: [
+                  path: isMobileNav ? [
+                    // Mobile: LED no topo
+                    ["M", ledEndX, 0],
+                    ["L", `50% + ${halfTab + 35}`, 0],
+                    ["L", `50% + ${halfTab}`, -26],
+                  ] : [
+                    // Desktop: LED embaixo
                     ["M", ledEndX, "100%"],
                     ["L", `50% + ${halfTab + 35}`, "100%"],
                     ["L", `50% + ${halfTab}`, "100% + 26"],
