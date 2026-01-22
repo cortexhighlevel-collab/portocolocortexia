@@ -23,7 +23,9 @@ const HeroSection = () => {
     computeMobileScale();
     window.addEventListener("resize", computeMobileScale);
     return () => window.removeEventListener("resize", computeMobileScale);
-  }, []);
+  }, [CTA_MOBILE_TARGET_WIDTH_PERCENT]);
+
+  const currentScale = isMobile ? mobileScale : CTA_DESKTOP_SCALE;
 
   return (
     <>
@@ -76,7 +78,7 @@ const HeroSection = () => {
         <motion.a
           href="#contact"
           className="inline-block"
-          style={{ scale: isMobile ? mobileScale : CTA_DESKTOP_SCALE }}
+          style={{ transform: `scale(${currentScale})` }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
