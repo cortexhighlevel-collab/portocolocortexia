@@ -962,7 +962,8 @@ const MobileLayout = ({
     const trunkYBottom = lastCardY - curveR;
 
     // Posição X do "tronco" do primeiro card: passa POR DENTRO (à direita do trunkX principal)
-    const firstTrunkX = trunkX + 20;
+    // Fica BEM perto do trunkX pra linha não ficar grande
+    const firstTrunkX = trunkX + 14;
 
     // Hooks: primeiro card vai separado pelo centro inferior, outros vão pro tronco direito
     const hooks = anchors.map((a, i) => {
@@ -973,9 +974,9 @@ const MobileLayout = ({
       
       if (isFirst) {
         // Primeiro card: passa POR DENTRO, conecta no centro inferior do cérebro
-        // Sai horizontal → curva pra cima → sobe reto até o centro inferior do cérebro
+        // Curvas de 90° corretas: horizontal curta → curva pra cima → sobe → curva pra esquerda → vai ao centro
         const d = `M ${startX} ${y}
-                   L ${firstTrunkX - curveR} ${y}
+                   L ${firstTrunkX + curveR} ${y}
                    Q ${firstTrunkX} ${y} ${firstTrunkX} ${y - curveR}
                    L ${firstTrunkX} ${brainAnchorBottom.y + curveR}
                    Q ${firstTrunkX} ${brainAnchorBottom.y} ${firstTrunkX - curveR} ${brainAnchorBottom.y}
