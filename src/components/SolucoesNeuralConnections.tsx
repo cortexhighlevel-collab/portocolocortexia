@@ -13,28 +13,36 @@ function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
 }
 
-function roundedOrthoPath(start: Point, end: Point, direction: "horizontal" | "vertical", radius = 20) {
+function roundedOrthoPath(
+  start: Point,
+  end: Point,
+  direction: "horizontal" | "vertical",
+  radius = 20,
+  pivotOverride?: number
+) {
   // Orthogonal path with rounded corners
-  // direction = first segment direction from the card
-  
+  // pivotOverride: force the pivot x (horizontal) or y (vertical) position
+
   if (direction === "horizontal") {
     // Start horizontal, then vertical to end
-    const midX = (start.x + end.x) / 2;
+    const midX = pivotOverride ?? (start.x + end.x) / 2;
     const goingUp = end.y < start.y;
-    const goingRight = end.x > start.x;
-    
-    // Arc sweep flags
-    const sweep1 = (goingRight && goingUp) || (!goingRight && !goingUp) ? 0 : 1;
-    const sweep2 = (goingRight && goingUp) || (!goingRight && !goingUp) ? 1 : 0;
-    
-    const r = Math.min(radius, Math.abs(end.y - start.y) / 2, Math.abs(midX - start.x));
-    
+    const goingRight = midX > start.x;
+    const goingRightEnd = end.x > midX;
+
+    const r = Math.min(
+      radius,
+      Math.abs(end.y - start.y) / 2,
+      Math.abs(midX - start.x),
+      Math.abs(end.x - midX)
+    );
+
     const arc1StartX = midX + (goingRight ? -r : r);
     const arc1EndY = start.y + (goingUp ? -r : r);
-    
+
     const arc2StartY = end.y + (goingUp ? r : -r);
-    const arc2EndX = midX + (goingRight ? r : -r);
-    
+    const arc2EndX = midX + (goingRightEnd ? r : -r);
+
     return `M ${start.x} ${start.y} 
             L ${arc1StartX} ${start.y} 
             Q ${midX} ${start.y}, ${midX} ${arc1EndY}
@@ -43,18 +51,24 @@ function roundedOrthoPath(start: Point, end: Point, direction: "horizontal" | "v
             L ${end.x} ${end.y}`;
   } else {
     // Start vertical, then horizontal to end
-    const midY = (start.y + end.y) / 2;
-    const goingUp = end.y < start.y;
+    const midY = pivotOverride ?? (start.y + end.y) / 2;
+    const goingUp = midY < start.y;
     const goingRight = end.x > start.x;
-    
-    const r = Math.min(radius, Math.abs(end.x - start.x) / 2, Math.abs(midY - start.y));
-    
+    const goingUpEnd = end.y < midY;
+
+    const r = Math.min(
+      radius,
+      Math.abs(end.x - start.x) / 2,
+      Math.abs(midY - start.y),
+      Math.abs(end.y - midY)
+    );
+
     const arc1StartY = midY + (goingUp ? r : -r);
     const arc1EndX = start.x + (goingRight ? r : -r);
-    
+
     const arc2StartX = end.x + (goingRight ? -r : r);
-    const arc2EndY = midY + (goingUp ? -r : r);
-    
+    const arc2EndY = midY + (goingUpEnd ? -r : r);
+
     return `M ${start.x} ${start.y}
             L ${start.x} ${arc1StartY}
             Q ${start.x} ${midY}, ${arc1EndX} ${midY}
@@ -73,9 +87,7 @@ export function SolucoesNeuralConnections(props: {
   const { containerRef, brainRef, cardElsRef, positions } = props;
 
   const uid = useId().replace(/[:]/g, "");
-  const gradientId = `neural-gradient-${uid}`;
   const glowId = `neural-glow-${uid}`;
-  const dotGlowId = `neural-dotglow-${uid}`;
 
   const [layout, setLayout] = useState<{ w: number; h: number; conns: Connection[] }>({
     w: 0,
@@ -105,7 +117,7 @@ export function SolucoesNeuralConnections(props: {
       const bw = bRect.width;
       const bh = bRect.height;
 
-      // Alvos no cérebro (aprox. nos “pinos” visualmente)
+      // Alvos no cérebro (aprox. nos "pinos" visualmente)
       const brainTargetsByPos: Record<string, Point> = {
         "top-left": { x: brainCenter.x - bw * 0.38, y: brainCenter.y - bh * 0.18 },
         "mid-left": { x: brainCenter.x - bw * 0.4, y: brainCenter.y + bh * 0.1 },
@@ -127,27 +139,22 @@ export function SolucoesNeuralConnections(props: {
         let ay: number;
 
         if (pos === "top-left") {
-          // Borda direita do card, centralizado verticalmente no anel
           ax = r.right;
           ay = r.top + r.height * 0.38;
         } else if (pos === "mid-left") {
-          // Borda direita do card
           ax = r.right;
           ay = r.top + r.height * 0.5;
         } else if (pos === "top-right") {
-          // Borda esquerda do card
           ax = r.left;
           ay = r.top + r.height * 0.5;
         } else if (pos === "mid-right") {
-          // Borda esquerda do card
           ax = r.left;
           ay = r.top + r.height * 0.5;
         } else if (pos === "bottom-right") {
-          // Borda esquerda, no topo onde fica o ícone
           ax = r.left;
           ay = r.top + r.height * 0.22;
         } else {
-          // bottom-center: borda direita externa do card (onde fica o anel do ícone)
+          // bottom-center: borda direita externa do card
           ax = r.right;
           ay = r.top + r.height * 0.38;
         }
@@ -163,8 +170,15 @@ export function SolucoesNeuralConnections(props: {
           y: target.y,
         };
 
-        // Todas as linhas usam direção horizontal (reta → curva → sobe → curva → conecta)
-        const d = roundedOrthoPath(start, end, "horizontal", 24);
+        // Para bottom-center: forçar a linha a sair para a DIREITA primeiro (lead-out)
+        // antes de subir, assim não entra no card
+        let pivotX: number | undefined;
+        if (pos === "bottom-center") {
+          // Sai 100px para a direita antes de subir
+          pivotX = start.x + 100;
+        }
+
+        const d = roundedOrthoPath(start, end, "horizontal", 24, pivotX);
 
         conns.push({
           key: `${pos}-${idx}`,
@@ -213,10 +227,24 @@ export function SolucoesNeuralConnections(props: {
       aria-hidden="true"
     >
       <defs>
-        <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="hsl(var(--frame-red))" />
-          <stop offset="100%" stopColor="hsl(var(--frame-purple))" />
-        </linearGradient>
+        {/* Gradiente por conexão (alinhado ao path) */}
+        {layout.conns.map((c) => {
+          const gid = `neural-grad-${uid}-${c.key}`.replace(/[^a-zA-Z0-9_-]/g, "");
+          return (
+            <linearGradient
+              key={gid}
+              id={gid}
+              gradientUnits="userSpaceOnUse"
+              x1={c.start.x}
+              y1={c.start.y}
+              x2={c.end.x}
+              y2={c.end.y}
+            >
+              <stop offset="0%" stopColor="hsl(var(--frame-red))" />
+              <stop offset="100%" stopColor="hsl(var(--frame-purple))" />
+            </linearGradient>
+          );
+        })}
         <filter id={glowId}>
           <feGaussianBlur stdDeviation="2.75" result="coloredBlur" />
           <feMerge>
@@ -224,30 +252,26 @@ export function SolucoesNeuralConnections(props: {
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
-        <filter id={dotGlowId}>
-          <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
-          <feMerge>
-            <feMergeNode in="coloredBlur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
       </defs>
 
-      {layout.conns.map((c) => (
-        <g key={c.key}>
-          <path
-            d={c.d}
-            stroke={`url(#${gradientId})`}
-            strokeWidth={2.25}
-            strokeOpacity={0.85}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-            filter={`url(#${glowId})`}
-            vectorEffect="non-scaling-stroke"
-          />
-        </g>
-      ))}
+      {layout.conns.map((c) => {
+        const gid = `neural-grad-${uid}-${c.key}`.replace(/[^a-zA-Z0-9_-]/g, "");
+        return (
+          <g key={c.key}>
+            <path
+              d={c.d}
+              stroke={`url(#${gid})`}
+              strokeWidth={2.25}
+              strokeOpacity={0.85}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+              filter={`url(#${glowId})`}
+              vectorEffect="non-scaling-stroke"
+            />
+          </g>
+        );
+      })}
     </svg>
   );
 }
