@@ -890,126 +890,162 @@ const MobileLayout = ({
   camadas: CamadaType[];
   mobileOrder: number[];
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const brainRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [paths, setPaths] = useState<string[]>([]);
-  const [svgHeight, setSvgHeight] = useState(0);
-  const [brainConnectionY, setBrainConnectionY] = useState(0);
 
-  const calculatePaths = useCallback(() => {
-    if (!containerRef.current || !brainRef.current) return;
-    
-    const container = containerRef.current;
-    const containerRect = container.getBoundingClientRect();
+  const [layout, setLayout] = useState<{
+    w: number;
+    h: number;
+    trunkX: number;
+    trunkYTop: number;
+    trunkYBottom: number;
+    brainAnchor: { x: number; y: number };
+    hooks: Array<{ d: string }>;
+  } | null>(null);
+
+  const calculate = useCallback(() => {
+    if (!wrapperRef.current || !brainRef.current || !cardsRef.current) return;
+
+    const wrapperRect = wrapperRef.current.getBoundingClientRect();
     const brainRect = brainRef.current.getBoundingClientRect();
-    
-    // Posição Y do cérebro (parte inferior) relativo ao container
-    const brainBottomY = brainRect.bottom - containerRect.top;
-    setBrainConnectionY(brainBottomY);
-    
-    const newPaths: string[] = [];
-    let minY = Infinity;
-    let maxY = 0;
-    
-    cardRefs.current.forEach((cardEl, i) => {
-      if (!cardEl) return;
-      
-      const cardRect = cardEl.getBoundingClientRect();
-      
-      // Centro Y do card relativo ao container
-      const cardCenterY = cardRect.top - containerRect.top + cardRect.height / 2;
-      
-      // Borda esquerda do círculo
-      const circleRadiusPercent = 133 / 731;
-      const circleRadius = cardRect.width * circleRadiusPercent;
-      const circleCenterX = cardRect.left - containerRect.left + circleRadius;
-      const circleLeftEdge = circleCenterX - circleRadius;
-      
-      // Linha vertical está em x = 24
-      const lineX = 24;
-      const curveRadius = 10;
-      
-      // Path: da borda do círculo -> horizontal -> curva 90°
-      const path = `M ${circleLeftEdge} ${cardCenterY}
-                    L ${lineX + curveRadius} ${cardCenterY}
-                    Q ${lineX} ${cardCenterY} ${lineX} ${cardCenterY - curveRadius}`;
-      
-      newPaths.push(path);
-      
-      if (cardCenterY < minY) minY = cardCenterY;
-      if (cardCenterY > maxY) maxY = cardCenterY;
+
+    const w = wrapperRect.width;
+    const h = wrapperRef.current.scrollHeight;
+
+    const cardGeoms = cardRefs.current
+      .map((el) => (el ? el.getBoundingClientRect() : null))
+      .filter(Boolean) as DOMRect[];
+
+    if (cardGeoms.length === 0) return;
+
+    const circleRadiusPercent = 133 / 731; // do SVG desktop
+
+    const anchors = cardGeoms.map((cardRect) => {
+      const y = cardRect.top - wrapperRect.top + cardRect.height / 2;
+      const r = cardRect.width * circleRadiusPercent;
+      const circleLeftEdge = cardRect.left - wrapperRect.left; // círculo começa no x=0 do SVG
+      // OBS: O SVG do card tem círculo à esquerda; o bounding box do card já inclui o círculo.
+      return { y, r, circleLeftEdge };
     });
-    
-    setPaths(newPaths);
-    setSvgHeight(maxY + 40);
+
+    // Tronco (linha vertical) fica no "gutter" à esquerda do card
+    const minCircleLeft = Math.min(...anchors.map((a) => a.circleLeftEdge));
+    const trunkX = Math.max(10, minCircleLeft - 18);
+
+    // Âncora no cérebro: quadrante inferior-esquerdo do círculo
+    const brainAnchor = {
+      x: brainRect.left - wrapperRect.left + brainRect.width * 0.28,
+      y: brainRect.top - wrapperRect.top + brainRect.height * 0.72
+    };
+
+    const trunkYTop = brainAnchor.y;
+    const trunkYBottom = Math.max(...anchors.map((a) => a.y)) + 20;
+
+    const curveR = 12;
+
+    // Hooks: saem da borda do círculo, fazem curva e encostam no tronco
+    const hooks = anchors.map((a) => {
+      const startX = a.circleLeftEdge;
+      const y = a.y;
+      const d = `M ${startX} ${y}
+                 L ${trunkX + curveR} ${y}
+                 Q ${trunkX} ${y} ${trunkX} ${y - curveR}`;
+      return { d };
+    });
+
+    setLayout({
+      w,
+      h,
+      trunkX,
+      trunkYTop,
+      trunkYBottom,
+      brainAnchor,
+      hooks
+    });
   }, []);
 
   useLayoutEffect(() => {
-    calculatePaths();
-    
-    const handleResize = () => calculatePaths();
-    window.addEventListener('resize', handleResize);
-    
-    const timeout = setTimeout(calculatePaths, 150);
-    
+    calculate();
+
+    const onResize = () => calculate();
+    window.addEventListener("resize", onResize);
+    const t = window.setTimeout(calculate, 120);
+
     return () => {
-      window.removeEventListener('resize', handleResize);
-      clearTimeout(timeout);
+      window.removeEventListener("resize", onResize);
+      window.clearTimeout(t);
     };
-  }, [calculatePaths]);
+  }, [calculate]);
 
   return (
-    <div className="lg:hidden flex flex-col items-center relative">
-      {/* SVG que cobre toda a área - linha vertical subindo até o cérebro */}
-      <svg 
-        className="absolute left-0 top-0 w-full pointer-events-none z-0"
-        style={{ height: svgHeight || '100%' }}
-      >
-        <defs>
-          <linearGradient id="mobileConnectionGradLayout" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#a855f7" />
-            <stop offset="50%" stopColor="#ff2244" />
-            <stop offset="100%" stopColor="#a855f7" />
-          </linearGradient>
-        </defs>
-        
-        {/* Linha vertical principal - do cérebro até o último card */}
-        <line 
-          x1="64" 
-          y1={brainConnectionY > 0 ? brainConnectionY - 20 : 0}
-          x2="64" 
-          y2={svgHeight}
-          stroke="url(#mobileConnectionGradLayout)" 
-          strokeWidth="2"
-        />
-        
-        {/* Curvas de conexão para cada card */}
-        {paths.map((d, i) => (
-          <path
-            key={`mobile-curve-${i}`}
-            d={d.replace(/x = 24/g, '').replace(/24/g, '64')}
+    <div ref={wrapperRef} className="lg:hidden relative flex flex-col items-center">
+      {/* SVG das conexões (tronco + hooks + conexão no cérebro) */}
+      {layout && (
+        <svg
+          className="absolute inset-0 pointer-events-none z-0"
+          width="100%"
+          height="100%"
+          viewBox={`0 0 ${layout.w} ${layout.h}`}
+          preserveAspectRatio="none"
+        >
+          <defs>
+            <linearGradient id="mobileConnectionGradLayout" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="hsl(var(--frame-purple))" />
+              <stop offset="50%" stopColor="hsl(var(--frame-red))" />
+              <stop offset="100%" stopColor="hsl(var(--frame-purple))" />
+            </linearGradient>
+          </defs>
+
+          {/* Tronco vertical (liga todos os hooks) */}
+          <line
+            x1={layout.trunkX}
+            y1={layout.trunkYTop}
+            x2={layout.trunkX}
+            y2={layout.trunkYBottom}
             stroke="url(#mobileConnectionGradLayout)"
-            strokeWidth="2"
+            strokeWidth={2}
+            strokeLinecap="round"
+          />
+
+          {/* Conexão do tronco até o cérebro (curva + reto) */}
+          <path
+            d={`M ${layout.trunkX} ${layout.trunkYTop}
+                Q ${(layout.trunkX + layout.brainAnchor.x) / 2} ${layout.trunkYTop - 22}
+                  ${layout.brainAnchor.x} ${layout.brainAnchor.y}`}
+            stroke="url(#mobileConnectionGradLayout)"
+            strokeWidth={2}
             fill="none"
             strokeLinecap="round"
           />
-        ))}
-      </svg>
-      
+
+          {/* Hooks de cada card */}
+          {layout.hooks.map((h, i) => (
+            <path
+              key={`hook-${i}`}
+              d={h.d}
+              stroke="url(#mobileConnectionGradLayout)"
+              strokeWidth={2}
+              fill="none"
+              strokeLinecap="round"
+            />
+          ))}
+        </svg>
+      )}
+
       {/* Cérebro centralizado no topo */}
       <div ref={brainRef} className="relative z-10 mb-2 scale-[0.45] origin-center">
         <CentralBrain />
       </div>
-      
-      {/* Container dos cards */}
-      <div ref={containerRef} className="relative flex flex-col items-start w-full pl-16 pr-2">
-        {/* Cards empilhados - menores */}
+
+      {/* Cards */}
+      <div ref={cardsRef} className="relative z-10 flex flex-col items-start w-full pl-16 pr-2">
         {mobileOrder.map((idx, i) => (
-          <div 
-            key={camadas[idx].position} 
-            ref={el => cardRefs.current[i] = el}
-            className="relative w-full max-w-[260px] z-10"
+          <div
+            key={camadas[idx].position}
+            ref={(el) => (cardRefs.current[i] = el)}
+            className="relative w-full max-w-[260px]"
           >
             <MobileSvgCard camada={camadas[idx]} index={i} />
           </div>
