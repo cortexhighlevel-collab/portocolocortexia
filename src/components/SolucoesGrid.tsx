@@ -808,7 +808,7 @@ const SolucoesGrid = () => {
     </section>;
 };
 
-// Card mobile com design SVG similar ao desktop (círculo à esquerda + retângulo arredondado)
+// Card mobile com design SVG IDÊNTICO ao desktop (RightCardFrameSvg)
 const MobileSvgCard = ({
   camada,
   index
@@ -819,68 +819,71 @@ const MobileSvgCard = ({
   const Icon = camada.icon;
   const svgId = `mobile-card-${index}`;
   
-  // O círculo fica sobreposto ao retângulo (círculo na frente, retângulo começa por baixo)
-  // Círculo: centro x=45, raio=42 -> borda externa em x=87
-  // Retângulo: começa em x=20 (passa por baixo do círculo)
+  // Usando exatamente o mesmo SVG do desktop (viewBox 731x267), apenas escalado
+  // O círculo fica à esquerda sobrepondo o retângulo
   
   return (
     <motion.div 
       initial={{ opacity: 1 }} 
       whileInView={{ opacity: 1 }} 
       viewport={{ once: true, amount: 0.1 }} 
-      className="relative w-full my-2"
+      className="relative w-full my-1"
     >
-      {/* Container do card */}
-      <div className="relative w-full aspect-[340/100]">
-        {/* SVG Frame */}
+      {/* Container do card - aspect ratio igual ao desktop */}
+      <div className="relative w-full aspect-[731/267]">
+        {/* SVG Frame - IDÊNTICO ao RightCardFrameSvg do desktop */}
         <svg 
           className="absolute inset-0 w-full h-full" 
-          viewBox="0 0 340 100" 
+          viewBox="0 0 731 267" 
           fill="none" 
           xmlns="http://www.w3.org/2000/svg" 
           preserveAspectRatio="xMidYMid meet"
+          aria-hidden="true"
+          focusable="false"
         >
           <defs>
-            <linearGradient id={`mobileGrad-${svgId}`} x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient id={`frameGradientRight-${svgId}`} x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="hsl(var(--frame-red))" />
               <stop offset="100%" stopColor="hsl(var(--frame-purple))" />
             </linearGradient>
-            {/* Clip path para o background do retângulo (não inclui área do círculo) */}
-            <clipPath id={`mobileRectClip-${svgId}`}>
-              <rect x="85" y="8" width="247" height="84" rx="14" />
-            </clipPath>
-            {/* Clip path para o background do círculo */}
-            <clipPath id={`mobileCircleClip-${svgId}`}>
-              <circle cx="45" cy="50" r="40" />
+            <clipPath id={`cardClipRight-${svgId}`} clipPathUnits="userSpaceOnUse">
+              {/* Círculo + retângulo arredondado (silhueta total do card) */}
+              <circle cx="133.5" cy="133.5" r="133" />
+              <rect x="180.5" y="9" width="549.5" height="249" rx="40" ry="40" />
             </clipPath>
           </defs>
           
-          {/* 1. Retângulo (camada de trás) */}
-          {/* Background do retângulo */}
-          <g clipPath={`url(#mobileRectClip-${svgId})`}>
-            <rect x="0" y="0" width="340" height="100" fill="hsl(var(--frame-panel))" fillOpacity="0.92" />
+          {/* Background com clip path */}
+          <g id="svg-bg-group">
+            <g clipPath={`url(#cardClipRight-${svgId})`}>
+              <rect id="svg-bg-base-01" x="0" y="0" width="731" height="267" fill="hsl(var(--frame-panel))" fillOpacity="0.92" />
+            </g>
           </g>
-          {/* Bordas do retângulo */}
-          <rect x="85" y="5" width="250" height="90" rx="16" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1.5" fill="none" />
-          <rect x="89" y="9" width="242" height="82" rx="12" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1" fill="none" />
-          
-          {/* 2. Círculo (camada da frente - sobrepõe o retângulo) */}
-          {/* Background do círculo */}
-          <g clipPath={`url(#mobileCircleClip-${svgId})`}>
-            <rect x="0" y="0" width="100" height="100" fill="hsl(var(--frame-panel))" fillOpacity="0.95" />
+
+          <g id="svg-decor-group" />
+
+          {/* Formas principais - círculo sobreposto ao retângulo */}
+          <g id="svg-main-group">
+            {/* Retângulo arredondado (desenhado primeiro, fica atrás) */}
+            <path id="svg-main-shape-03" d="M180.501 258H690C712.091 258 730 240.091 730 218V49C730 26.9086 712.091 9 690 9H180.5" stroke={`url(#frameGradientRight-${svgId})`} vectorEffect="non-scaling-stroke" />
+            <path id="svg-main-shape-04" d="M192 253H685.499C707.591 253 725.499 235.091 725.499 213V53C725.499 30.9086 707.591 13 685.499 13H190" stroke={`url(#frameGradientRight-${svgId})`} vectorEffect="non-scaling-stroke" />
+            
+            {/* Círculos (desenhados por cima - sobreposição) */}
+            <circle id="svg-main-shape-01" cx="133.5" cy="133.5" r="133" stroke={`url(#frameGradientRight-${svgId})`} vectorEffect="non-scaling-stroke" />
+            <path id="svg-main-shape-02" d="M133.5 21.5C195.358 21.5 245.5 71.4223 245.5 133C245.5 194.578 195.358 244.5 133.5 244.5C71.642 244.5 21.5 194.578 21.5 133C21.5 71.4223 71.642 21.5 133.5 21.5Z" stroke={`url(#frameGradientRight-${svgId})`} vectorEffect="non-scaling-stroke" />
           </g>
-          {/* Bordas do círculo (desenhadas por cima) */}
-          <circle cx="45" cy="50" r="42" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1.5" fill="none" />
-          <circle cx="45" cy="50" r="36" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1" fill="none" />
+
+          <g id="svg-content-group" />
+          <g id="svg-effects-group" />
         </svg>
         
         {/* Ícone dentro do círculo */}
-        <div className="absolute left-[5%] top-1/2 -translate-y-1/2 w-[22%] flex items-center justify-center">
-          <Icon className="w-5 h-5 text-[#ff6b8a]" />
+        <div className="absolute left-[8%] top-1/2 -translate-y-1/2 w-[28%] flex items-center justify-center">
+          <Icon className="w-6 h-6 text-[#ff6b8a]" />
         </div>
         
-        {/* Conteúdo de texto - começa após o círculo */}
-        <div className="absolute left-[30%] right-2 top-1/2 -translate-y-1/2">
+        {/* Conteúdo de texto - posicionado igual ao desktop */}
+        <div className="absolute left-[38%] right-[5%] top-1/2 -translate-y-1/2">
           <h3 className="text-white font-bold text-[11px] leading-tight mb-0.5">
             {camada.titulo}
           </h3>
