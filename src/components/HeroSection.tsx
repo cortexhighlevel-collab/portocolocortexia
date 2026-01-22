@@ -6,12 +6,27 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 // ============ CONFIGURAÇÕES SEPARADAS DESKTOP / MOBILE ============
 const CTA_DESKTOP_SCALE = 0.50;
-const CTA_MOBILE_SCALE = 0.30; // Mobile 30% menor
+// Mobile: reduzido em ~30% vs antes (85% -> 60% da largura da tela)
+const CTA_MOBILE_TARGET_WIDTH_PERCENT = 0.60;
 
 const HeroSection = () => {
   const isMobile = useIsMobile();
+  const [mobileScale, setMobileScale] = useState(CTA_DESKTOP_SCALE);
 
-  // Componente do botão CTA reutilizável
+  useEffect(() => {
+    // Mantém a escala do MOBILE isolada do DESKTOP.
+    const computeMobileScale = () => {
+      const vw = window.innerWidth;
+      const targetWidth = vw * CTA_MOBILE_TARGET_WIDTH_PERCENT;
+      setMobileScale(targetWidth / 1008);
+    };
+
+    computeMobileScale();
+    window.addEventListener("resize", computeMobileScale);
+    return () => window.removeEventListener("resize", computeMobileScale);
+  }, []);
+
+  // Conteúdo do CTA (idêntico nos 2 botões)
   const CTAButton = () => (
     <div className="relative group rounded-full overflow-visible shrink-0 cta-border-glow">
       <button
@@ -43,6 +58,22 @@ const HeroSection = () => {
         <div className="absolute inset-x-0 top-0 h-[35%] bg-gradient-to-b from-white/8 to-transparent pointer-events-none z-20 rounded-t-full"></div>
       </button>
     </div>
+  );
+
+  // Link + animação (y/opacity) separados da escala.
+  // A escala fica num wrapper interno pra não conflitar com o transform do Framer Motion.
+  const CTALink = ({ scale }: { scale: number }) => (
+    <motion.a
+      href="#contact"
+      className="inline-block"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.6 }}
+    >
+      <div style={{ transform: `scale(${scale})`, transformOrigin: "center" }}>
+        <CTAButton />
+      </div>
+    </motion.a>
   );
 
   return (
@@ -91,35 +122,17 @@ const HeroSection = () => {
         </section>
       </ImageScrollSequence>
 
-      {/* CTA DESKTOP - só aparece no desktop */}
+      {/* CTA DESKTOP (isolado) */}
       {!isMobile && (
         <div className="cyberpunk-cta-wrapper">
-          <motion.a
-            href="#contact"
-            className="inline-block"
-            style={{ transform: `scale(${CTA_DESKTOP_SCALE})` }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          >
-            <CTAButton />
-          </motion.a>
+          <CTALink scale={CTA_DESKTOP_SCALE} />
         </div>
       )}
 
-      {/* CTA MOBILE - só aparece no mobile */}
+      {/* CTA MOBILE (isolado) */}
       {isMobile && (
         <div className="cyberpunk-cta-wrapper">
-          <motion.a
-            href="#contact"
-            className="inline-block"
-            style={{ transform: `scale(${CTA_MOBILE_SCALE})` }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          >
-            <CTAButton />
-          </motion.a>
+          <CTALink scale={mobileScale} />
         </div>
       )}
     </>
