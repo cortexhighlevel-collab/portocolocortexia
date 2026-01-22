@@ -15,10 +15,10 @@ const HeroSection = () => {
         return;
       }
 
-      // Mantém o “tamanho atual” (0.28) como padrão e só reduz em telas muito estreitas
+      // Escala menor para mobile - ajustável aqui
       const vw = window.innerWidth;
-      const fitScale = (vw - 32) / 1008; // 16px de padding de cada lado
-      const next = Math.min(0.28, Math.max(0.22, fitScale));
+      const fitScale = (vw - 32) / 1008;
+      const next = Math.min(0.20, Math.max(0.16, fitScale));
       setCtaScale(next);
     };
 
