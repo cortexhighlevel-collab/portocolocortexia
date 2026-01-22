@@ -421,17 +421,20 @@
     }
 
     .cyberpunk-cta-wrapper {
-      /* Mobile: evitar cortes por safe-area/URL bar e evitar translate/scale que conflitam com framer-motion */
+      /* Mobile: posicionamento fixo com safe-area */
+      position: fixed;
       display: flex;
       top: auto;
-      bottom: calc(env(safe-area-inset-bottom) + 18px);
+      bottom: calc(env(safe-area-inset-bottom) + 24px);
       left: 0;
       right: 0;
       translate: 0 0;
       scale: 1;
       transform-origin: center;
       justify-content: center;
-      padding: 0 14px;
+      padding: 0 16px;
+      z-index: 50;
+      pointer-events: auto;
     }
   }
 
