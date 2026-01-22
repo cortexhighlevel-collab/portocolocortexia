@@ -4,6 +4,7 @@ import { useRef, useState, useLayoutEffect, useCallback } from "react";
 import brainIcon from "@/assets/brain-icon.png";
 import { SolucoesNeuralConnections } from "@/components/SolucoesNeuralConnections";
 import { isIOSDevice } from "@/lib/platform";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Tipo para os dados das camadas
 type CamadaType = (typeof camadas)[0];
@@ -243,24 +244,38 @@ const CyberCard = ({
 // Cérebro central com moldura animada
 const CentralBrain = () => {
   const [isHovered, setIsHovered] = useState(false);
+  const isMobile = useIsMobile();
   const isIOSMobile =
     typeof window !== "undefined" &&
     window.innerWidth < 768 &&
     isIOSDevice();
 
-  // iOS mobile: evita filtros/blur grandes no WebKit.
-  const glowFilter = isIOSMobile ? undefined : isHovered ? "url(#glowStrong)" : "url(#glow)";
+  // Mobile: remove o efeito de "hover" (em touch ele pode ativar ao toque e ficar animando).
+  const hoverEnabled = !isMobile;
+  const hover = hoverEnabled && isHovered;
 
-  return <div className="relative flex items-center justify-center w-[260px] h-[260px] cursor-pointer" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+  // iOS mobile: evita filtros/blur grandes no WebKit.
+  const glowFilter = isIOSMobile ? undefined : hover ? "url(#glowStrong)" : "url(#glow)";
+
+  return (
+    <div
+      className={`relative flex items-center justify-center w-[260px] h-[260px] ${hoverEnabled ? "cursor-pointer" : "cursor-default"}`}
+      onMouseEnter={() => {
+        if (hoverEnabled) setIsHovered(true);
+      }}
+      onMouseLeave={() => {
+        if (hoverEnabled) setIsHovered(false);
+      }}
+    >
       {/* Ambient glow */}
       <motion.div className="absolute w-[200px] h-[200px] rounded-full" style={{
       background: "radial-gradient(circle, hsl(330 100% 50% / 0.2) 0%, transparent 60%)",
       filter: isIOSMobile ? "none" : "blur(30px)"
     }} animate={{
-      scale: isHovered ? [1.1, 1.3, 1.1] : [1, 1.15, 1],
-      opacity: isHovered ? [0.5, 0.8, 0.5] : [0.4, 0.6, 0.4]
+      scale: hover ? [1.1, 1.3, 1.1] : [1, 1.15, 1],
+      opacity: hover ? [0.5, 0.8, 0.5] : [0.4, 0.6, 0.4]
     }} transition={{
-      duration: isHovered ? 2 : 4,
+      duration: hover ? 2 : 4,
       repeat: Infinity,
       ease: "easeInOut"
     }} />
@@ -346,15 +361,15 @@ const CentralBrain = () => {
         <motion.g style={{
         transformOrigin: "130px 130px"
       }} animate={{
-        rotate: isHovered ? 360 : 0
+        rotate: hover ? 360 : 0
       }} transition={{
-        duration: isHovered ? 8 : 0,
-        repeat: isHovered ? Infinity : 0,
+        duration: hover ? 8 : 0,
+        repeat: hover ? Infinity : 0,
         ease: "linear"
       }}>
           {/* Arc 1 - Outer ring (radius 140) */}
           <motion.path d={`M ${130 + 115 * Math.cos(-70 * Math.PI / 180)} ${130 + 115 * Math.sin(-70 * Math.PI / 180)} 
-                A 115 115 0 0 1 ${130 + 115 * Math.cos(-20 * Math.PI / 180)} ${130 + 115 * Math.sin(-20 * Math.PI / 180)}`} fill="none" stroke="hsl(340 100% 50%)" strokeWidth={isHovered ? 5 : 4} strokeLinecap="round" filter={glowFilter} animate={{
+                A 115 115 0 0 1 ${130 + 115 * Math.cos(-20 * Math.PI / 180)} ${130 + 115 * Math.sin(-20 * Math.PI / 180)}`} fill="none" stroke="hsl(340 100% 50%)" strokeWidth={hover ? 5 : 4} strokeLinecap="round" filter={glowFilter} animate={{
           opacity: [0.8, 1, 0.8]
         }} transition={{
           duration: 1.5,
@@ -362,7 +377,7 @@ const CentralBrain = () => {
         }} />
           {/* Arc 2 - Second ring (radius 122) */}
           <motion.path d={`M ${130 + 100 * Math.cos(20 * Math.PI / 180)} ${130 + 100 * Math.sin(20 * Math.PI / 180)} 
-                A 100 100 0 0 1 ${130 + 100 * Math.cos(70 * Math.PI / 180)} ${130 + 100 * Math.sin(70 * Math.PI / 180)}`} fill="none" stroke="hsl(330 100% 55%)" strokeWidth={isHovered ? 4 : 3} strokeLinecap="round" filter={glowFilter} animate={{
+                A 100 100 0 0 1 ${130 + 100 * Math.cos(70 * Math.PI / 180)} ${130 + 100 * Math.sin(70 * Math.PI / 180)}`} fill="none" stroke="hsl(330 100% 55%)" strokeWidth={hover ? 4 : 3} strokeLinecap="round" filter={glowFilter} animate={{
           opacity: [0.6, 1, 0.6]
         }} transition={{
           duration: 1.5,
@@ -371,7 +386,7 @@ const CentralBrain = () => {
         }} />
           {/* Arc 3 - Third ring (radius 102) */}
           <motion.path d={`M ${130 + 83 * Math.cos(120 * Math.PI / 180)} ${130 + 83 * Math.sin(120 * Math.PI / 180)} 
-                A 83 83 0 0 1 ${130 + 83 * Math.cos(170 * Math.PI / 180)} ${130 + 83 * Math.sin(170 * Math.PI / 180)}`} fill="none" stroke="hsl(340 100% 50%)" strokeWidth={isHovered ? 5 : 4} strokeLinecap="round" filter={glowFilter} animate={{
+                A 83 83 0 0 1 ${130 + 83 * Math.cos(170 * Math.PI / 180)} ${130 + 83 * Math.sin(170 * Math.PI / 180)}`} fill="none" stroke="hsl(340 100% 50%)" strokeWidth={hover ? 5 : 4} strokeLinecap="round" filter={glowFilter} animate={{
           opacity: [0.8, 1, 0.8]
         }} transition={{
           duration: 1.5,
@@ -380,7 +395,7 @@ const CentralBrain = () => {
         }} />
           {/* Arc 4 - Outer ring opposite side (radius 140) */}
           <motion.path d={`M ${130 + 115 * Math.cos(200 * Math.PI / 180)} ${130 + 115 * Math.sin(200 * Math.PI / 180)} 
-                A 115 115 0 0 1 ${130 + 115 * Math.cos(250 * Math.PI / 180)} ${130 + 115 * Math.sin(250 * Math.PI / 180)}`} fill="none" stroke="hsl(330 100% 50%)" strokeWidth={isHovered ? 4 : 3} strokeLinecap="round" filter={glowFilter} animate={{
+                A 115 115 0 0 1 ${130 + 115 * Math.cos(250 * Math.PI / 180)} ${130 + 115 * Math.sin(250 * Math.PI / 180)}`} fill="none" stroke="hsl(330 100% 50%)" strokeWidth={hover ? 4 : 3} strokeLinecap="round" filter={glowFilter} animate={{
           opacity: [0.6, 1, 0.6]
         }} transition={{
           duration: 1.5,
@@ -389,7 +404,7 @@ const CentralBrain = () => {
         }} />
           {/* Arc 5 - Second ring opposite (radius 122) */}
           <motion.path d={`M ${130 + 100 * Math.cos(-160 * Math.PI / 180)} ${130 + 100 * Math.sin(-160 * Math.PI / 180)} 
-                A 100 100 0 0 1 ${130 + 100 * Math.cos(-110 * Math.PI / 180)} ${130 + 100 * Math.sin(-110 * Math.PI / 180)}`} fill="none" stroke="hsl(335 100% 52%)" strokeWidth={isHovered ? 3 : 2} strokeLinecap="round" filter={glowFilter} animate={{
+                A 100 100 0 0 1 ${130 + 100 * Math.cos(-110 * Math.PI / 180)} ${130 + 100 * Math.sin(-110 * Math.PI / 180)}`} fill="none" stroke="hsl(335 100% 52%)" strokeWidth={hover ? 3 : 2} strokeLinecap="round" filter={glowFilter} animate={{
           opacity: [0.5, 0.9, 0.5]
         }} transition={{
           duration: 1.5,
@@ -418,9 +433,9 @@ const CentralBrain = () => {
             <circle cx={pos.x} cy={pos.y} r={10} fill="none" stroke="hsl(330 50% 35%)" strokeWidth="2" />
             <motion.circle cx={pos.x} cy={pos.y} r={5} fill="hsl(330 100% 55%)" filter={glowFilter} animate={{
           opacity: [0.7, 1, 0.7],
-          scale: isHovered ? [1, 1.3, 1] : [1, 1.1, 1]
+          scale: hover ? [1, 1.3, 1] : [1, 1.1, 1]
         }} transition={{
-          duration: isHovered ? 1 : 2,
+          duration: hover ? 1 : 2,
           repeat: Infinity,
           delay: i * 0.15
         }} />
@@ -435,7 +450,8 @@ const CentralBrain = () => {
       <div className="absolute z-20 flex items-center justify-center">
         <img src={brainIcon} alt="AI Brain" className="w-[230px] h-[230px] object-contain" />
       </div>
-    </div>;
+    </div>
+  );
 };
 
 // Linhas neurálgicas conectando cards ao cérebro central
