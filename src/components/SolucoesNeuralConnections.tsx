@@ -171,10 +171,11 @@ export function SolucoesNeuralConnections(props: {
         };
 
         // Para bottom-center: forçar a linha a sair para a DIREITA primeiro (lead-out)
-        // antes de subir, assim não entra no card — valor menor para não encostar no SEO+AEO
+        // antes de subir, assim não entra no card. Mantém curto para não encostar no SEO+AEO.
         let pivotX: number | undefined;
         if (pos === "bottom-center") {
-          pivotX = start.x + 40;
+          const leadOut = Math.min(16, w * 0.02);
+          pivotX = start.x + leadOut;
         }
 
         const d = roundedOrthoPath(start, end, "horizontal", 24, pivotX);
