@@ -719,7 +719,6 @@ const SolucoesGrid = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const brainRef = useRef<HTMLDivElement | null>(null);
   const cardElsRef = useRef<Array<HTMLDivElement | null>>([]);
-  
   return <section id="solucoes" className="relative bg-black py-24 md:py-32 overflow-hidden">
       {/* (removido) Circuitos de borda */}
       
@@ -757,19 +756,13 @@ const SolucoesGrid = () => {
           
           {/* Cards empilhados verticalmente com linhas */}
           <div className="flex flex-col items-center w-full px-4">
-            {mobileOrder.map((idx, i) => (
-              <div key={camadas[idx].position} className="relative w-full max-w-[380px]">
+            {mobileOrder.map((idx, i) => <div key={camadas[idx].position} className="relative w-full max-w-[380px]">
                 {/* Linha de conexão vertical entre cards */}
-                {i > 0 && (
-                  <div className="absolute left-[68px] -top-4 w-0.5 h-4 bg-gradient-to-b from-[#ff2244] to-[#a855f7]" />
-                )}
+                {i > 0 && <div className="absolute left-[68px] -top-4 w-0.5 h-4 bg-gradient-to-b from-[#ff2244] to-[#a855f7]" />}
                 <MobileSvgCard camada={camadas[idx]} index={i} />
                 {/* Linha após o card (exceto último) */}
-                {i < mobileOrder.length - 1 && (
-                  <div className="absolute left-[68px] -bottom-4 w-0.5 h-4 bg-gradient-to-b from-[#a855f7] to-[#ff2244]" />
-                )}
-              </div>
-            ))}
+                {i < mobileOrder.length - 1 && <div className="absolute left-[68px] -bottom-4 w-0.5 h-4 bg-gradient-to-b from-[#a855f7] to-[#ff2244]" />}
+              </div>)}
           </div>
         </div>
         
@@ -823,24 +816,18 @@ const MobileSvgCard = ({
 }) => {
   const Icon = camada.icon;
   const svgId = `mobile-card-${index}`;
-  
-  return (
-    <motion.div
-      initial={{ opacity: 1 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true, amount: 0.1 }}
-      className="relative w-full my-4"
-    >
+  return <motion.div initial={{
+    opacity: 1
+  }} whileInView={{
+    opacity: 1
+  }} viewport={{
+    once: true,
+    amount: 0.1
+  }} className="relative w-full my-4">
       {/* Container do card */}
       <div className="relative w-full aspect-[380/110]">
         {/* SVG Frame */}
-        <svg
-          className="absolute inset-0 w-full h-full"
-          viewBox="0 0 380 110"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="xMidYMid meet"
-        >
+        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 380 110" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
           <defs>
             <linearGradient id={`mobileGrad-${svgId}`} x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="hsl(var(--frame-red))" />
@@ -867,11 +854,7 @@ const MobileSvgCard = ({
         </svg>
         
         {/* Ícone no círculo */}
-        <div className="absolute left-[22px] top-1/2 -translate-y-1/2 w-[66px] h-[66px] flex items-center justify-center">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] flex items-center justify-center">
-            <Icon className="w-6 h-6 text-[#a855f7]" />
-          </div>
-        </div>
+        
         
         {/* Conteúdo de texto */}
         <div className="absolute left-[120px] right-4 top-1/2 -translate-y-1/2">
@@ -886,8 +869,6 @@ const MobileSvgCard = ({
           </p>
         </div>
       </div>
-    </motion.div>
-  );
+    </motion.div>;
 };
-
 export default SolucoesGrid;
