@@ -423,12 +423,11 @@
     .cyberpunk-cta-wrapper {
       /* Mobile: botão fixo fora do overflow:hidden */
       position: fixed;
-      display: flex;
       top: auto;
       bottom: calc(env(safe-area-inset-bottom) + 40px);
-      left: 0;
-      right: 0;
-      justify-content: center;
+      left: 50%;
+      right: auto;
+      translate: -50% 0;
       z-index: 50;
       pointer-events: auto;
       transform-origin: center;
