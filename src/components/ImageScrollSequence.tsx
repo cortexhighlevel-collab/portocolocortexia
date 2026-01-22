@@ -22,8 +22,7 @@ const mobileFrames = toSortedFrameList(
   import.meta.glob("/src/assets/hero-frames-mobile/frame-*.jpg", { eager: true, import: "default" })
 );
 
-// Step padrão (mobile). No desktop o step vira “livre” (mapeamento direto).
-const MAX_STEP = 2;
+  // OBS: manter mapeamento direto (0..N-1) também no mobile quando estiver em modo canvas.
 
 // Desktop: suavização via interpolação (lerp) em RAF.
 // Valores maiores = mais responsivo.
@@ -88,7 +87,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const DESKTOP_FRAME_BUFFER = 16;
   // iOS mobile: buffer mínimo para evitar pressão de memória.
   const effectiveFrameBuffer = isIOS ? 1 : isMobile ? 6 : DESKTOP_FRAME_BUFFER;
-  const effectiveMaxStep = isMobile ? MAX_STEP : frames.length;
+  const effectiveMaxStep = frames.length;
   const allowBackgroundPreload = !isIOS;
   const allowDecode = !isIOS;
   const gateOnLoadedDesktop = true;
@@ -462,7 +461,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
         loadFrame(nextFrame, "near");
 
         // Escolhe o frame carregado mais próximo do ALVO (não do current), para reduzir “saltos” quando destrava.
-        const radius = isMobile ? MAX_STEP : 10;
+        const radius = isMobile ? 6 : 10;
         let bestCandidate = current;
         let bestDistance = Number.POSITIVE_INFINITY;
         for (let offset = 1; offset <= radius; offset++) {
