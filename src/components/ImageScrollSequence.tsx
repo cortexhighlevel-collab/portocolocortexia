@@ -27,6 +27,10 @@ const FRAME_BUFFER = 10;
 // Step padrão (mobile). No desktop o step vira “livre” (mapeamento direto).
 const MAX_STEP = 2;
 
+// Desktop: suavização via interpolação (lerp) em RAF.
+// Valores menores = mais suave (mas mais “atraso”); maiores = mais responsivo.
+const DESKTOP_SMOOTH_FACTOR = 0.08;
+
 // CRITICAL (mobile/iPhone): manter poucos <img> no DOM evita estouro de memória/GPU.
 // Pool fixo: reaproveita N elementos e só troca o src conforme o frame muda.
 const POOL_SIZE = 7;
@@ -48,6 +52,10 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const rafIdRef = useRef<number | null>(null);
   const displayedFrameRef = useRef(0);
   const previousDisplayedFrameRef = useRef(0);
+  const targetFrameFloatRef = useRef(0);
+  const currentFrameFloatRef = useRef(0);
+  const lastPreloadCenterRef = useRef(-999);
+  const lastTargetFrameIntRef = useRef(0);
   const loadedFramesRef = useRef<Set<number>>(new Set());
   const decodedFramesRef = useRef<Set<number>>(new Set());
   const loadingFramesRef = useRef<Set<number>>(new Set());
@@ -93,6 +101,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const allowDecode = !isIOS;
   const gateOnLoadedDesktop = true;
   const gateOnLoaded = (!isMobile && gateOnLoadedDesktop) || (isMobile && !isIOS);
+
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
   const ensurePoolSize = () => {
     if (poolElsRef.current.length !== POOL_SIZE) {
@@ -231,6 +241,10 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     loadingFramesRef.current = new Set();
     displayedFrameRef.current = 0;
     previousDisplayedFrameRef.current = 0;
+    targetFrameFloatRef.current = 0;
+    currentFrameFloatRef.current = 0;
+    lastPreloadCenterRef.current = -999;
+    lastTargetFrameIntRef.current = 0;
     setIsReady(false);
 
     // Garante estado visual inicial (frame 0) sem depender de 48 <img>
@@ -316,48 +330,55 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       const scrollStart = Math.max(0, -rect.top);
       const progress = clamp(scrollStart / scrollRange, 0, 1);
 
-      // Frame alvo baseado no progresso
-      const targetFrame = Math.round(progress * (frames.length - 1));
+      // Frame alvo baseado no progresso (float para suavização)
+      const targetFloat = progress * (frames.length - 1);
+      targetFrameFloatRef.current = targetFloat;
+      const targetFrameInt = clamp(Math.round(targetFloat), 0, frames.length - 1);
+
+      // Suavização (lerp) do frame atual em direção ao alvo
+      const smoothFactor = isMobile ? 0.3 : DESKTOP_SMOOTH_FACTOR;
+      const prevFloat = currentFrameFloatRef.current;
+      const nextFloat = lerp(prevFloat, targetFloat, smoothFactor);
+      currentFrameFloatRef.current = nextFloat;
+
+      const desiredFrame = clamp(Math.round(nextFloat), 0, frames.length - 1);
       const current = displayedFrameRef.current;
 
-      // Pré-carregar frames próximos do target
-      loadNearbyFrames(targetFrame);
+      // Pré-carregar frames próximos só quando o centro muda (reduz carga em scroll rápido)
+      if (Math.abs(targetFrameInt - lastPreloadCenterRef.current) >= 2) {
+        lastPreloadCenterRef.current = targetFrameInt;
+        loadNearbyFrames(targetFrameInt);
+      }
+
+      // Em scroll muito rápido, cria um “corredor” no sentido do movimento para evitar buracos
+      const targetDelta = targetFrameInt - lastTargetFrameIntRef.current;
+      if (!isMobile && Math.abs(targetDelta) >= 4) {
+        const dir = targetDelta > 0 ? 1 : -1;
+        const corridorLimit = 12;
+        for (let step = 1; step <= corridorLimit; step++) {
+          const idx = targetFrameInt + dir * step;
+          if (idx < 0 || idx >= frames.length) break;
+          if (!loadedFramesRef.current.has(idx)) loadFrame(idx, "near");
+        }
+      }
+      lastTargetFrameIntRef.current = targetFrameInt;
 
       // Se já está no frame correto, não faz nada
-      if (targetFrame === current) {
+      if (desiredFrame === current) {
         rafIdRef.current = window.requestAnimationFrame(tick);
         return;
       }
 
-      // Calcular próximo frame com limite de step (progressão sequencial)
-      let nextFrame: number;
-      if (targetFrame > current) {
-        // Scrollando para baixo
-        nextFrame = Math.min(current + effectiveMaxStep, targetFrame);
-      } else {
-        // Scrollando para cima
-        nextFrame = Math.max(current - effectiveMaxStep, targetFrame);
-      }
-
-      // Garantir bounds
-      nextFrame = clamp(nextFrame, 0, frames.length - 1);
+      // Frame candidato (já suavizado)
+      let nextFrame = desiredFrame;
 
       // Evitar “pulo” no desktop: se o frame alvo não estiver carregado, não troca.
       // Em vez disso, escolhe o melhor frame já carregado mais próximo do frame alvo e continua carregando o caminho.
       if (gateOnLoaded && !loadedFramesRef.current.has(nextFrame)) {
         loadFrame(nextFrame, "near");
 
-        // 1) Pré-carrega também um “corredor” em direção ao alvo (capped), porque scroll rápido cria buracos.
-        const dir = nextFrame > current ? 1 : -1;
-        const corridorLimit = isMobile ? MAX_STEP : 12;
-        for (let step = 1; step <= corridorLimit; step++) {
-          const idx = current + dir * step;
-          if (idx < 0 || idx >= frames.length) break;
-          if (!loadedFramesRef.current.has(idx)) loadFrame(idx, "near");
-        }
-
-        // 2) Escolhe o frame carregado mais próximo do ALVO (não do current), para reduzir “saltos” quando destrava.
-        const radius = isMobile ? MAX_STEP : 8;
+        // Escolhe o frame carregado mais próximo do ALVO (não do current), para reduzir “saltos” quando destrava.
+        const radius = isMobile ? MAX_STEP : 10;
         let bestCandidate = current;
         let bestDistance = Number.POSITIVE_INFINITY;
         for (let offset = 1; offset <= radius; offset++) {
@@ -416,7 +437,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const firstFrame = frames[0];
 
   return (
-    <div ref={scrollContainerRef} className="relative" style={{ height: "300vh" }}>
+    <div ref={scrollContainerRef} className="relative" style={{ height: "200vh" }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* Fallback: primeira imagem sempre visível */}
         <div
