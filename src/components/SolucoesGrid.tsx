@@ -1,8 +1,12 @@
 import { motion } from "framer-motion";
 import { Bot, BarChart3, Brain, Users, Sparkles, Search } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, useLayoutEffect, useCallback } from "react";
 import brainIcon from "@/assets/brain-icon.png";
 import { SolucoesNeuralConnections } from "@/components/SolucoesNeuralConnections";
+
+// Tipo para os dados das camadas
+type CamadaType = (typeof camadas)[0];
+
 const camadas = [{
   icon: Bot,
   titulo: "Automação com IA",
@@ -745,79 +749,7 @@ const SolucoesGrid = () => {
         </motion.div>
         
         {/* ===== LAYOUT MOBILE ===== */}
-        <div className="lg:hidden flex flex-col items-center">
-          {/* Cérebro centralizado no topo (tamanho reduzido) */}
-          <div className="relative z-10 mb-6 scale-[0.5] origin-center">
-            <CentralBrain />
-          </div>
-          
-          {/* Container dos cards com SVG de conexões */}
-          <div className="relative flex flex-col items-start w-full pl-16 pr-4">
-            {/* SVG das linhas de conexão - curvas saindo dos cards para linha vertical */}
-            <svg 
-              className="absolute left-0 top-[-20px] w-24 pointer-events-none z-0"
-              style={{ height: 'calc(100% + 20px)' }}
-              preserveAspectRatio="none"
-            >
-              <defs>
-                <linearGradient id="mobileConnectionGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#a855f7" />
-                  <stop offset="50%" stopColor="#ff2244" />
-                  <stop offset="100%" stopColor="#a855f7" />
-                </linearGradient>
-              </defs>
-              
-              {/* Linha vertical principal (espinha dorsal) */}
-              <line 
-                x1="20" 
-                y1="0" 
-                x2="20" 
-                y2="100%" 
-                stroke="url(#mobileConnectionGrad)" 
-                strokeWidth="2"
-              />
-              
-              {/* Curvas de conexão para cada card - saem horizontal, curvam e sobem */}
-              {mobileOrder.map((_, i) => {
-                // Altura do card baseada no aspect ratio 731/267
-                // Com max-width de 280px: height = 280 * (267/731) ≈ 102px
-                // my-1 = 4px cada lado = 8px total entre cards
-                const cardHeight = 102;
-                const cardSpacing = 8;
-                const totalCardHeight = cardHeight + cardSpacing;
-                
-                // Centro vertical do círculo do card (o círculo está no meio verticalmente)
-                // +20px para compensar o offset do SVG
-                const cardCenterY = 20 + (i * totalCardHeight) + (cardHeight / 2);
-                
-                // Posições X
-                const lineX = 20; // Linha vertical principal
-                const cardCircleEdge = 60; // Borda esquerda do círculo do card
-                const curveRadius = 15;
-                
-                // Curva: sai horizontal do círculo, faz curva de 90°, e conecta na linha vertical
-                return (
-                  <path
-                    key={`curve-${i}`}
-                    d={`M ${cardCircleEdge} ${cardCenterY}
-                        L ${lineX + curveRadius} ${cardCenterY}
-                        Q ${lineX} ${cardCenterY} ${lineX} ${cardCenterY - curveRadius}`}
-                    stroke="url(#mobileConnectionGrad)"
-                    strokeWidth="2"
-                    fill="none"
-                  />
-                );
-              })}
-            </svg>
-            
-            {/* Cards empilhados */}
-            {mobileOrder.map((idx, i) => (
-              <div key={camadas[idx].position} className="relative w-full max-w-[280px] ml-2 z-10">
-                <MobileSvgCard camada={camadas[idx]} index={i} />
-              </div>
-            ))}
-          </div>
-        </div>
+        <MobileLayout camadas={camadas} mobileOrder={mobileOrder} />
         
         {/* ===== LAYOUT DESKTOP ===== */}
         <div ref={containerRef} className="relative min-h-[700px] hidden lg:flex items-center justify-center">
@@ -864,7 +796,7 @@ const MobileSvgCard = ({
   camada,
   index
 }: {
-  camada: (typeof camadas)[0];
+  camada: CamadaType;
   index: number;
 }) => {
   const Icon = camada.icon;
@@ -949,4 +881,136 @@ const MobileSvgCard = ({
     </motion.div>
   );
 };
+
+// Layout Mobile com conexões que medem posições reais dos cards
+const MobileLayout = ({ 
+  camadas, 
+  mobileOrder 
+}: { 
+  camadas: CamadaType[];
+  mobileOrder: number[];
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [paths, setPaths] = useState<string[]>([]);
+  const [lineHeight, setLineHeight] = useState(0);
+
+  const calculatePaths = useCallback(() => {
+    if (!containerRef.current) return;
+    
+    const container = containerRef.current;
+    const containerRect = container.getBoundingClientRect();
+    
+    const newPaths: string[] = [];
+    let maxY = 0;
+    
+    cardRefs.current.forEach((cardEl, i) => {
+      if (!cardEl) return;
+      
+      const cardRect = cardEl.getBoundingClientRect();
+      
+      // Centro Y do card relativo ao container
+      const cardCenterY = cardRect.top - containerRect.top + cardRect.height / 2;
+      
+      // Borda esquerda do círculo (18% da largura do card é onde fica o centro do círculo no SVG)
+      // O círculo tem centro em 133.5 de 731, então ~18.3% da largura
+      // Raio do círculo é 133 de 731, então ~18.2% da largura
+      const circleRadiusPercent = 133 / 731;
+      const circleRadius = cardRect.width * circleRadiusPercent;
+      const circleCenterX = cardRect.left - containerRect.left + circleRadius;
+      const circleLeftEdge = circleCenterX - circleRadius;
+      
+      // Linha vertical está em x = 20
+      const lineX = 20;
+      const curveRadius = 12;
+      
+      // Path: da borda do círculo -> horizontal -> curva 90° -> linha vertical
+      const path = `M ${circleLeftEdge} ${cardCenterY}
+                    L ${lineX + curveRadius} ${cardCenterY}
+                    Q ${lineX} ${cardCenterY} ${lineX} ${cardCenterY - curveRadius}`;
+      
+      newPaths.push(path);
+      
+      if (cardCenterY > maxY) maxY = cardCenterY;
+    });
+    
+    setPaths(newPaths);
+    setLineHeight(maxY + 20);
+  }, []);
+
+  useLayoutEffect(() => {
+    calculatePaths();
+    
+    const handleResize = () => calculatePaths();
+    window.addEventListener('resize', handleResize);
+    
+    // Recalcular após um pequeno delay para garantir que o layout estabilizou
+    const timeout = setTimeout(calculatePaths, 100);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timeout);
+    };
+  }, [calculatePaths]);
+
+  return (
+    <div className="lg:hidden flex flex-col items-center">
+      {/* Cérebro centralizado no topo */}
+      <div className="relative z-10 mb-4 scale-[0.5] origin-center">
+        <CentralBrain />
+      </div>
+      
+      {/* Container dos cards com conexões */}
+      <div ref={containerRef} className="relative flex flex-col items-start w-full pl-10 pr-2">
+        {/* SVG das linhas de conexão */}
+        <svg 
+          className="absolute left-0 top-0 w-full pointer-events-none z-0"
+          style={{ height: lineHeight || '100%' }}
+        >
+          <defs>
+            <linearGradient id="mobileConnectionGradLayout" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#a855f7" />
+              <stop offset="50%" stopColor="#ff2244" />
+              <stop offset="100%" stopColor="#a855f7" />
+            </linearGradient>
+          </defs>
+          
+          {/* Linha vertical principal */}
+          <line 
+            x1="20" 
+            y1="0" 
+            x2="20" 
+            y2={lineHeight || '100%'}
+            stroke="url(#mobileConnectionGradLayout)" 
+            strokeWidth="2"
+          />
+          
+          {/* Curvas de conexão */}
+          {paths.map((d, i) => (
+            <path
+              key={`mobile-curve-${i}`}
+              d={d}
+              stroke="url(#mobileConnectionGradLayout)"
+              strokeWidth="2"
+              fill="none"
+              strokeLinecap="round"
+            />
+          ))}
+        </svg>
+        
+        {/* Cards empilhados */}
+        {mobileOrder.map((idx, i) => (
+          <div 
+            key={camadas[idx].position} 
+            ref={el => cardRefs.current[i] = el}
+            className="relative w-full max-w-[300px] z-10"
+          >
+            <MobileSvgCard camada={camadas[idx]} index={i} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export default SolucoesGrid;
