@@ -13,18 +13,18 @@ function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
 }
 
-function orthoPath(start: Point, end: Point, mid: { x?: number; y?: number }) {
-  // Orthogonal circuit-style path with a single bend (or two, depending on mid).
-  if (typeof mid.x === "number") {
-    const mx = mid.x;
-    return `M ${start.x} ${start.y} L ${mx} ${start.y} L ${mx} ${end.y} L ${end.x} ${end.y}`;
-  }
-  if (typeof mid.y === "number") {
-    const my = mid.y;
-    return `M ${start.x} ${start.y} L ${start.x} ${my} L ${end.x} ${my} L ${end.x} ${end.y}`;
-  }
-  const mx = (start.x + end.x) / 2;
-  return `M ${start.x} ${start.y} L ${mx} ${start.y} L ${mx} ${end.y} L ${end.x} ${end.y}`;
+function curvePath(start: Point, end: Point, curvature = 0.4) {
+  // Smooth Bezier curve path from start to end
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  
+  // Control points for smooth S-curve
+  const cp1x = start.x + dx * curvature;
+  const cp1y = start.y;
+  const cp2x = end.x - dx * curvature;
+  const cp2y = end.y;
+  
+  return `M ${start.x} ${start.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${end.x} ${end.y}`;
 }
 
 export function SolucoesNeuralConnections(props: {
@@ -115,19 +115,9 @@ export function SolucoesNeuralConnections(props: {
           y: target.y,
         };
 
-        // Caminho ortogonal (ajustes por posição p/ evitar sobreposição)
-        const dx = end.x - start.x;
-        const dy = end.y - start.y;
-
-        const midXBase = start.x + dx * (pos.includes("left") ? 0.62 : pos.includes("right") ? 0.38 : 0.5);
-        const midYBase = start.y + dy * 0.55;
-
-        const stagger = (idx - 2) * 10;
-
-        const d =
-          pos === "bottom-center"
-            ? orthoPath(start, end, { y: midYBase + 30 })
-            : orthoPath(start, end, { x: midXBase + stagger });
+        // Curvatura variada por posição para visual orgânico
+        const curvature = pos === "bottom-center" ? 0.5 : pos.includes("left") ? 0.35 : 0.45;
+        const d = curvePath(start, end, curvature);
 
         conns.push({
           key: `${pos}-${idx}`,
