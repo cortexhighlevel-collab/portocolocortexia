@@ -421,10 +421,10 @@
     }
 
     .cyberpunk-cta-wrapper {
-      /* Mobile: botão fixo fora do overflow:hidden */
+      /* Mobile: botão posicionado perto do rosto do personagem */
       position: fixed;
-      top: auto;
-      bottom: calc(env(safe-area-inset-bottom) + 40px);
+      top: 55%;
+      bottom: auto;
       left: 50%;
       right: auto;
       transform: translateX(-50%);
