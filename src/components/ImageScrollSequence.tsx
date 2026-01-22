@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { isIOSDevice } from "@/lib/platform";
 
 // iOS/Safari: reduzir peso de JS e evitar 96 imports diretos.
 // A glob gera um map de URLs e a gente ordena pelos números (001..048).
@@ -21,9 +22,9 @@ const mobileFrames = toSortedFrameList(
   import.meta.glob("/src/assets/hero-frames-mobile/frame-*.jpg", { eager: true, import: "default" })
 );
 
-// Número de frames vizinhos a manter carregados (para trás e para frente)
+// Buffer padrão (desktop). No iPhone vamos reduzir isso dinamicamente.
 const FRAME_BUFFER = 10;
-// Máximo de frames que pode pular por tick (previne saltos)
+// Step padrão (mobile). No desktop o step vira “livre” (mapeamento direto).
 const MAX_STEP = 2;
 
 // CRITICAL (mobile/iPhone): manter poucos <img> no DOM evita estouro de memória/GPU.
@@ -53,8 +54,17 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const poolElsRef = useRef<Array<HTMLImageElement | null>>([]);
   const poolFrameIndexRef = useRef<number[]>(Array.from({ length: POOL_SIZE }, () => -1));
   const isMobile = useIsMobile();
+  const isIOS = isMobile && isIOSDevice();
 
   const frames = isMobile ? mobileFrames : desktopFrames;
+
+  // iOS (Chrome/Safari) usa WebKit e costuma “derrubar” a aba por memória/GPU.
+  // Mantemos o efeito de 48 frames, mas reduzimos agressivamente preload/decoding.
+  const effectiveFrameBuffer = isIOS ? 2 : isMobile ? 6 : FRAME_BUFFER;
+  const effectiveMaxStep = isMobile ? MAX_STEP : frames.length; // desktop volta a seguir o scroll sem limitação
+  const allowBackgroundPreload = !isIOS;
+  const allowDecode = !isIOS;
+  const gateOnLoaded = !isIOS; // no iOS: não bloqueia troca de frame esperando preload
 
   const ensurePoolSize = () => {
     if (poolElsRef.current.length !== POOL_SIZE) {
@@ -141,6 +151,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
         // Tenta decodificar em background para suavidade
         const maybeDecode = () => {
           if (decodedFramesRef.current.has(index)) return;
+          if (!allowDecode) return;
           if (img.decode) img.decode().then(() => decodedFramesRef.current.add(index)).catch(() => void 0);
         };
 
@@ -164,8 +175,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
   // Carregar frames próximos ao frame atual
   const loadNearbyFrames = (centerFrame: number) => {
-    const start = Math.max(0, centerFrame - FRAME_BUFFER);
-    const end = Math.min(frames.length - 1, centerFrame + FRAME_BUFFER);
+    const start = Math.max(0, centerFrame - effectiveFrameBuffer);
+    const end = Math.min(frames.length - 1, centerFrame + effectiveFrameBuffer);
 
     for (let i = start; i <= end; i++) {
       loadFrame(i, "near");
@@ -199,7 +210,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
     // Pré-carregar os primeiros frames
     const preloadInitial = async () => {
-      const initialFramesToLoad = Math.min(FRAME_BUFFER, frames.length);
+      const initialFramesToLoad = Math.min(effectiveFrameBuffer + 1, frames.length);
       const promises: Promise<void>[] = [];
       for (let i = 0; i < initialFramesToLoad; i++) {
         promises.push(loadFrame(i, "near"));
@@ -213,7 +224,11 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
         requestIdleCallback?: (cb: (deadline?: { timeRemaining: () => number }) => void, opts?: { timeout?: number }) => number;
       }).requestIdleCallback;
 
-      const maxBackground = isMobile ? Math.min(24, frames.length) : frames.length;
+      const maxBackground = allowBackgroundPreload
+        ? isMobile
+          ? Math.min(24, frames.length)
+          : frames.length
+        : 0;
       let cursor = 0;
 
       const chunk = (deadline?: { timeRemaining: () => number }) => {
@@ -284,10 +299,10 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       let nextFrame: number;
       if (targetFrame > current) {
         // Scrollando para baixo
-        nextFrame = Math.min(current + MAX_STEP, targetFrame);
+        nextFrame = Math.min(current + effectiveMaxStep, targetFrame);
       } else {
         // Scrollando para cima
-        nextFrame = Math.max(current - MAX_STEP, targetFrame);
+        nextFrame = Math.max(current - effectiveMaxStep, targetFrame);
       }
 
       // Garantir bounds
@@ -295,7 +310,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
       // Atualiza sem setState (evita re-render do Hero e elimina flicker/travadas)
       // Se o frame ainda não estiver carregado, força carga e mantém o atual até ter ao menos "loaded".
-      if (!loadedFramesRef.current.has(nextFrame)) {
+      if (gateOnLoaded && !loadedFramesRef.current.has(nextFrame)) {
         loadFrame(nextFrame, "near");
       } else {
         const oldCurrent = displayedFrameRef.current;
