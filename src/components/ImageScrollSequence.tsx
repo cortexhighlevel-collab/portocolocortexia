@@ -68,27 +68,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
   // DEBUG/ISOLATION MODE: no mobile, o Hero fica estático (sem sequência de frames)
   // para isolarmos se o crash no iOS vem do Hero.
-  if (isMobile) {
-    const firstFrame = mobileFrames[0];
-    return (
-      <div ref={scrollContainerRef} className="relative" style={{ height: "100vh" }}>
-        <div className="sticky top-0 h-screen w-full overflow-hidden">
-          <div
-            className="pointer-events-none absolute inset-0 z-0"
-            style={{
-              backgroundImage: `url(${firstFrame})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center center",
-              transform: "scale(1.15)",
-              transformOrigin: "center center",
-            }}
-            aria-hidden="true"
-          />
-          <div className="relative z-10 h-full">{children}</div>
-        </div>
-      </div>
-    );
-  }
+  // IMPORTANTE: não faça return cedo aqui — isso quebra a ordem de hooks.
+  const renderStaticMobile = isMobile;
 
   // Desktop: prioriza fidelidade e responsividade em scroll rápido.
   // A principal diferença entre Preview vs Published costuma ser latência/cache: no publicado, os JPGs podem demorar
@@ -222,6 +203,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   };
 
   useEffect(() => {
+    if (renderStaticMobile) return;
     const el = scrollContainerRef.current;
     if (!el) return;
 
@@ -246,6 +228,12 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     lastPreloadCenterRef.current = -999;
     lastTargetFrameIntRef.current = 0;
     setIsReady(false);
+
+    // Mobile estático: não faz preload/tick, só marca como pronto.
+    if (renderStaticMobile) {
+      setIsReady(true);
+      return;
+    }
 
     // Garante estado visual inicial (frame 0) sem depender de 48 <img>
     renderPoolForFrames(0, 0);
@@ -299,9 +287,10 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     };
 
     preloadInitial();
-  }, [isMobile]);
+  }, [isMobile, renderStaticMobile]);
 
   useEffect(() => {
+    if (renderStaticMobile) return;
     const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
 
     const tick = () => {
@@ -432,9 +421,31 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
         rafIdRef.current = null;
       }
     };
-  }, [frames, isInView]);
+  }, [frames, isInView, renderStaticMobile]);
 
   const firstFrame = frames[0];
+
+  if (renderStaticMobile) {
+    const staticFrame = mobileFrames[0] ?? firstFrame;
+    return (
+      <div ref={scrollContainerRef} className="relative" style={{ height: "100vh" }}>
+        <div className="sticky top-0 h-screen w-full overflow-hidden">
+          <div
+            className="pointer-events-none absolute inset-0 z-0"
+            style={{
+              backgroundImage: `url(${staticFrame})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center center",
+              transform: "scale(1.15)",
+              transformOrigin: "center center",
+            }}
+            aria-hidden="true"
+          />
+          <div className="relative z-10 h-full">{children}</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div ref={scrollContainerRef} className="relative" style={{ height: "200vh" }}>
