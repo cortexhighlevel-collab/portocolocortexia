@@ -51,7 +51,7 @@ const HeroSection = () => {
 
         <motion.a
           href="#contact"
-          className={`cyberpunk-cta-wrapper ${isMobile ? "!scale-[0.045]" : ""}`}
+          className={`cyberpunk-cta-wrapper ${isMobile ? "!scale-[0.06]" : ""}`}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
