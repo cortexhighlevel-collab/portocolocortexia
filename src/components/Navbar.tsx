@@ -171,6 +171,7 @@ function Navbar() {
 
           <div className="absolute inset-0 w-full h-full flex items-center justify-center z-30">
             <div ref={contentRef} className="flex-none flex items-center px-8 mt-4">
+              {/* Desktop: mostra todos os links */}
               <div className="hidden lg:flex gap-10 font-medium text-base">
                 {navLinks.map((link) => (
                   <a
@@ -183,9 +184,10 @@ function Navbar() {
                   </a>
                 ))}
               </div>
+              {/* Mobile: mostra Menu centralizado com ícone */}
               <div
                 onClick={() => setShowMenu(true)}
-                className="cursor-pointer ms-auto flex items-center gap-2 lg:hidden font-medium text-white"
+                className="cursor-pointer flex items-center gap-2 lg:hidden font-medium text-white"
               >
                 <Zap className="size-4" />
                 Menu
