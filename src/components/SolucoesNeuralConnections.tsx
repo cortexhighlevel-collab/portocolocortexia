@@ -168,8 +168,8 @@ export function SolucoesNeuralConnections(props: {
           ax = r.left;
           ay = r.top + r.height * 0.22;
         } else {
-          // bottom-center: borda direita externa do card
-          ax = r.right;
+          // bottom-center (Agentes Inteligentes): sai pela ESQUERDA, vai pra esquerda e curva pra direita
+          ax = r.left;
           ay = r.top + r.height * 0.38;
         }
 
@@ -190,8 +190,8 @@ export function SolucoesNeuralConnections(props: {
         const nearCircleGap = 36;
 
         if (pos === "bottom-center") {
-          // Agentes Inteligentes: sai da borda direita do card, lead-out curto (não entra no card)
-          pivotX = clamp(start.x + 8, 0, w);
+          // Agentes Inteligentes: sai pela esquerda, vai para a esquerda e depois curva pra direita
+          pivotX = clamp(start.x - 60, 0, w);
         } else if (pos === "top-left") {
           pivotX = clamp(end.x - nearCircleGap - 24, 0, w);
         } else if (pos === "mid-left") {
