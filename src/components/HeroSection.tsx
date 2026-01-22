@@ -90,10 +90,16 @@ const HeroSection = () => {
           <div className="relative group rounded-full overflow-visible shrink-0">
             {/* Static shine effect on border - red glow at top */}
             <div 
-              className="absolute inset-0 rounded-full pointer-events-none"
+              className="absolute -inset-[1px] rounded-full pointer-events-none z-20"
               style={{
-                background: "linear-gradient(180deg, rgba(255,50,50,0.6) 0%, transparent 30%, transparent 70%, transparent 100%)",
-                padding: "4px",
+                background: "linear-gradient(180deg, rgba(255,60,60,1) 0%, rgba(255,30,30,0.8) 5%, transparent 15%, transparent 100%)",
+              }}
+            />
+            {/* Secondary glow for more intensity */}
+            <div 
+              className="absolute -inset-[3px] rounded-full pointer-events-none blur-[2px]"
+              style={{
+                background: "linear-gradient(180deg, rgba(255,0,0,0.7) 0%, transparent 20%, transparent 100%)",
               }}
             />
             <button
