@@ -6,8 +6,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 // Ajuste de tamanho do CTA
 const CTA_DESKTOP_SCALE = 0.28;
-const CTA_MOBILE_MAX_SCALE = 0.07;
-const CTA_MOBILE_MIN_SCALE = 0.05;
 
 const HeroSection = () => {
   const isMobile = useIsMobile();
@@ -20,11 +18,12 @@ const HeroSection = () => {
         return;
       }
 
-      // Escala menor para mobile (responsiva)
+      // Escala proporcional à largura da tela no mobile
+      // O botão original tem 1008px, queremos que ocupe ~85% da tela com padding
       const vw = window.innerWidth;
-      const fitScale = (vw - 32) / 1008;
-      const next = Math.min(CTA_MOBILE_MAX_SCALE, Math.max(CTA_MOBILE_MIN_SCALE, fitScale));
-      setCtaScale(next);
+      const targetWidth = vw * 0.85; // 85% da largura da tela
+      const fitScale = targetWidth / 1008;
+      setCtaScale(fitScale);
     };
 
     compute();
