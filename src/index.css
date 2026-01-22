@@ -2223,6 +2223,19 @@
   animation: marquee 20s linear infinite;
 }
 
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin 3s linear infinite;
+}
+
 @keyframes grid-pulse {
   0%, 100% { opacity: 0.1; }
   50% { opacity: 0.2; }
