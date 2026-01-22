@@ -421,9 +421,9 @@
     }
 
     .cyberpunk-cta-wrapper {
-      /* Mobile: botão posicionado perto do rosto do personagem */
+      /* Mobile: botão abaixo do abdômen do personagem */
       position: fixed;
-      top: 55%;
+      top: 72%;
       bottom: auto;
       left: 50%;
       right: auto;
