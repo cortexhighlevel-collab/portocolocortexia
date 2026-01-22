@@ -6,8 +6,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 // ============ CONFIGURAÇÕES SEPARADAS DESKTOP / MOBILE ============
 const CTA_DESKTOP_SCALE = 0.50;
-// Mobile: reduzido em ~30% vs antes (85% -> 60% da largura da tela)
-const CTA_MOBILE_TARGET_WIDTH_PERCENT = 0.60;
+// Mobile: 70% da largura da tela
+const CTA_MOBILE_TARGET_WIDTH_PERCENT = 0.70;
 
 const HeroSection = () => {
   const isMobile = useIsMobile();
