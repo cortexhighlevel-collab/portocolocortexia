@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import ImageScrollSequence from "./ImageScrollSequence";
@@ -5,6 +6,26 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 const HeroSection = () => {
   const isMobile = useIsMobile();
+  const [ctaScale, setCtaScale] = useState(0.5);
+
+  useEffect(() => {
+    const compute = () => {
+      if (!isMobile) {
+        setCtaScale(0.5);
+        return;
+      }
+
+      // Mantém o “tamanho atual” (0.28) como padrão e só reduz em telas muito estreitas
+      const vw = window.innerWidth;
+      const fitScale = (vw - 32) / 1008; // 16px de padding de cada lado
+      const next = Math.min(0.28, Math.max(0.22, fitScale));
+      setCtaScale(next);
+    };
+
+    compute();
+    window.addEventListener("resize", compute);
+    return () => window.removeEventListener("resize", compute);
+  }, [isMobile]);
 
   return (
     <>
@@ -56,12 +77,12 @@ const HeroSection = () => {
       <motion.a
         href="#contact"
         className="cyberpunk-cta-wrapper"
-        style={{ scale: isMobile ? 0.28 : 0.5 }}
+        style={{ scale: ctaScale }}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.6 }}
       >
-        <div className="relative group rounded-full overflow-hidden">
+        <div className="relative group rounded-full overflow-visible shrink-0">
           <button
             className="relative z-10 flex items-center justify-between w-[1008px] h-[92px] px-8 gap-6 bg-gradient-to-b from-[#2a2a2a] via-[#0a0a0a] to-[#1a1a1a] text-white rounded-full border-2 border-[#3a3a3a] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_4px_20px_-5px_rgba(0,0,0,0.8)] transition-transform active:scale-[0.98] overflow-hidden"
           >
