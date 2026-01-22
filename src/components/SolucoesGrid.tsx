@@ -904,6 +904,7 @@ const MobileLayout = ({
     brainAnchor: { x: number; y: number };
     hooks: Array<{ d: string }>;
     firstCardY: number;
+    curveR: number;
   } | null>(null);
 
   const calculate = useCallback(() => {
@@ -942,23 +943,31 @@ const MobileLayout = ({
       y: brainRect.top - wrapperRect.top + brainRect.height * 0.72
     };
 
-    // O tronco vertical vai do cérebro até o último card (passando por todos)
+    // O tronco vertical vai do primeiro card até o último (termina nas curvas)
     const firstCardY = Math.min(...anchors.map((a) => a.y));
     const lastCardY = Math.max(...anchors.map((a) => a.y));
 
-    // Começa um pouco abaixo do cérebro (para ficar visível acima do primeiro card)
-    const trunkYTop = Math.min(firstCardY - 20, brainAnchor.y + 50);
-    const trunkYBottom = lastCardY + 10;
+    const curveR = 14;
 
-    const curveR = 12;
+    // O tronco começa na curva do primeiro card e termina na curva do último
+    // (sem pontinha extra)
+    const trunkYTop = firstCardY - curveR;
+    const trunkYBottom = lastCardY;
 
-    // Hooks: saem da borda do círculo, fazem curva e ENCOSTAM no tronco
-    const hooks = anchors.map((a) => {
+    // Hooks: saem da borda do círculo, fazem curva suave subindo para o tronco
+    const hooks = anchors.map((a, i) => {
       const startX = a.circleLeftEdge;
       const y = a.y;
-      const d = `M ${startX} ${y}
-                 L ${trunkX + curveR} ${y}
-                 Q ${trunkX} ${y} ${trunkX} ${y}`;
+      const isLast = i === anchors.length - 1;
+      
+      // Curva que sai horizontal e vira para cima (exceto o último que não precisa subir)
+      const d = isLast
+        ? `M ${startX} ${y}
+           L ${trunkX + curveR} ${y}
+           Q ${trunkX} ${y} ${trunkX} ${y}`
+        : `M ${startX} ${y}
+           L ${trunkX + curveR} ${y}
+           Q ${trunkX} ${y} ${trunkX} ${y - curveR}`;
       return { d };
     });
 
@@ -970,7 +979,8 @@ const MobileLayout = ({
       trunkYBottom,
       brainAnchor,
       hooks,
-      firstCardY
+      firstCardY,
+      curveR
     });
   }, []);
 
@@ -1028,11 +1038,12 @@ const MobileLayout = ({
             strokeLinecap="round"
           />
 
-          {/* Conexão do tronco até o cérebro (curva + reto) */}
+          {/* Conexão do tronco até o cérebro (curva suave igual aos hooks) */}
           <path
             d={`M ${layout.trunkX} ${layout.trunkYTop}
-                Q ${(layout.trunkX + layout.brainAnchor.x) / 2} ${layout.trunkYTop - 22}
-                  ${layout.brainAnchor.x} ${layout.brainAnchor.y}`}
+                L ${layout.trunkX} ${layout.brainAnchor.y + layout.curveR}
+                Q ${layout.trunkX} ${layout.brainAnchor.y} ${layout.trunkX + layout.curveR} ${layout.brainAnchor.y}
+                L ${layout.brainAnchor.x} ${layout.brainAnchor.y}`}
             stroke="url(#mobileConnectionGradLayout)"
             strokeWidth={3}
             fill="none"
