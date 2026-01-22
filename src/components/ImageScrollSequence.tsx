@@ -128,6 +128,10 @@ const FRAME_BUFFER = 10;
 // Máximo de frames que pode pular por tick (previne saltos)
 const MAX_STEP = 2;
 
+// CRITICAL (mobile/iPhone): manter poucos <img> no DOM evita estouro de memória/GPU.
+// Pool fixo: reaproveita N elementos e só troca o src conforme o frame muda.
+const POOL_SIZE = 7;
+
 type FrameLoadMode = "near" | "background";
 
 type ImageScrollSequenceProps = {
@@ -144,44 +148,59 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const loadedFramesRef = useRef<Set<number>>(new Set());
   const decodedFramesRef = useRef<Set<number>>(new Set());
   const loadingFramesRef = useRef<Set<number>>(new Set());
-  const frameElsRef = useRef<Array<HTMLImageElement | null>>([]);
+  const poolElsRef = useRef<Array<HTMLImageElement | null>>([]);
+  const poolFrameIndexRef = useRef<number[]>(Array.from({ length: POOL_SIZE }, () => -1));
   const isMobile = useIsMobile();
 
   const frames = isMobile ? mobileFrames : desktopFrames;
 
-  const ensureFrameElsSize = () => {
-    if (frameElsRef.current.length !== frames.length) {
-      frameElsRef.current = Array.from({ length: frames.length }, (_, i) => frameElsRef.current[i] ?? null);
+  const ensurePoolSize = () => {
+    if (poolElsRef.current.length !== POOL_SIZE) {
+      poolElsRef.current = Array.from({ length: POOL_SIZE }, (_, i) => poolElsRef.current[i] ?? null);
+    }
+    if (poolFrameIndexRef.current.length !== POOL_SIZE) {
+      poolFrameIndexRef.current = Array.from({ length: POOL_SIZE }, () => -1);
     }
   };
 
-  const setFrameStyles = (index: number, nextOpacity: number, nextZ: number) => {
-    const el = frameElsRef.current[index];
+  const setPoolSlot = (slot: number, frameIndex: number, opacity: number, zIndex: number) => {
+    const el = poolElsRef.current[slot];
     if (!el) return;
-    // Evita write no DOM se já estiver correto (reduz layout/paint churn)
-    const op = String(nextOpacity);
-    const z = String(nextZ);
+
+    const nextSrc = frameIndex >= 0 && frameIndex < frames.length ? frames[frameIndex] : "";
+    if (poolFrameIndexRef.current[slot] !== frameIndex && nextSrc) {
+      // Troca src só quando necessário (reduz trabalho do Safari)
+      el.src = nextSrc;
+      poolFrameIndexRef.current[slot] = frameIndex;
+    }
+
+    const op = String(opacity);
+    const z = String(zIndex);
     if (el.style.opacity !== op) el.style.opacity = op;
     if (el.style.zIndex !== z) el.style.zIndex = z;
   };
 
-  const applyFrameVisibility = (
-    newCurrent: number,
-    newPrev: number,
-    oldCurrent: number,
-    oldPrev: number,
-  ) => {
-    ensureFrameElsSize();
+  const computeWindowFrames = (center: number) => {
+    const half = Math.floor(POOL_SIZE / 2);
+    const start = Math.max(0, Math.min(center - half, frames.length - POOL_SIZE));
+    const end = Math.min(frames.length - 1, start + POOL_SIZE - 1);
+    const list: number[] = [];
+    for (let i = start; i <= end; i++) list.push(i);
+    return list;
+  };
 
-    const keep = new Set([newCurrent, newPrev]);
+  const renderPoolForFrames = (currentFrame: number, prevFrame: number) => {
+    ensurePoolSize();
+    const windowFrames = computeWindowFrames(currentFrame);
 
-    // Esconde o que não faz mais parte do par (current/prev)
-    if (!keep.has(oldCurrent)) setFrameStyles(oldCurrent, 0, 0);
-    if (!keep.has(oldPrev)) setFrameStyles(oldPrev, 0, 0);
-
-    // Mostra prev e current (apenas 2 frames visíveis, sem re-render React)
-    if (newPrev !== newCurrent) setFrameStyles(newPrev, 1, 1);
-    setFrameStyles(newCurrent, 1, 2);
+    for (let slot = 0; slot < POOL_SIZE; slot++) {
+      const frameIndex = windowFrames[slot] ?? currentFrame;
+      const isCurrent = frameIndex === currentFrame;
+      const isPrev = frameIndex === prevFrame && prevFrame !== currentFrame;
+      const opacity = isCurrent || isPrev ? 1 : 0;
+      const z = isCurrent ? 2 : isPrev ? 1 : 0;
+      setPoolSlot(slot, frameIndex, opacity, z);
+    }
   };
 
   // Função para carregar um frame específico
@@ -194,12 +213,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
       if (loadedFramesRef.current.has(index) || loadingFramesRef.current.has(index)) {
         // Se estiver carregado mas não decodificado e for prioritário, tenta decodificar em background
-        if (mode === "near" && loadedFramesRef.current.has(index) && !decodedFramesRef.current.has(index)) {
-          const el = frameElsRef.current[index];
-          if (el?.decode) {
-            el.decode().then(() => decodedFramesRef.current.add(index)).catch(() => void 0);
-          }
-        }
+        // (no pool, nem sempre teremos um <img> específico por frame)
         resolve();
         return;
       }
@@ -220,12 +234,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
         // Tenta decodificar em background para suavidade
         const maybeDecode = () => {
           if (decodedFramesRef.current.has(index)) return;
-          // Preferir decode do elemento real (quando existir), senão do Image()
-          const el = frameElsRef.current[index];
-          const decoder = el?.decode ? el : img;
-          if (decoder.decode) {
-            decoder.decode().then(() => decodedFramesRef.current.add(index)).catch(() => void 0);
-          }
+          if (img.decode) img.decode().then(() => decodedFramesRef.current.add(index)).catch(() => void 0);
         };
 
         if (mode === "near") {
@@ -278,9 +287,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     previousDisplayedFrameRef.current = 0;
     setIsReady(false);
 
-    // Ajusta array de refs e garante estado visual inicial (frame 0)
-    ensureFrameElsSize();
-    applyFrameVisibility(0, 0, 0, 0);
+    // Garante estado visual inicial (frame 0) sem depender de 48 <img>
+    renderPoolForFrames(0, 0);
 
     // Pré-carregar os primeiros frames
     const preloadInitial = async () => {
@@ -292,16 +300,32 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       await Promise.all(promises);
       setIsReady(true);
 
-      // Pré-carregar o resto em background (elimina travadas em scroll rápido)
-      const preloadAll = () => {
-        for (let i = 0; i < frames.length; i++) loadFrame(i, "background");
+      // Background preload:
+      // No iPhone, decodificar TUDO tende a travar (memória/GPU). Mantemos um preload progressivo e leve.
+      const requestIdleCallback = (window as unknown as {
+        requestIdleCallback?: (cb: (deadline?: { timeRemaining: () => number }) => void, opts?: { timeout?: number }) => number;
+      }).requestIdleCallback;
+
+      const maxBackground = isMobile ? Math.min(24, frames.length) : frames.length;
+      let cursor = 0;
+
+      const chunk = (deadline?: { timeRemaining: () => number }) => {
+        const budget = deadline?.timeRemaining ? deadline.timeRemaining() : 8;
+        const startTime = performance.now();
+
+        while (cursor < maxBackground && (performance.now() - startTime < budget)) {
+          loadFrame(cursor, "background");
+          cursor++;
+        }
+
+        if (cursor < maxBackground) {
+          if (requestIdleCallback) requestIdleCallback(chunk, { timeout: 1500 });
+          else window.setTimeout(() => chunk(), 16);
+        }
       };
 
-      const requestIdleCallback = (window as unknown as { requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number })
-        .requestIdleCallback;
-
-      if (requestIdleCallback) requestIdleCallback(preloadAll, { timeout: 1500 });
-      else window.setTimeout(preloadAll, 0);
+      if (requestIdleCallback) requestIdleCallback(chunk, { timeout: 1500 });
+      else window.setTimeout(() => chunk(), 0);
     };
 
     preloadInitial();
@@ -374,7 +398,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
         previousDisplayedFrameRef.current = newPrev;
         displayedFrameRef.current = newCurrent;
-        applyFrameVisibility(newCurrent, newPrev, oldCurrent, oldPrev);
+        // Renderiza via pool (7 imgs), reduzindo memória e travadas no iPhone
+        renderPoolForFrames(newCurrent, newPrev);
       }
 
       rafIdRef.current = window.requestAnimationFrame(tick);
@@ -414,16 +439,17 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
           style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease" }}
           aria-hidden="true"
         >
-          {frames.map((src, index) => (
+          {Array.from({ length: POOL_SIZE }).map((_, slot) => (
             <img
-              key={`${isMobile ? "mobile" : "desktop"}-${index}`}
+              key={`${isMobile ? "mobile" : "desktop"}-pool-${slot}`}
               ref={(el) => {
-                frameElsRef.current[index] = el;
+                poolElsRef.current[slot] = el;
               }}
-              src={src}
+              // src será gerenciado via renderPoolForFrames() (pool)
+              src={slot === 0 ? firstFrame : ""}
               alt=""
               decoding="async"
-              loading="eager"
+              loading={slot === 0 ? "eager" : "lazy"}
               style={{
                 position: "absolute",
                 top: 0,
@@ -434,8 +460,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
                 objectPosition: "center center",
                 transform: "scale(1.15)",
                 transformOrigin: "center center",
-                opacity: index === 0 ? 1 : 0,
-                zIndex: index === 0 ? 2 : 0,
+                opacity: slot === 0 ? 1 : 0,
+                zIndex: slot === 0 ? 2 : 0,
                 transition: "none",
                 willChange: "opacity",
               }}
