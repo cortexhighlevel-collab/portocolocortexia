@@ -902,7 +902,7 @@ const MobileLayout = ({
     trunkYTop: number;
     trunkYBottom: number;
     brainAnchor: { x: number; y: number };
-    hooks: Array<{ d: string }>;
+    hooks: Array<{ d: string; isFirst?: boolean }>;
     firstCardY: number;
     curveR: number;
   } | null>(null);
@@ -943,32 +943,50 @@ const MobileLayout = ({
       y: brainRect.top - wrapperRect.top + brainRect.height * 0.72
     };
 
-    // O tronco vertical vai do primeiro card até o último (termina nas curvas)
+    // Primeiro card vai direto ao cérebro (separado)
+    // Os outros cards (2 ao último) conectam ao tronco
     const firstCardY = Math.min(...anchors.map((a) => a.y));
     const lastCardY = Math.max(...anchors.map((a) => a.y));
+    
+    // Pega o segundo card como início do tronco (se existir)
+    const secondCardY = anchors.length > 1 ? anchors[1].y : firstCardY;
 
     const curveR = 14;
 
-    // O tronco começa na curva do primeiro card e termina na curva do último
-    // (sem pontinha extra)
-    const trunkYTop = firstCardY - curveR;
+    // O tronco começa no segundo card e termina no último
+    const trunkYTop = secondCardY - curveR;
     const trunkYBottom = lastCardY;
 
-    // Hooks: saem da borda do círculo, fazem curva suave subindo para o tronco
+    // Hooks: primeiro card vai separado pro cérebro, os outros vão pro tronco
     const hooks = anchors.map((a, i) => {
       const startX = a.circleLeftEdge;
       const y = a.y;
+      const isFirst = i === 0;
       const isLast = i === anchors.length - 1;
       
-      // Curva que sai horizontal e vira para cima (exceto o último que não precisa subir)
-      const d = isLast
-        ? `M ${startX} ${y}
-           L ${trunkX + curveR} ${y}
-           Q ${trunkX} ${y} ${trunkX} ${y}`
-        : `M ${startX} ${y}
-           L ${trunkX + curveR} ${y}
-           Q ${trunkX} ${y} ${trunkX} ${y - curveR}`;
-      return { d };
+      if (isFirst) {
+        // Primeiro card: vai direto pro cérebro com curva
+        // Sai horizontal, curva pra cima, sobe reto, curva pra direita, vai pro cérebro
+        const d = `M ${startX} ${y}
+                   L ${trunkX + curveR} ${y}
+                   Q ${trunkX} ${y} ${trunkX} ${y - curveR}
+                   L ${trunkX} ${brainAnchor.y + curveR}
+                   Q ${trunkX} ${brainAnchor.y} ${trunkX + curveR} ${brainAnchor.y}
+                   L ${brainAnchor.x} ${brainAnchor.y}`;
+        return { d, isFirst: true };
+      } else if (isLast) {
+        // Último card: curva de 90° no final (desce um pouco e para)
+        const d = `M ${startX} ${y}
+                   L ${trunkX + curveR} ${y}
+                   Q ${trunkX} ${y} ${trunkX} ${y + curveR}`;
+        return { d, isFirst: false };
+      } else {
+        // Cards do meio: curva que sobe para o tronco
+        const d = `M ${startX} ${y}
+                   L ${trunkX + curveR} ${y}
+                   Q ${trunkX} ${y} ${trunkX} ${y - curveR}`;
+        return { d, isFirst: false };
+      }
     });
 
     setLayout({
@@ -1038,17 +1056,7 @@ const MobileLayout = ({
             strokeLinecap="round"
           />
 
-          {/* Conexão do tronco até o cérebro (curva suave igual aos hooks) */}
-          <path
-            d={`M ${layout.trunkX} ${layout.trunkYTop}
-                L ${layout.trunkX} ${layout.brainAnchor.y + layout.curveR}
-                Q ${layout.trunkX} ${layout.brainAnchor.y} ${layout.trunkX + layout.curveR} ${layout.brainAnchor.y}
-                L ${layout.brainAnchor.x} ${layout.brainAnchor.y}`}
-            stroke="url(#mobileConnectionGradLayout)"
-            strokeWidth={3}
-            fill="none"
-            strokeLinecap="round"
-          />
+          {/* A conexão ao cérebro agora é feita pelo primeiro hook (primeiro card) */}
 
           {/* Hooks de cada card */}
           {layout.hooks.map((h, i) => (
