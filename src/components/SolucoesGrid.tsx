@@ -391,13 +391,13 @@ const CentralBrain = () => {
 
   return (
     <div 
-      className="relative flex items-center justify-center w-[320px] h-[320px] cursor-pointer"
+      className="relative flex items-center justify-center w-[260px] h-[260px] cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Ambient glow */}
       <motion.div
-        className="absolute w-[250px] h-[250px] rounded-full"
+        className="absolute w-[200px] h-[200px] rounded-full"
         style={{
           background: "radial-gradient(circle, hsl(330 100% 50% / 0.2) 0%, transparent 60%)",
           filter: "blur(30px)",
@@ -413,7 +413,7 @@ const CentralBrain = () => {
 
       {/* Ring 1 - Outermost */}
       <div
-        className="absolute w-[280px] h-[280px] rounded-full"
+        className="absolute w-[230px] h-[230px] rounded-full"
         style={{
           background: "linear-gradient(180deg, hsl(220 15% 18%) 0%, hsl(220 12% 10%) 100%)",
           boxShadow: `
@@ -427,7 +427,7 @@ const CentralBrain = () => {
 
       {/* Ring 2 */}
       <div
-        className="absolute w-[245px] h-[245px] rounded-full"
+        className="absolute w-[200px] h-[200px] rounded-full"
         style={{
           background: "linear-gradient(180deg, hsl(220 12% 22%) 0%, hsl(220 10% 12%) 100%)",
           boxShadow: `
@@ -440,7 +440,7 @@ const CentralBrain = () => {
 
       {/* Ring 3 */}
       <div
-        className="absolute w-[205px] h-[205px] rounded-full"
+        className="absolute w-[168px] h-[168px] rounded-full"
         style={{
           background: "linear-gradient(180deg, hsl(225 15% 16%) 0%, hsl(230 12% 8%) 100%)",
           boxShadow: `
@@ -454,7 +454,7 @@ const CentralBrain = () => {
 
       {/* Ring 4 */}
       <div
-        className="absolute w-[165px] h-[165px] rounded-full"
+        className="absolute w-[135px] h-[135px] rounded-full"
         style={{
           background: "linear-gradient(180deg, hsl(220 10% 12%) 0%, hsl(230 15% 6%) 100%)",
           boxShadow: `
@@ -467,7 +467,7 @@ const CentralBrain = () => {
 
       {/* Ring 5 - inner solid gray */}
       <div
-        className="absolute w-[125px] h-[125px] rounded-full"
+        className="absolute w-[102px] h-[102px] rounded-full"
         style={{
           background: "linear-gradient(180deg, hsl(220 15% 14%) 0%, hsl(220 12% 8%) 100%)",
           boxShadow: `
@@ -478,7 +478,7 @@ const CentralBrain = () => {
       />
 
       {/* SVG content */}
-      <svg viewBox="0 0 320 320" className="absolute w-full h-full z-10">
+      <svg viewBox="0 0 260 260" className="absolute w-full h-full z-10">
         <defs>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="3" result="blur" />
@@ -503,7 +503,7 @@ const CentralBrain = () => {
 
         {/* Rotating arc group */}
         <motion.g
-          style={{ transformOrigin: "160px 160px" }}
+          style={{ transformOrigin: "130px 130px" }}
           animate={{ rotate: isHovered ? 360 : 0 }}
           transition={{ 
             duration: isHovered ? 8 : 0, 
@@ -513,8 +513,8 @@ const CentralBrain = () => {
         >
           {/* Arc 1 - Outer ring (radius 140) */}
           <motion.path
-            d={`M ${160 + 140 * Math.cos(-70 * Math.PI / 180)} ${160 + 140 * Math.sin(-70 * Math.PI / 180)} 
-                A 140 140 0 0 1 ${160 + 140 * Math.cos(-20 * Math.PI / 180)} ${160 + 140 * Math.sin(-20 * Math.PI / 180)}`}
+            d={`M ${130 + 115 * Math.cos(-70 * Math.PI / 180)} ${130 + 115 * Math.sin(-70 * Math.PI / 180)} 
+                A 115 115 0 0 1 ${130 + 115 * Math.cos(-20 * Math.PI / 180)} ${130 + 115 * Math.sin(-20 * Math.PI / 180)}`}
             fill="none" 
             stroke="hsl(340 100% 50%)" 
             strokeWidth={isHovered ? 5 : 4} 
@@ -525,8 +525,8 @@ const CentralBrain = () => {
           />
           {/* Arc 2 - Second ring (radius 122) */}
           <motion.path
-            d={`M ${160 + 122 * Math.cos(20 * Math.PI / 180)} ${160 + 122 * Math.sin(20 * Math.PI / 180)} 
-                A 122 122 0 0 1 ${160 + 122 * Math.cos(70 * Math.PI / 180)} ${160 + 122 * Math.sin(70 * Math.PI / 180)}`}
+            d={`M ${130 + 100 * Math.cos(20 * Math.PI / 180)} ${130 + 100 * Math.sin(20 * Math.PI / 180)} 
+                A 100 100 0 0 1 ${130 + 100 * Math.cos(70 * Math.PI / 180)} ${130 + 100 * Math.sin(70 * Math.PI / 180)}`}
             fill="none" 
             stroke="hsl(330 100% 55%)" 
             strokeWidth={isHovered ? 4 : 3} 
@@ -537,8 +537,8 @@ const CentralBrain = () => {
           />
           {/* Arc 3 - Third ring (radius 102) */}
           <motion.path
-            d={`M ${160 + 102 * Math.cos(120 * Math.PI / 180)} ${160 + 102 * Math.sin(120 * Math.PI / 180)} 
-                A 102 102 0 0 1 ${160 + 102 * Math.cos(170 * Math.PI / 180)} ${160 + 102 * Math.sin(170 * Math.PI / 180)}`}
+            d={`M ${130 + 83 * Math.cos(120 * Math.PI / 180)} ${130 + 83 * Math.sin(120 * Math.PI / 180)} 
+                A 83 83 0 0 1 ${130 + 83 * Math.cos(170 * Math.PI / 180)} ${130 + 83 * Math.sin(170 * Math.PI / 180)}`}
             fill="none" 
             stroke="hsl(340 100% 50%)" 
             strokeWidth={isHovered ? 5 : 4} 
@@ -549,8 +549,8 @@ const CentralBrain = () => {
           />
           {/* Arc 4 - Outer ring opposite side (radius 140) */}
           <motion.path
-            d={`M ${160 + 140 * Math.cos(200 * Math.PI / 180)} ${160 + 140 * Math.sin(200 * Math.PI / 180)} 
-                A 140 140 0 0 1 ${160 + 140 * Math.cos(250 * Math.PI / 180)} ${160 + 140 * Math.sin(250 * Math.PI / 180)}`}
+            d={`M ${130 + 115 * Math.cos(200 * Math.PI / 180)} ${130 + 115 * Math.sin(200 * Math.PI / 180)} 
+                A 115 115 0 0 1 ${130 + 115 * Math.cos(250 * Math.PI / 180)} ${130 + 115 * Math.sin(250 * Math.PI / 180)}`}
             fill="none" 
             stroke="hsl(330 100% 50%)" 
             strokeWidth={isHovered ? 4 : 3} 
@@ -561,8 +561,8 @@ const CentralBrain = () => {
           />
           {/* Arc 5 - Second ring opposite (radius 122) */}
           <motion.path
-            d={`M ${160 + 122 * Math.cos(-160 * Math.PI / 180)} ${160 + 122 * Math.sin(-160 * Math.PI / 180)} 
-                A 122 122 0 0 1 ${160 + 122 * Math.cos(-110 * Math.PI / 180)} ${160 + 122 * Math.sin(-110 * Math.PI / 180)}`}
+            d={`M ${130 + 100 * Math.cos(-160 * Math.PI / 180)} ${130 + 100 * Math.sin(-160 * Math.PI / 180)} 
+                A 100 100 0 0 1 ${130 + 100 * Math.cos(-110 * Math.PI / 180)} ${130 + 100 * Math.sin(-110 * Math.PI / 180)}`}
             fill="none" 
             stroke="hsl(335 100% 52%)" 
             strokeWidth={isHovered ? 3 : 2} 
@@ -575,10 +575,10 @@ const CentralBrain = () => {
 
         {/* Connection nodes */}
         {[
-          { x: 160, y: 20 },
-          { x: 300, y: 160 },
-          { x: 160, y: 300 },
-          { x: 20, y: 160 },
+          { x: 130, y: 16 },
+          { x: 244, y: 130 },
+          { x: 130, y: 244 },
+          { x: 16, y: 130 },
         ].map((pos, i) => (
           <g key={i}>
             <circle cx={pos.x} cy={pos.y} r={12} fill="hsl(230 20% 12%)" 
@@ -607,7 +607,7 @@ const CentralBrain = () => {
         <img 
           src={brainIcon} 
           alt="AI Brain" 
-          className="w-[280px] h-[280px] object-contain"
+          className="w-[230px] h-[230px] object-contain"
         />
       </div>
     </div>
