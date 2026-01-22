@@ -8,13 +8,54 @@ import novaCamadaMobileVideoMp4 from "@/assets/nova-camada-mobile.mp4";
 const NovaCamadaSection = () => {
   const isMobile = useIsMobile();
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const PLAYBACK_RATE = 0.65;
 
-  // Mobile: deixar o vídeo um pouco mais lento.
+  // Deixar o vídeo mais lento (mobile + desktop) e evitar pausas aleatórias.
   useEffect(() => {
-    if (!isMobile) return;
     const v = videoRef.current;
     if (!v) return;
-    v.playbackRate = 0.75;
+
+    const applySettings = () => {
+      v.playbackRate = PLAYBACK_RATE;
+      // Em alguns navegadores o autoplay pode "parar"; tentamos retomar.
+      if (!document.hidden && v.paused) {
+        v.play().catch(() => void 0);
+      }
+    };
+
+    const onVisibility = () => {
+      if (!document.hidden) applySettings();
+    };
+
+    const onPause = () => {
+      // Se pausou sozinho, tenta retomar (mantém loop “infinito” na prática)
+      if (!document.hidden) {
+        v.play().catch(() => void 0);
+      }
+    };
+
+    const onEnded = () => {
+      // redundância: loop já está ativo, mas garante retomada
+      v.currentTime = 0;
+      v.play().catch(() => void 0);
+    };
+
+    // aplica já
+    applySettings();
+
+    document.addEventListener("visibilitychange", onVisibility);
+    v.addEventListener("pause", onPause);
+    v.addEventListener("ended", onEnded);
+    v.addEventListener("loadedmetadata", applySettings);
+    v.addEventListener("canplay", applySettings);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      v.removeEventListener("pause", onPause);
+      v.removeEventListener("ended", onEnded);
+      v.removeEventListener("loadedmetadata", applySettings);
+      v.removeEventListener("canplay", applySettings);
+    };
   }, [isMobile]);
 
   return (
@@ -46,10 +87,12 @@ const NovaCamadaSection = () => {
                       muted
                       loop
                       playsInline
-                      preload={isMobile ? "metadata" : "auto"}
+                      preload="auto"
+                      disablePictureInPicture
+                      controls={false}
                       onLoadedMetadata={() => {
                         // Garantia extra (iOS às vezes ignora o primeiro set)
-                        if (isMobile && videoRef.current) videoRef.current.playbackRate = 0.75;
+                        if (videoRef.current) videoRef.current.playbackRate = PLAYBACK_RATE;
                       }}
                     >
                       {/* iOS/Safari: preferir MP4 */}
