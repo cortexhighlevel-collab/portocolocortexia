@@ -306,18 +306,18 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* Fallback: primeira imagem sempre visível */}
         <div
-          className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+          className="pointer-events-none absolute inset-0 z-0"
           style={{
             backgroundImage: `url(${firstFrame})`,
             backgroundSize: "cover",
-            backgroundPosition: "center top",
+            backgroundPosition: "center center",
           }}
           aria-hidden="true"
         />
 
         {/* Apenas frames visíveis/próximos são renderizados */}
         <div
-          className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+          className="pointer-events-none absolute inset-0 z-0"
           style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease" }}
           aria-hidden="true"
         >
@@ -331,19 +331,15 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
               style={{
                 position: "absolute",
                 top: 0,
-                left: "50%",
-                transform: "translate3d(-50%, 0, 0) scale(1.1)",
-                width: isMobile ? "100%" : "auto",
+                left: 0,
+                width: "100%",
                 height: "100%",
-                minWidth: isMobile ? "auto" : "100%",
-                maxWidth: "none",
                 objectFit: "cover",
-                objectPosition: "center top",
+                objectPosition: "center center",
                 opacity: index === currentFrame || index === previousFrame ? 1 : 0,
                 zIndex: index === currentFrame ? 2 : index === previousFrame ? 1 : 0,
                 transition: "none",
                 willChange: "opacity",
-                backfaceVisibility: "hidden",
               }}
             />
           ))}
