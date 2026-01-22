@@ -82,16 +82,14 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     );
   }
 
-  // iOS (Chrome/Safari) usa WebKit e costuma “derrubar” a aba por memória/GPU.
-  // Mantemos o efeito de 48 frames, mas reduzimos agressivamente preload/decoding.
+  // Desktop: prioriza fidelidade (nunca mostrar frame não-carregado → evita “trava e pula” em scroll rápido)
+  // Mobile: manter otimizações (mas no momento está em modo estático acima).
   const effectiveFrameBuffer = isIOS ? 2 : isMobile ? 6 : FRAME_BUFFER;
-  const effectiveMaxStep = isMobile ? MAX_STEP : frames.length; // desktop volta a seguir o scroll sem limitação
+  const effectiveMaxStep = isMobile ? MAX_STEP : frames.length;
   const allowBackgroundPreload = !isIOS;
   const allowDecode = !isIOS;
-  // Desktop: NUNCA pode “travar” esperando preload (senão parece que o scroll-frame sumiu).
-  // Mobile (não-iOS): mantém gate para evitar flashes/ghosting.
-  // iOS: sem gate para reduzir main thread e evitar loop pesado.
-  const gateOnLoaded = isMobile && !isIOS;
+  const gateOnLoadedDesktop = true;
+  const gateOnLoaded = (!isMobile && gateOnLoadedDesktop) || (isMobile && !isIOS);
 
   const ensurePoolSize = () => {
     if (poolElsRef.current.length !== POOL_SIZE) {
@@ -251,6 +249,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
         requestIdleCallback?: (cb: (deadline?: { timeRemaining: () => number }) => void, opts?: { timeout?: number }) => number;
       }).requestIdleCallback;
 
+      // Desktop: preload completo em background para manter scroll suave mesmo em scroll rápido.
+      // Mobile: limitado (e no iOS desativado) para evitar pressão de memória.
       const maxBackground = allowBackgroundPreload
         ? isMobile
           ? Math.min(24, frames.length)
@@ -335,10 +335,32 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       // Garantir bounds
       nextFrame = clamp(nextFrame, 0, frames.length - 1);
 
-      // Atualiza sem setState (evita re-render do Hero e elimina flicker/travadas)
-      // Se o frame ainda não estiver carregado, força carga e mantém o atual até ter ao menos "loaded".
+      // Evitar “pulo” no desktop: se o frame alvo não estiver carregado, não troca.
+      // Em vez disso, tenta aproximar por um frame já carregado (progressão suave) ou mantém o atual.
       if (gateOnLoaded && !loadedFramesRef.current.has(nextFrame)) {
         loadFrame(nextFrame, "near");
+
+        const dir = nextFrame > current ? 1 : -1;
+        let candidate = current;
+        // procura até MAX_STEP (mobile) ou até um pequeno limite no desktop
+        const searchLimit = isMobile ? MAX_STEP : 6;
+        for (let step = 1; step <= searchLimit; step++) {
+          const idx = current + dir * step;
+          if (idx < 0 || idx >= frames.length) break;
+          if (loadedFramesRef.current.has(idx)) {
+            candidate = idx;
+          } else {
+            loadFrame(idx, "near");
+          }
+        }
+
+        if (candidate !== current) {
+          const newPrev = current;
+          const newCurrent = candidate;
+          previousDisplayedFrameRef.current = newPrev;
+          displayedFrameRef.current = newCurrent;
+          renderPoolForFrames(newCurrent, newPrev);
+        }
       } else {
         const oldCurrent = displayedFrameRef.current;
         const oldPrev = previousDisplayedFrameRef.current;
