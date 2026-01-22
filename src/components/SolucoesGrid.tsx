@@ -937,10 +937,10 @@ const MobileLayout = ({
     // Empurra um pouco mais pra esquerda para não ficar escondido atrás do círculo
     const trunkX = Math.max(12, minCircleLeft - 36);
 
-    // Âncora no cérebro: lado ESQUERDO (para o primeiro card, separado)
-    const brainAnchorLeft = {
-      x: brainRect.left - wrapperRect.left + brainRect.width * 0.15,
-      y: brainRect.top - wrapperRect.top + brainRect.height * 0.72
+    // Âncora no cérebro: CENTRO INFERIOR (rodinha azul, para o primeiro card)
+    const brainAnchorBottom = {
+      x: brainRect.left - wrapperRect.left + brainRect.width * 0.5,
+      y: brainRect.top - wrapperRect.top + brainRect.height * 0.98
     };
     
     // Âncora no cérebro: lado DIREITO (para o tronco principal dos outros cards)
@@ -949,7 +949,7 @@ const MobileLayout = ({
       y: brainRect.top - wrapperRect.top + brainRect.height * 0.72
     };
 
-    // Primeiro card vai separado pelo lado esquerdo
+    // Primeiro card vai separado pelo centro inferior
     // Cards 2 ao último conectam ao tronco (lado direito)
     const firstCardY = anchors[0]?.y || 0;
     const secondCardY = anchors.length > 1 ? anchors[1].y : firstCardY;
@@ -961,10 +961,10 @@ const MobileLayout = ({
     const trunkYTop = secondCardY - curveR;
     const trunkYBottom = lastCardY - curveR;
 
-    // Posição X do tronco do primeiro card (lado esquerdo, separado)
-    const firstTrunkX = trunkX - 30;
+    // Posição X do "tronco" do primeiro card: passa POR DENTRO (à direita do trunkX principal)
+    const firstTrunkX = trunkX + 20;
 
-    // Hooks: primeiro card vai separado pelo lado esquerdo, outros vão pro tronco direito
+    // Hooks: primeiro card vai separado pelo centro inferior, outros vão pro tronco direito
     const hooks = anchors.map((a, i) => {
       const startX = a.circleLeftEdge;
       const y = a.y;
@@ -972,13 +972,14 @@ const MobileLayout = ({
       const isLast = i === anchors.length - 1;
       
       if (isFirst) {
-        // Primeiro card: caminho separado pelo lado ESQUERDO do cérebro
+        // Primeiro card: passa POR DENTRO, conecta no centro inferior do cérebro
+        // Sai horizontal → curva pra cima → sobe reto até o centro inferior do cérebro
         const d = `M ${startX} ${y}
-                   L ${firstTrunkX + curveR} ${y}
+                   L ${firstTrunkX - curveR} ${y}
                    Q ${firstTrunkX} ${y} ${firstTrunkX} ${y - curveR}
-                   L ${firstTrunkX} ${brainAnchorLeft.y + curveR}
-                   Q ${firstTrunkX} ${brainAnchorLeft.y} ${firstTrunkX + curveR} ${brainAnchorLeft.y}
-                   L ${brainAnchorLeft.x} ${brainAnchorLeft.y}`;
+                   L ${firstTrunkX} ${brainAnchorBottom.y + curveR}
+                   Q ${firstTrunkX} ${brainAnchorBottom.y} ${firstTrunkX - curveR} ${brainAnchorBottom.y}
+                   L ${brainAnchorBottom.x} ${brainAnchorBottom.y}`;
         return { d, isFirst: true };
       } else if (isLast) {
         // Último card: curva de 90° pra CIMA (conecta no tronco junto com os outros)
