@@ -147,9 +147,9 @@ export function SolucoesNeuralConnections(props: {
           ax = r.left;
           ay = r.top + r.height * 0.22;
         } else {
-          // bottom-center: borda direita do ícone (mesmo padrão horizontal das outras)
+          // bottom-center: borda direita externa do card (onde fica o anel do ícone)
           ax = r.right;
-          ay = r.top + r.height * 0.5;
+          ay = r.top + r.height * 0.38;
         }
 
         const start: Point = {
