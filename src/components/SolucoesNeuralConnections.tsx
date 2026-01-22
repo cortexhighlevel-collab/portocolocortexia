@@ -124,8 +124,8 @@ export function SolucoesNeuralConnections(props: {
         "mid-left": 180,       // 9h
         "bottom-center": 90,   // 6h
         "top-right": -30,      // ~2h
-        "mid-right": 0,        // 3h
-        "bottom-right": 30,    // ~4h
+        "mid-right": 15,       // ~3h30 - ajustado para criar diferença de Y e curva visível
+        "bottom-right": 45,    // ~4h30
       };
 
       const brainTargetsByPos: Record<string, Point> = Object.fromEntries(
@@ -190,8 +190,8 @@ export function SolucoesNeuralConnections(props: {
         const nearCircleGap = 36;
 
         if (pos === "bottom-center") {
-          // Linha do Agentes Inteligentes: bem curta pra não encostar no SEO+AEO
-          pivotX = undefined; // Usa o midX padrão (meio entre start e end)
+          // Agentes Inteligentes: sai da borda direita do card, lead-out curto (não entra no card)
+          pivotX = clamp(start.x + 8, 0, w);
         } else if (pos === "top-left") {
           pivotX = clamp(end.x - nearCircleGap - 24, 0, w);
         } else if (pos === "mid-left") {
