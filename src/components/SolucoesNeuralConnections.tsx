@@ -122,7 +122,7 @@ export function SolucoesNeuralConnections(props: {
         // Distribui em ângulos diferentes para não “conectar” linhas entre si
         "top-left": -150,      // ~10h
         "mid-left": 180,       // 9h
-        "bottom-center": 90,   // 6h
+        "bottom-center": 120,  // ~8h - deslocado pra esquerda pra não cruzar com SEO+AEO
         "top-right": -30,      // ~2h
         "mid-right": 15,       // ~3h30 - ajustado para criar diferença de Y e curva visível
         "bottom-right": 45,    // ~4h30
