@@ -96,7 +96,7 @@ const CyberCard = ({
       
       {/* Main card container */}
       <div 
-        className={`relative bg-zinc-950/95 ${isLarge ? 'h-full min-h-[295px] md:min-h-[460px]' : isMedium ? 'min-h-[220px] md:min-h-[340px]' : 'min-h-[100px] md:min-h-[160px]'}`}
+        className={`relative bg-zinc-950/95 ${isLarge ? 'h-full min-h-[295px] lg:min-h-[460px]' : isMedium ? 'min-h-[220px] lg:min-h-[340px]' : 'min-h-[100px] lg:min-h-[160px]'}`}
         style={{
           clipPath,
           margin: '1px',
@@ -192,9 +192,9 @@ const CyberCard = ({
         </div>
 
         {/* Content */}
-        <div className={`relative z-10 p-4 md:p-6 ${isLarge ? 'h-full flex flex-col justify-end' : 'pt-8 md:pt-10'}`}>
+        <div className={`relative z-10 p-4 lg:p-6 ${isLarge ? 'h-full flex flex-col justify-end' : 'pt-8 lg:pt-10'}`}>
           <span className="text-red-400 text-xs tracking-wider font-mono">{problema.id}</span>
-          <h3 className={`text-white font-semibold mt-2 ${isLarge ? 'text-xl md:text-2xl' : 'text-base md:text-lg'}`}>
+          <h3 className={`text-white font-semibold mt-2 ${isLarge ? 'text-xl lg:text-2xl' : 'text-base lg:text-lg'}`}>
             {problema.titulo}
           </h3>
         </div>
