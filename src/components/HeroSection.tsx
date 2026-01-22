@@ -4,9 +4,10 @@ import { ArrowRight } from "lucide-react";
 import ImageScrollSequence from "./ImageScrollSequence";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const CTA_DESKTOP_SCALE = 0.42;
-const CTA_MOBILE_MAX_SCALE = 0.18;
-const CTA_MOBILE_MIN_SCALE = 0.14;
+// Ajuste de tamanho do CTA
+const CTA_DESKTOP_SCALE = 0.28;
+const CTA_MOBILE_MAX_SCALE = 0.11;
+const CTA_MOBILE_MIN_SCALE = 0.08;
 
 const HeroSection = () => {
   const isMobile = useIsMobile();
@@ -81,6 +82,7 @@ const HeroSection = () => {
       <div className="cyberpunk-cta-wrapper">
         <motion.a
           href="#contact"
+          className="inline-block"
           style={{ scale: ctaScale }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
