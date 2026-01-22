@@ -431,7 +431,7 @@
       justify-content: center;
       z-index: 50;
       pointer-events: auto;
-      transform: scale(0.35);
+      transform: scale(0.28);
       transform-origin: center;
     }
   }
