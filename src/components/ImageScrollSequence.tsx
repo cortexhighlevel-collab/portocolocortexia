@@ -144,44 +144,64 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const loadedFramesRef = useRef<Set<number>>(new Set());
   const decodedFramesRef = useRef<Set<number>>(new Set());
   const loadingFramesRef = useRef<Set<number>>(new Set());
-  const frameElsRef = useRef<Array<HTMLImageElement | null>>([]);
+
+  // IMPORTANTE (mobile): não renderizar 48 imgs simultâneas, isso estoura memória e pode “derrubar” o browser.
+  const SLOT_COUNT = 7;
+  const slotElsRef = useRef<Array<HTMLImageElement | null>>(Array(SLOT_COUNT).fill(null));
+  const slotFrameIndexRef = useRef<Array<number>>(Array(SLOT_COUNT).fill(-1));
   const isMobile = useIsMobile();
 
   const frames = isMobile ? mobileFrames : desktopFrames;
 
-  const ensureFrameElsSize = () => {
-    if (frameElsRef.current.length !== frames.length) {
-      frameElsRef.current = Array.from({ length: frames.length }, (_, i) => frameElsRef.current[i] ?? null);
-    }
-  };
-
-  const setFrameStyles = (index: number, nextOpacity: number, nextZ: number) => {
-    const el = frameElsRef.current[index];
+  const setSlotStyles = (slot: number, nextOpacity: number, nextZ: number) => {
+    const el = slotElsRef.current[slot];
     if (!el) return;
-    // Evita write no DOM se já estiver correto (reduz layout/paint churn)
     const op = String(nextOpacity);
     const z = String(nextZ);
     if (el.style.opacity !== op) el.style.opacity = op;
     if (el.style.zIndex !== z) el.style.zIndex = z;
   };
 
-  const applyFrameVisibility = (
-    newCurrent: number,
-    newPrev: number,
-    oldCurrent: number,
-    oldPrev: number,
-  ) => {
-    ensureFrameElsSize();
+  const computeWantedFrames = (current: number, prev: number) => {
+    const wanted = new Set<number>();
+    wanted.add(current);
+    wanted.add(prev);
+    for (let i = current - 2; i <= current + 2; i++) {
+      if (i >= 0 && i < frames.length) wanted.add(i);
+    }
+    // garante tamanho máximo
+    return Array.from(wanted).slice(0, SLOT_COUNT);
+  };
 
-    const keep = new Set([newCurrent, newPrev]);
+  const applySlots = (newCurrent: number, newPrev: number) => {
+    const wanted = computeWantedFrames(newCurrent, newPrev);
 
-    // Esconde o que não faz mais parte do par (current/prev)
-    if (!keep.has(oldCurrent)) setFrameStyles(oldCurrent, 0, 0);
-    if (!keep.has(oldPrev)) setFrameStyles(oldPrev, 0, 0);
+    // 1) Atualiza/realoca slots para as fontes necessárias
+    for (let i = 0; i < wanted.length; i++) {
+      const frameIdx = wanted[i];
+      const el = slotElsRef.current[i];
+      if (!el) continue;
 
-    // Mostra prev e current (apenas 2 frames visíveis, sem re-render React)
-    if (newPrev !== newCurrent) setFrameStyles(newPrev, 1, 1);
-    setFrameStyles(newCurrent, 1, 2);
+      if (slotFrameIndexRef.current[i] !== frameIdx) {
+        slotFrameIndexRef.current[i] = frameIdx;
+        if (el.src !== frames[frameIdx]) el.src = frames[frameIdx];
+      }
+    }
+
+    // 2) Slots extras ficam invisíveis
+    for (let i = wanted.length; i < SLOT_COUNT; i++) {
+      slotFrameIndexRef.current[i] = -1;
+      setSlotStyles(i, 0, 0);
+    }
+
+    // 3) Define opacidade/zIndex: current por cima, prev logo abaixo, demais off
+    for (let i = 0; i < wanted.length; i++) {
+      const idx = slotFrameIndexRef.current[i];
+      if (idx === -1) continue;
+      if (idx === newCurrent) setSlotStyles(i, 1, 2);
+      else if (idx === newPrev) setSlotStyles(i, 1, 1);
+      else setSlotStyles(i, 0, 0);
+    }
   };
 
   // Função para carregar um frame específico
@@ -194,12 +214,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
       if (loadedFramesRef.current.has(index) || loadingFramesRef.current.has(index)) {
         // Se estiver carregado mas não decodificado e for prioritário, tenta decodificar em background
-        if (mode === "near" && loadedFramesRef.current.has(index) && !decodedFramesRef.current.has(index)) {
-          const el = frameElsRef.current[index];
-          if (el?.decode) {
-            el.decode().then(() => decodedFramesRef.current.add(index)).catch(() => void 0);
-          }
-        }
+        // decode é best-effort (não bloqueia rendering)
         resolve();
         return;
       }
@@ -220,12 +235,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
         // Tenta decodificar em background para suavidade
         const maybeDecode = () => {
           if (decodedFramesRef.current.has(index)) return;
-          // Preferir decode do elemento real (quando existir), senão do Image()
-          const el = frameElsRef.current[index];
-          const decoder = el?.decode ? el : img;
-          if (decoder.decode) {
-            decoder.decode().then(() => decodedFramesRef.current.add(index)).catch(() => void 0);
-          }
+          if (img.decode) img.decode().then(() => decodedFramesRef.current.add(index)).catch(() => void 0);
         };
 
         if (mode === "near") {
@@ -278,9 +288,9 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     previousDisplayedFrameRef.current = 0;
     setIsReady(false);
 
-    // Ajusta array de refs e garante estado visual inicial (frame 0)
-    ensureFrameElsSize();
-    applyFrameVisibility(0, 0, 0, 0);
+    // Estado visual inicial (frame 0)
+    slotFrameIndexRef.current = Array(SLOT_COUNT).fill(-1);
+    applySlots(0, 0);
 
     // Pré-carregar os primeiros frames
     const preloadInitial = async () => {
@@ -291,17 +301,6 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       }
       await Promise.all(promises);
       setIsReady(true);
-
-      // Pré-carregar o resto em background (elimina travadas em scroll rápido)
-      const preloadAll = () => {
-        for (let i = 0; i < frames.length; i++) loadFrame(i, "background");
-      };
-
-      const requestIdleCallback = (window as unknown as { requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number })
-        .requestIdleCallback;
-
-      if (requestIdleCallback) requestIdleCallback(preloadAll, { timeout: 1500 });
-      else window.setTimeout(preloadAll, 0);
     };
 
     preloadInitial();
@@ -368,13 +367,12 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
         loadFrame(nextFrame, "near");
       } else {
         const oldCurrent = displayedFrameRef.current;
-        const oldPrev = previousDisplayedFrameRef.current;
         const newPrev = oldCurrent;
         const newCurrent = nextFrame;
 
         previousDisplayedFrameRef.current = newPrev;
         displayedFrameRef.current = newCurrent;
-        applyFrameVisibility(newCurrent, newPrev, oldCurrent, oldPrev);
+        applySlots(newCurrent, newPrev);
       }
 
       rafIdRef.current = window.requestAnimationFrame(tick);
@@ -414,16 +412,16 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
           style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease" }}
           aria-hidden="true"
         >
-          {frames.map((src, index) => (
+          {Array.from({ length: SLOT_COUNT }).map((_, slot) => (
             <img
-              key={`${isMobile ? "mobile" : "desktop"}-${index}`}
+              key={`${isMobile ? "mobile" : "desktop"}-slot-${slot}`}
               ref={(el) => {
-                frameElsRef.current[index] = el;
+                slotElsRef.current[slot] = el;
               }}
-              src={src}
+              src={firstFrame}
               alt=""
               decoding="async"
-              loading="eager"
+              loading={slot === 0 ? "eager" : "lazy"}
               style={{
                 position: "absolute",
                 top: 0,
@@ -434,8 +432,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
                 objectPosition: "center center",
                 transform: "scale(1.15)",
                 transformOrigin: "center center",
-                opacity: index === 0 ? 1 : 0,
-                zIndex: index === 0 ? 2 : 0,
+                opacity: slot === 0 ? 1 : 0,
+                zIndex: slot === 0 ? 2 : 0,
                 transition: "none",
                 willChange: "opacity",
               }}
