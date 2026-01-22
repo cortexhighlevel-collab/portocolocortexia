@@ -150,11 +150,13 @@ const NovaCamadaSection = () => {
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isReady, setIsReady] = useState(false);
   const isIOS = isIOSDevice();
+  const mediaRef = useRef<HTMLDivElement | null>(null);
+  const [isInView, setIsInView] = useState(true);
 
   // Preload
   useEffect(() => {
-    // iOS/WebKit: não fazer preload em massa nem renderizar 48 <img> empilhadas.
-    // Isso é o que costuma derrubar a aba com "A problem occurred with this webpage".
+    // iOS/WebKit: NÃO fazer preload em massa.
+    // A animação (modo leve) vai carregando sob demanda 1 frame por vez.
     if (isIOS) {
       setCurrentFrame(0);
       setIsReady(true);
@@ -173,16 +175,59 @@ const NovaCamadaSection = () => {
     });
   }, [isIOS]);
 
+  // InView (para pausar autoplay fora da tela no iOS)
+  useEffect(() => {
+    const el = mediaRef.current;
+    if (!el) return;
+
+    const obs = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { threshold: 0 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
   // Autoplay loop
   useEffect(() => {
-    if (!isReady || isIOS) return;
-    
+    if (!isReady) return;
+
+    // iOS: modo leve -> apenas 1 <img> (sem empilhar 48 no DOM) + preload do próximo frame.
+    // Também pausa fora da tela/aba para reduzir pressão de memória.
+    if (isIOS) {
+      if (!isInView) return;
+
+      let cancelled = false;
+      let timer: number | null = null;
+
+      const scheduleNext = () => {
+        if (cancelled) return;
+        timer = window.setTimeout(() => {
+          if (cancelled) return;
+          setCurrentFrame((prev) => {
+            const next = (prev + 1) % frames.length;
+            // Preload do próximo
+            const img = new Image();
+            img.src = frames[next];
+            return next;
+          });
+          scheduleNext();
+        }, FRAME_DURATION);
+      };
+
+      scheduleNext();
+      return () => {
+        cancelled = true;
+        if (timer) window.clearTimeout(timer);
+      };
+    }
+
     const interval = setInterval(() => {
       setCurrentFrame((prev) => (prev + 1) % frames.length);
     }, FRAME_DURATION);
 
     return () => clearInterval(interval);
-  }, [isReady, isIOS]);
+  }, [isReady, isIOS, isInView]);
 
   return (
     <section id="nova-camada" className="relative bg-background py-24 md:py-32">
@@ -205,11 +250,12 @@ const NovaCamadaSection = () => {
                   <div
                     className="absolute inset-0"
                     style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.4s ease" }}
+                    ref={mediaRef}
                   >
                     {isIOS ? (
                       <img
-                        src={frames[0]}
-                        alt="Visual da seção A Nova Camada"
+                        src={frames[currentFrame] ?? frames[0]}
+                        alt="Visual animado da seção A Nova Camada"
                         className="absolute inset-0 w-full h-full object-cover"
                         decoding="async"
                         loading="eager"

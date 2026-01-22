@@ -78,15 +78,16 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const renderMode: RenderMode = "canvas";
 
   // IMPORTANTE: não faça return cedo aqui — isso quebra a ordem de hooks.
-  // Mobile: usuário pediu animado. Mantemos um failsafe: iOS continua estático para evitar crash WebKit.
-  const renderStaticMobile = isIOS;
+  // Mobile: usuário pediu animado (inclusive no iOS), mas em modo leve (sem preload agressivo).
+  const renderStaticMobile = false;
 
   // Desktop: prioriza fidelidade e responsividade em scroll rápido.
   // A principal diferença entre Preview vs Published costuma ser latência/cache: no publicado, os JPGs podem demorar
   // mais a chegar, então precisamos de um preload inicial maior + fallback mais esperto quando o frame alvo não carregou.
   // Mobile: manter otimizações (mas no momento está em modo estático acima).
   const DESKTOP_FRAME_BUFFER = 16;
-  const effectiveFrameBuffer = isIOS ? 2 : isMobile ? 6 : DESKTOP_FRAME_BUFFER;
+  // iOS mobile: buffer mínimo para evitar pressão de memória.
+  const effectiveFrameBuffer = isIOS ? 1 : isMobile ? 6 : DESKTOP_FRAME_BUFFER;
   const effectiveMaxStep = isMobile ? MAX_STEP : frames.length;
   const allowBackgroundPreload = !isIOS;
   const allowDecode = !isIOS;
@@ -299,12 +300,6 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     imgCacheRef.current = new Map<number, HTMLImageElement>();
     setIsReady(false);
 
-    // Mobile estático: não faz preload/tick, só marca como pronto.
-    if (renderStaticMobile) {
-      setIsReady(true);
-      return;
-    }
-
     // Garante estado visual inicial (frame 0) sem depender de 48 <img>
     renderPoolForFrames(0, 0);
 
@@ -328,7 +323,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       }
 
       // Background preload:
-      // No iPhone, decodificar TUDO tende a travar (memória/GPU). Mantemos um preload progressivo e leve.
+      // No iPhone, decodificar/carregar muita coisa tende a travar (memória/GPU).
+      // Mantemos um preload progressivo e BEM limitado.
       const requestIdleCallback = (window as unknown as {
         requestIdleCallback?: (cb: (deadline?: { timeRemaining: () => number }) => void, opts?: { timeout?: number }) => number;
       }).requestIdleCallback;
@@ -336,9 +332,11 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       // Desktop: preload completo em background para manter scroll suave mesmo em scroll rápido.
       // Mobile: limitado (e no iOS desativado) para evitar pressão de memória.
       const maxBackground = allowBackgroundPreload
-        ? isMobile
-          ? Math.min(24, frames.length)
-          : frames.length
+        ? isIOS
+          ? Math.min(8, frames.length)
+          : isMobile
+            ? Math.min(24, frames.length)
+            : frames.length
         : 0;
       let cursor = 0;
 
