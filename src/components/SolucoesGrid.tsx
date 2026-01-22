@@ -746,18 +746,31 @@ const SolucoesGrid = () => {
         </motion.div>
         
         {/* ===== LAYOUT MOBILE ===== */}
-        <div className="lg:hidden flex flex-col items-center gap-6">
-          {/* Cérebro centralizado no topo */}
-          <div ref={brainRef} className="relative z-10 mb-4">
+        <div className="lg:hidden flex flex-col items-center">
+          {/* Cérebro centralizado no topo (tamanho reduzido) */}
+          <div className="relative z-10 mb-2 scale-[0.65] origin-center">
             <CentralBrain />
           </div>
           
-          {/* Cards empilhados verticalmente */}
-          {mobileOrder.map((idx, i) => (
-            <div key={camadas[idx].position} className="w-full max-w-[340px]">
-              <MobileCard camada={camadas[idx]} index={i} />
-            </div>
-          ))}
+          {/* Linha vertical do cérebro até o primeiro card */}
+          <div className="w-0.5 h-8 bg-gradient-to-b from-[#a855f7] to-[#ff2244]" />
+          
+          {/* Cards empilhados verticalmente com linhas */}
+          <div className="flex flex-col items-center w-full px-4">
+            {mobileOrder.map((idx, i) => (
+              <div key={camadas[idx].position} className="relative w-full max-w-[380px]">
+                {/* Linha de conexão vertical entre cards */}
+                {i > 0 && (
+                  <div className="absolute left-[68px] -top-4 w-0.5 h-4 bg-gradient-to-b from-[#ff2244] to-[#a855f7]" />
+                )}
+                <MobileSvgCard camada={camadas[idx]} index={i} />
+                {/* Linha após o card (exceto último) */}
+                {i < mobileOrder.length - 1 && (
+                  <div className="absolute left-[68px] -bottom-4 w-0.5 h-4 bg-gradient-to-b from-[#a855f7] to-[#ff2244]" />
+                )}
+              </div>
+            ))}
+          </div>
         </div>
         
         {/* ===== LAYOUT DESKTOP ===== */}
@@ -800,48 +813,75 @@ const SolucoesGrid = () => {
     </section>;
 };
 
-// Card simplificado para mobile (sem os SVGs complexos, usa layout limpo com círculo + texto)
-const MobileCard = ({
+// Card mobile com design SVG similar ao desktop (círculo à esquerda + retângulo arredondado)
+const MobileSvgCard = ({
   camada,
   index
 }: {
   camada: (typeof camadas)[0];
   index: number;
 }) => {
+  const Icon = camada.icon;
+  const svgId = `mobile-card-${index}`;
+  
   return (
     <motion.div
-      initial={{ opacity: 1, y: 0 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 1 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.1 }}
-      transition={{ delay: index * 0.1, duration: 0.4 }}
-      className="relative"
+      className="relative w-full my-4"
     >
-      {/* Linha de conexão vertical (exceto no primeiro card) */}
-      {index > 0 && (
-        <div className="absolute left-1/2 -top-6 w-0.5 h-6 bg-gradient-to-b from-[#ff2244] to-[#a855f7]" />
-      )}
-      
-      {/* Card container */}
-      <div className="relative flex items-center gap-4 p-4 rounded-xl border border-[#a855f7]/40 bg-[hsl(220_14%_12%/0.92)]">
-        {/* Círculo do ícone à esquerda */}
-        <div className="relative flex-shrink-0">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] border-2 border-[#a855f7]/50 flex items-center justify-center">
-            <camada.icon className="w-7 h-7 text-[#a855f7]" />
+      {/* Container do card */}
+      <div className="relative w-full aspect-[380/110]">
+        {/* SVG Frame */}
+        <svg
+          className="absolute inset-0 w-full h-full"
+          viewBox="0 0 380 110"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <defs>
+            <linearGradient id={`mobileGrad-${svgId}`} x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="hsl(var(--frame-red))" />
+              <stop offset="100%" stopColor="hsl(var(--frame-purple))" />
+            </linearGradient>
+            <clipPath id={`mobileClip-${svgId}`}>
+              <circle cx="55" cy="55" r="50" />
+              <rect x="75" y="8" width="297" height="94" rx="16" />
+            </clipPath>
+          </defs>
+          
+          {/* Background */}
+          <g clipPath={`url(#mobileClip-${svgId})`}>
+            <rect x="0" y="0" width="380" height="110" fill="hsl(var(--frame-panel))" fillOpacity="0.92" />
+          </g>
+          
+          {/* Círculo externo */}
+          <circle cx="55" cy="55" r="54" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1" fill="none" />
+          <circle cx="55" cy="55" r="48" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1" fill="none" />
+          
+          {/* Retângulo arredondado */}
+          <rect x="75" y="4" width="301" height="102" rx="18" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1" fill="none" />
+          <rect x="79" y="8" width="293" height="94" rx="14" stroke={`url(#mobileGrad-${svgId})`} strokeWidth="1" fill="none" />
+        </svg>
+        
+        {/* Ícone no círculo */}
+        <div className="absolute left-[22px] top-1/2 -translate-y-1/2 w-[66px] h-[66px] flex items-center justify-center">
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] flex items-center justify-center">
+            <Icon className="w-6 h-6 text-[#a855f7]" />
           </div>
-          {/* Anel externo decorativo */}
-          <div className="absolute inset-[-4px] rounded-full border border-[#ff2244]/40" />
-          <div className="absolute inset-[-8px] rounded-full border border-[#a855f7]/20" />
         </div>
         
         {/* Conteúdo de texto */}
-        <div className="flex-1 min-w-0">
-          <h3 className="text-white font-bold text-base leading-tight mb-1">
+        <div className="absolute left-[120px] right-4 top-1/2 -translate-y-1/2">
+          <h3 className="text-white font-bold text-sm leading-tight mb-0.5">
             {camada.titulo}
           </h3>
-          <p className="text-[#ff6b8a] text-[9px] uppercase tracking-widest font-mono leading-snug mb-1">
+          <p className="text-[#ff6b8a] text-[8px] uppercase tracking-widest font-mono leading-snug mb-0.5">
             {camada.funcao}
           </p>
-          <p className="text-gray-400 text-xs leading-snug">
+          <p className="text-gray-400 text-[11px] leading-snug">
             {camada.beneficio}
           </p>
         </div>
