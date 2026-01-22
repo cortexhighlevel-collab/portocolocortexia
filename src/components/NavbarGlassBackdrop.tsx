@@ -75,6 +75,12 @@ export default function NavbarGlassBackdrop({
 
   const clip = d ? `path("${d}")` : undefined;
 
+  // iOS mobile: backdrop-filter costuma ser bem caro no WebKit.
+  const reduceEffects =
+    typeof document !== "undefined" &&
+    document.documentElement.classList.contains("ios-mobile");
+  const effectiveBlurPx = reduceEffects ? 0 : blurPx;
+
   return (
     <div ref={baseRef} className="absolute inset-0 pointer-events-none">
       <div
@@ -84,8 +90,8 @@ export default function NavbarGlassBackdrop({
           clipPath: clip,
           WebkitClipPath: clip,
           background: "hsl(var(--nav-bg) / var(--nav-bg-alpha))",
-          backdropFilter: `blur(${blurPx}px)`,
-          WebkitBackdropFilter: `blur(${blurPx}px)`,
+          backdropFilter: effectiveBlurPx ? `blur(${effectiveBlurPx}px)` : "none",
+          WebkitBackdropFilter: effectiveBlurPx ? `blur(${effectiveBlurPx}px)` : "none",
         }}
       />
     </div>

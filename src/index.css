@@ -90,6 +90,18 @@
     letter-spacing: 0.01em;
   }
 
+  /* iOS (iPhone) performance mode: reduz filtros caros do WebKit somente no mobile.
+     A classe é aplicada em runtime via App.tsx: documentElement.classList.toggle('ios-mobile'). */
+  html.ios-mobile {
+    /* desativa blur de navegação globalmente */
+    --nav-blur: 0px;
+  }
+
+  html.ios-mobile * {
+    /* evita filtros/blur herdados ficarem “presos” em layers grandes */
+    -webkit-backdrop-filter: none;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     @apply font-display;
     font-weight: 700;
@@ -110,6 +122,28 @@
     backdrop-filter: blur(var(--nav-blur));
     -webkit-backdrop-filter: blur(var(--nav-blur));
     border-radius: var(--nav-radius);
+  }
+
+  /* iOS mobile: desliga backdrop-filter (muito pesado no Safari) */
+  html.ios-mobile .nav-glass {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  html.ios-mobile .hero-cta-button {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  /* brilhaço/blur em pseudo-elementos (ex: CTA) */
+  html.ios-mobile .border-shine-run {
+    filter: none;
+  }
+
+  html.ios-mobile .cta-border-glow::before,
+  html.ios-mobile .cta-border-glow::after {
+    filter: none;
+    animation: none;
   }
 
   .nav-link {
