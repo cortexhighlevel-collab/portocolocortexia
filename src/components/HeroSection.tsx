@@ -84,7 +84,11 @@ const HeroSection = () => {
             <div className="hero-content-inner">
               <div className="hero-top-content">
                 <motion.div
-                  className={isMobile ? "origin-center w-full flex flex-col items-center text-center" : "scale-[1.7] origin-left"}
+                  className={isMobile 
+                    ? "origin-center w-full flex flex-col items-center text-center fixed left-1/2 -translate-x-1/2 z-40" 
+                    : "scale-[1.7] origin-left"
+                  }
+                  style={isMobile ? { top: "38%" } : {}}
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.2 }}
@@ -92,7 +96,7 @@ const HeroSection = () => {
                   <h1
                     className={`hero-headline uppercase font-bold italic text-white ${
                       isMobile
-                        ? "text-[1.8rem] leading-[1.1]"
+                        ? "text-[1.5rem] leading-[1.1]"
                         : "scale-[2.4] origin-left -translate-x-[40%] translate-y-[15%]"
                     }`}
                   >
@@ -106,7 +110,7 @@ const HeroSection = () => {
                   <p
                     className={`hero-headline uppercase font-medium italic text-zinc-400 ${
                       isMobile
-                        ? "text-[0.65rem] mt-6 tracking-[0.08em]"
+                        ? "text-[0.55rem] mt-4 tracking-[0.08em]"
                         : "mt-24 scale-[1.36] origin-left -translate-x-[40%]"
                     }`}
                     style={isMobile ? {} : { fontSize: "0.55em", letterSpacing: "0.05em" }}
