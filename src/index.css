@@ -421,7 +421,7 @@
     }
 
     .cyberpunk-cta-wrapper {
-      /* Mobile: botão original escalado para caber na tela */
+      /* Mobile: botão original (escala aplicada via Framer Motion no componente) */
       position: fixed;
       display: flex;
       top: auto;
@@ -431,7 +431,6 @@
       justify-content: center;
       z-index: 50;
       pointer-events: auto;
-      transform: scale(0.28);
       transform-origin: center;
     }
   }
@@ -443,7 +442,6 @@
       left: 50%;
       top: 72%;
       translate: -50% -50%;
-      scale: 0.5;
       transform-origin: center;
       z-index: 50;
       pointer-events: auto;
