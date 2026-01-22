@@ -8,7 +8,10 @@ import novaCamadaMobileVideoMp4 from "@/assets/nova-camada-mobile.mp4";
 const NovaCamadaSection = () => {
   const isMobile = useIsMobile();
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const PLAYBACK_RATE = 0.65;
+  // 20% mais lento que antes (0.65 -> 0.52)
+  const PLAYBACK_RATE = 0.52;
+  // Reinicia um pouco antes do final para evitar o “tranco” do loop em alguns devices.
+  const LOOP_EARLY_SECONDS = 0.12;
 
   // Deixar o vídeo mais lento (mobile + desktop) e evitar pausas aleatórias.
   useEffect(() => {
@@ -40,12 +43,23 @@ const NovaCamadaSection = () => {
       v.play().catch(() => void 0);
     };
 
+    const onTimeUpdate = () => {
+      // Loop antecipado para ficar com cara de “infinito” e sem travadinha
+      const d = v.duration;
+      if (!Number.isFinite(d) || d <= 0) return;
+      if (d - v.currentTime <= LOOP_EARLY_SECONDS) {
+        v.currentTime = 0;
+        v.play().catch(() => void 0);
+      }
+    };
+
     // aplica já
     applySettings();
 
     document.addEventListener("visibilitychange", onVisibility);
     v.addEventListener("pause", onPause);
     v.addEventListener("ended", onEnded);
+    v.addEventListener("timeupdate", onTimeUpdate);
     v.addEventListener("loadedmetadata", applySettings);
     v.addEventListener("canplay", applySettings);
 
@@ -53,6 +67,7 @@ const NovaCamadaSection = () => {
       document.removeEventListener("visibilitychange", onVisibility);
       v.removeEventListener("pause", onPause);
       v.removeEventListener("ended", onEnded);
+      v.removeEventListener("timeupdate", onTimeUpdate);
       v.removeEventListener("loadedmetadata", applySettings);
       v.removeEventListener("canplay", applySettings);
     };
