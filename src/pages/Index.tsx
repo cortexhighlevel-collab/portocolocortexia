@@ -3,7 +3,7 @@ import HeroSection from "@/components/HeroSection";
 import ProblemaSection from "@/components/ProblemaSection";
 import NovaCamadaSection from "@/components/NovaCamadaSection";
 import ServicesSection from "@/components/ServicesSection";
-import EntregasSection from "@/components/EntregasSection";
+
 import ParaQuemSection from "@/components/ParaQuemSection";
 import MetodologiaSection from "@/components/MetodologiaSection";
 import ProjectsSection from "@/components/ProjectsSection";
@@ -26,8 +26,6 @@ const Index = () => {
         <NovaCamadaSection />
         {/* 3. Soluções - Cards de serviços */}
         <ServicesSection />
-        {/* 4. Entregas - Detalhamento técnico */}
-        <EntregasSection />
         {/* 5. Para Quem - Segmentação */}
         <ParaQuemSection />
         {/* 6. Metodologia - Processo */}
