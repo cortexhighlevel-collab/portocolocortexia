@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react"; 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { isIOSDevice } from "@/lib/platform";
 
@@ -57,6 +57,30 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const isIOS = isMobile && isIOSDevice();
 
   const frames = isMobile ? mobileFrames : desktopFrames;
+
+  // DEBUG/ISOLATION MODE: no mobile, o Hero fica estático (sem sequência de frames)
+  // para isolarmos se o crash no iOS vem do Hero.
+  if (isMobile) {
+    const firstFrame = mobileFrames[0];
+    return (
+      <div ref={scrollContainerRef} className="relative" style={{ height: "100vh" }}>
+        <div className="sticky top-0 h-screen w-full overflow-hidden">
+          <div
+            className="pointer-events-none absolute inset-0 z-0"
+            style={{
+              backgroundImage: `url(${firstFrame})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center center",
+              transform: "scale(1.15)",
+              transformOrigin: "center center",
+            }}
+            aria-hidden="true"
+          />
+          <div className="relative z-10 h-full">{children}</div>
+        </div>
+      </div>
+    );
+  }
 
   // iOS (Chrome/Safari) usa WebKit e costuma “derrubar” a aba por memória/GPU.
   // Mantemos o efeito de 48 frames, mas reduzimos agressivamente preload/decoding.
