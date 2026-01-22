@@ -169,16 +169,8 @@ const CyberCard = ({
           </div>
 
           {isBottomRight ? <>
-              {/* Ícone (layout retangular) */}
-              <div className="absolute left-6 top-6 z-10">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] border border-[#a855f7]/30 flex items-center justify-center">
-                  <Icon className="w-6 h-6 text-[#a855f7]" />
-                </div>
-                <div className="absolute inset-0 rounded-full bg-[#a855f7]/20 blur-md -z-10" />
-              </div>
-
               {/* Conteúdo (mantém texto original) */}
-               <div className="relative z-10 h-full w-full pl-[92px] pr-8 py-5 flex flex-col justify-center gap-1">
+               <div className="relative z-10 h-full w-full pl-8 pr-8 py-5 flex flex-col justify-center gap-1">
                  <h3 className="text-white font-bold text-base leading-tight break-words">{camada.titulo}</h3>
                  <p className="text-[#ff6b8a] text-[8px] uppercase tracking-widest font-mono leading-snug break-words">
                    {camada.funcao}
@@ -192,14 +184,6 @@ const CyberCard = ({
                    </p>
               </div>
             </> : <>
-              {/* Ícone no círculo esquerdo do SVG */}
-              <div className="absolute left-8 top-1/2 -translate-y-1/2 z-10">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#1a1a2e] to-[#0a0a0f] border border-[#a855f7]/30 flex items-center justify-center">
-                  <Icon className="w-7 h-7 text-[#a855f7]" />
-                </div>
-                <div className="absolute inset-0 rounded-full bg-[#a855f7]/20 blur-md -z-10" />
-              </div>
-
                {/* Conteúdo (mantém texto original) */}
                 <div className="relative z-10 h-full w-full pl-[210px] pr-10 py-4 flex flex-col justify-center gap-1">
                   <h3 className={`text-white font-bold leading-tight break-words ${camada.position === "top-right" ? "whitespace-nowrap text-[15px]" : "text-base"}`}>
