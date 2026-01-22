@@ -3,109 +3,14 @@ import { Bot, BarChart3, Brain, Users, Sparkles, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import SolucoesGrid from "./SolucoesGrid";
 import { isIOSDevice } from "@/lib/platform";
+import { useIsMobile } from "@/hooks/use-mobile";
 
-// Frames (lado esquerdo do card)
-import frame001 from "@/assets/nova-camada-frames/frame-001.jpg";
-import frame002 from "@/assets/nova-camada-frames/frame-002.jpg";
-import frame003 from "@/assets/nova-camada-frames/frame-003.jpg";
-import frame004 from "@/assets/nova-camada-frames/frame-004.jpg";
-import frame005 from "@/assets/nova-camada-frames/frame-005.jpg";
-import frame006 from "@/assets/nova-camada-frames/frame-006.jpg";
-import frame007 from "@/assets/nova-camada-frames/frame-007.jpg";
-import frame008 from "@/assets/nova-camada-frames/frame-008.jpg";
-import frame009 from "@/assets/nova-camada-frames/frame-009.jpg";
-import frame010 from "@/assets/nova-camada-frames/frame-010.jpg";
-import frame011 from "@/assets/nova-camada-frames/frame-011.jpg";
-import frame012 from "@/assets/nova-camada-frames/frame-012.jpg";
-import frame013 from "@/assets/nova-camada-frames/frame-013.jpg";
-import frame014 from "@/assets/nova-camada-frames/frame-014.jpg";
-import frame015 from "@/assets/nova-camada-frames/frame-015.jpg";
-import frame016 from "@/assets/nova-camada-frames/frame-016.jpg";
-import frame017 from "@/assets/nova-camada-frames/frame-017.jpg";
-import frame018 from "@/assets/nova-camada-frames/frame-018.jpg";
-import frame019 from "@/assets/nova-camada-frames/frame-019.jpg";
-import frame020 from "@/assets/nova-camada-frames/frame-020.jpg";
-import frame021 from "@/assets/nova-camada-frames/frame-021.jpg";
-import frame022 from "@/assets/nova-camada-frames/frame-022.jpg";
-import frame023 from "@/assets/nova-camada-frames/frame-023.jpg";
-import frame024 from "@/assets/nova-camada-frames/frame-024.jpg";
-import frame025 from "@/assets/nova-camada-frames/frame-025.jpg";
-import frame026 from "@/assets/nova-camada-frames/frame-026.jpg";
-import frame027 from "@/assets/nova-camada-frames/frame-027.jpg";
-import frame028 from "@/assets/nova-camada-frames/frame-028.jpg";
-import frame029 from "@/assets/nova-camada-frames/frame-029.jpg";
-import frame030 from "@/assets/nova-camada-frames/frame-030.jpg";
-import frame031 from "@/assets/nova-camada-frames/frame-031.jpg";
-import frame032 from "@/assets/nova-camada-frames/frame-032.jpg";
-import frame033 from "@/assets/nova-camada-frames/frame-033.jpg";
-import frame034 from "@/assets/nova-camada-frames/frame-034.jpg";
-import frame035 from "@/assets/nova-camada-frames/frame-035.jpg";
-import frame036 from "@/assets/nova-camada-frames/frame-036.jpg";
-import frame037 from "@/assets/nova-camada-frames/frame-037.jpg";
-import frame038 from "@/assets/nova-camada-frames/frame-038.jpg";
-import frame039 from "@/assets/nova-camada-frames/frame-039.jpg";
-import frame040 from "@/assets/nova-camada-frames/frame-040.jpg";
-import frame041 from "@/assets/nova-camada-frames/frame-041.jpg";
-import frame042 from "@/assets/nova-camada-frames/frame-042.jpg";
-import frame043 from "@/assets/nova-camada-frames/frame-043.jpg";
-import frame044 from "@/assets/nova-camada-frames/frame-044.jpg";
-import frame045 from "@/assets/nova-camada-frames/frame-045.jpg";
-import frame046 from "@/assets/nova-camada-frames/frame-046.jpg";
-import frame047 from "@/assets/nova-camada-frames/frame-047.jpg";
-import frame048 from "@/assets/nova-camada-frames/frame-048.jpg";
+import novaCamadaMobileVideo from "@/assets/nova-camada-mobile.webm";
 
-const frames = [
-  frame001,
-  frame002,
-  frame003,
-  frame004,
-  frame005,
-  frame006,
-  frame007,
-  frame008,
-  frame009,
-  frame010,
-  frame011,
-  frame012,
-  frame013,
-  frame014,
-  frame015,
-  frame016,
-  frame017,
-  frame018,
-  frame019,
-  frame020,
-  frame021,
-  frame022,
-  frame023,
-  frame024,
-  frame025,
-  frame026,
-  frame027,
-  frame028,
-  frame029,
-  frame030,
-  frame031,
-  frame032,
-  frame033,
-  frame034,
-  frame035,
-  frame036,
-  frame037,
-  frame038,
-  frame039,
-  frame040,
-  frame041,
-  frame042,
-  frame043,
-  frame044,
-  frame045,
-  frame046,
-  frame047,
-  frame048,
-];
+// Fallback estático (iOS não toca .webm)
+import novaCamadaPoster from "@/assets/nova-camada-frames/frame-001.jpg";
 
-const FRAME_DURATION = 42; // ms por frame (~24 FPS - velocidade de cinema)
+// (Mobile) vídeo substitui os frames no autoplay para reduzir memória.
 
 const camadas = [
   {
@@ -147,87 +52,8 @@ const camadas = [
 ];
 
 const NovaCamadaSection = () => {
-  const [currentFrame, setCurrentFrame] = useState(0);
-  const [isReady, setIsReady] = useState(false);
+  const isMobile = useIsMobile();
   const isIOS = isIOSDevice();
-  const mediaRef = useRef<HTMLDivElement | null>(null);
-  const [isInView, setIsInView] = useState(true);
-
-  // Preload
-  useEffect(() => {
-    // iOS/WebKit: NÃO fazer preload em massa.
-    // A animação (modo leve) vai carregando sob demanda 1 frame por vez.
-    if (isIOS) {
-      setCurrentFrame(0);
-      setIsReady(true);
-      return;
-    }
-
-    let loaded = 0;
-    setIsReady(false);
-    frames.forEach((src) => {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => {
-        loaded++;
-        if (loaded === frames.length) setIsReady(true);
-      };
-    });
-  }, [isIOS]);
-
-  // InView (para pausar autoplay fora da tela no iOS)
-  useEffect(() => {
-    const el = mediaRef.current;
-    if (!el) return;
-
-    const obs = new IntersectionObserver(
-      ([entry]) => setIsInView(entry.isIntersecting),
-      { threshold: 0 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  // Autoplay loop
-  useEffect(() => {
-    if (!isReady) return;
-
-    // iOS: modo leve -> apenas 1 <img> (sem empilhar 48 no DOM) + preload do próximo frame.
-    // Também pausa fora da tela/aba para reduzir pressão de memória.
-    if (isIOS) {
-      if (!isInView) return;
-
-      let cancelled = false;
-      let timer: number | null = null;
-
-      const scheduleNext = () => {
-        if (cancelled) return;
-        timer = window.setTimeout(() => {
-          if (cancelled) return;
-          setCurrentFrame((prev) => {
-            const next = (prev + 1) % frames.length;
-            // Preload do próximo
-            const img = new Image();
-            img.src = frames[next];
-            return next;
-          });
-          scheduleNext();
-        }, FRAME_DURATION);
-      };
-
-      scheduleNext();
-      return () => {
-        cancelled = true;
-        if (timer) window.clearTimeout(timer);
-      };
-    }
-
-    const interval = setInterval(() => {
-      setCurrentFrame((prev) => (prev + 1) % frames.length);
-    }, FRAME_DURATION);
-
-    return () => clearInterval(interval);
-  }, [isReady, isIOS, isInView]);
 
   return (
     <section id="nova-camada" className="relative bg-background py-24 md:py-32">
@@ -249,30 +75,38 @@ const NovaCamadaSection = () => {
                 <div className="relative min-h-[320px] lg:min-h-[520px] bg-background">
                   <div
                     className="absolute inset-0"
-                    style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.4s ease" }}
-                    ref={mediaRef}
+                    style={{ opacity: 1, transition: "opacity 0.4s ease" }}
                   >
-                    {isIOS ? (
+                    {isMobile ? (
+                      isIOS ? (
+                        <img
+                          src={novaCamadaPoster}
+                          alt="Visual da seção A Nova Camada"
+                          className="absolute inset-0 w-full h-full object-cover"
+                          decoding="async"
+                          loading="eager"
+                        />
+                      ) : (
+                        <video
+                          className="absolute inset-0 w-full h-full object-cover"
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          preload="metadata"
+                          poster={novaCamadaPoster}
+                        >
+                          <source src={novaCamadaMobileVideo} type="video/webm" />
+                        </video>
+                      )
+                    ) : (
                       <img
-                        src={frames[currentFrame] ?? frames[0]}
-                        alt="Visual animado da seção A Nova Camada"
+                        src={novaCamadaPoster}
+                        alt="Visual da seção A Nova Camada"
                         className="absolute inset-0 w-full h-full object-cover"
                         decoding="async"
                         loading="eager"
                       />
-                    ) : (
-                      frames.map((src, index) => (
-                        <img
-                          key={index}
-                          src={src}
-                          alt={`Frame ${index + 1}`}
-                          className="absolute inset-0 w-full h-full object-cover"
-                          style={{
-                            opacity: index === currentFrame ? 1 : 0,
-                            visibility: index === currentFrame ? "visible" : "hidden",
-                          }}
-                        />
-                      ))
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
                   </div>
