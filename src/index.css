@@ -381,7 +381,19 @@
   @media (max-width: 768px) {
     .hero-content {
       justify-content: flex-start;
-      padding: 20vh 16px 100px;
+      padding: 25vh 16px 100px;
+      align-items: center;
+    }
+
+    .hero-content-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero-top-content {
+      align-items: center;
+      gap: 20px;
     }
 
     .hero-headline {
@@ -408,17 +420,13 @@
       height: 30px;
     }
 
-    .hero-top-content {
-      gap: 20px;
-    }
-
     .cyberpunk-cta-wrapper {
       display: block;
       top: auto;
-      bottom: 15%;
+      bottom: 12%;
       left: 50%;
       translate: -50% 0;
-      scale: 1;
+      scale: 0.32;
       transform-origin: center;
     }
   }
