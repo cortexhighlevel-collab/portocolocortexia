@@ -64,6 +64,7 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   // Canvas renderer
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasSizeRef = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
+  const canvasDprRef = useRef<number>(1);
   const imgCacheRef = useRef<Map<number, HTMLImageElement>>(new Map());
 
   const poolElsRef = useRef<Array<HTMLImageElement | null>>([]);
@@ -89,7 +90,8 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
   const effectiveFrameBuffer = isIOS ? 1 : isMobile ? 6 : DESKTOP_FRAME_BUFFER;
   const effectiveMaxStep = frames.length;
   const allowBackgroundPreload = !isIOS;
-  const allowDecode = !isIOS;
+  // Mobile: decode() pode aumentar pressão de memória/CPU; manter desligado no mobile.
+  const allowDecode = !isMobile && !isIOS;
   const gateOnLoadedDesktop = true;
   const gateOnLoaded = (!isMobile && gateOnLoadedDesktop) || (isMobile && !isIOS);
 
@@ -142,14 +144,26 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
     const img = imgCacheRef.current.get(frameIndex);
     if (!img || !img.complete) return;
 
-    const { width: cw, height: ch } = canvas;
+    // Render em coordenadas lógicas (CSS pixels) com DPR limitado para melhorar nitidez sem “derreter” o mobile.
+    const dpr = canvasDprRef.current || 1;
+    const cw = Math.max(1, Math.floor(canvas.width / dpr));
+    const ch = Math.max(1, Math.floor(canvas.height / dpr));
     if (!cw || !ch) return;
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
 
     // clear
     ctx.clearRect(0, 0, cw, ch);
 
     // cover draw
-    const { dx, dy, dw, dh } = computeCoverDraw(img.naturalWidth || img.width, img.naturalHeight || img.height, cw, ch);
+    const { dx, dy, dw, dh } = computeCoverDraw(
+      img.naturalWidth || img.width,
+      img.naturalHeight || img.height,
+      cw,
+      ch
+    );
     ctx.drawImage(img, dx, dy, dw, dh);
   };
 
@@ -373,19 +387,52 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
       const h = window.innerHeight;
       if (canvasSizeRef.current.w === w && canvasSizeRef.current.h === h) return;
       canvasSizeRef.current = { w, h };
-      canvas.width = w;
-      canvas.height = h;
+
+      // Qualidade vs performance:
+      // - Desktop: pode usar DPR maior.
+      // - Mobile/iOS: limita DPR para evitar aquecimento e travas.
+      const rawDpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+      const dprCap = isMobile ? (isIOS ? 1.0 : 1.25) : 2.0;
+      const dpr = Math.max(1, Math.min(rawDpr, dprCap));
+      canvasDprRef.current = dpr;
+
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
       drawFrameToCanvas(displayedFrameRef.current);
     };
 
     onResize();
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [renderStaticMobile]);
+  }, [renderStaticMobile, isMobile, isIOS]);
+
+  // Mobile: reduzir trabalho contínuo.
+  // Em vez de rodar RAF para sempre, só anima enquanto o usuário está scrollando (ou enquanto ainda está “alcançando” o alvo).
+  const scrollWakeRef = useRef(0);
+  useEffect(() => {
+    const onScroll = () => {
+      scrollWakeRef.current = performance.now();
+      if (rafIdRef.current == null) {
+        rafIdRef.current = window.requestAnimationFrame(() => {
+          rafIdRef.current = null;
+          // o useEffect do tick (abaixo) agenda novamente
+        });
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     if (renderStaticMobile) return;
     const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
+
+    const shouldStayHot = () => {
+      // Mantém ativo por um curto período após scroll para suavização do lerp.
+      const since = performance.now() - (scrollWakeRef.current || 0);
+      return since < 200;
+    };
 
     const tick = () => {
       if (!isInView) {
@@ -448,6 +495,11 @@ const ImageScrollSequence = ({ children }: ImageScrollSequenceProps) => {
 
       // Se já está no frame correto, não faz nada
       if (desiredFrame === current) {
+        // Mobile: se não está scrollando e já alcançou o alvo, para o RAF para não aquecer.
+        if (isMobile && !shouldStayHot()) {
+          rafIdRef.current = null;
+          return;
+        }
         rafIdRef.current = window.requestAnimationFrame(tick);
         return;
       }
