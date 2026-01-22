@@ -1,57 +1,12 @@
-import { motion } from "framer-motion";
-import { Bot, BarChart3, Brain, Users, Sparkles, Search } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import SolucoesGrid from "./SolucoesGrid";
-import { isIOSDevice } from "@/lib/platform";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 import novaCamadaMobileVideo from "@/assets/nova-camada-mobile.webm";
 import novaCamadaMobileVideoMp4 from "@/assets/nova-camada-mobile.mp4";
 
-// (Mobile) vídeo substitui os frames no autoplay para reduzir memória.
-
-const camadas = [
-  {
-    icon: Bot,
-    titulo: "Automação com IA",
-    funcao: "Workflows inteligentes que aprendem",
-    beneficio: "Reduza 80% do trabalho operacional repetitivo",
-  },
-  {
-    icon: BarChart3,
-    titulo: "Análise Estratégica",
-    funcao: "Dados transformados em decisões",
-    beneficio: "Tome decisões baseadas em inteligência, não intuição",
-  },
-  {
-    icon: Brain,
-    titulo: "Engenharia de Prompt",
-    funcao: "Comandos precisos e estruturados",
-    beneficio: "Extraia o máximo de qualquer modelo de IA",
-  },
-  {
-    icon: Users,
-    titulo: "Personas Treinadas",
-    funcao: "IA que entende seu negócio",
-    beneficio: "Assistentes que falam a língua da sua empresa",
-  },
-  {
-    icon: Sparkles,
-    titulo: "Agentes Inteligentes",
-    funcao: "IA autônoma e especializada",
-    beneficio: "Sistemas que executam, não apenas respondem",
-  },
-  {
-    icon: Search,
-    titulo: "SEO + AEO",
-    funcao: "Otimização para humanos e IAs",
-    beneficio: "Apareça em buscas tradicionais e respostas de IA",
-  },
-];
-
 const NovaCamadaSection = () => {
   const isMobile = useIsMobile();
-  const isIOS = isIOSDevice();
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   // Mobile: deixar o vídeo um pouco mais lento.
@@ -64,7 +19,7 @@ const NovaCamadaSection = () => {
 
   return (
     <section id="nova-camada" className="relative bg-background py-24 md:py-32">
-      {/* CARD com imagem (frames) + texto */}
+      {/* CARD com vídeo + texto */}
       <div className="px-6 md:px-12">
         <div className="max-w-7xl mx-auto">
           <div className="relative overflow-hidden rounded-2xl border border-border bg-card">
