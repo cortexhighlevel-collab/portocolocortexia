@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Bot, BarChart3, Brain, Users, Sparkles, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import SolucoesGrid from "./SolucoesGrid";
+import { isIOSDevice } from "@/lib/platform";
 
 // Frames (lado esquerdo do card)
 import frame001 from "@/assets/nova-camada-frames/frame-001.jpg";
@@ -148,9 +149,18 @@ const camadas = [
 const NovaCamadaSection = () => {
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isReady, setIsReady] = useState(false);
+  const isIOS = isIOSDevice();
 
   // Preload
   useEffect(() => {
+    // iOS/WebKit: não fazer preload em massa nem renderizar 48 <img> empilhadas.
+    // Isso é o que costuma derrubar a aba com "A problem occurred with this webpage".
+    if (isIOS) {
+      setCurrentFrame(0);
+      setIsReady(true);
+      return;
+    }
+
     let loaded = 0;
     setIsReady(false);
     frames.forEach((src) => {
@@ -161,18 +171,18 @@ const NovaCamadaSection = () => {
         if (loaded === frames.length) setIsReady(true);
       };
     });
-  }, []);
+  }, [isIOS]);
 
   // Autoplay loop
   useEffect(() => {
-    if (!isReady) return;
+    if (!isReady || isIOS) return;
     
     const interval = setInterval(() => {
       setCurrentFrame((prev) => (prev + 1) % frames.length);
     }, FRAME_DURATION);
 
     return () => clearInterval(interval);
-  }, [isReady]);
+  }, [isReady, isIOS]);
 
   return (
     <section id="nova-camada" className="relative bg-background py-24 md:py-32">
@@ -196,18 +206,28 @@ const NovaCamadaSection = () => {
                     className="absolute inset-0"
                     style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.4s ease" }}
                   >
-                    {frames.map((src, index) => (
+                    {isIOS ? (
                       <img
-                        key={index}
-                        src={src}
-                        alt={`Frame ${index + 1}`}
+                        src={frames[0]}
+                        alt="Visual da seção A Nova Camada"
                         className="absolute inset-0 w-full h-full object-cover"
-                        style={{
-                          opacity: index === currentFrame ? 1 : 0,
-                          visibility: index === currentFrame ? "visible" : "hidden",
-                        }}
+                        decoding="async"
+                        loading="eager"
                       />
-                    ))}
+                    ) : (
+                      frames.map((src, index) => (
+                        <img
+                          key={index}
+                          src={src}
+                          alt={`Frame ${index + 1}`}
+                          className="absolute inset-0 w-full h-full object-cover"
+                          style={{
+                            opacity: index === currentFrame ? 1 : 0,
+                            visibility: index === currentFrame ? "visible" : "hidden",
+                          }}
+                        />
+                      ))
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
                   </div>
 
