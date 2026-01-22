@@ -58,15 +58,20 @@ const FramesStack = forwardRef<FramesStackHandle, FramesStackProps>(
             src={src}
             alt=""
             aria-hidden="true"
+            draggable={false}
             loading="eager"
             decoding="async"
-            className="absolute inset-0 h-full w-full object-cover"
+            fetchPriority={index === 0 ? "high" : "low"}
+            className="absolute inset-0 h-full w-full select-none object-cover"
             style={{
               opacity: index === 0 ? 1 : 0,
-              transform: `scale(${scale})`,
+              transform: `translateZ(0) scale(${scale})`,
               transformOrigin: "center center",
-              transition: "opacity 60ms linear",
+              // Sem crossfade: cada frame já é “o blur/suavidade”.
+              // Crossfade deixa vários frames parcialmente visíveis e pesa no scroll.
+              transition: "opacity 0ms linear",
               willChange: "opacity",
+              backfaceVisibility: "hidden",
             }}
           />
         ))}
