@@ -192,9 +192,9 @@ const CyberCard = ({
         </div>
 
         {/* Content */}
-        <div className={`relative z-10 p-6 ${isLarge ? 'h-full flex flex-col justify-end' : 'pt-10'}`}>
+        <div className={`relative z-10 p-4 md:p-6 ${isLarge ? 'h-full flex flex-col justify-end' : 'pt-8 md:pt-10'}`}>
           <span className="text-red-400 text-xs tracking-wider font-mono">{problema.id}</span>
-          <h3 className={`text-white font-semibold mt-2 ${isLarge ? 'text-2xl' : 'text-lg'}`}>
+          <h3 className={`text-white font-semibold mt-2 ${isLarge ? 'text-xl md:text-2xl' : 'text-base md:text-lg'}`}>
             {problema.titulo}
           </h3>
         </div>
