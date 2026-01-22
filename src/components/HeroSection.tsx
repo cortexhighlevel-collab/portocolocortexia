@@ -4,21 +4,25 @@ import { ArrowRight } from "lucide-react";
 import ImageScrollSequence from "./ImageScrollSequence";
 import { useIsMobile } from "@/hooks/use-mobile";
 
+const CTA_DESKTOP_SCALE = 0.42;
+const CTA_MOBILE_MAX_SCALE = 0.18;
+const CTA_MOBILE_MIN_SCALE = 0.14;
+
 const HeroSection = () => {
   const isMobile = useIsMobile();
-  const [ctaScale, setCtaScale] = useState(0.5);
+  const [ctaScale, setCtaScale] = useState(CTA_DESKTOP_SCALE);
 
   useEffect(() => {
     const compute = () => {
       if (!isMobile) {
-        setCtaScale(0.5);
+        setCtaScale(CTA_DESKTOP_SCALE);
         return;
       }
 
-      // Escala menor para mobile - ajustável aqui
+      // Escala menor para mobile (responsiva)
       const vw = window.innerWidth;
       const fitScale = (vw - 32) / 1008;
-      const next = Math.min(0.20, Math.max(0.16, fitScale));
+      const next = Math.min(CTA_MOBILE_MAX_SCALE, Math.max(CTA_MOBILE_MIN_SCALE, fitScale));
       setCtaScale(next);
     };
 
@@ -74,45 +78,46 @@ const HeroSection = () => {
       </ImageScrollSequence>
 
       {/* CTA fora da section para evitar overflow:hidden */}
-      <motion.a
-        href="#contact"
-        className="cyberpunk-cta-wrapper"
-        style={{ scale: ctaScale }}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.6 }}
-      >
-        <div className="relative group rounded-full overflow-visible shrink-0">
-          <button
-            className="relative z-10 flex items-center justify-between w-[1008px] h-[92px] px-8 gap-6 bg-gradient-to-b from-[#2a2a2a] via-[#0a0a0a] to-[#1a1a1a] text-white rounded-full border-2 border-[#3a3a3a] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_4px_20px_-5px_rgba(0,0,0,0.8)] transition-transform active:scale-[0.98] overflow-hidden"
-          >
-            <div
-              className="absolute inset-0 bg-gradient-to-b from-[#333333] via-[#0a0a0a] to-[#222222] pointer-events-none opacity-80"
-              style={{
-                maskImage: "linear-gradient(to right, transparent 30%, black 40%, black 60%, transparent 70%)",
-                WebkitMaskImage: "linear-gradient(to right, transparent 30%, black 40%, black 60%, transparent 70%)",
-              }}
-            ></div>
+      <div className="cyberpunk-cta-wrapper">
+        <motion.a
+          href="#contact"
+          style={{ scale: ctaScale }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          <div className="relative group rounded-full overflow-visible shrink-0">
+            <button
+              className="relative z-10 flex items-center justify-between w-[1008px] h-[92px] px-8 gap-6 bg-gradient-to-b from-[#2a2a2a] via-[#0a0a0a] to-[#1a1a1a] text-white rounded-full border-2 border-[#3a3a3a] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_4px_20px_-5px_rgba(0,0,0,0.8)] transition-transform active:scale-[0.98] overflow-hidden"
+            >
+              <div
+                className="absolute inset-0 bg-gradient-to-b from-[#333333] via-[#0a0a0a] to-[#222222] pointer-events-none opacity-80"
+                style={{
+                  maskImage: "linear-gradient(to right, transparent 30%, black 40%, black 60%, transparent 70%)",
+                  WebkitMaskImage: "linear-gradient(to right, transparent 30%, black 40%, black 60%, transparent 70%)",
+                }}
+              ></div>
 
-            <div className="bg-gradient-to-b from-[#ffcccc] via-[#ff4444] to-[#ff2a2a] shadow-[0_0_4px_#ff0000,0_0_8px_#ff0000,0_0_16px_#ff0000,0_0_32px_#ff0000,0_0_48px_#cc0000,0_0_80px_#990000] rounded-full relative z-10 h-2 flex-1 max-w-[180px]">
-              <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/80 via-white/30 to-transparent rounded-full"></div>
-            </div>
+              <div className="bg-gradient-to-b from-[#ffcccc] via-[#ff4444] to-[#ff2a2a] shadow-[0_0_4px_#ff0000,0_0_8px_#ff0000,0_0_16px_#ff0000,0_0_32px_#ff0000,0_0_48px_#cc0000,0_0_80px_#990000] rounded-full relative z-10 h-2 flex-1 max-w-[180px]">
+                <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/80 via-white/30 to-transparent rounded-full"></div>
+              </div>
 
-            <div className="flex items-center gap-3 z-10 shrink-0">
-              <span className="font-normal tracking-[0.15em] uppercase text-white/90 group-hover:text-white transition-colors text-[1.8rem]">
-                DIAGNÓSTICO ESTRATÉGICO
-              </span>
-              <ArrowRight className="w-6 h-6 text-white/80" />
-            </div>
+              <div className="flex items-center gap-3 z-10 shrink-0">
+                <span className="font-normal tracking-[0.15em] uppercase text-white/90 group-hover:text-white transition-colors text-[1.8rem]">
+                  DIAGNÓSTICO ESTRATÉGICO
+                </span>
+                <ArrowRight className="w-6 h-6 text-white/80" />
+              </div>
 
-            <div className="bg-gradient-to-b from-[#ffcccc] via-[#ff4444] to-[#ff2a2a] shadow-[0_0_4px_#ff0000,0_0_8px_#ff0000,0_0_16px_#ff0000,0_0_32px_#ff0000,0_0_48px_#cc0000,0_0_80px_#990000] rounded-full relative z-10 h-2 flex-1 max-w-[180px]">
-              <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/80 via-white/30 to-transparent rounded-full"></div>
-            </div>
+              <div className="bg-gradient-to-b from-[#ffcccc] via-[#ff4444] to-[#ff2a2a] shadow-[0_0_4px_#ff0000,0_0_8px_#ff0000,0_0_16px_#ff0000,0_0_32px_#ff0000,0_0_48px_#cc0000,0_0_80px_#990000] rounded-full relative z-10 h-2 flex-1 max-w-[180px]">
+                <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/80 via-white/30 to-transparent rounded-full"></div>
+              </div>
 
-            <div className="absolute inset-x-0 top-0 h-[35%] bg-gradient-to-b from-white/8 to-transparent pointer-events-none z-20 rounded-t-full"></div>
-          </button>
-        </div>
-      </motion.a>
+              <div className="absolute inset-x-0 top-0 h-[35%] bg-gradient-to-b from-white/8 to-transparent pointer-events-none z-20 rounded-t-full"></div>
+            </button>
+          </div>
+        </motion.a>
+      </div>
     </>
   );
 };
