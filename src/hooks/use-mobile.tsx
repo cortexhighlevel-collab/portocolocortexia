@@ -10,9 +10,25 @@ export function useIsMobile() {
     const onChange = () => {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
     };
-    mql.addEventListener("change", onChange);
+
+    // iOS/Safari antigos: MediaQueryList pode não suportar addEventListener.
+    // Mantém compatibilidade sem alterar comportamento.
+    const supportsAddEventListener = typeof (mql as MediaQueryList).addEventListener === "function";
+    if (supportsAddEventListener) {
+      mql.addEventListener("change", onChange);
+    } else {
+      // eslint-disable-next-line deprecation/deprecation
+      (mql as unknown as { addListener: (cb: () => void) => void }).addListener(onChange);
+    }
     setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
-    return () => mql.removeEventListener("change", onChange);
+    return () => {
+      if (supportsAddEventListener) {
+        mql.removeEventListener("change", onChange);
+      } else {
+        // eslint-disable-next-line deprecation/deprecation
+        (mql as unknown as { removeListener: (cb: () => void) => void }).removeListener(onChange);
+      }
+    };
   }, []);
 
   return !!isMobile;
