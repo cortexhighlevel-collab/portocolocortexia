@@ -165,8 +165,9 @@ export function SolucoesNeuralConnections(props: {
           ax = r.left;
           ay = r.top + r.height * 0.5;
         } else if (pos === "bottom-right") {
+          // SEO + AEO: sai exatamente pela borda esquerda do card retangular
           ax = r.left;
-          ay = r.top + r.height * 0.22;
+          ay = r.top + r.height * 0.35;
         } else {
           // bottom-center (Agentes Inteligentes): sai pela ESQUERDA, vai pra esquerda e curva pra direita
           ax = r.left;
