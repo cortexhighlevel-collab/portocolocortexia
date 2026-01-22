@@ -4,32 +4,26 @@ import { ArrowRight } from "lucide-react";
 import ImageScrollSequence from "./ImageScrollSequence";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-// Ajuste de tamanho do CTA
+// ============ CONFIGURAÇÕES SEPARADAS DESKTOP / MOBILE ============
 const CTA_DESKTOP_SCALE = 0.50;
+const CTA_MOBILE_TARGET_WIDTH_PERCENT = 0.85; // 85% da largura da tela
 
 const HeroSection = () => {
   const isMobile = useIsMobile();
-  const [ctaScale, setCtaScale] = useState(CTA_DESKTOP_SCALE);
+  const [mobileScale, setMobileScale] = useState(0.3);
 
   useEffect(() => {
-    const compute = () => {
-      if (!isMobile) {
-        setCtaScale(CTA_DESKTOP_SCALE);
-        return;
-      }
-
-      // Escala proporcional à largura da tela no mobile
-      // O botão original tem 1008px, queremos que ocupe ~85% da tela com padding
+    const computeMobileScale = () => {
       const vw = window.innerWidth;
-      const targetWidth = vw * 0.85; // 85% da largura da tela
+      const targetWidth = vw * CTA_MOBILE_TARGET_WIDTH_PERCENT;
       const fitScale = targetWidth / 1008;
-      setCtaScale(fitScale);
+      setMobileScale(fitScale);
     };
 
-    compute();
-    window.addEventListener("resize", compute);
-    return () => window.removeEventListener("resize", compute);
-  }, [isMobile]);
+    computeMobileScale();
+    window.addEventListener("resize", computeMobileScale);
+    return () => window.removeEventListener("resize", computeMobileScale);
+  }, []);
 
   return (
     <>
@@ -82,7 +76,7 @@ const HeroSection = () => {
         <motion.a
           href="#contact"
           className="inline-block"
-          style={{ scale: ctaScale }}
+          style={{ scale: isMobile ? mobileScale : CTA_DESKTOP_SCALE }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
