@@ -1251,17 +1251,15 @@
     color: hsl(var(--foreground));
   }
 
-  .project-card-video-wrapper {
+  .project-card-media {
     position: absolute;
     inset: 0;
     z-index: 5;
-  }
-
-  .project-card-video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
+    /* Fundo leve que mantém o “clima” sem vídeo */
+    background:
+      radial-gradient(1200px 600px at 20% 20%, hsla(var(--foreground), 0.10) 0%, transparent 55%),
+      radial-gradient(900px 500px at 85% 30%, hsla(var(--foreground), 0.08) 0%, transparent 60%),
+      linear-gradient(135deg, hsla(var(--background), 0.65) 0%, hsla(var(--background), 0.15) 55%, hsla(var(--background), 0.75) 100%);
   }
 
   .project-card-overlay {
