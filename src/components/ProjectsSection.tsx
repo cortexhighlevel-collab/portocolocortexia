@@ -1,29 +1,22 @@
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 import { ExternalLink } from "lucide-react";
-import { isIOSDevice } from "@/lib/platform";
-import projectVideo from "@/assets/project-video.webm";
-import projectVideo2 from "@/assets/project-video-2.webm";
-import projectVideo3 from "@/assets/project-video-3.webm";
 
 const projects = [
   {
     id: 1,
     name: "Automação E-commerce",
     tags: ["Automação", "n8n", "IA Generativa"],
-    videoUrl: projectVideo,
   },
   {
     id: 2,
     name: "Agente de Atendimento",
     tags: ["Chatbot", "GPT-4", "WhatsApp"],
-    videoUrl: projectVideo2,
   },
   {
     id: 3,
     name: "Sistema AEO/SEO",
     tags: ["Análise IA", "Otimização", "Conteúdo"],
-    videoUrl: projectVideo3,
   },
 ];
 
@@ -174,8 +167,6 @@ const ProjectsSection = () => {
 };
 
 const CardContent = ({ project }: { project: typeof projects[0] }) => {
-  const isIOS = isIOSDevice();
-
   return (
     <div className="group relative w-full h-full">
       {/* Cyberpunk scan lines overlay */}
@@ -234,26 +225,8 @@ const CardContent = ({ project }: { project: typeof projects[0] }) => {
         </div>
       </div>
 
-      {/* Video Background with enhanced overlay */}
-      <div className="project-card-video-wrapper">
-        {!isIOS ? (
-          <video
-            key={project.videoUrl}
-            loop
-            muted
-            playsInline
-            autoPlay
-            className="project-card-video"
-          >
-            <source src={project.videoUrl} type="video/webm" />
-          </video>
-        ) : (
-          // iOS/WebKit: evitar autoplay WebM (pode falhar e/ou causar pressão de memória mesmo offscreen)
-          <div className="absolute inset-0 bg-gradient-to-br from-red-900/10 via-transparent to-purple-900/10" aria-hidden="true" />
-        )}
-        {/* Red tint overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 via-transparent to-purple-900/20 mix-blend-overlay" />
-      </div>
+      {/* Background (sem vídeo) */}
+      <div className="project-card-media" aria-hidden="true" />
 
       {/* Dark Bottom Overlay with gradient */}
       <div className="project-card-overlay" />
