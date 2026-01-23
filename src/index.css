@@ -1283,9 +1283,9 @@
     inset: 0;
     z-index: 0;
     background:
-      radial-gradient(900px 520px at 18% 25%, hsla(var(--frame-red), 0.22) 0%, transparent 60%),
-      radial-gradient(900px 520px at 82% 30%, hsla(var(--frame-purple), 0.20) 0%, transparent 60%),
-      linear-gradient(135deg, hsla(var(--frame-red), 0.10) 0%, transparent 45%, hsla(var(--frame-purple), 0.12) 100%);
+      radial-gradient(1200px 560px at 16% 22%, hsla(var(--frame-red), 0.28) 0%, transparent 62%),
+      radial-gradient(1200px 560px at 84% 26%, hsla(var(--frame-purple), 0.24) 0%, transparent 62%),
+      linear-gradient(90deg, hsla(var(--frame-red), 0.12) 0%, transparent 42%, hsla(var(--frame-purple), 0.12) 100%);
   }
 
   .aeo-section-scanlines {
@@ -1308,28 +1308,26 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 24px;
+    margin-bottom: 22px;
     padding: 10px 14px;
-    border: 1px solid hsla(var(--foreground), 0.12);
-    border-radius: 10px;
-    background:
-      linear-gradient(90deg, hsla(var(--frame-red), 0.10), hsla(var(--frame-purple), 0.10));
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid hsla(var(--foreground), 0.10);
+    border-radius: 9999px;
+    background: transparent;
   }
 
   .aeo-badge-text {
     font-family: "Orbitron", "Rajdhani", system-ui, sans-serif;
     font-size: 12px;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.30em;
     text-transform: uppercase;
-    color: hsla(var(--foreground), 0.68);
+    color: hsla(var(--foreground), 0.7);
   }
 
   .aeo-title {
-    font-size: clamp(2.1rem, 4vw, 3.1rem);
-    line-height: 1.05;
-    font-weight: 800;
+    font-size: clamp(2.8rem, 6vw, 4.2rem);
+    line-height: 0.96;
+    font-weight: 900;
+    letter-spacing: 0.02em;
     color: hsl(var(--foreground));
   }
 
@@ -1340,60 +1338,68 @@
     color: transparent;
   }
 
-  .aeo-card {
+  .aeo-compare {
     position: relative;
-    padding: 32px;
-    border-radius: 18px;
-    overflow: hidden;
-    background:
-      linear-gradient(180deg, hsla(var(--card), 0.92) 0%, hsla(var(--card), 0.82) 100%);
-    border: 1px solid hsla(var(--foreground), 0.12);
   }
 
-  .aeo-card::before {
-    content: "";
-    position: absolute;
-    inset: -1px;
-    pointer-events: none;
-    background:
-      linear-gradient(135deg, hsla(var(--frame-red), 0.16), transparent 45%, hsla(var(--frame-purple), 0.16));
-    opacity: 0.9;
+  .aeo-compare-status {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    margin-bottom: 22px;
   }
 
-  .aeo-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.20;
-    background-image: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      hsla(var(--foreground), 0.07) 2px,
-      hsla(var(--foreground), 0.07) 4px
-    );
+  .aeo-compare-status-center {
+    justify-self: center;
+    font-family: "Orbitron", "Rajdhani", system-ui, sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.30em;
+    text-transform: uppercase;
+    color: hsla(var(--foreground), 0.55);
   }
 
-  .aeo-card--deprecated {
-    box-shadow: 0 24px 60px -30px hsla(var(--frame-purple), 0.22);
-  }
-
-  .aeo-card--active {
-    border-color: hsla(var(--frame-red), 0.38);
-    box-shadow:
-      0 0 0 1px hsla(var(--frame-purple), 0.22),
-      0 28px 70px -28px hsla(var(--frame-red), 0.32);
-  }
-
-  .aeo-status {
-    position: absolute;
-    top: 16px;
-    right: 16px;
+  .aeo-compare-status-right {
+    justify-self: end;
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    z-index: 5;
+  }
+
+  .aeo-compare-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 44px;
+  }
+
+  @media (min-width: 768px) {
+    .aeo-compare-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+    }
+  }
+
+  .aeo-card {
+    position: relative;
+    padding: 0;
+    border-radius: 0;
+    overflow: visible;
+    background: transparent;
+    border: none;
+  }
+
+  .aeo-card::before,
+  .aeo-card::after {
+    content: none;
+  }
+
+  .aeo-card--deprecated {
+    box-shadow: none;
+  }
+
+  .aeo-card--active {
+    border-color: transparent;
+    box-shadow: none;
   }
 
   .aeo-status-dot {
@@ -1429,14 +1435,15 @@
   .aeo-card-title {
     position: relative;
     z-index: 3;
-    font-size: 1.6rem;
-    font-weight: 800;
-    margin-bottom: 22px;
-    color: hsl(var(--card-foreground));
+    font-size: clamp(1.9rem, 2.4vw, 2.4rem);
+    font-weight: 900;
+    margin-bottom: 18px;
+    color: hsl(var(--foreground));
+    letter-spacing: 0.01em;
   }
 
   .aeo-card-title--muted {
-    color: hsla(var(--foreground), 0.62);
+    color: hsla(var(--foreground), 0.85);
   }
 
   .aeo-list {
@@ -1448,13 +1455,13 @@
     padding: 0;
     list-style: none;
     font-family: "Rajdhani", system-ui, sans-serif;
-    font-size: 15px;
+    font-size: 16px;
     letter-spacing: 0.02em;
-    color: hsla(var(--foreground), 0.82);
+    color: hsla(var(--foreground), 0.78);
   }
 
   .aeo-list--muted {
-    color: hsla(var(--foreground), 0.55);
+    color: hsla(var(--foreground), 0.6);
   }
 
   .aeo-list-item {
