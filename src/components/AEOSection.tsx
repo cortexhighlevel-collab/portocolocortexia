@@ -23,21 +23,16 @@ const AEOSection = () => {
         </motion.div>
 
         <div className="aeo-compare" aria-label="Comparação SEO tradicional vs AEO">
-          <div className="aeo-compare-status" aria-hidden="true">
-            <span className="aeo-compare-status-center">DEPRECATED</span>
-            <span className="aeo-compare-status-right">
-              <span className="aeo-status-dot aeo-status-dot--ok" />
-              <span className="aeo-status-text aeo-status-text--ok">ACTIVE</span>
-            </span>
-          </div>
-
           <div className="aeo-compare-grid">
+            {/* Coluna SEO Tradicional */}
             <motion.div
               className="aeo-card aeo-card--deprecated"
-              initial={{ opacity: 1, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5 }}
             >
+              <span className="aeo-status-label aeo-status-label--deprecated">DEPRECATED</span>
               <h3 className="aeo-card-title aeo-card-title--muted">SEO Tradicional</h3>
               <ul className="aeo-list aeo-list--muted">
                 <li className="aeo-list-item"><span className="aeo-x">✕</span> Keywords obsoletas</li>
@@ -46,12 +41,18 @@ const AEOSection = () => {
               </ul>
             </motion.div>
 
+            {/* Coluna AEO Cortex */}
             <motion.div
               className="aeo-card aeo-card--active"
-              initial={{ opacity: 1, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
             >
+              <span className="aeo-status-label aeo-status-label--active">
+                <span className="aeo-status-dot aeo-status-dot--ok" />
+                ACTIVE
+              </span>
               <h3 className="aeo-card-title">
                 AEO <span className="aeo-title-accent">Cortex</span>
               </h3>

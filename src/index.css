@@ -1342,40 +1342,16 @@
     position: relative;
   }
 
-  .aeo-compare-status {
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    margin-bottom: 22px;
-  }
-
-  .aeo-compare-status-center {
-    justify-self: center;
-    font-family: "Orbitron", "Rajdhani", system-ui, sans-serif;
-    font-size: 12px;
-    letter-spacing: 0.30em;
-    text-transform: uppercase;
-    color: hsla(var(--foreground), 0.55);
-  }
-
-  .aeo-compare-status-right {
-    justify-self: end;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-  }
-
   .aeo-compare-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 44px;
+    gap: 48px;
   }
 
   @media (min-width: 768px) {
     .aeo-compare-grid {
       grid-template-columns: 1fr 1fr;
-      gap: 72px;
+      gap: 80px;
     }
   }
 
@@ -1386,6 +1362,8 @@
     overflow: visible;
     background: transparent;
     border: none;
+    display: flex;
+    flex-direction: column;
   }
 
   .aeo-card::before,
@@ -1402,10 +1380,41 @@
     box-shadow: none;
   }
 
+  /* Status Labels - acima de cada coluna */
+  .aeo-status-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "Orbitron", "Rajdhani", system-ui, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.30em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .aeo-status-label--deprecated {
+    color: hsla(var(--foreground), 0.45);
+  }
+
+  .aeo-status-label--active {
+    color: hsla(var(--foreground), 0.85);
+    justify-content: flex-end;
+  }
+
+  @media (min-width: 768px) {
+    .aeo-status-label--deprecated {
+      text-align: left;
+    }
+    .aeo-status-label--active {
+      text-align: right;
+    }
+  }
+
   .aeo-status-dot {
     width: 10px;
     height: 10px;
     border-radius: 9999px;
+    flex-shrink: 0;
   }
 
   .aeo-status-dot--ok {
@@ -1415,21 +1424,6 @@
 
   .aeo-status-dot--warn {
     background: hsla(var(--foreground), 0.35);
-  }
-
-  .aeo-status-text {
-    font-family: "Orbitron", "Rajdhani", system-ui, sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-  }
-
-  .aeo-status-text--ok {
-    color: hsla(var(--foreground), 0.8);
-  }
-
-  .aeo-status-text--warn {
-    color: hsla(var(--foreground), 0.45);
   }
 
   .aeo-card-title {
