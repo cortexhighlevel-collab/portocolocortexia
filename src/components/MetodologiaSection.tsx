@@ -43,8 +43,8 @@ const MetodologiaSection = () => {
             viewport={{ once: true, amount: 0.1 }}
           >
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-px bg-gradient-to-r from-red-500 to-transparent" />
-              <span className="text-red-500 text-sm uppercase tracking-[0.3em] font-mono">Process</span>
+              <div className="w-12 h-px bg-gradient-accent" />
+              <span className="text-gradient-accent text-sm uppercase tracking-[0.3em] font-mono">Process</span>
             </div>
             
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -112,11 +112,11 @@ const MetodologiaSection = () => {
                 {/* Node */}
                 <div className={`absolute left-2 md:left-1/2 top-0 md:-top-2 w-5 h-5 rounded-full border-2 transition-all duration-500 md:-translate-x-1/2 ${
                   index <= activeStep 
-                    ? 'bg-red-500 border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.5)]' 
+                    ? 'dot-gradient-accent border-transparent shadow-[0_0_20px_rgba(239,68,68,0.5)]' 
                     : 'bg-[#0a0a0a] border-white/20'
                 }`}>
                   {index === activeStep && (
-                    <div className="absolute inset-0 rounded-full bg-red-500 animate-ping" />
+                    <div className="absolute inset-0 rounded-full dot-gradient-accent animate-ping" />
                   )}
                 </div>
 
@@ -124,7 +124,7 @@ const MetodologiaSection = () => {
                 <div className={`transition-all duration-500 ${
                   index === activeStep ? 'opacity-100' : 'opacity-50'
                 }`}>
-                  <span className="text-red-500/60 font-mono text-xs block mb-1">
+                  <span className="text-gradient-accent font-mono text-xs block mb-1 opacity-70">
                     STEP_{etapa.numero}
                   </span>
                   <h3 className="text-white font-medium text-sm md:text-base">
@@ -143,9 +143,9 @@ const MetodologiaSection = () => {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.1 }}
         >
-          <div className="inline-flex items-center gap-4 px-6 py-3 bg-red-500/10 border border-red-500/30 rounded-full">
-            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-            <span className="text-red-400 font-mono text-sm">
+          <div className="inline-flex items-center gap-4 px-6 py-3 border-gradient-accent rounded-full" style={{ background: 'linear-gradient(hsl(0 0% 0%), hsl(0 0% 0%)) padding-box, var(--accent-gradient) border-box' }}>
+            <span className="w-2 h-2 dot-gradient-accent rounded-full animate-pulse" />
+            <span className="text-gradient-accent font-mono text-sm">
               EXECUTING: {etapas[activeStep].titulo}
             </span>
           </div>

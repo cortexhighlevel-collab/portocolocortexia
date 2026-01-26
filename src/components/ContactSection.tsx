@@ -23,11 +23,11 @@ const ContactSection = () => {
           </div>
           <div className="p-8">
             <div className="mb-8">
-              <div className="font-mono text-sm text-white/40 mb-2"><span className="text-red-500">$</span> cat /contact/email</div>
+              <div className="font-mono text-sm text-white/40 mb-2"><span className="text-gradient-accent">$</span> cat /contact/email</div>
               <a href="mailto:contato@cortexpoei.com" className="text-2xl md:text-3xl font-bold text-white hover:text-red-400 transition-colors">contato@cortexpoei.com</a>
             </div>
             <div className="flex items-center gap-4 my-6"><div className="flex-1 h-px bg-white/10" /><span className="text-white/30 font-mono text-xs">OR</span><div className="flex-1 h-px bg-white/10" /></div>
-            <div className="font-mono text-sm text-white/40 mb-4"><span className="text-red-500">$</span> ./schedule --meeting</div>
+            <div className="font-mono text-sm text-white/40 mb-4"><span className="text-gradient-accent">$</span> ./schedule --meeting</div>
             <div className="relative bg-white/5 border border-white/10 rounded-lg overflow-hidden">
               <iframe src="https://tidycal.com/cortexpoei/diagnostico-estrategico" className="w-full h-[500px] border-0" title="Agendar" />
             </div>
