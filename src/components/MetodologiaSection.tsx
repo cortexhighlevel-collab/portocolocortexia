@@ -48,7 +48,7 @@ const MetodologiaSection = () => {
             </div>
             
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              EXECUTION <span className="text-red-500">PROTOCOL</span>
+              EXECUTION <span className="text-gradient-accent">PROTOCOL</span>
             </h2>
             <p className="text-white/40">
               8 fases sequenciais para transformação completa

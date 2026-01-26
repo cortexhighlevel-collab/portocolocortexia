@@ -62,6 +62,9 @@
     --frame-purple: 280 85% 60%;
     --frame-panel: 220 14% 12%;
 
+    /* Blood gradient text accent (red → purple) */
+    --accent-gradient: linear-gradient(135deg, hsl(350, 95%, 50%), hsl(280, 85%, 55%));
+
     --sidebar-background: 0 0% 10%;
     --sidebar-foreground: 0 0% 85%;
     --sidebar-primary: 0 0% 98%;
@@ -113,6 +116,14 @@
 @layer utilities {
   .font-mono {
     @apply font-display;
+  }
+
+  /* Gradient text accent: blood red → purple */
+  .text-gradient-accent {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }
 

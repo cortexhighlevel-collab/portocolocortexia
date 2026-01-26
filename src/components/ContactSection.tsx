@@ -9,7 +9,7 @@ const ContactSection = () => {
             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
             <span className="font-mono text-xs text-green-400">CHANNEL OPEN</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">INICIAR <span className="text-red-500">CONTATO</span></h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">INICIAR <span className="text-gradient-accent">CONTATO</span></h2>
         </motion.div>
 
         <motion.div className="bg-[#0a0a0a] border border-white/10 rounded-lg overflow-hidden" initial={{ opacity: 1, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }}>

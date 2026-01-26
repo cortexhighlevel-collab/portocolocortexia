@@ -96,7 +96,7 @@ const ProjectsSection = () => {
           viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.6 }}
         >
-          Casos de Sucesso
+          Casos de <span className="text-gradient-accent">Sucesso</span>
         </motion.h2>
 
         {/* Main Content Area */}
