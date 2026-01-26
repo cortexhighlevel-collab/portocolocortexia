@@ -59,7 +59,7 @@ const ParaQuemSection = () => {
             <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
             <span className="text-red-400 font-mono text-xs">TARGETING SYSTEM</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white">TARGET <span className="text-red-500">PROFILES</span></h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-white">TARGET <span className="text-gradient-accent">PROFILES</span></h2>
         </motion.div>
 
         <div className="relative">

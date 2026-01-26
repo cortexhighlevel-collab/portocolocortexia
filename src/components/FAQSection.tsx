@@ -20,7 +20,7 @@ const FAQSection = () => {
             <span className="text-red-500 font-mono text-xs">{">"}</span>
             <span className="text-white/40 font-mono text-xs">help --faq</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white">PERGUNTAS <span className="text-red-500">FREQUENTES</span></h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-white">PERGUNTAS <span className="text-gradient-accent">FREQUENTES</span></h2>
         </motion.div>
 
         <div className="space-y-3">
