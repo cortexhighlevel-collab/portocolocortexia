@@ -55,9 +55,9 @@ const ParaQuemSection = () => {
     >
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12">
         <motion.div className="mb-16" initial={{ opacity: 1, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }}>
-          <div className="flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/30 rounded w-fit mb-6">
-            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-            <span className="text-red-400 font-mono text-xs">TARGETING SYSTEM</span>
+          <div className="flex items-center gap-2 px-3 py-1 border-gradient-accent rounded w-fit mb-6" style={{ background: 'linear-gradient(hsl(0 0% 0%), hsl(0 0% 0%)) padding-box, var(--accent-gradient) border-box' }}>
+            <div className="w-2 h-2 dot-gradient-accent rounded-full animate-pulse" />
+            <span className="text-gradient-accent font-mono text-xs">TARGETING SYSTEM</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-white">TARGET <span className="text-gradient-accent">PROFILES</span></h2>
         </motion.div>

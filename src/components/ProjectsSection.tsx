@@ -183,12 +183,12 @@ const CardContent = ({ project }: { project: typeof projects[0] }) => {
       
       {/* Corner HUD elements */}
       <div className="absolute top-4 left-4 z-30 flex items-center gap-2">
-        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
-        <span className="text-[10px] text-red-400 font-mono uppercase tracking-wider">REC</span>
+        <div className="w-2 h-2 dot-gradient-accent rounded-full animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+        <span className="text-[10px] text-gradient-accent font-mono uppercase tracking-wider">REC</span>
       </div>
       
       <div className="absolute top-4 right-16 z-30">
-        <span className="text-[10px] text-red-400/60 font-mono">SYS.OK</span>
+        <span className="text-[10px] text-gradient-accent font-mono opacity-60">SYS.OK</span>
       </div>
       
       {/* External Link Icon with glow */}
