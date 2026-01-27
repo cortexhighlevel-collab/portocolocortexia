@@ -15,6 +15,9 @@ const ComoIAEntendeSection = () => {
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
             Como a IA <span className="text-gradient-accent">entende você</span>
           </h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            Treinamos modelos para interpretar seu negócio e operar de forma autônoma.
+          </p>
         </motion.div>
 
         {/* SVG centralizado */}
