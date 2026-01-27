@@ -1073,6 +1073,7 @@
     align-items: center;
     padding: 0 40px;
     overflow: hidden;
+    background-color: hsl(0 0% 100%);
   }
 
   .projects-heading-fixed {
