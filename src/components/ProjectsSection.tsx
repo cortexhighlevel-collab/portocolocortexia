@@ -1,62 +1,48 @@
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 import { ExternalLink } from "lucide-react";
-
-const projects = [
-  {
-    id: 1,
-    name: "Automação E-commerce",
-    tags: ["Automação", "n8n", "IA Generativa"],
-  },
-  {
-    id: 2,
-    name: "Agente de Atendimento",
-    tags: ["Chatbot", "GPT-4", "WhatsApp"],
-  },
-  {
-    id: 3,
-    name: "Sistema AEO/SEO",
-    tags: ["Análise IA", "Otimização", "Conteúdo"],
-  },
-];
-
+const projects = [{
+  id: 1,
+  name: "Automação E-commerce",
+  tags: ["Automação", "n8n", "IA Generativa"]
+}, {
+  id: 2,
+  name: "Agente de Atendimento",
+  tags: ["Chatbot", "GPT-4", "WhatsApp"]
+}, {
+  id: 3,
+  name: "Sistema AEO/SEO",
+  tags: ["Análise IA", "Otimização", "Conteúdo"]
+}];
 const ProjectsSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  
+
   // Track which project index is currently visible
   const [currentProjectIndex, setCurrentProjectIndex] = useState(0);
   const [frontProjectIndex, setFrontProjectIndex] = useState(0);
   const [backProjectIndex, setBackProjectIndex] = useState(1);
   const lastFlipRef = useRef(0);
-  
-  const { scrollYProgress } = useScroll({
+  const {
+    scrollYProgress
+  } = useScroll({
     target: sectionRef,
-    offset: ["start start", "end end"],
+    offset: ["start start", "end end"]
   });
 
   // Calculate rotation based on scroll - 3 projects = 2 flips (0->180->360)
-  const rotateX = useTransform(
-    scrollYProgress,
-    [0, 0.20, 0.30, 0.45, 0.55, 0.70, 0.80, 1],
-    [0, 0, 180, 180, 180, 360, 360, 360]
-  );
+  const rotateX = useTransform(scrollYProgress, [0, 0.20, 0.30, 0.45, 0.55, 0.70, 0.80, 1], [0, 0, 180, 180, 180, 360, 360, 360]);
 
   // Track flips and update card contents
-  useMotionValueEvent(rotateX, "change", (latest) => {
+  useMotionValueEvent(rotateX, "change", latest => {
     // Determine current flip (0, 1, or 2)
     const currentFlip = Math.floor((latest + 1) / 180);
     const clampedFlip = Math.max(0, Math.min(2, currentFlip));
-    
     const lastFlip = lastFlipRef.current;
-    
     if (clampedFlip !== lastFlip) {
       const isScrollingDown = clampedFlip > lastFlip;
       lastFlipRef.current = clampedFlip;
-      
       setCurrentProjectIndex(clampedFlip);
-      
       const isFrontVisible = clampedFlip % 2 === 0;
-      
       if (isScrollingDown) {
         if (isFrontVisible) {
           const nextBackIndex = Math.min(clampedFlip + 1, projects.length - 1);
@@ -80,22 +66,24 @@ const ProjectsSection = () => {
       }
     }
   });
-
   const frontProject = projects[frontProjectIndex];
   const backProject = projects[backProjectIndex];
-
-  return (
-    <section id="projects" ref={sectionRef} className="projects-scroll-section">
+  return <section id="projects" ref={sectionRef} className="projects-scroll-section">
       {/* Sticky Container */}
       <div className="projects-sticky-container">
         {/* Section Heading */}
-        <motion.h2
-          className="projects-heading-fixed"
-          initial={{ opacity: 1, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.1 }}
-          transition={{ duration: 0.6 }}
-        >
+        <motion.h2 className="projects-heading-fixed text-primary-foreground" initial={{
+        opacity: 1,
+        y: 10
+      }} whileInView={{
+        opacity: 1,
+        y: 0
+      }} viewport={{
+        once: true,
+        amount: 0.1
+      }} transition={{
+        duration: 0.6
+      }}>
           Casos de <span className="text-gradient-accent">Sucesso</span>
         </motion.h2>
 
@@ -103,10 +91,9 @@ const ProjectsSection = () => {
         <div className="projects-main-content">
           {/* Background Text Flipper */}
           <div className="projects-text-flipper-wrapper">
-            <motion.div 
-              className="projects-text-flipper"
-              style={{ rotateX }}
-            >
+            <motion.div className="projects-text-flipper" style={{
+            rotateX
+          }}>
               {/* Front Text */}
               <div className="projects-text-face projects-text-front">
                 <div className="projects-text-marquee">
@@ -135,10 +122,9 @@ const ProjectsSection = () => {
 
           {/* Flipper Card Container */}
           <div className="projects-flipper-wrapper">
-            <motion.div 
-              className="projects-flipper"
-              style={{ rotateX }}
-            >
+            <motion.div className="projects-flipper" style={{
+            rotateX
+          }}>
               {/* Front Face */}
               <div className="projects-flipper-face projects-flipper-front">
                 <CardContent project={frontProject} />
@@ -154,26 +140,22 @@ const ProjectsSection = () => {
 
         {/* Project Indicator */}
         <div className="projects-indicator">
-          {projects.map((_, index) => (
-            <div 
-              key={index} 
-              className={`projects-indicator-dot ${index === currentProjectIndex ? 'active' : ''}`}
-            />
-          ))}
+          {projects.map((_, index) => <div key={index} className={`projects-indicator-dot ${index === currentProjectIndex ? 'active' : ''}`} />)}
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
-const CardContent = ({ project }: { project: typeof projects[0] }) => {
-  return (
-    <div className="group relative w-full h-full">
+const CardContent = ({
+  project
+}: {
+  project: typeof projects[0];
+}) => {
+  return <div className="group relative w-full h-full">
       {/* Cyberpunk scan lines overlay */}
       <div className="absolute inset-0 pointer-events-none z-20 opacity-30">
         <div className="w-full h-full" style={{
-          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)',
-        }} />
+        backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)'
+      }} />
       </div>
       
       {/* Animated scan line */}
@@ -199,28 +181,33 @@ const CardContent = ({ project }: { project: typeof projects[0] }) => {
       {/* Content Overlay */}
       <div className="project-card-content">
         <div className="project-card-row">
-          <motion.h3 
-            className="project-card-title"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
+          <motion.h3 className="project-card-title" initial={{
+          opacity: 0,
+          x: -20
+        }} animate={{
+          opacity: 1,
+          x: 0
+        }} transition={{
+          duration: 0.5
+        }}>
             {project.name}
           </motion.h3>
           <div className="project-card-tags">
-            {project.tags.map((tag, i) => (
-              <motion.span 
-                key={i} 
-                className="project-card-tag relative overflow-hidden"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: i * 0.1 }}
-                whileHover={{ scale: 1.05 }}
-              >
+            {project.tags.map((tag, i) => <motion.span key={i} className="project-card-tag relative overflow-hidden" initial={{
+            opacity: 0,
+            y: 10
+          }} animate={{
+            opacity: 1,
+            y: 0
+          }} transition={{
+            duration: 0.3,
+            delay: i * 0.1
+          }} whileHover={{
+            scale: 1.05
+          }}>
                 <span className="relative z-10">{tag}</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-purple-500/20 opacity-0 hover:opacity-100 transition-opacity duration-300" />
-              </motion.span>
-            ))}
+              </motion.span>)}
           </div>
         </div>
       </div>
@@ -233,8 +220,6 @@ const CardContent = ({ project }: { project: typeof projects[0] }) => {
       
       {/* Neon border glow */}
       <div className="absolute inset-0 rounded-2xl border border-red-500/20 pointer-events-none" />
-    </div>
-  );
+    </div>;
 };
-
 export default ProjectsSection;
