@@ -1521,12 +1521,12 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background-color: hsla(var(--foreground), 0.3);
+    background-color: hsl(0, 0%, 35%);
     transition: all 0.3s ease;
   }
 
   .projects-indicator-dot.active {
-    background-color: hsl(var(--foreground));
+    background-color: hsl(0, 0%, 20%);
     transform: scale(1.2);
   }
 
