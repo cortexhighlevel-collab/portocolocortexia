@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import comoIaEntendeBg from "@/assets/como-ia-entende-bg.svg";
+import comoIaEntendeBg from "@/assets/como-ia-entende-diagram.svg";
 
 const ComoIAEntendeSection = () => {
   return (
