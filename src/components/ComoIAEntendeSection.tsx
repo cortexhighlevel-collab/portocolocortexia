@@ -1,7 +1,11 @@
 import { motion } from "framer-motion";
 import comoIaEntendeBg from "@/assets/como-ia-entende-diagram.svg";
+import comoIaEntendeMobile from "@/assets/como-ia-entende-mobile.svg";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const ComoIAEntendeSection = () => {
+  const isMobile = useIsMobile();
+  
   return (
     <section id="como-ia-entende" className="relative py-32 md:py-48 bg-background overflow-hidden">
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12">
@@ -29,7 +33,7 @@ const ComoIAEntendeSection = () => {
           transition={{ delay: 0.1 }}
         >
           <img 
-            src={comoIaEntendeBg} 
+            src={isMobile ? comoIaEntendeMobile : comoIaEntendeBg} 
             alt="Como a IA entende você" 
             className="w-full max-w-[874px] h-auto rounded-lg"
           />
