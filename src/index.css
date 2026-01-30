@@ -147,10 +147,10 @@
   /* SVG line pulse animation */
   @keyframes svg-line-pulse {
     0%, 100% {
-      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
+      filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
     }
     50% {
-      filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1)) drop-shadow(0 0 40px rgba(255, 255, 255, 0.8));
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5)) drop-shadow(0 0 16px rgba(255, 255, 255, 0.3));
     }
   }
 
