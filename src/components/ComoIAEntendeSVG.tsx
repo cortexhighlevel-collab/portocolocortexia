@@ -1,5 +1,5 @@
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useInView } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
 import comoIaEntendeBg from "@/assets/como-ia-entende-diagram.svg";
 import comoIaEntendeMobile from "@/assets/como-ia-entende-mobile.svg";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -8,83 +8,131 @@ const ComoIAEntendeSVG = () => {
   const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, amount: 0.2 });
+  const [svgContent, setSvgContent] = useState<string>("");
 
-  // Definir as camadas de animação com delays progressivos
-  const layers = [
-    { id: "brain", delay: 0, clipPath: "inset(30% 30% 30% 30%)" }, // Centro (cérebro)
-    { id: "inner-nodes", delay: 0.3, clipPath: "inset(20% 20% 20% 20%)" }, // Nós internos
-    { id: "mid-nodes", delay: 0.5, clipPath: "inset(10% 10% 40% 10%)" }, // Nós médios superiores
-    { id: "icons", delay: 0.7, clipPath: "inset(0% 0% 60% 0%)" }, // Ícones superiores
-    { id: "connections-left", delay: 0.9, clipPath: "inset(20% 50% 20% 0%)" }, // Conexões esquerda
-    { id: "connections-right", delay: 1.1, clipPath: "inset(20% 0% 20% 50%)" }, // Conexões direita
-    { id: "bottom-left", delay: 1.3, clipPath: "inset(60% 50% 0% 0%)" }, // Canto inferior esquerdo
-    { id: "bottom-right", delay: 1.5, clipPath: "inset(60% 0% 0% 50%)" }, // Canto inferior direito
-  ];
+  // Carregar e modificar o SVG para adicionar animações de linha
+  useEffect(() => {
+    const svgUrl = isMobile ? comoIaEntendeMobile : comoIaEntendeBg;
+    
+    fetch(svgUrl)
+      .then(response => response.text())
+      .then(svgText => {
+        // Adicionar estilos de animação ao SVG
+        const styleTag = `
+          <style>
+            @keyframes drawLine {
+              from {
+                stroke-dashoffset: var(--line-length, 1000);
+              }
+              to {
+                stroke-dashoffset: 0;
+              }
+            }
+            
+            @keyframes fadeInNode {
+              from {
+                opacity: 0;
+                transform: scale(0);
+              }
+              to {
+                opacity: 1;
+                transform: scale(1);
+              }
+            }
+            
+            @keyframes glowPulse {
+              0%, 100% {
+                filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+              }
+              50% {
+                filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+              }
+            }
+            
+            line, path:not([fill="white"]) {
+              stroke-dasharray: 5000;
+              stroke-dashoffset: 5000;
+              animation: drawLine 2.5s ease-out forwards;
+            }
+            
+            ellipse, circle, rect {
+              opacity: 0;
+              transform-origin: center;
+              animation: fadeInNode 0.5s ease-out forwards;
+            }
+            
+            /* Delays progressivos para as linhas - efeito raiz */
+            line:nth-of-type(1), path:nth-of-type(1) { animation-delay: 0s; }
+            line:nth-of-type(2), path:nth-of-type(2) { animation-delay: 0.05s; }
+            line:nth-of-type(3), path:nth-of-type(3) { animation-delay: 0.1s; }
+            line:nth-of-type(4), path:nth-of-type(4) { animation-delay: 0.15s; }
+            line:nth-of-type(5), path:nth-of-type(5) { animation-delay: 0.2s; }
+            line:nth-of-type(6), path:nth-of-type(6) { animation-delay: 0.25s; }
+            line:nth-of-type(7), path:nth-of-type(7) { animation-delay: 0.3s; }
+            line:nth-of-type(8), path:nth-of-type(8) { animation-delay: 0.35s; }
+            line:nth-of-type(9), path:nth-of-type(9) { animation-delay: 0.4s; }
+            line:nth-of-type(10), path:nth-of-type(10) { animation-delay: 0.45s; }
+            line:nth-of-type(n+11), path:nth-of-type(n+11) { animation-delay: 0.5s; }
+            line:nth-of-type(n+21), path:nth-of-type(n+21) { animation-delay: 0.7s; }
+            line:nth-of-type(n+31), path:nth-of-type(n+31) { animation-delay: 0.9s; }
+            line:nth-of-type(n+41), path:nth-of-type(n+41) { animation-delay: 1.1s; }
+            line:nth-of-type(n+51), path:nth-of-type(n+51) { animation-delay: 1.3s; }
+            
+            /* Delays para os nós (ellipses) - aparecem após as linhas */
+            ellipse:nth-of-type(1) { animation-delay: 0.8s; }
+            ellipse:nth-of-type(2) { animation-delay: 0.85s; }
+            ellipse:nth-of-type(3) { animation-delay: 0.9s; }
+            ellipse:nth-of-type(4) { animation-delay: 0.95s; }
+            ellipse:nth-of-type(5) { animation-delay: 1s; }
+            ellipse:nth-of-type(6) { animation-delay: 1.05s; }
+            ellipse:nth-of-type(7) { animation-delay: 1.1s; }
+            ellipse:nth-of-type(8) { animation-delay: 1.15s; }
+            ellipse:nth-of-type(9) { animation-delay: 1.2s; }
+            ellipse:nth-of-type(10) { animation-delay: 1.25s; }
+            ellipse:nth-of-type(n+11) { animation-delay: 1.3s; }
+            ellipse:nth-of-type(n+21) { animation-delay: 1.5s; }
+            ellipse:nth-of-type(n+31) { animation-delay: 1.7s; }
+            ellipse:nth-of-type(n+41) { animation-delay: 1.9s; }
+            
+            /* Retângulos (ícones) aparecem por último */
+            rect:nth-of-type(1) { animation-delay: 2s; }
+            rect:nth-of-type(2) { animation-delay: 2.1s; }
+            rect:nth-of-type(3) { animation-delay: 2.2s; }
+            rect:nth-of-type(4) { animation-delay: 2.3s; }
+            rect:nth-of-type(5) { animation-delay: 2.4s; }
+            rect:nth-of-type(n+6) { animation-delay: 2.5s; }
+            
+            /* Glow pulse após tudo aparecer */
+            svg {
+              animation: glowPulse 3s ease-in-out infinite;
+              animation-delay: 3s;
+            }
+          </style>
+        `;
+        
+        // Inserir o style tag logo após a abertura do SVG
+        const modifiedSvg = svgText.replace(/<svg([^>]*)>/, `<svg$1>${styleTag}`);
+        setSvgContent(modifiedSvg);
+      })
+      .catch(console.error);
+  }, [isMobile]);
 
   return (
     <div 
       ref={containerRef}
       className="relative w-full max-w-[874px] mx-auto"
     >
-      {/* Camada base - totalmente visível após animação */}
-      <motion.div
-        className="relative"
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 0.8, delay: 1.8 }}
-      >
-        <img 
-          src={isMobile ? comoIaEntendeMobile : comoIaEntendeBg} 
-          alt="Como a IA entende você" 
-          className="w-full h-auto rounded-lg svg-lines-pulse"
+      {isInView && svgContent && (
+        <div 
+          className="w-full h-auto rounded-lg"
+          dangerouslySetInnerHTML={{ __html: svgContent }}
         />
-      </motion.div>
-
-      {/* Camadas animadas que revelam partes do SVG */}
-      {layers.map((layer) => (
-        <motion.div
-          key={layer.id}
-          className="absolute inset-0"
-          style={{ clipPath: layer.clipPath }}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={isInView ? { 
-            opacity: [0, 1, 1, 0],
-            scale: [0.8, 1, 1, 1]
-          } : { opacity: 0, scale: 0.8 }}
-          transition={{ 
-            duration: 1.2,
-            delay: layer.delay,
-            times: [0, 0.3, 0.7, 1],
-            ease: "easeOut"
-          }}
-        >
-          <img 
-            src={isMobile ? comoIaEntendeMobile : comoIaEntendeBg} 
-            alt=""
-            aria-hidden="true"
-            className="w-full h-auto rounded-lg"
-            style={{ 
-              filter: "drop-shadow(0 0 20px rgba(255, 255, 255, 0.8))"
-            }}
-          />
-        </motion.div>
-      ))}
-
-      {/* Efeito de scan line que percorre */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: [0, 1, 0] } : { opacity: 0 }}
-        transition={{ duration: 2, delay: 0.2, ease: "easeInOut" }}
-      >
-        <motion.div
-          className="absolute w-full h-1 bg-gradient-to-r from-transparent via-white to-transparent"
-          style={{ boxShadow: "0 0 30px 10px rgba(255, 255, 255, 0.5)" }}
-          initial={{ top: "0%" }}
-          animate={isInView ? { top: "100%" } : { top: "0%" }}
-          transition={{ duration: 2, delay: 0.2, ease: "easeInOut" }}
-        />
-      </motion.div>
+      )}
+      
+      {/* Placeholder enquanto carrega ou antes de entrar na view */}
+      {(!isInView || !svgContent) && (
+        <div className="w-full aspect-[874/630] bg-background/50 rounded-lg" />
+      )}
     </div>
   );
 };
