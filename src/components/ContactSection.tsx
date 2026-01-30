@@ -70,7 +70,7 @@ ${descricao || "Não informado"}
 ---
 Enviado via site CORTEX POEI`;
 
-    const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(mensagem)}`;
+    const whatsappUrl = `https://wa.me/554797422069?text=${encodeURIComponent(mensagem)}`;
     window.open(whatsappUrl, "_blank");
   };
 
