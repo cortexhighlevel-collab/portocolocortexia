@@ -35,7 +35,7 @@ const ComoIAEntendeSection = () => {
           <img 
             src={isMobile ? comoIaEntendeMobile : comoIaEntendeBg} 
             alt="Como a IA entende você" 
-            className="w-full max-w-[874px] h-auto rounded-lg"
+            className="w-full max-w-[874px] h-auto rounded-lg svg-lines-pulse"
           />
         </motion.div>
       </div>
