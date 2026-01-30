@@ -27,27 +27,19 @@ export const urgencias = [
   { id: "explorando", label: "Apenas explorando" },
 ];
 
-export const crms = [
-  { id: "nenhum", label: "Não utilizo CRM" },
-  { id: "hubspot", label: "HubSpot" },
-  { id: "salesforce", label: "Salesforce" },
-  { id: "pipedrive", label: "Pipedrive" },
-  { id: "rdstation", label: "RD Station" },
-  { id: "outro", label: "Outro CRM" },
-];
-
 export interface BriefingData {
   nome: string;
   empresa: string;
-  selectedServicos: string[];
-  selectedOrcamento: string;
-  selectedUrgencia: string;
-  descricao: string;
-  selectedCrm: string;
-  temAtendentes: boolean | null;
-  quantidadeAtendentes: string;
   temPresencaDigital: boolean | null;
   presencaDigitalUrl: string;
+  selectedServicos: string[];
+  descricao: string;
+  temCrm: boolean | null;
+  crmNome: string;
+  temAtendentes: boolean | null;
+  quantidadeAtendentes: string;
+  selectedOrcamento: string;
+  selectedUrgencia: string;
 }
 
 interface StepProps {
@@ -55,7 +47,7 @@ interface StepProps {
   updateData: (updates: Partial<BriefingData>) => void;
 }
 
-// Step 1: Dados básicos
+// Step 1: Dados básicos (Nome e Empresa)
 export const StepDadosBasicos = ({ data, updateData }: StepProps) => (
   <div className="space-y-4">
     <div className="font-mono text-sm text-white/40 flex items-center gap-2 mb-4">
@@ -86,7 +78,60 @@ export const StepDadosBasicos = ({ data, updateData }: StepProps) => (
   </div>
 );
 
-// Step 2: Serviços
+// Step 2: Presença Digital (site ou Instagram)
+export const StepPresencaDigital = ({ data, updateData }: StepProps) => (
+  <div className="space-y-4">
+    <div className="font-mono text-sm text-white/40 flex items-center gap-2 mb-4">
+      <span className="text-red-500">$</span> query --digital-presence
+    </div>
+    <p className="text-white/50 text-sm mb-4">Você possui site ou Instagram da empresa?</p>
+    <div className="flex gap-3">
+      <button
+        onClick={() => updateData({ temPresencaDigital: true })}
+        className={`flex-1 px-4 py-3 text-center transition-all ${
+          data.temPresencaDigital === true
+            ? "bg-red-500/10 border-red-500/50 text-white"
+            : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+        } border rounded font-mono text-xs`}
+      >
+        Sim, tenho
+      </button>
+      <button
+        onClick={() => updateData({ temPresencaDigital: false, presencaDigitalUrl: "" })}
+        className={`flex-1 px-4 py-3 text-center transition-all ${
+          data.temPresencaDigital === false
+            ? "bg-red-500/10 border-red-500/50 text-white"
+            : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+        } border rounded font-mono text-xs`}
+      >
+        Não tenho
+      </button>
+    </div>
+    <AnimatePresence>
+      {data.temPresencaDigital === true && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="mt-3"
+        >
+          <label className="text-white/30 text-xs font-mono block mb-2">
+            INFORME O LINK *
+          </label>
+          <input
+            type="text"
+            value={data.presencaDigitalUrl}
+            onChange={(e) => updateData({ presencaDigitalUrl: e.target.value })}
+            placeholder="Ex: www.suaempresa.com.br ou @seuinstagram"
+            className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </div>
+);
+
+// Step 3: Serviços
 export const StepServicos = ({ data, updateData }: StepProps) => {
   const toggleServico = (id: string) => {
     const newServicos = data.selectedServicos.includes(id)
@@ -139,53 +184,6 @@ export const StepServicos = ({ data, updateData }: StepProps) => {
   );
 };
 
-// Step 3: Orçamento e Urgência
-export const StepOrcamentoUrgencia = ({ data, updateData }: StepProps) => (
-  <div className="space-y-6">
-    <div className="space-y-4">
-      <div className="font-mono text-sm text-white/40 flex items-center gap-2">
-        <span className="text-red-500">$</span> select --budget
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        {orcamentos.map((orcamento) => (
-          <button
-            key={orcamento.id}
-            onClick={() => updateData({ selectedOrcamento: orcamento.id })}
-            className={`px-3 py-3 text-center transition-all ${
-              data.selectedOrcamento === orcamento.id
-                ? "bg-red-500/10 border-red-500/50 text-white"
-                : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-            } border rounded font-mono text-xs`}
-          >
-            {orcamento.label}
-          </button>
-        ))}
-      </div>
-    </div>
-
-    <div className="space-y-4">
-      <div className="font-mono text-sm text-white/40 flex items-center gap-2">
-        <span className="text-red-500">$</span> select --urgency
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        {urgencias.map((urgencia) => (
-          <button
-            key={urgencia.id}
-            onClick={() => updateData({ selectedUrgencia: urgencia.id })}
-            className={`px-3 py-3 text-center transition-all ${
-              data.selectedUrgencia === urgencia.id
-                ? "bg-red-500/10 border-red-500/50 text-white"
-                : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-            } border rounded font-mono text-xs`}
-          >
-            {urgencia.label}
-          </button>
-        ))}
-      </div>
-    </div>
-  </div>
-);
-
 // Step 4: Descrição do Projeto
 export const StepDescricao = ({ data, updateData }: StepProps) => (
   <div className="space-y-4">
@@ -202,27 +200,56 @@ export const StepDescricao = ({ data, updateData }: StepProps) => (
   </div>
 );
 
-// Step 5: CRM
+// Step 5: CRM (simplificado)
 export const StepCrm = ({ data, updateData }: StepProps) => (
   <div className="space-y-4">
     <div className="font-mono text-sm text-white/40 flex items-center gap-2 mb-4">
-      <span className="text-red-500">$</span> select --crm-system
+      <span className="text-red-500">$</span> query --crm-system
     </div>
-    <div className="grid grid-cols-2 gap-3">
-      {crms.map((crm) => (
-        <button
-          key={crm.id}
-          onClick={() => updateData({ selectedCrm: crm.id })}
-          className={`px-3 py-3 text-center transition-all ${
-            data.selectedCrm === crm.id
-              ? "bg-red-500/10 border-red-500/50 text-white"
-              : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-          } border rounded font-mono text-xs`}
+    <p className="text-white/50 text-sm mb-4">Você utiliza algum sistema de CRM?</p>
+    <div className="flex gap-3">
+      <button
+        onClick={() => updateData({ temCrm: true })}
+        className={`flex-1 px-4 py-3 text-center transition-all ${
+          data.temCrm === true
+            ? "bg-red-500/10 border-red-500/50 text-white"
+            : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+        } border rounded font-mono text-xs`}
+      >
+        Sim, utilizo
+      </button>
+      <button
+        onClick={() => updateData({ temCrm: false, crmNome: "" })}
+        className={`flex-1 px-4 py-3 text-center transition-all ${
+          data.temCrm === false
+            ? "bg-red-500/10 border-red-500/50 text-white"
+            : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+        } border rounded font-mono text-xs`}
+      >
+        Não utilizo
+      </button>
+    </div>
+    <AnimatePresence>
+      {data.temCrm === true && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="mt-3"
         >
-          {crm.label}
-        </button>
-      ))}
-    </div>
+          <label className="text-white/30 text-xs font-mono block mb-2">
+            QUAL CRM VOCÊ UTILIZA? *
+          </label>
+          <input
+            type="text"
+            value={data.crmNome}
+            onChange={(e) => updateData({ crmNome: e.target.value })}
+            placeholder="Ex: HubSpot, Salesforce, Pipedrive..."
+            className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
   </div>
 );
 
@@ -231,8 +258,8 @@ export const StepAtendentes = ({ data, updateData }: StepProps) => (
   <div className="space-y-4">
     <div className="font-mono text-sm text-white/40 flex items-center gap-2 mb-4">
       <span className="text-red-500">$</span> query --team-support
-      <span className="text-white/20 text-xs">(possui atendentes?)</span>
     </div>
+    <p className="text-white/50 text-sm mb-4">Você possui atendentes na sua equipe?</p>
     <div className="flex gap-3">
       <button
         onClick={() => updateData({ temAtendentes: true })}
@@ -279,56 +306,50 @@ export const StepAtendentes = ({ data, updateData }: StepProps) => (
   </div>
 );
 
-// Step 7: Presença Digital
-export const StepPresencaDigital = ({ data, updateData }: StepProps) => (
-  <div className="space-y-4">
-    <div className="font-mono text-sm text-white/40 flex items-center gap-2 mb-4">
-      <span className="text-red-500">$</span> query --digital-presence
-      <span className="text-white/20 text-xs">(site ou Instagram?)</span>
+// Step 7: Orçamento e Urgência (final)
+export const StepOrcamentoUrgencia = ({ data, updateData }: StepProps) => (
+  <div className="space-y-6">
+    <div className="space-y-4">
+      <div className="font-mono text-sm text-white/40 flex items-center gap-2">
+        <span className="text-red-500">$</span> select --budget
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        {orcamentos.map((orcamento) => (
+          <button
+            key={orcamento.id}
+            onClick={() => updateData({ selectedOrcamento: orcamento.id })}
+            className={`px-3 py-3 text-center transition-all ${
+              data.selectedOrcamento === orcamento.id
+                ? "bg-red-500/10 border-red-500/50 text-white"
+                : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+            } border rounded font-mono text-xs`}
+          >
+            {orcamento.label}
+          </button>
+        ))}
+      </div>
     </div>
-    <div className="flex gap-3">
-      <button
-        onClick={() => updateData({ temPresencaDigital: true })}
-        className={`flex-1 px-4 py-3 text-center transition-all ${
-          data.temPresencaDigital === true
-            ? "bg-red-500/10 border-red-500/50 text-white"
-            : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-        } border rounded font-mono text-xs`}
-      >
-        Sim, tenho
-      </button>
-      <button
-        onClick={() => updateData({ temPresencaDigital: false, presencaDigitalUrl: "" })}
-        className={`flex-1 px-4 py-3 text-center transition-all ${
-          data.temPresencaDigital === false
-            ? "bg-red-500/10 border-red-500/50 text-white"
-            : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-        } border rounded font-mono text-xs`}
-      >
-        Não tenho
-      </button>
+
+    <div className="space-y-4">
+      <div className="font-mono text-sm text-white/40 flex items-center gap-2">
+        <span className="text-red-500">$</span> select --urgency
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        {urgencias.map((urgencia) => (
+          <button
+            key={urgencia.id}
+            onClick={() => updateData({ selectedUrgencia: urgencia.id })}
+            className={`px-3 py-3 text-center transition-all ${
+              data.selectedUrgencia === urgencia.id
+                ? "bg-red-500/10 border-red-500/50 text-white"
+                : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+            } border rounded font-mono text-xs`}
+          >
+            {urgencia.label}
+          </button>
+        ))}
+      </div>
     </div>
-    <AnimatePresence>
-      {data.temPresencaDigital === true && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          className="mt-3"
-        >
-          <label className="text-white/30 text-xs font-mono block mb-2">
-            INFORME O LINK (SITE OU INSTAGRAM) *
-          </label>
-          <input
-            type="text"
-            value={data.presencaDigitalUrl}
-            onChange={(e) => updateData({ presencaDigitalUrl: e.target.value })}
-            placeholder="Ex: www.suaempresa.com.br ou @seuinstagram"
-            className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
-          />
-        </motion.div>
-      )}
-    </AnimatePresence>
   </div>
 );
 

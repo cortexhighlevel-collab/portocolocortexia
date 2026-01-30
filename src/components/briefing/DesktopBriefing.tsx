@@ -6,7 +6,6 @@ import {
   servicos,
   orcamentos,
   urgencias,
-  crms,
 } from "./BriefingSteps";
 
 interface DesktopBriefingProps {
@@ -17,15 +16,16 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
   const [data, setData] = useState<BriefingData>({
     nome: "",
     empresa: "",
-    selectedServicos: [],
-    selectedOrcamento: "",
-    selectedUrgencia: "",
-    descricao: "",
-    selectedCrm: "",
-    temAtendentes: null,
-    quantidadeAtendentes: "",
     temPresencaDigital: null,
     presencaDigitalUrl: "",
+    selectedServicos: [],
+    descricao: "",
+    temCrm: null,
+    crmNome: "",
+    temAtendentes: null,
+    quantidadeAtendentes: "",
+    selectedOrcamento: "",
+    selectedUrgencia: "",
   });
 
   const updateData = (updates: Partial<BriefingData>) => {
@@ -110,6 +110,65 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
             </div>
           </div>
 
+          {/* Presença Digital */}
+          <div className="space-y-4">
+            <div className="font-mono text-sm text-white/40 flex items-center gap-2">
+              <span className="text-red-500">$</span>
+              query --digital-presence
+              <span className="text-white/20 text-xs">(site ou Instagram?)</span>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => updateData({ temPresencaDigital: true })}
+                className={`flex-1 px-4 py-3 text-center transition-all ${
+                  data.temPresencaDigital === true
+                    ? "bg-red-500/10 border-red-500/50 text-white"
+                    : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+                } border rounded font-mono text-xs`}
+              >
+                Sim, tenho
+              </button>
+              <button
+                onClick={() =>
+                  updateData({
+                    temPresencaDigital: false,
+                    presencaDigitalUrl: "",
+                  })
+                }
+                className={`flex-1 px-4 py-3 text-center transition-all ${
+                  data.temPresencaDigital === false
+                    ? "bg-red-500/10 border-red-500/50 text-white"
+                    : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+                } border rounded font-mono text-xs`}
+              >
+                Não tenho
+              </button>
+            </div>
+            <AnimatePresence>
+              {data.temPresencaDigital === true && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-3"
+                >
+                  <label className="text-white/30 text-xs font-mono block mb-2">
+                    INFORME O LINK *
+                  </label>
+                  <input
+                    type="text"
+                    value={data.presencaDigitalUrl}
+                    onChange={(e) =>
+                      updateData({ presencaDigitalUrl: e.target.value })
+                    }
+                    placeholder="Ex: www.suaempresa.com.br ou @seuinstagram"
+                    className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           {/* Serviços */}
           <div className="space-y-4">
             <div className="font-mono text-sm text-white/40 flex items-center gap-2">
@@ -153,54 +212,6 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
             </div>
           </div>
 
-          {/* Orçamento */}
-          <div className="space-y-4">
-            <div className="font-mono text-sm text-white/40 flex items-center gap-2">
-              <span className="text-red-500">$</span>
-              select --budget
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {orcamentos.map((orcamento) => (
-                <button
-                  key={orcamento.id}
-                  onClick={() =>
-                    updateData({ selectedOrcamento: orcamento.id })
-                  }
-                  className={`px-4 py-3 text-center transition-all ${
-                    data.selectedOrcamento === orcamento.id
-                      ? "bg-red-500/10 border-red-500/50 text-white"
-                      : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-                  } border rounded font-mono text-xs`}
-                >
-                  {orcamento.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Urgência */}
-          <div className="space-y-4">
-            <div className="font-mono text-sm text-white/40 flex items-center gap-2">
-              <span className="text-red-500">$</span>
-              select --urgency
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {urgencias.map((urgencia) => (
-                <button
-                  key={urgencia.id}
-                  onClick={() => updateData({ selectedUrgencia: urgencia.id })}
-                  className={`px-4 py-3 text-center transition-all ${
-                    data.selectedUrgencia === urgencia.id
-                      ? "bg-red-500/10 border-red-500/50 text-white"
-                      : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-                  } border rounded font-mono text-xs`}
-                >
-                  {urgencia.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Descrição */}
           <div className="space-y-4">
             <div className="font-mono text-sm text-white/40 flex items-center gap-2">
@@ -220,23 +231,51 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
           <div className="space-y-4">
             <div className="font-mono text-sm text-white/40 flex items-center gap-2">
               <span className="text-red-500">$</span>
-              select --crm-system
+              query --crm-system
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {crms.map((crm) => (
-                <button
-                  key={crm.id}
-                  onClick={() => updateData({ selectedCrm: crm.id })}
-                  className={`px-4 py-3 text-center transition-all ${
-                    data.selectedCrm === crm.id
-                      ? "bg-red-500/10 border-red-500/50 text-white"
-                      : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-                  } border rounded font-mono text-xs`}
+            <div className="flex gap-3">
+              <button
+                onClick={() => updateData({ temCrm: true })}
+                className={`flex-1 px-4 py-3 text-center transition-all ${
+                  data.temCrm === true
+                    ? "bg-red-500/10 border-red-500/50 text-white"
+                    : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+                } border rounded font-mono text-xs`}
+              >
+                Sim, utilizo CRM
+              </button>
+              <button
+                onClick={() => updateData({ temCrm: false, crmNome: "" })}
+                className={`flex-1 px-4 py-3 text-center transition-all ${
+                  data.temCrm === false
+                    ? "bg-red-500/10 border-red-500/50 text-white"
+                    : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+                } border rounded font-mono text-xs`}
+              >
+                Não utilizo CRM
+              </button>
+            </div>
+            <AnimatePresence>
+              {data.temCrm === true && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-3"
                 >
-                  {crm.label}
-                </button>
-              ))}
-            </div>
+                  <label className="text-white/30 text-xs font-mono block mb-2">
+                    QUAL CRM VOCÊ UTILIZA? *
+                  </label>
+                  <input
+                    type="text"
+                    value={data.crmNome}
+                    onChange={(e) => updateData({ crmNome: e.target.value })}
+                    placeholder="Ex: HubSpot, Salesforce, Pipedrive..."
+                    className="w-full md:w-1/2 bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Atendentes */}
@@ -295,63 +334,52 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
             </AnimatePresence>
           </div>
 
-          {/* Presença Digital */}
+          {/* Orçamento */}
           <div className="space-y-4">
             <div className="font-mono text-sm text-white/40 flex items-center gap-2">
               <span className="text-red-500">$</span>
-              query --digital-presence
-              <span className="text-white/20 text-xs">(site ou Instagram?)</span>
+              select --budget
             </div>
-            <div className="flex gap-3">
-              <button
-                onClick={() => updateData({ temPresencaDigital: true })}
-                className={`flex-1 px-4 py-3 text-center transition-all ${
-                  data.temPresencaDigital === true
-                    ? "bg-red-500/10 border-red-500/50 text-white"
-                    : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-                } border rounded font-mono text-xs`}
-              >
-                Sim, tenho
-              </button>
-              <button
-                onClick={() =>
-                  updateData({
-                    temPresencaDigital: false,
-                    presencaDigitalUrl: "",
-                  })
-                }
-                className={`flex-1 px-4 py-3 text-center transition-all ${
-                  data.temPresencaDigital === false
-                    ? "bg-red-500/10 border-red-500/50 text-white"
-                    : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-                } border rounded font-mono text-xs`}
-              >
-                Não tenho
-              </button>
-            </div>
-            <AnimatePresence>
-              {data.temPresencaDigital === true && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="mt-3"
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {orcamentos.map((orcamento) => (
+                <button
+                  key={orcamento.id}
+                  onClick={() =>
+                    updateData({ selectedOrcamento: orcamento.id })
+                  }
+                  className={`px-4 py-3 text-center transition-all ${
+                    data.selectedOrcamento === orcamento.id
+                      ? "bg-red-500/10 border-red-500/50 text-white"
+                      : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+                  } border rounded font-mono text-xs`}
                 >
-                  <label className="text-white/30 text-xs font-mono block mb-2">
-                    INFORME O LINK (SITE OU INSTAGRAM) *
-                  </label>
-                  <input
-                    type="text"
-                    value={data.presencaDigitalUrl}
-                    onChange={(e) =>
-                      updateData({ presencaDigitalUrl: e.target.value })
-                    }
-                    placeholder="Ex: www.suaempresa.com.br ou @seuinstagram"
-                    className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  {orcamento.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Urgência */}
+          <div className="space-y-4">
+            <div className="font-mono text-sm text-white/40 flex items-center gap-2">
+              <span className="text-red-500">$</span>
+              select --urgency
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {urgencias.map((urgencia) => (
+                <button
+                  key={urgencia.id}
+                  onClick={() => updateData({ selectedUrgencia: urgencia.id })}
+                  className={`px-4 py-3 text-center transition-all ${
+                    data.selectedUrgencia === urgencia.id
+                      ? "bg-red-500/10 border-red-500/50 text-white"
+                      : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+                  } border rounded font-mono text-xs`}
+                >
+                  {urgencia.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Divider */}

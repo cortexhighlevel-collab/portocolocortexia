@@ -7,7 +7,6 @@ import {
   servicos,
   orcamentos,
   urgencias,
-  crms,
 } from "./briefing/BriefingSteps";
 
 const ContactSection = () => {
@@ -24,19 +23,29 @@ const ContactSection = () => {
     const urgenciaSelecionada =
       urgencias.find((u) => u.id === data.selectedUrgencia)?.label ||
       "Não informado";
-    const crmSelecionado =
-      crms.find((c) => c.id === data.selectedCrm)?.label || "Não informado";
+    
+    // CRM info
+    const crmInfo =
+      data.temCrm === null
+        ? "Não informado"
+        : data.temCrm
+        ? data.crmNome || "Utiliza CRM (não especificou)"
+        : "Não utiliza CRM";
+    
+    // Atendentes info
     const atendentesInfo =
       data.temAtendentes === null
         ? "Não informado"
         : data.temAtendentes
         ? `Sim, ${data.quantidadeAtendentes || "quantidade não informada"} atendente(s)`
         : "Não possui atendentes";
+    
+    // Presença Digital info
     const presencaDigitalInfo =
       data.temPresencaDigital === null
         ? "Não informado"
         : data.temPresencaDigital
-        ? data.presencaDigitalUrl || "Não informou o link"
+        ? data.presencaDigitalUrl || "Possui (não informou o link)"
         : "Não possui site/Instagram";
 
     const mensagem = `🧠 *BRIEFING CORTEX POEI*
@@ -44,21 +53,21 @@ const ContactSection = () => {
 👤 *Nome:* ${data.nome || "Não informado"}
 🏢 *Empresa:* ${data.empresa || "Não informado"}
 
+🌐 *Presença Digital:* ${presencaDigitalInfo}
+
 📋 *Serviços de Interesse:*
 ${servicosSelecionados || "Nenhum selecionado"}
+
+📝 *Descrição do Projeto:*
+${data.descricao || "Não informado"}
+
+📊 *Sistema CRM:* ${crmInfo}
+
+👥 *Atendentes:* ${atendentesInfo}
 
 💰 *Orçamento Estimado:* ${orcamentoSelecionado}
 
 ⏰ *Urgência:* ${urgenciaSelecionada}
-
-📊 *Sistema CRM:* ${crmSelecionado}
-
-👥 *Atendentes:* ${atendentesInfo}
-
-🌐 *Presença Digital:* ${presencaDigitalInfo}
-
-📝 *Descrição do Projeto:*
-${data.descricao || "Não informado"}
 
 ---
 Enviado via site CORTEX POEI`;
