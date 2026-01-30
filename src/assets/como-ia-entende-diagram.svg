@@ -1,8 +1,22 @@
 <svg width="42002" height="30336" viewBox="0 0 42002 30336" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<line x1="23" y1="-23" x2="4080.68" y2="-23" transform="matrix(0.00261904 0.999997 -0.999996 0.00280416 21117.1 20493.9)" stroke="white" stroke-width="46" stroke-linecap="round"/>
-<path d="M20566.8 20046.8C20832.3 23430.9 19681.2 23265.2 18731.1 23309.7" stroke="white" stroke-width="46"/>
-<path d="M10177.7 24579.5C10123 23743.2 10723.6 23277.2 11399.3 23307.3" stroke="white" stroke-width="46" stroke-linecap="round"/>
-<line y1="-23" x2="7458.09" y2="-23" transform="matrix(-1 -0.000298228 -0.000277359 1 18753.3 23332.1)" stroke="white" stroke-width="46"/>
+<defs>
+  <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#e11d48"/>
+    <stop offset="50%" stop-color="#a855f7"/>
+    <stop offset="100%" stop-color="#8b5cf6"/>
+  </linearGradient>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="40" result="coloredBlur"/>
+    <feMerge>
+      <feMergeNode in="coloredBlur"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+</defs>
+<line x1="23" y1="-23" x2="4080.68" y2="-23" transform="matrix(0.00261904 0.999997 -0.999996 0.00280416 21117.1 20493.9)" stroke="url(#lineGradient)" stroke-width="46" stroke-linecap="round" filter="url(#glow)"/>
+<path d="M20566.8 20046.8C20832.3 23430.9 19681.2 23265.2 18731.1 23309.7" stroke="url(#lineGradient)" stroke-width="46" filter="url(#glow)"/>
+<path d="M10177.7 24579.5C10123 23743.2 10723.6 23277.2 11399.3 23307.3" stroke="url(#lineGradient)" stroke-width="46" stroke-linecap="round" filter="url(#glow)"/>
+<line y1="-23" x2="7458.09" y2="-23" transform="matrix(-1 -0.000298228 -0.000277359 1 18753.3 23332.1)" stroke="url(#lineGradient)" stroke-width="46" filter="url(#glow)"/>
 <ellipse cx="23771.5" cy="9114.5" rx="382.5" ry="386.5" fill="white"/>
 <ellipse cx="22561.5" cy="7471" rx="383.5" ry="387" fill="white"/>
 <ellipse cx="28176.5" cy="11063" rx="382.5" ry="387" fill="white"/>
@@ -40,10 +54,10 @@
 <ellipse cx="28671.5" cy="9116" rx="267.5" ry="281" fill="white"/>
 <ellipse cx="34563.5" cy="7080" rx="267.5" ry="282" fill="white"/>
 <ellipse cx="36614" cy="9230.5" rx="268" ry="281.5" fill="white"/>
-<path d="M21791 21373.5C21699.6 22979.4 22453 23318.6 23639.6 23294.2" stroke="white" stroke-width="46"/>
-<path d="M32189.4 24564.2C32244.2 23727.9 31642.3 23261.9 30965.2 23292" stroke="white" stroke-width="46" stroke-linecap="round"/>
-<path d="M21791 21373.5C21699.6 22979.4 22453 23318.6 23639.6 23294.2" stroke="white" stroke-width="46"/>
-<path d="M32189.4 24564.2C32244.2 23727.9 31642.3 23261.9 30965.2 23292" stroke="white" stroke-width="46" stroke-linecap="round"/>
+<path d="M21791 21373.5C21699.6 22979.4 22453 23318.6 23639.6 23294.2" stroke="url(#lineGradient)" stroke-width="46" filter="url(#glow)"/>
+<path d="M32189.4 24564.2C32244.2 23727.9 31642.3 23261.9 30965.2 23292" stroke="url(#lineGradient)" stroke-width="46" stroke-linecap="round" filter="url(#glow)"/>
+<path d="M21791 21373.5C21699.6 22979.4 22453 23318.6 23639.6 23294.2" stroke="url(#lineGradient)" stroke-width="46" filter="url(#glow)"/>
+<path d="M32189.4 24564.2C32244.2 23727.9 31642.3 23261.9 30965.2 23292" stroke="url(#lineGradient)" stroke-width="46" stroke-linecap="round" filter="url(#glow)"/>
 <rect x="3702.36" y="4982.26" width="4123.26" height="4277.09" rx="246.5" stroke="white" stroke-width="49"/>
 <path d="M6024.29 5716.79C6030.43 5716.79 6036.3 5719.36 6040.47 5723.88L6795.17 6542.95C6798.91 6547.01 6800.99 6552.33 6800.99 6557.85V8478.93C6800.99 8491.08 6791.14 8500.93 6778.99 8500.93H4724.05C4711.9 8500.93 4702.05 8491.08 4702.05 8478.93V5738.79C4702.05 5726.64 4711.9 5716.79 4724.05 5716.79H6024.29ZM6101.34 6454.1C6101.34 6466.25 6111.19 6476.1 6123.34 6476.1H6351.79C6370.96 6476.1 6380.96 6453.29 6367.97 6439.19L6139.52 6191.27C6125.95 6176.53 6101.34 6186.14 6101.34 6206.18V6454.1ZM6567.78 6751.2C6567.78 6739.05 6557.93 6729.2 6545.78 6729.2H5890.13C5877.98 6729.2 5868.13 6719.35 5868.13 6707.2V5991.89C5868.13 5979.74 5858.28 5969.89 5846.13 5969.89H4957.27C4945.12 5969.89 4935.27 5979.74 4935.27 5991.89V8225.83C4935.27 8237.98 4945.12 8247.83 4957.27 8247.83H6545.78C6557.93 8247.83 6567.78 8237.98 6567.78 8225.83V6751.2ZM5168.48 7763.62C5168.48 7751.47 5178.33 7741.62 5190.48 7741.62H6079.34C6091.49 7741.62 6101.34 7751.47 6101.34 7763.62V7972.72C6101.34 7984.88 6091.49 7994.72 6079.34 7994.72H5190.48C5178.33 7994.72 5168.48 7984.88 5168.48 7972.72V7763.62ZM5634.91 7466.52C5634.91 7478.67 5625.06 7488.52 5612.91 7488.52H5190.48C5178.33 7488.52 5168.48 7478.67 5168.48 7466.52V7257.41C5168.48 7245.26 5178.33 7235.41 5190.48 7235.41H5612.91C5625.06 7235.41 5634.91 7245.26 5634.91 7257.41V7466.52ZM5634.91 6960.31C5634.91 6972.46 5625.06 6982.31 5612.91 6982.31H5190.48C5178.33 6982.31 5168.48 6972.46 5168.48 6960.31V6751.2C5168.48 6739.05 5178.33 6729.2 5190.48 6729.2H5612.91C5625.06 6729.2 5634.91 6739.05 5634.91 6751.2V6960.31ZM5634.91 6454.1C5634.91 6466.25 5625.06 6476.1 5612.91 6476.1H5190.48C5178.33 6476.1 5168.48 6466.25 5168.48 6454.1V6245C5168.48 6232.85 5178.33 6223 5190.48 6223H5612.91C5625.06 6223 5634.91 6232.85 5634.91 6245V6454.1Z" fill="white"/>
 <rect x="13573" y="1908.41" width="4123.26" height="4277.09" rx="246.5" stroke="white" stroke-width="49"/>

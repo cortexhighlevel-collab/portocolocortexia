@@ -1,9 +1,23 @@
 <svg width="16420" height="24715" viewBox="0 0 16420 24715" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<path d="M15017 3463.5V4053C14979.1 5032.79 14665.4 5342.19 13609.5 5491.5H11180.5C10409 5570.99 10157.2 5795.82 10072.5 6560.5V8470.5" stroke="white" stroke-width="37" stroke-linecap="round"/>
-<path d="M10748.5 2889.5V3314C10627.4 3787.03 10489.2 3976.6 10080 4139.5L9742 4186.5C9185.96 4367.21 9025.54 4603.2 8956 5216.5V8125" stroke="white" stroke-width="37" stroke-linecap="round"/>
-<path d="M6032 2881.5V3235.5C6125.16 3819.62 6304.08 4026.43 6857.5 4171L7242.5 4241.5C7615.14 4404.16 7739.23 4611.48 7824 5169V8101" stroke="white" stroke-width="37" stroke-linecap="round"/>
-<path d="M1771.5 3510.5V4076.5C1959.23 4951.64 2261.5 5272.34 3210 5491.5H5623C6320.44 5634.17 6560.99 5870.04 6708 6584V8376.5" stroke="white" stroke-width="37" stroke-linecap="round"/>
-<path d="M8781.5 14010V15686C8833.99 16182.5 8991.48 16333.8 9482 16392.5H11276.5C11759.6 16572.9 11798.4 16752 11814 17168V21707.5M8386.5 13553V21707.5" stroke="white" stroke-width="37" stroke-linecap="round"/>
+<defs>
+  <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#e11d48"/>
+    <stop offset="50%" stop-color="#a855f7"/>
+    <stop offset="100%" stop-color="#8b5cf6"/>
+  </linearGradient>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="25" result="coloredBlur"/>
+    <feMerge>
+      <feMergeNode in="coloredBlur"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+</defs>
+<path d="M15017 3463.5V4053C14979.1 5032.79 14665.4 5342.19 13609.5 5491.5H11180.5C10409 5570.99 10157.2 5795.82 10072.5 6560.5V8470.5" stroke="url(#lineGradient)" stroke-width="37" stroke-linecap="round" filter="url(#glow)"/>
+<path d="M10748.5 2889.5V3314C10627.4 3787.03 10489.2 3976.6 10080 4139.5L9742 4186.5C9185.96 4367.21 9025.54 4603.2 8956 5216.5V8125" stroke="url(#lineGradient)" stroke-width="37" stroke-linecap="round" filter="url(#glow)"/>
+<path d="M6032 2881.5V3235.5C6125.16 3819.62 6304.08 4026.43 6857.5 4171L7242.5 4241.5C7615.14 4404.16 7739.23 4611.48 7824 5169V8101" stroke="url(#lineGradient)" stroke-width="37" stroke-linecap="round" filter="url(#glow)"/>
+<path d="M1771.5 3510.5V4076.5C1959.23 4951.64 2261.5 5272.34 3210 5491.5H5623C6320.44 5634.17 6560.99 5870.04 6708 6584V8376.5" stroke="url(#lineGradient)" stroke-width="37" stroke-linecap="round" filter="url(#glow)"/>
+<path d="M8781.5 14010V15686C8833.99 16182.5 8991.48 16333.8 9482 16392.5H11276.5C11759.6 16572.9 11798.4 16752 11814 17168V21707.5M8386.5 13553V21707.5" stroke="url(#lineGradient)" stroke-width="37" stroke-linecap="round" filter="url(#glow)"/>
 <ellipse cx="10754.5" cy="2774.5" rx="173.5" ry="172.5" fill="white"/>
 <ellipse cx="6026.5" cy="2774.5" rx="173.5" ry="172.5" fill="white"/>
 <ellipse cx="1763.5" cy="3393.5" rx="173.5" ry="172.5" fill="white"/>
