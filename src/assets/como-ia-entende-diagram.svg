@@ -1,4 +1,15 @@
 <svg width="42002" height="30336" viewBox="0 0 42002 30336" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+  <filter id="whiteGlow" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="80" result="coloredBlur"/>
+    <feMerge>
+      <feMergeNode in="coloredBlur"/>
+      <feMergeNode in="coloredBlur"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+</defs>
+<g filter="url(#whiteGlow)">
 <line x1="23" y1="-23" x2="4080.68" y2="-23" transform="matrix(0.00261904 0.999997 -0.999996 0.00280416 21117.1 20493.9)" stroke="white" stroke-width="46" stroke-linecap="round"/>
 <path d="M20566.8 20046.8C20832.3 23430.9 19681.2 23265.2 18731.1 23309.7" stroke="white" stroke-width="46"/>
 <path d="M10177.7 24579.5C10123 23743.2 10723.6 23277.2 11399.3 23307.3" stroke="white" stroke-width="46" stroke-linecap="round"/>
@@ -196,6 +207,7 @@
 <path d="M18692 8993L19705 7501" stroke="white" stroke-width="37"/>
 <path d="M23824 9003C24451.7 8996.63 24918.7 8823.89 25247 8528" stroke="white" stroke-width="37"/>
 <path d="M25397 8391C26086.6 7953.07 26365.9 7497.62 26711 6385" stroke="white" stroke-width="37"/>
+</g>
 <rect x="13562.9" y="12904.7" width="12062.3" height="7947.44" fill="url(#pattern0_93_184)"/>
 <defs>
 <pattern id="pattern0_93_184" patternContentUnits="objectBoundingBox" width="1" height="1">
