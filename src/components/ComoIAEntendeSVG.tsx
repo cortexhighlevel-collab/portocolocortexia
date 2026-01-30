@@ -160,11 +160,11 @@ const ComoIAEntendeSVG = () => {
   return (
     <div 
       ref={containerRef}
-      className="relative w-full max-w-[874px] mx-auto"
+      className="relative w-full max-w-[874px] mx-auto pb-4"
     >
       {isAnimating && svgContent ? (
         <div 
-          className="w-full h-auto rounded-lg [&>svg]:w-full [&>svg]:h-auto"
+          className="w-full h-auto rounded-lg [&>svg]:w-full [&>svg]:h-auto [&>svg]:overflow-visible"
           dangerouslySetInnerHTML={{ __html: svgContent }}
         />
       ) : (
