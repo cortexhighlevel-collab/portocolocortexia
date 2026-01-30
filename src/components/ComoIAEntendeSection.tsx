@@ -1,11 +1,7 @@
 import { motion } from "framer-motion";
-import comoIaEntendeBg from "@/assets/como-ia-entende-diagram.svg";
-import comoIaEntendeMobile from "@/assets/como-ia-entende-mobile.svg";
-import { useIsMobile } from "@/hooks/use-mobile";
+import ComoIAEntendeSVG from "./ComoIAEntendeSVG";
 
 const ComoIAEntendeSection = () => {
-  const isMobile = useIsMobile();
-
   // Container animation with stagger for children
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -13,7 +9,7 @@ const ComoIAEntendeSection = () => {
       opacity: 1,
       transition: {
         staggerChildren: 0.15,
-        delayChildren: 0.2,
+        delayChildren: 0.1,
       }
     }
   };
@@ -23,32 +19,12 @@ const ComoIAEntendeSection = () => {
     hidden: { 
       opacity: 0, 
       y: 30,
-      scale: 0.95
     },
     visible: { 
       opacity: 1, 
       y: 0,
-      scale: 1,
       transition: {
         duration: 0.6,
-        ease: "easeOut" as const
-      }
-    }
-  };
-
-  // SVG specific animation with glow effect
-  const svgVariants = {
-    hidden: { 
-      opacity: 0, 
-      scale: 0.9,
-      filter: "blur(10px)"
-    },
-    visible: { 
-      opacity: 1, 
-      scale: 1,
-      filter: "blur(0px)",
-      transition: {
-        duration: 1,
         ease: "easeOut" as const
       }
     }
@@ -76,17 +52,10 @@ const ComoIAEntendeSection = () => {
             </p>
           </motion.div>
 
-          {/* SVG centralizado com animação sequencial */}
-          <motion.div 
-            className="flex justify-center"
-            variants={svgVariants}
-          >
-            <img 
-              src={isMobile ? comoIaEntendeMobile : comoIaEntendeBg} 
-              alt="Como a IA entende você" 
-              className="w-full max-w-[874px] h-auto rounded-lg svg-lines-pulse"
-            />
-          </motion.div>
+          {/* SVG animado com efeito sequencial */}
+          <div className="flex justify-center">
+            <ComoIAEntendeSVG />
+          </div>
         </motion.div>
       </div>
     </section>
