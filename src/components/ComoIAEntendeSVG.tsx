@@ -29,15 +29,17 @@ const ComoIAEntendeSVG = () => {
           <style>
             /* Linhas puras - animação de desenho */
             .svg-animated > line {
-              stroke-dasharray: 10000;
-              stroke-dashoffset: 10000;
+              /* No SVG desktop os paths/lines são MUITO longos (coordenadas gigantes).
+                 Se o dash for pequeno, a linha nunca “termina de desenhar” e parece cortada. */
+              stroke-dasharray: 1000000;
+              stroke-dashoffset: 1000000;
               animation: drawLine 2.5s ease-out forwards;
             }
             
             /* Paths que são linhas (têm stroke mas não fill sólido) */
             .svg-animated > path:not([fill="white"]) {
-              stroke-dasharray: 10000;
-              stroke-dashoffset: 10000;
+              stroke-dasharray: 1000000;
+              stroke-dashoffset: 1000000;
               animation: drawLine 2.5s ease-out forwards;
             }
             
