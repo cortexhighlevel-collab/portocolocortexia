@@ -143,6 +143,20 @@
   .dot-gradient-accent {
     background: var(--accent-gradient);
   }
+
+  /* SVG line pulse animation */
+  @keyframes svg-line-pulse {
+    0%, 100% {
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
+    }
+    50% {
+      filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1)) drop-shadow(0 0 40px rgba(255, 255, 255, 0.8));
+    }
+  }
+
+  .svg-lines-pulse {
+    animation: svg-line-pulse 2s ease-in-out infinite;
+  }
 }
 
 @layer components {
