@@ -27,10 +27,24 @@ const urgencias = [
   { id: "explorando", label: "Apenas explorando" },
 ];
 
+const crms = [
+  { id: "nenhum", label: "Não utilizo CRM" },
+  { id: "hubspot", label: "HubSpot" },
+  { id: "salesforce", label: "Salesforce" },
+  { id: "pipedrive", label: "Pipedrive" },
+  { id: "rdstation", label: "RD Station" },
+  { id: "outro", label: "Outro CRM" },
+];
+
 const ContactSection = () => {
   const [selectedServicos, setSelectedServicos] = useState<string[]>([]);
   const [selectedOrcamento, setSelectedOrcamento] = useState<string>("");
   const [selectedUrgencia, setSelectedUrgencia] = useState<string>("");
+  const [selectedCrm, setSelectedCrm] = useState<string>("");
+  const [temAtendentes, setTemAtendentes] = useState<boolean | null>(null);
+  const [quantidadeAtendentes, setQuantidadeAtendentes] = useState<string>("");
+  const [temPresencaDigital, setTemPresencaDigital] = useState<boolean | null>(null);
+  const [presencaDigitalUrl, setPresencaDigitalUrl] = useState<string>("");
   const [nome, setNome] = useState("");
   const [empresa, setEmpresa] = useState("");
   const [descricao, setDescricao] = useState("");
@@ -51,6 +65,19 @@ const ContactSection = () => {
     
     const orcamentoSelecionado = orcamentos.find(o => o.id === selectedOrcamento)?.label || "Não informado";
     const urgenciaSelecionada = urgencias.find(u => u.id === selectedUrgencia)?.label || "Não informado";
+    const crmSelecionado = crms.find(c => c.id === selectedCrm)?.label || "Não informado";
+
+    const atendentesInfo = temAtendentes === null 
+      ? "Não informado" 
+      : temAtendentes 
+        ? `Sim, ${quantidadeAtendentes || "quantidade não informada"} atendente(s)`
+        : "Não possui atendentes";
+
+    const presencaDigitalInfo = temPresencaDigital === null
+      ? "Não informado"
+      : temPresencaDigital
+        ? presencaDigitalUrl || "Não informou o link"
+        : "Não possui site/Instagram";
 
     const mensagem = `🧠 *BRIEFING CORTEX POEI*
 
@@ -63,6 +90,12 @@ ${servicosSelecionados || "Nenhum selecionado"}
 💰 *Orçamento Estimado:* ${orcamentoSelecionado}
 
 ⏰ *Urgência:* ${urgenciaSelecionada}
+
+📊 *Sistema CRM:* ${crmSelecionado}
+
+👥 *Atendentes:* ${atendentesInfo}
+
+🌐 *Presença Digital:* ${presencaDigitalInfo}
 
 📝 *Descrição do Projeto:*
 ${descricao || "Não informado"}
@@ -268,6 +301,121 @@ Enviado via site CORTEX POEI`;
                   rows={4}
                   className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors resize-none"
                 />
+              </div>
+
+              {/* CRM */}
+              <div className="space-y-4">
+                <div className="font-mono text-sm text-white/40 flex items-center gap-2">
+                  <span className="text-red-500">$</span> 
+                  select --crm-system
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {crms.map((crm) => (
+                    <button
+                      key={crm.id}
+                      onClick={() => setSelectedCrm(crm.id)}
+                      className={`px-4 py-3 text-center transition-all ${
+                        selectedCrm === crm.id
+                          ? 'bg-red-500/10 border-red-500/50 text-white'
+                          : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'
+                      } border rounded font-mono text-xs`}
+                    >
+                      {crm.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Atendentes */}
+              <div className="space-y-4">
+                <div className="font-mono text-sm text-white/40 flex items-center gap-2">
+                  <span className="text-red-500">$</span> 
+                  query --team-support
+                  <span className="text-white/20 text-xs">(possui atendentes?)</span>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setTemAtendentes(true)}
+                    className={`flex-1 px-4 py-3 text-center transition-all ${
+                      temAtendentes === true
+                        ? 'bg-red-500/10 border-red-500/50 text-white'
+                        : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'
+                    } border rounded font-mono text-xs`}
+                  >
+                    Sim, possuo
+                  </button>
+                  <button
+                    onClick={() => {
+                      setTemAtendentes(false);
+                      setQuantidadeAtendentes("");
+                    }}
+                    className={`flex-1 px-4 py-3 text-center transition-all ${
+                      temAtendentes === false
+                        ? 'bg-red-500/10 border-red-500/50 text-white'
+                        : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'
+                    } border rounded font-mono text-xs`}
+                  >
+                    Não possuo
+                  </button>
+                </div>
+                {temAtendentes === true && (
+                  <div className="mt-3">
+                    <label className="text-white/30 text-xs font-mono block mb-2">QUANTOS ATENDENTES? *</label>
+                    <input
+                      type="text"
+                      value={quantidadeAtendentes}
+                      onChange={(e) => setQuantidadeAtendentes(e.target.value)}
+                      placeholder="Ex: 3 atendentes"
+                      className="w-full md:w-1/2 bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Presença Digital */}
+              <div className="space-y-4">
+                <div className="font-mono text-sm text-white/40 flex items-center gap-2">
+                  <span className="text-red-500">$</span> 
+                  query --digital-presence
+                  <span className="text-white/20 text-xs">(site ou Instagram?)</span>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setTemPresencaDigital(true)}
+                    className={`flex-1 px-4 py-3 text-center transition-all ${
+                      temPresencaDigital === true
+                        ? 'bg-red-500/10 border-red-500/50 text-white'
+                        : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'
+                    } border rounded font-mono text-xs`}
+                  >
+                    Sim, tenho
+                  </button>
+                  <button
+                    onClick={() => {
+                      setTemPresencaDigital(false);
+                      setPresencaDigitalUrl("");
+                    }}
+                    className={`flex-1 px-4 py-3 text-center transition-all ${
+                      temPresencaDigital === false
+                        ? 'bg-red-500/10 border-red-500/50 text-white'
+                        : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'
+                    } border rounded font-mono text-xs`}
+                  >
+                    Não tenho
+                  </button>
+                </div>
+                {temPresencaDigital === true && (
+                  <div className="mt-3">
+                    <label className="text-white/30 text-xs font-mono block mb-2">INFORME O LINK (SITE OU INSTAGRAM) *</label>
+                    <input
+                      type="text"
+                      value={presencaDigitalUrl}
+                      onChange={(e) => setPresencaDigitalUrl(e.target.value)}
+                      placeholder="Ex: www.suaempresa.com.br ou @seuinstagram"
+                      className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Divider */}
