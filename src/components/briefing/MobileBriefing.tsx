@@ -11,6 +11,7 @@ import {
   StepOrcamentoUrgencia,
   ProgressIndicator,
   NavigationButtons,
+  validateEmail,
 } from "./BriefingSteps";
 
 interface MobileBriefingProps {
@@ -24,6 +25,7 @@ const MobileBriefing = ({ onSubmit }: MobileBriefingProps) => {
   const [data, setData] = useState<BriefingData>({
     nome: "",
     empresa: "",
+    email: "",
     temPresencaDigital: null,
     presencaDigitalUrl: "",
     selectedServicos: [],
@@ -42,8 +44,8 @@ const MobileBriefing = ({ onSubmit }: MobileBriefingProps) => {
 
   const canProceed = (): boolean => {
     switch (currentStep) {
-      case 0: // Dados básicos
-        return data.nome.trim().length > 0;
+      case 0: // Dados básicos - requer nome e e-mail válido
+        return data.nome.trim().length >= 2 && validateEmail(data.email.trim());
       case 1: // Presença Digital
         if (data.temPresencaDigital === null) return false;
         if (data.temPresencaDigital === true && !data.presencaDigitalUrl.trim()) return false;
