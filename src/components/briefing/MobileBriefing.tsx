@@ -3,18 +3,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   BriefingData,
   StepDadosBasicos,
+  StepPresencaDigital,
   StepServicos,
-  StepOrcamentoUrgencia,
   StepDescricao,
   StepCrm,
   StepAtendentes,
-  StepPresencaDigital,
+  StepOrcamentoUrgencia,
   ProgressIndicator,
   NavigationButtons,
-  servicos,
-  orcamentos,
-  urgencias,
-  crms,
 } from "./BriefingSteps";
 
 interface MobileBriefingProps {
@@ -28,15 +24,16 @@ const MobileBriefing = ({ onSubmit }: MobileBriefingProps) => {
   const [data, setData] = useState<BriefingData>({
     nome: "",
     empresa: "",
-    selectedServicos: [],
-    selectedOrcamento: "",
-    selectedUrgencia: "",
-    descricao: "",
-    selectedCrm: "",
-    temAtendentes: null,
-    quantidadeAtendentes: "",
     temPresencaDigital: null,
     presencaDigitalUrl: "",
+    selectedServicos: [],
+    descricao: "",
+    temCrm: null,
+    crmNome: "",
+    temAtendentes: null,
+    quantidadeAtendentes: "",
+    selectedOrcamento: "",
+    selectedUrgencia: "",
   });
 
   const updateData = (updates: Partial<BriefingData>) => {
@@ -45,24 +42,26 @@ const MobileBriefing = ({ onSubmit }: MobileBriefingProps) => {
 
   const canProceed = (): boolean => {
     switch (currentStep) {
-      case 0:
+      case 0: // Dados básicos
         return data.nome.trim().length > 0;
-      case 1:
-        return data.selectedServicos.length > 0;
-      case 2:
-        return data.selectedOrcamento !== "" && data.selectedUrgencia !== "";
-      case 3:
-        return true; // Descrição é opcional
-      case 4:
-        return data.selectedCrm !== "";
-      case 5:
-        if (data.temAtendentes === null) return false;
-        if (data.temAtendentes === true && !data.quantidadeAtendentes.trim()) return false;
-        return true;
-      case 6:
+      case 1: // Presença Digital
         if (data.temPresencaDigital === null) return false;
         if (data.temPresencaDigital === true && !data.presencaDigitalUrl.trim()) return false;
         return true;
+      case 2: // Serviços
+        return data.selectedServicos.length > 0;
+      case 3: // Descrição
+        return true; // Descrição é opcional
+      case 4: // CRM
+        if (data.temCrm === null) return false;
+        if (data.temCrm === true && !data.crmNome.trim()) return false;
+        return true;
+      case 5: // Atendentes
+        if (data.temAtendentes === null) return false;
+        if (data.temAtendentes === true && !data.quantidadeAtendentes.trim()) return false;
+        return true;
+      case 6: // Orçamento e Urgência
+        return data.selectedOrcamento !== "" && data.selectedUrgencia !== "";
       default:
         return false;
     }
@@ -88,12 +87,12 @@ const MobileBriefing = ({ onSubmit }: MobileBriefingProps) => {
 
   const stepTitles = [
     "Seus Dados",
+    "Presença Digital",
     "Serviços",
-    "Orçamento & Prazo",
     "Seu Projeto",
     "Sistema CRM",
     "Equipe",
-    "Presença Digital",
+    "Orçamento & Prazo",
   ];
 
   const renderStep = () => {
@@ -102,9 +101,9 @@ const MobileBriefing = ({ onSubmit }: MobileBriefingProps) => {
       case 0:
         return <StepDadosBasicos {...props} />;
       case 1:
-        return <StepServicos {...props} />;
+        return <StepPresencaDigital {...props} />;
       case 2:
-        return <StepOrcamentoUrgencia {...props} />;
+        return <StepServicos {...props} />;
       case 3:
         return <StepDescricao {...props} />;
       case 4:
@@ -112,7 +111,7 @@ const MobileBriefing = ({ onSubmit }: MobileBriefingProps) => {
       case 5:
         return <StepAtendentes {...props} />;
       case 6:
-        return <StepPresencaDigital {...props} />;
+        return <StepOrcamentoUrgencia {...props} />;
       default:
         return null;
     }
