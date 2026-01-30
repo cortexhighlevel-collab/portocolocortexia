@@ -1,21 +1,32 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, ChevronRight, ChevronLeft, AlertCircle } from "lucide-react";
 import {
   BriefingData,
   servicos,
   orcamentos,
   urgencias,
+  ValidationErrors,
+  validateStep1,
+  validateStep2,
+  validateStep3,
 } from "./BriefingSteps";
 
 interface DesktopBriefingProps {
   onSubmit: (data: BriefingData) => void;
 }
 
+const TOTAL_STEPS = 3;
+
 const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+
   const [data, setData] = useState<BriefingData>({
     nome: "",
     empresa: "",
+    email: "",
     temPresencaDigital: null,
     presencaDigitalUrl: "",
     selectedServicos: [],
@@ -30,6 +41,17 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
 
   const updateData = (updates: Partial<BriefingData>) => {
     setData((prev) => ({ ...prev, ...updates }));
+    // Clear errors for updated fields
+    const keys = Object.keys(updates);
+    const newErrors = { ...errors };
+    keys.forEach((key) => {
+      delete newErrors[key as keyof ValidationErrors];
+    });
+    setErrors(newErrors);
+  };
+
+  const markTouched = (field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
   const toggleServico = (id: string) => {
@@ -39,12 +61,465 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
     updateData({ selectedServicos: newServicos });
   };
 
+  const validateCurrentStep = (): boolean => {
+    let stepErrors: ValidationErrors = {};
+    switch (currentStep) {
+      case 0:
+        stepErrors = validateStep1(data);
+        break;
+      case 1:
+        stepErrors = validateStep2(data);
+        break;
+      case 2:
+        stepErrors = validateStep3(data);
+        break;
+    }
+    setErrors(stepErrors);
+    return Object.keys(stepErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (validateCurrentStep() && currentStep < TOTAL_STEPS - 1) {
+      setCurrentStep((prev) => prev + 1);
+      setErrors({});
+      setTouched({});
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentStep > 0) {
+      setCurrentStep((prev) => prev - 1);
+      setErrors({});
+      setTouched({});
+    }
+  };
+
   const handleSubmit = () => {
-    onSubmit(data);
+    if (validateCurrentStep()) {
+      onSubmit(data);
+    }
   };
 
   const clipPath =
     "polygon(0 12px, 12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%)";
+
+  const stepTitles = [
+    "Dados & Presença Digital",
+    "Serviços & Equipe",
+    "Orçamento & Prazo",
+  ];
+
+  const ErrorMessage = ({ message }: { message?: string }) => {
+    if (!message) return null;
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: -5 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center gap-1.5 mt-1.5 text-red-400 text-xs font-mono"
+      >
+        <AlertCircle className="w-3 h-3" />
+        {message}
+      </motion.div>
+    );
+  };
+
+  // STEP 1: Dados básicos + Presença Digital
+  const renderStep1 = () => (
+    <div className="space-y-6">
+      {/* Dados básicos */}
+      <div className="space-y-4">
+        <div className="font-mono text-sm text-white/40 flex items-center gap-2">
+          <span className="text-red-500">$</span>
+          input --user-data
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="text-white/30 text-xs font-mono block mb-2">
+              NOME *
+            </label>
+            <input
+              type="text"
+              value={data.nome}
+              onChange={(e) => updateData({ nome: e.target.value })}
+              onBlur={() => markTouched("nome")}
+              placeholder="Seu nome completo"
+              className={`w-full bg-white/5 border rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:outline-none transition-colors ${
+                errors.nome
+                  ? "border-red-500/50 focus:border-red-500"
+                  : "border-white/10 focus:border-red-500/50"
+              }`}
+            />
+            <ErrorMessage message={errors.nome} />
+          </div>
+          <div>
+            <label className="text-white/30 text-xs font-mono block mb-2">
+              E-MAIL *
+            </label>
+            <input
+              type="email"
+              value={data.email}
+              onChange={(e) => updateData({ email: e.target.value })}
+              onBlur={() => markTouched("email")}
+              placeholder="seu@email.com"
+              className={`w-full bg-white/5 border rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:outline-none transition-colors ${
+                errors.email
+                  ? "border-red-500/50 focus:border-red-500"
+                  : "border-white/10 focus:border-red-500/50"
+              }`}
+            />
+            <ErrorMessage message={errors.email} />
+          </div>
+        </div>
+        <div>
+          <label className="text-white/30 text-xs font-mono block mb-2">
+            EMPRESA
+          </label>
+          <input
+            type="text"
+            value={data.empresa}
+            onChange={(e) => updateData({ empresa: e.target.value })}
+            placeholder="Nome da empresa (opcional)"
+            className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
+          />
+        </div>
+      </div>
+
+      {/* Presença Digital */}
+      <div className="space-y-4">
+        <div className="font-mono text-sm text-white/40 flex items-center gap-2">
+          <span className="text-red-500">$</span>
+          query --digital-presence
+          <span className="text-white/20 text-xs">(site ou Instagram?)</span>
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={() => updateData({ temPresencaDigital: true })}
+            className={`flex-1 px-4 py-3 text-center transition-all ${
+              data.temPresencaDigital === true
+                ? "bg-red-500/10 border-red-500/50 text-white"
+                : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+            } border rounded font-mono text-xs`}
+          >
+            Sim, tenho
+          </button>
+          <button
+            onClick={() =>
+              updateData({
+                temPresencaDigital: false,
+                presencaDigitalUrl: "",
+              })
+            }
+            className={`flex-1 px-4 py-3 text-center transition-all ${
+              data.temPresencaDigital === false
+                ? "bg-red-500/10 border-red-500/50 text-white"
+                : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+            } border rounded font-mono text-xs`}
+          >
+            Não tenho
+          </button>
+        </div>
+        <AnimatePresence>
+          {data.temPresencaDigital === true && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-3"
+            >
+              <label className="text-white/30 text-xs font-mono block mb-2">
+                INFORME O LINK *
+              </label>
+              <input
+                type="text"
+                value={data.presencaDigitalUrl}
+                onChange={(e) =>
+                  updateData({ presencaDigitalUrl: e.target.value })
+                }
+                placeholder="Ex: www.suaempresa.com.br ou @seuinstagram"
+                className={`w-full bg-white/5 border rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:outline-none transition-colors ${
+                  errors.presencaDigitalUrl
+                    ? "border-red-500/50 focus:border-red-500"
+                    : "border-white/10 focus:border-red-500/50"
+                }`}
+              />
+              <ErrorMessage message={errors.presencaDigitalUrl} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Descrição */}
+      <div className="space-y-4">
+        <div className="font-mono text-sm text-white/40 flex items-center gap-2">
+          <span className="text-red-500">$</span>
+          input --description
+          <span className="text-white/20 text-xs">(opcional)</span>
+        </div>
+        <textarea
+          value={data.descricao}
+          onChange={(e) => updateData({ descricao: e.target.value })}
+          placeholder="Descreva seu projeto, objetivos, desafios atuais e o que você espera alcançar..."
+          rows={3}
+          className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors resize-none"
+        />
+      </div>
+    </div>
+  );
+
+  // STEP 2: Serviços + CRM + Atendentes
+  const renderStep2 = () => (
+    <div className="space-y-6">
+      {/* Serviços */}
+      <div className="space-y-4">
+        <div className="font-mono text-sm text-white/40 flex items-center gap-2">
+          <span className="text-red-500">$</span>
+          select --services
+          <span className="text-white/20 text-xs">(múltipla escolha) *</span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {servicos.map((servico) => (
+            <button
+              key={servico.id}
+              onClick={() => toggleServico(servico.id)}
+              className={`relative flex items-center gap-3 px-4 py-3 text-left transition-all ${
+                data.selectedServicos.includes(servico.id)
+                  ? "bg-red-500/10 border-red-500/50"
+                  : "bg-white/5 border-white/10 hover:border-white/20"
+              } border rounded`}
+            >
+              <div
+                className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${
+                  data.selectedServicos.includes(servico.id)
+                    ? "bg-red-500 border-red-500"
+                    : "border-white/20"
+                }`}
+              >
+                {data.selectedServicos.includes(servico.id) && (
+                  <Check className="w-3 h-3 text-white" />
+                )}
+              </div>
+              <span
+                className={`font-mono text-sm ${
+                  data.selectedServicos.includes(servico.id)
+                    ? "text-white"
+                    : "text-white/60"
+                }`}
+              >
+                {servico.label}
+              </span>
+            </button>
+          ))}
+        </div>
+        <ErrorMessage message={errors.selectedServicos} />
+      </div>
+
+      {/* CRM */}
+      <div className="space-y-4">
+        <div className="font-mono text-sm text-white/40 flex items-center gap-2">
+          <span className="text-red-500">$</span>
+          query --crm-system
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={() => updateData({ temCrm: true })}
+            className={`flex-1 px-4 py-3 text-center transition-all ${
+              data.temCrm === true
+                ? "bg-red-500/10 border-red-500/50 text-white"
+                : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+            } border rounded font-mono text-xs`}
+          >
+            Sim, utilizo CRM
+          </button>
+          <button
+            onClick={() => updateData({ temCrm: false, crmNome: "" })}
+            className={`flex-1 px-4 py-3 text-center transition-all ${
+              data.temCrm === false
+                ? "bg-red-500/10 border-red-500/50 text-white"
+                : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+            } border rounded font-mono text-xs`}
+          >
+            Não utilizo CRM
+          </button>
+        </div>
+        <AnimatePresence>
+          {data.temCrm === true && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-3"
+            >
+              <label className="text-white/30 text-xs font-mono block mb-2">
+                QUAL CRM VOCÊ UTILIZA? *
+              </label>
+              <input
+                type="text"
+                value={data.crmNome}
+                onChange={(e) => updateData({ crmNome: e.target.value })}
+                placeholder="Ex: HubSpot, Salesforce, Pipedrive..."
+                className={`w-full md:w-1/2 bg-white/5 border rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:outline-none transition-colors ${
+                  errors.crmNome
+                    ? "border-red-500/50 focus:border-red-500"
+                    : "border-white/10 focus:border-red-500/50"
+                }`}
+              />
+              <ErrorMessage message={errors.crmNome} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Atendentes */}
+      <div className="space-y-4">
+        <div className="font-mono text-sm text-white/40 flex items-center gap-2">
+          <span className="text-red-500">$</span>
+          query --team-support
+          <span className="text-white/20 text-xs">(possui atendentes?)</span>
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={() => updateData({ temAtendentes: true })}
+            className={`flex-1 px-4 py-3 text-center transition-all ${
+              data.temAtendentes === true
+                ? "bg-red-500/10 border-red-500/50 text-white"
+                : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+            } border rounded font-mono text-xs`}
+          >
+            Sim, possuo
+          </button>
+          <button
+            onClick={() =>
+              updateData({ temAtendentes: false, quantidadeAtendentes: "" })
+            }
+            className={`flex-1 px-4 py-3 text-center transition-all ${
+              data.temAtendentes === false
+                ? "bg-red-500/10 border-red-500/50 text-white"
+                : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+            } border rounded font-mono text-xs`}
+          >
+            Não possuo
+          </button>
+        </div>
+        <AnimatePresence>
+          {data.temAtendentes === true && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-3"
+            >
+              <label className="text-white/30 text-xs font-mono block mb-2">
+                QUANTOS ATENDENTES? *
+              </label>
+              <input
+                type="text"
+                value={data.quantidadeAtendentes}
+                onChange={(e) =>
+                  updateData({ quantidadeAtendentes: e.target.value })
+                }
+                placeholder="Ex: 3 atendentes"
+                className={`w-full md:w-1/2 bg-white/5 border rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:outline-none transition-colors ${
+                  errors.quantidadeAtendentes
+                    ? "border-red-500/50 focus:border-red-500"
+                    : "border-white/10 focus:border-red-500/50"
+                }`}
+              />
+              <ErrorMessage message={errors.quantidadeAtendentes} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+
+  // STEP 3: Orçamento + Urgência
+  const renderStep3 = () => (
+    <div className="space-y-6">
+      {/* Orçamento */}
+      <div className="space-y-4">
+        <div className="font-mono text-sm text-white/40 flex items-center gap-2">
+          <span className="text-red-500">$</span>
+          select --budget *
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {orcamentos.map((orcamento) => (
+            <button
+              key={orcamento.id}
+              onClick={() => updateData({ selectedOrcamento: orcamento.id })}
+              className={`px-4 py-3 text-center transition-all ${
+                data.selectedOrcamento === orcamento.id
+                  ? "bg-red-500/10 border-red-500/50 text-white"
+                  : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+              } border rounded font-mono text-xs`}
+            >
+              {orcamento.label}
+            </button>
+          ))}
+        </div>
+        <ErrorMessage message={errors.selectedOrcamento} />
+      </div>
+
+      {/* Urgência */}
+      <div className="space-y-4">
+        <div className="font-mono text-sm text-white/40 flex items-center gap-2">
+          <span className="text-red-500">$</span>
+          select --urgency *
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {urgencias.map((urgencia) => (
+            <button
+              key={urgencia.id}
+              onClick={() => updateData({ selectedUrgencia: urgencia.id })}
+              className={`px-4 py-3 text-center transition-all ${
+                data.selectedUrgencia === urgencia.id
+                  ? "bg-red-500/10 border-red-500/50 text-white"
+                  : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+              } border rounded font-mono text-xs`}
+            >
+              {urgencia.label}
+            </button>
+          ))}
+        </div>
+        <ErrorMessage message={errors.selectedUrgencia} />
+      </div>
+
+      {/* Resumo rápido */}
+      <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+        <div className="font-mono text-xs text-white/40 mb-3">
+          <span className="text-green-500">✓</span> Resumo do briefing:
+        </div>
+        <div className="space-y-1 text-xs font-mono text-white/60">
+          <p>
+            <span className="text-white/40">Nome:</span> {data.nome || "-"}
+          </p>
+          <p>
+            <span className="text-white/40">E-mail:</span> {data.email || "-"}
+          </p>
+          <p>
+            <span className="text-white/40">Serviços:</span>{" "}
+            {data.selectedServicos.length > 0
+              ? data.selectedServicos
+                  .map((id) => servicos.find((s) => s.id === id)?.label)
+                  .join(", ")
+              : "-"}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderStep = () => {
+    switch (currentStep) {
+      case 0:
+        return renderStep1();
+      case 1:
+        return renderStep2();
+      case 2:
+        return renderStep3();
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="relative">
@@ -64,326 +539,60 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
         style={{ clipPath, margin: "1px" }}
       >
         {/* Terminal header */}
-        <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border-b border-white/10">
-          <div className="flex gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-            <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-            <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+        <div className="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/10">
+          <div className="flex items-center gap-3">
+            <div className="flex gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+              <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+              <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+            </div>
+            <span className="text-white/40 font-mono text-xs">
+              briefing_system.exe
+            </span>
           </div>
-          <span className="text-white/40 font-mono text-xs">
-            briefing_system.exe
-          </span>
+          {/* Step indicator in header */}
+          <div className="flex items-center gap-2">
+            {Array.from({ length: TOTAL_STEPS }).map((_, index) => (
+              <div
+                key={index}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  index < currentStep
+                    ? "w-6 bg-green-500"
+                    : index === currentStep
+                    ? "w-8 bg-red-500"
+                    : "w-4 bg-white/20"
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
-        <div className="p-6 md:p-8 space-y-8">
-          {/* Dados básicos */}
-          <div className="space-y-4">
-            <div className="font-mono text-sm text-white/40 flex items-center gap-2">
-              <span className="text-red-500">$</span>
-              input --user-data
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-white/30 text-xs font-mono block mb-2">
-                  NOME *
-                </label>
-                <input
-                  type="text"
-                  value={data.nome}
-                  onChange={(e) => updateData({ nome: e.target.value })}
-                  placeholder="Seu nome"
-                  className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
-                />
-              </div>
-              <div>
-                <label className="text-white/30 text-xs font-mono block mb-2">
-                  EMPRESA
-                </label>
-                <input
-                  type="text"
-                  value={data.empresa}
-                  onChange={(e) => updateData({ empresa: e.target.value })}
-                  placeholder="Nome da empresa"
-                  className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
-                />
-              </div>
-            </div>
+        <div className="p-6 md:p-8">
+          {/* Step title */}
+          <div className="mb-6">
+            <span className="font-mono text-xs text-red-500/60 uppercase tracking-wider">
+              Etapa {currentStep + 1} de {TOTAL_STEPS}
+            </span>
+            <h3 className="text-xl font-bold text-white mt-1">
+              {stepTitles[currentStep]}
+            </h3>
           </div>
 
-          {/* Presença Digital */}
-          <div className="space-y-4">
-            <div className="font-mono text-sm text-white/40 flex items-center gap-2">
-              <span className="text-red-500">$</span>
-              query --digital-presence
-              <span className="text-white/20 text-xs">(site ou Instagram?)</span>
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={() => updateData({ temPresencaDigital: true })}
-                className={`flex-1 px-4 py-3 text-center transition-all ${
-                  data.temPresencaDigital === true
-                    ? "bg-red-500/10 border-red-500/50 text-white"
-                    : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-                } border rounded font-mono text-xs`}
-              >
-                Sim, tenho
-              </button>
-              <button
-                onClick={() =>
-                  updateData({
-                    temPresencaDigital: false,
-                    presencaDigitalUrl: "",
-                  })
-                }
-                className={`flex-1 px-4 py-3 text-center transition-all ${
-                  data.temPresencaDigital === false
-                    ? "bg-red-500/10 border-red-500/50 text-white"
-                    : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-                } border rounded font-mono text-xs`}
-              >
-                Não tenho
-              </button>
-            </div>
-            <AnimatePresence>
-              {data.temPresencaDigital === true && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="mt-3"
-                >
-                  <label className="text-white/30 text-xs font-mono block mb-2">
-                    INFORME O LINK *
-                  </label>
-                  <input
-                    type="text"
-                    value={data.presencaDigitalUrl}
-                    onChange={(e) =>
-                      updateData({ presencaDigitalUrl: e.target.value })
-                    }
-                    placeholder="Ex: www.suaempresa.com.br ou @seuinstagram"
-                    className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Serviços */}
-          <div className="space-y-4">
-            <div className="font-mono text-sm text-white/40 flex items-center gap-2">
-              <span className="text-red-500">$</span>
-              select --services
-              <span className="text-white/20 text-xs">(múltipla escolha)</span>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {servicos.map((servico) => (
-                <button
-                  key={servico.id}
-                  onClick={() => toggleServico(servico.id)}
-                  className={`relative flex items-center gap-3 px-4 py-3 text-left transition-all ${
-                    data.selectedServicos.includes(servico.id)
-                      ? "bg-red-500/10 border-red-500/50"
-                      : "bg-white/5 border-white/10 hover:border-white/20"
-                  } border rounded`}
-                >
-                  <div
-                    className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${
-                      data.selectedServicos.includes(servico.id)
-                        ? "bg-red-500 border-red-500"
-                        : "border-white/20"
-                    }`}
-                  >
-                    {data.selectedServicos.includes(servico.id) && (
-                      <Check className="w-3 h-3 text-white" />
-                    )}
-                  </div>
-                  <span
-                    className={`font-mono text-sm ${
-                      data.selectedServicos.includes(servico.id)
-                        ? "text-white"
-                        : "text-white/60"
-                    }`}
-                  >
-                    {servico.label}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Descrição */}
-          <div className="space-y-4">
-            <div className="font-mono text-sm text-white/40 flex items-center gap-2">
-              <span className="text-red-500">$</span>
-              input --description
-            </div>
-            <textarea
-              value={data.descricao}
-              onChange={(e) => updateData({ descricao: e.target.value })}
-              placeholder="Descreva seu projeto, objetivos, desafios atuais e o que você espera alcançar..."
-              rows={4}
-              className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors resize-none"
-            />
-          </div>
-
-          {/* CRM */}
-          <div className="space-y-4">
-            <div className="font-mono text-sm text-white/40 flex items-center gap-2">
-              <span className="text-red-500">$</span>
-              query --crm-system
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={() => updateData({ temCrm: true })}
-                className={`flex-1 px-4 py-3 text-center transition-all ${
-                  data.temCrm === true
-                    ? "bg-red-500/10 border-red-500/50 text-white"
-                    : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-                } border rounded font-mono text-xs`}
-              >
-                Sim, utilizo CRM
-              </button>
-              <button
-                onClick={() => updateData({ temCrm: false, crmNome: "" })}
-                className={`flex-1 px-4 py-3 text-center transition-all ${
-                  data.temCrm === false
-                    ? "bg-red-500/10 border-red-500/50 text-white"
-                    : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-                } border rounded font-mono text-xs`}
-              >
-                Não utilizo CRM
-              </button>
-            </div>
-            <AnimatePresence>
-              {data.temCrm === true && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="mt-3"
-                >
-                  <label className="text-white/30 text-xs font-mono block mb-2">
-                    QUAL CRM VOCÊ UTILIZA? *
-                  </label>
-                  <input
-                    type="text"
-                    value={data.crmNome}
-                    onChange={(e) => updateData({ crmNome: e.target.value })}
-                    placeholder="Ex: HubSpot, Salesforce, Pipedrive..."
-                    className="w-full md:w-1/2 bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Atendentes */}
-          <div className="space-y-4">
-            <div className="font-mono text-sm text-white/40 flex items-center gap-2">
-              <span className="text-red-500">$</span>
-              query --team-support
-              <span className="text-white/20 text-xs">(possui atendentes?)</span>
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={() => updateData({ temAtendentes: true })}
-                className={`flex-1 px-4 py-3 text-center transition-all ${
-                  data.temAtendentes === true
-                    ? "bg-red-500/10 border-red-500/50 text-white"
-                    : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-                } border rounded font-mono text-xs`}
-              >
-                Sim, possuo
-              </button>
-              <button
-                onClick={() =>
-                  updateData({ temAtendentes: false, quantidadeAtendentes: "" })
-                }
-                className={`flex-1 px-4 py-3 text-center transition-all ${
-                  data.temAtendentes === false
-                    ? "bg-red-500/10 border-red-500/50 text-white"
-                    : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-                } border rounded font-mono text-xs`}
-              >
-                Não possuo
-              </button>
-            </div>
-            <AnimatePresence>
-              {data.temAtendentes === true && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="mt-3"
-                >
-                  <label className="text-white/30 text-xs font-mono block mb-2">
-                    QUANTOS ATENDENTES? *
-                  </label>
-                  <input
-                    type="text"
-                    value={data.quantidadeAtendentes}
-                    onChange={(e) =>
-                      updateData({ quantidadeAtendentes: e.target.value })
-                    }
-                    placeholder="Ex: 3 atendentes"
-                    className="w-full md:w-1/2 bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Orçamento */}
-          <div className="space-y-4">
-            <div className="font-mono text-sm text-white/40 flex items-center gap-2">
-              <span className="text-red-500">$</span>
-              select --budget
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {orcamentos.map((orcamento) => (
-                <button
-                  key={orcamento.id}
-                  onClick={() =>
-                    updateData({ selectedOrcamento: orcamento.id })
-                  }
-                  className={`px-4 py-3 text-center transition-all ${
-                    data.selectedOrcamento === orcamento.id
-                      ? "bg-red-500/10 border-red-500/50 text-white"
-                      : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-                  } border rounded font-mono text-xs`}
-                >
-                  {orcamento.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Urgência */}
-          <div className="space-y-4">
-            <div className="font-mono text-sm text-white/40 flex items-center gap-2">
-              <span className="text-red-500">$</span>
-              select --urgency
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {urgencias.map((urgencia) => (
-                <button
-                  key={urgencia.id}
-                  onClick={() => updateData({ selectedUrgencia: urgencia.id })}
-                  className={`px-4 py-3 text-center transition-all ${
-                    data.selectedUrgencia === urgencia.id
-                      ? "bg-red-500/10 border-red-500/50 text-white"
-                      : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
-                  } border rounded font-mono text-xs`}
-                >
-                  {urgencia.label}
-                </button>
-              ))}
-            </div>
-          </div>
+          {/* Step content */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              {renderStep()}
+            </motion.div>
+          </AnimatePresence>
 
           {/* Divider */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 my-6">
             <div className="flex-1 h-px bg-white/10" />
             <div className="flex items-center gap-2">
               <div className="w-1 h-1 bg-red-500/50" />
@@ -393,21 +602,42 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
             <div className="flex-1 h-px bg-white/10" />
           </div>
 
-          {/* Submit Button */}
-          <div className="flex flex-col items-center gap-4">
-            <button onClick={handleSubmit} className="group relative w-full md:w-auto">
-              {/* Button glow */}
-              <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 via-red-500/30 to-purple-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-
-              {/* Button */}
-              <div
-                className="relative px-8 py-4 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 transition-all"
-                style={{
-                  clipPath:
-                    "polygon(0 8px, 8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px))",
-                }}
+          {/* Navigation */}
+          <div className="flex gap-3">
+            {currentStep > 0 && (
+              <button
+                onClick={handlePrev}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded font-mono text-sm text-white/60 hover:border-white/20 transition-all"
               >
-                <span className="flex items-center justify-center gap-3 text-white font-bold text-sm uppercase tracking-wider">
+                <ChevronLeft className="w-4 h-4" />
+                Voltar
+              </button>
+            )}
+
+            {currentStep < TOTAL_STEPS - 1 ? (
+              <button
+                onClick={handleNext}
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-red-500/20 border border-red-500/50 rounded font-mono text-sm text-white hover:bg-red-500/30 transition-all"
+              >
+                Próximo
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            ) : (
+              <button
+                onClick={handleSubmit}
+                className="group relative flex-1"
+              >
+                {/* Button glow */}
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 via-red-500/30 to-purple-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                {/* Button */}
+                <div
+                  className="relative flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 transition-all"
+                  style={{
+                    clipPath:
+                      "polygon(0 8px, 8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px))",
+                  }}
+                >
                   <svg
                     className="w-5 h-5"
                     fill="currentColor"
@@ -415,61 +645,12 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
                   >
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                   </svg>
-                  ENVIAR VIA WHATSAPP
-                </span>
-              </div>
-
-              {/* Corner accents */}
-              <svg
-                className="absolute -top-1 -left-1 pointer-events-none"
-                width="12"
-                height="12"
-              >
-                <line
-                  x1="0"
-                  y1="12"
-                  x2="0"
-                  y2="4"
-                  stroke="#ef4444"
-                  strokeWidth="2"
-                />
-                <line
-                  x1="0"
-                  y1="12"
-                  x2="8"
-                  y2="12"
-                  stroke="#ef4444"
-                  strokeWidth="2"
-                />
-              </svg>
-              <svg
-                className="absolute -top-1 -right-1 pointer-events-none"
-                width="12"
-                height="12"
-              >
-                <line
-                  x1="12"
-                  y1="12"
-                  x2="12"
-                  y2="4"
-                  stroke="#ef4444"
-                  strokeWidth="2"
-                />
-                <line
-                  x1="12"
-                  y1="12"
-                  x2="4"
-                  y2="12"
-                  stroke="#ef4444"
-                  strokeWidth="2"
-                />
-              </svg>
-            </button>
-
-            <p className="text-white/20 text-xs font-mono text-center">
-              <span className="text-red-500/40">//</span> Seu briefing será
-              enviado diretamente para nossa equipe
-            </p>
+                  <span className="text-white font-bold text-sm uppercase tracking-wider">
+                    Enviar WhatsApp
+                  </span>
+                </div>
+              </button>
+            )}
           </div>
         </div>
       </div>

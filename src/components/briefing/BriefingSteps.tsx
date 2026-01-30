@@ -30,6 +30,7 @@ export const urgencias = [
 export interface BriefingData {
   nome: string;
   empresa: string;
+  email: string;
   temPresencaDigital: boolean | null;
   presencaDigitalUrl: string;
   selectedServicos: string[];
@@ -42,12 +43,72 @@ export interface BriefingData {
   selectedUrgencia: string;
 }
 
+// Validação
+export interface ValidationErrors {
+  nome?: string;
+  email?: string;
+  presencaDigitalUrl?: string;
+  selectedServicos?: string;
+  crmNome?: string;
+  quantidadeAtendentes?: string;
+  selectedOrcamento?: string;
+  selectedUrgencia?: string;
+}
+
+export const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+export const validateStep1 = (data: BriefingData): ValidationErrors => {
+  const errors: ValidationErrors = {};
+  if (!data.nome.trim()) {
+    errors.nome = "Nome é obrigatório";
+  } else if (data.nome.trim().length < 2) {
+    errors.nome = "Nome deve ter pelo menos 2 caracteres";
+  }
+  if (!data.email.trim()) {
+    errors.email = "E-mail é obrigatório";
+  } else if (!validateEmail(data.email.trim())) {
+    errors.email = "E-mail inválido";
+  }
+  if (data.temPresencaDigital === true && !data.presencaDigitalUrl.trim()) {
+    errors.presencaDigitalUrl = "Link é obrigatório";
+  }
+  return errors;
+};
+
+export const validateStep2 = (data: BriefingData): ValidationErrors => {
+  const errors: ValidationErrors = {};
+  if (data.selectedServicos.length === 0) {
+    errors.selectedServicos = "Selecione pelo menos um serviço";
+  }
+  if (data.temCrm === true && !data.crmNome.trim()) {
+    errors.crmNome = "Nome do CRM é obrigatório";
+  }
+  if (data.temAtendentes === true && !data.quantidadeAtendentes.trim()) {
+    errors.quantidadeAtendentes = "Quantidade é obrigatória";
+  }
+  return errors;
+};
+
+export const validateStep3 = (data: BriefingData): ValidationErrors => {
+  const errors: ValidationErrors = {};
+  if (!data.selectedOrcamento) {
+    errors.selectedOrcamento = "Selecione um orçamento";
+  }
+  if (!data.selectedUrgencia) {
+    errors.selectedUrgencia = "Selecione uma urgência";
+  }
+  return errors;
+};
+
 interface StepProps {
   data: BriefingData;
   updateData: (updates: Partial<BriefingData>) => void;
 }
 
-// Step 1: Dados básicos (Nome e Empresa)
+// Step 1: Dados básicos (Nome, E-mail e Empresa)
 export const StepDadosBasicos = ({ data, updateData }: StepProps) => (
   <div className="space-y-4">
     <div className="font-mono text-sm text-white/40 flex items-center gap-2 mb-4">
@@ -60,7 +121,17 @@ export const StepDadosBasicos = ({ data, updateData }: StepProps) => (
           type="text"
           value={data.nome}
           onChange={(e) => updateData({ nome: e.target.value })}
-          placeholder="Seu nome"
+          placeholder="Seu nome completo"
+          className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
+        />
+      </div>
+      <div>
+        <label className="text-white/30 text-xs font-mono block mb-2">E-MAIL *</label>
+        <input
+          type="email"
+          value={data.email}
+          onChange={(e) => updateData({ email: e.target.value })}
+          placeholder="seu@email.com"
           className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
         />
       </div>
@@ -70,7 +141,7 @@ export const StepDadosBasicos = ({ data, updateData }: StepProps) => (
           type="text"
           value={data.empresa}
           onChange={(e) => updateData({ empresa: e.target.value })}
-          placeholder="Nome da empresa"
+          placeholder="Nome da empresa (opcional)"
           className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
         />
       </div>
