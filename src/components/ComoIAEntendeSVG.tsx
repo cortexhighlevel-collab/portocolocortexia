@@ -7,155 +7,105 @@ import { useIsMobile } from "@/hooks/use-mobile";
 const ComoIAEntendeSVG = () => {
   const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
+  const svgContainerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, amount: 0.2 });
   const [svgContent, setSvgContent] = useState<string>("");
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // Carregar o SVG e preparar para animação
+  // Carregar o SVG
   useEffect(() => {
     const svgUrl = isMobile ? comoIaEntendeMobile : comoIaEntendeBg;
     
     fetch(svgUrl)
       .then(response => response.text())
       .then(svgText => {
-        // Remover width/height fixos e adicionar viewBox responsivo
+        // Remover width/height fixos
         let modifiedSvg = svgText
           .replace(/width="[^"]*"/, 'width="100%"')
           .replace(/height="[^"]*"/, 'height="100%"');
         
-        // CSS para animação de desenho das linhas
-        // Importante: só animar elementos que são LINHAS (stroke sem fill)
-        const animationStyles = `
-          <style>
-            /* Linhas puras - animação de desenho */
-            .svg-animated > line {
-              /* No SVG desktop os paths/lines são MUITO longos (coordenadas gigantes).
-                 Se o dash for pequeno, a linha nunca “termina de desenhar” e parece cortada. */
-              stroke-dasharray: 1000000;
-              stroke-dashoffset: 1000000;
-              animation: drawLine 2.5s ease-out forwards;
-            }
-            
-            /* Paths que são linhas (têm stroke mas não fill sólido) */
-            .svg-animated > path:not([fill="white"]) {
-              stroke-dasharray: 1000000;
-              stroke-dashoffset: 1000000;
-              animation: drawLine 2.5s ease-out forwards;
-            }
-            
-            /* Elipses (nós/pontos) - fade in */
-            .svg-animated > ellipse {
-              opacity: 0;
-              animation: fadeInNode 0.5s ease-out forwards;
-            }
-            
-            /* Círculos - fade in */
-            .svg-animated > circle {
-              opacity: 0;
-              animation: fadeInNode 0.5s ease-out forwards;
-            }
-            
-            /* Retângulos (bordas dos ícones) - fade in */
-            .svg-animated > rect {
-              opacity: 0;
-              animation: fadeInNode 0.6s ease-out forwards;
-            }
-            
-            /* Paths com fill (ícones, cérebro, etc) - fade in */
-            .svg-animated > path[fill="white"] {
-              opacity: 0;
-              animation: fadeInNode 0.6s ease-out forwards;
-            }
-            
-            @keyframes drawLine {
-              to {
-                stroke-dashoffset: 0;
-              }
-            }
-            
-            @keyframes fadeInNode {
-              to {
-                opacity: 1;
-              }
-            }
-            
-            /* === DELAYS PARA LINHAS === */
-            .svg-animated > line:nth-of-type(1) { animation-delay: 0s; }
-            .svg-animated > line:nth-of-type(2) { animation-delay: 0.03s; }
-            .svg-animated > line:nth-of-type(3) { animation-delay: 0.06s; }
-            .svg-animated > line:nth-of-type(4) { animation-delay: 0.09s; }
-            .svg-animated > line:nth-of-type(5) { animation-delay: 0.12s; }
-            .svg-animated > line:nth-of-type(6) { animation-delay: 0.15s; }
-            .svg-animated > line:nth-of-type(7) { animation-delay: 0.18s; }
-            .svg-animated > line:nth-of-type(8) { animation-delay: 0.21s; }
-            .svg-animated > line:nth-of-type(9) { animation-delay: 0.24s; }
-            .svg-animated > line:nth-of-type(10) { animation-delay: 0.27s; }
-            .svg-animated > line:nth-of-type(n+11) { animation-delay: 0.3s; }
-            .svg-animated > line:nth-of-type(n+20) { animation-delay: 0.5s; }
-            .svg-animated > line:nth-of-type(n+30) { animation-delay: 0.7s; }
-            .svg-animated > line:nth-of-type(n+40) { animation-delay: 0.9s; }
-            .svg-animated > line:nth-of-type(n+50) { animation-delay: 1.1s; }
-            
-            /* === DELAYS PARA PATHS (linhas curvas) === */
-            .svg-animated > path:not([fill="white"]):nth-of-type(1) { animation-delay: 0.05s; }
-            .svg-animated > path:not([fill="white"]):nth-of-type(2) { animation-delay: 0.1s; }
-            .svg-animated > path:not([fill="white"]):nth-of-type(3) { animation-delay: 0.15s; }
-            .svg-animated > path:not([fill="white"]):nth-of-type(4) { animation-delay: 0.2s; }
-            .svg-animated > path:not([fill="white"]):nth-of-type(5) { animation-delay: 0.25s; }
-            .svg-animated > path:not([fill="white"]):nth-of-type(n+6) { animation-delay: 0.35s; }
-            .svg-animated > path:not([fill="white"]):nth-of-type(n+10) { animation-delay: 0.5s; }
-            .svg-animated > path:not([fill="white"]):nth-of-type(n+15) { animation-delay: 0.7s; }
-            .svg-animated > path:not([fill="white"]):nth-of-type(n+20) { animation-delay: 0.9s; }
-            
-            /* === DELAYS PARA NÓS (ellipses) === */
-            .svg-animated > ellipse:nth-of-type(1) { animation-delay: 0.8s; }
-            .svg-animated > ellipse:nth-of-type(2) { animation-delay: 0.85s; }
-            .svg-animated > ellipse:nth-of-type(3) { animation-delay: 0.9s; }
-            .svg-animated > ellipse:nth-of-type(4) { animation-delay: 0.95s; }
-            .svg-animated > ellipse:nth-of-type(5) { animation-delay: 1s; }
-            .svg-animated > ellipse:nth-of-type(6) { animation-delay: 1.05s; }
-            .svg-animated > ellipse:nth-of-type(7) { animation-delay: 1.1s; }
-            .svg-animated > ellipse:nth-of-type(8) { animation-delay: 1.15s; }
-            .svg-animated > ellipse:nth-of-type(9) { animation-delay: 1.2s; }
-            .svg-animated > ellipse:nth-of-type(10) { animation-delay: 1.25s; }
-            .svg-animated > ellipse:nth-of-type(n+11) { animation-delay: 1.3s; }
-            .svg-animated > ellipse:nth-of-type(n+20) { animation-delay: 1.5s; }
-            .svg-animated > ellipse:nth-of-type(n+30) { animation-delay: 1.7s; }
-            .svg-animated > ellipse:nth-of-type(n+40) { animation-delay: 1.9s; }
-            
-            /* === DELAYS PARA ÍCONES (rects e paths com fill) === */
-            .svg-animated > rect:nth-of-type(1) { animation-delay: 1.8s; }
-            .svg-animated > rect:nth-of-type(2) { animation-delay: 1.9s; }
-            .svg-animated > rect:nth-of-type(3) { animation-delay: 2s; }
-            .svg-animated > rect:nth-of-type(4) { animation-delay: 2.1s; }
-            .svg-animated > rect:nth-of-type(n+5) { animation-delay: 2.2s; }
-            
-            .svg-animated > path[fill="white"]:nth-of-type(1) { animation-delay: 1.8s; }
-            .svg-animated > path[fill="white"]:nth-of-type(2) { animation-delay: 1.85s; }
-            .svg-animated > path[fill="white"]:nth-of-type(3) { animation-delay: 1.9s; }
-            .svg-animated > path[fill="white"]:nth-of-type(4) { animation-delay: 1.95s; }
-            .svg-animated > path[fill="white"]:nth-of-type(5) { animation-delay: 2s; }
-            .svg-animated > path[fill="white"]:nth-of-type(n+6) { animation-delay: 2.1s; }
-            .svg-animated > path[fill="white"]:nth-of-type(n+10) { animation-delay: 2.2s; }
-            
-            /* Círculos junto com ellipses */
-            .svg-animated > circle { animation-delay: 1.3s; }
-          </style>
-        `;
-        
-        // Adicionar classe ao SVG e inserir estilos
+        // Adicionar classe ao SVG
         modifiedSvg = modifiedSvg.replace(/<svg/, '<svg class="svg-animated"');
-        modifiedSvg = modifiedSvg.replace(/<svg([^>]*)>/, `<svg$1>${animationStyles}`);
         
         setSvgContent(modifiedSvg);
       })
       .catch(console.error);
   }, [isMobile]);
 
-  // Iniciar animação quando entrar na view
+  // Aplicar animações quando o SVG estiver carregado e visível
   useEffect(() => {
-    if (isInView && svgContent && !isAnimating) {
+    if (isInView && svgContent && !isAnimating && svgContainerRef.current) {
       setIsAnimating(true);
+      
+      const svg = svgContainerRef.current.querySelector('svg');
+      if (!svg) return;
+
+      // Animar linhas e paths (elementos com stroke)
+      const lines = svg.querySelectorAll('line');
+      const paths = svg.querySelectorAll('path');
+      const ellipses = svg.querySelectorAll('ellipse');
+      const circles = svg.querySelectorAll('circle');
+      const rects = svg.querySelectorAll('rect');
+
+      // Configurar e animar linhas
+      lines.forEach((line, index) => {
+        const length = Math.sqrt(
+          Math.pow((line.x2?.baseVal?.value || 0) - (line.x1?.baseVal?.value || 0), 2) +
+          Math.pow((line.y2?.baseVal?.value || 0) - (line.y1?.baseVal?.value || 0), 2)
+        );
+        
+        line.style.strokeDasharray = `${length}`;
+        line.style.strokeDashoffset = `${length}`;
+        line.style.animation = `drawLine 2s ease-out forwards`;
+        line.style.animationDelay = `${Math.min(index * 0.03, 1.2)}s`;
+      });
+
+      // Configurar e animar paths
+      paths.forEach((path, index) => {
+        const fill = path.getAttribute('fill');
+        
+        if (fill === 'white') {
+          // Paths com fill (ícones) - fade in
+          path.style.opacity = '0';
+          path.style.animation = `fadeInNode 0.6s ease-out forwards`;
+          path.style.animationDelay = `${1.8 + Math.min(index * 0.05, 0.5)}s`;
+        } else {
+          // Paths que são linhas - desenhar
+          try {
+            const length = path.getTotalLength();
+            path.style.strokeDasharray = `${length}`;
+            path.style.strokeDashoffset = `${length}`;
+            path.style.animation = `drawLine 2s ease-out forwards`;
+            path.style.animationDelay = `${Math.min(index * 0.05, 1)}s`;
+          } catch (e) {
+            // Fallback para paths que não suportam getTotalLength
+            path.style.opacity = '0';
+            path.style.animation = `fadeInNode 0.5s ease-out forwards`;
+            path.style.animationDelay = `${0.5 + index * 0.05}s`;
+          }
+        }
+      });
+
+      // Animar ellipses (nós)
+      ellipses.forEach((ellipse, index) => {
+        ellipse.style.opacity = '0';
+        ellipse.style.animation = `fadeInNode 0.4s ease-out forwards`;
+        ellipse.style.animationDelay = `${0.8 + Math.min(index * 0.03, 1.2)}s`;
+      });
+
+      // Animar circles
+      circles.forEach((circle, index) => {
+        circle.style.opacity = '0';
+        circle.style.animation = `fadeInNode 0.4s ease-out forwards`;
+        circle.style.animationDelay = `${1 + Math.min(index * 0.05, 0.5)}s`;
+      });
+
+      // Animar rects (bordas dos ícones)
+      rects.forEach((rect, index) => {
+        rect.style.opacity = '0';
+        rect.style.animation = `fadeInNode 0.5s ease-out forwards`;
+        rect.style.animationDelay = `${1.5 + Math.min(index * 0.1, 0.5)}s`;
+      });
     }
   }, [isInView, svgContent, isAnimating]);
 
@@ -164,13 +114,32 @@ const ComoIAEntendeSVG = () => {
       ref={containerRef}
       className="relative w-full max-w-[874px] mx-auto pb-4"
     >
-      {isAnimating && svgContent ? (
+      {/* Estilos de animação */}
+      <style>{`
+        @keyframes drawLine {
+          to {
+            stroke-dashoffset: 0;
+          }
+        }
+        
+        @keyframes fadeInNode {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+      `}</style>
+      
+      {svgContent ? (
         <div 
+          ref={svgContainerRef}
           className="w-full h-auto rounded-lg [&>svg]:w-full [&>svg]:h-auto [&>svg]:overflow-visible"
+          style={{ opacity: isAnimating ? 1 : 0 }}
           dangerouslySetInnerHTML={{ __html: svgContent }}
         />
       ) : (
-        // Placeholder com mesma proporção do SVG
         <div className="w-full aspect-[874/630] rounded-lg" />
       )}
     </div>
