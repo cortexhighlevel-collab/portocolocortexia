@@ -2,37 +2,44 @@ import { useEffect } from "react";
 
 export const useAntiDevTools = () => {
   useEffect(() => {
-    // Detectar se estamos no preview do Lovable (desenvolvimento/teste)
-    const isLovablePreview = (): boolean => {
+    // Detectar se estamos no preview do EDITOR do Lovable (não o site publicado)
+    const isLovableEditorPreview = (): boolean => {
       try {
         const hostname = window.location.hostname;
-        // Domínios do Lovable preview
-        const isLovableDomain = hostname.includes('lovable') || 
-                                hostname.includes('lovableproject') ||
+        // Preview do editor: id-preview--*.lovable.app ou localhost
+        // Site publicado: *.lovable.app (sem "preview" no hostname)
+        const isEditorPreview = hostname.includes('-preview--') || 
                                 hostname.includes('localhost');
         // Verificar se estamos em um iframe (preview do editor)
         const isInIframe = window !== window.top;
         // Parâmetro usado pelo Capacitor/preview
         const hasPreviewParam = window.location.search.includes('forceHideBadge');
         
-        return isLovableDomain || (isInIframe && hasPreviewParam);
+        // Só bypass se for o preview do editor, não o site publicado
+        return isEditorPreview || (isInIframe && hasPreviewParam);
       } catch {
         // Se não conseguir acessar window.top (cross-origin), provavelmente é iframe
         return true;
       }
     };
 
-    // Desativar proteções no preview do Lovable para evitar falsos positivos
-    if (isLovablePreview()) {
+    // Desativar proteções apenas no preview do EDITOR do Lovable
+    if (isLovableEditorPreview()) {
       return;
     }
 
-    // Só ativar proteções em produção real (não no preview do Lovable)
+    // Só ativar proteções em produção real
     const isProduction = import.meta.env.PROD;
     
     if (!isProduction) {
       return; // Não aplicar proteções em desenvolvimento
     }
+    
+    // Detectar se é mobile para ajustar thresholds
+    const isMobileDevice = (): boolean => {
+      return window.innerWidth < 768 || 
+             /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    };
 
     // ========== PROTEÇÃO ANTI-BOT E ANTI-IA ==========
     
@@ -816,22 +823,21 @@ export const useAntiDevTools = () => {
     };
 
     // Detectar DevTools aberto (método de detecção por timing)
+    // IMPORTANTE: Desativado no mobile devido a falsos positivos com barras do sistema
     let devToolsOpen = false;
     const detectDevTools = () => {
-      // No mobile, aumentar threshold devido às barras do sistema (endereço, navegação, notch)
-      // Desktop: 160px | Mobile: 300px (ou desativar)
-      const isMobile = window.innerWidth < 768;
-      const threshold = isMobile ? 300 : 160;
+      // No mobile, desativar completamente a detecção por tamanho de janela
+      // As barras do sistema (endereço, navegação, notch, Dynamic Island) causam falsos positivos
+      if (isMobileDevice()) {
+        return; // Não detectar DevTools no mobile por este método
+      }
       
+      // Apenas desktop: threshold de 160px
+      const threshold = 160;
       const widthThreshold = window.outerWidth - window.innerWidth > threshold;
       const heightThreshold = window.outerHeight - window.innerHeight > threshold;
       
-      // No mobile, só detectar se AMBOS thresholds forem excedidos (mais conservador)
-      const shouldBlock = isMobile 
-        ? (widthThreshold && heightThreshold) 
-        : (widthThreshold || heightThreshold);
-      
-      if (shouldBlock) {
+      if (widthThreshold || heightThreshold) {
         if (!devToolsOpen) {
           devToolsOpen = true;
           // Redirecionar ou mostrar aviso
@@ -858,7 +864,13 @@ export const useAntiDevTools = () => {
     };
 
     // Método de detecção via console.log timing
+    // IMPORTANTE: Desativado no mobile - causa falsos positivos
     const detectDevToolsConsole = () => {
+      // No mobile, desativar este método também
+      if (isMobileDevice()) {
+        return;
+      }
+      
       const element = new Image();
       Object.defineProperty(element, 'id', {
         get: function() {
