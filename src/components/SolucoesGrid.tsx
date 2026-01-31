@@ -192,25 +192,6 @@ const CyberCard = ({
                    </p>
               </div>
             </> : <>
-               {/* Imagem dentro do círculo para Personas Treinadas */}
-               {camada.titulo === "Personas Treinadas" && (
-                 <div 
-                   className="absolute z-[5] overflow-hidden rounded-full"
-                   style={{
-                     left: '3.5%',
-                     top: '50%',
-                     transform: 'translateY(-50%)',
-                     width: '33.5%',
-                     aspectRatio: '1/1',
-                   }}
-                 >
-                   <img 
-                     src={personasNetworkImage} 
-                     alt="Personas Treinadas"
-                     className="w-full h-full object-cover"
-                   />
-                 </div>
-               )}
                {/* Conteúdo (mantém texto original) */}
                 <div className="relative z-10 h-full w-full pl-[210px] pr-10 py-4 flex flex-col justify-center gap-1">
                   <h3 className={`text-white font-bold leading-tight break-words ${camada.position === "top-right" ? "whitespace-nowrap text-[15px]" : "text-base"}`}>
@@ -227,8 +208,8 @@ const CyberCard = ({
             <LeftCardFrameSvg />
           </div>
 
-          {/* Imagem dentro do círculo para Automação com IA */}
-          {camada.titulo === "Automação com IA" && (
+          {/* Imagem dentro do círculo para Automação com IA e Personas Treinadas */}
+          {(camada.titulo === "Automação com IA" || camada.titulo === "Personas Treinadas") && (
             <div 
               className="absolute z-[5] overflow-hidden rounded-full"
               style={{
@@ -240,8 +221,8 @@ const CyberCard = ({
               }}
             >
               <img 
-                src={automationRobotImage} 
-                alt="Automação com IA"
+                src={camada.titulo === "Automação com IA" ? automationRobotImage : personasNetworkImage} 
+                alt={camada.titulo}
                 className="w-full h-full object-cover"
               />
             </div>
