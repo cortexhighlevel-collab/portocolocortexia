@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronRight, ChevronLeft } from "lucide-react";
+import { Check, ChevronRight, ChevronLeft, X } from "lucide-react";
 import {
   BriefingData,
   servicos,
@@ -13,11 +13,12 @@ import {
 
 interface DesktopBriefingProps {
   onSubmit: (data: BriefingData) => void;
+  onClose?: () => void;
 }
 
 const TOTAL_STEPS = 3;
 
-const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
+const DesktopBriefing = ({ onSubmit, onClose }: DesktopBriefingProps) => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const [data, setData] = useState<BriefingData>({
@@ -468,20 +469,30 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
               briefing_system.exe
             </span>
           </div>
-          {/* Step indicator in header */}
-          <div className="flex items-center gap-2">
-            {Array.from({ length: TOTAL_STEPS }).map((_, index) => (
-              <div
-                key={index}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  index < currentStep
-                    ? "w-6 bg-green-500"
-                    : index === currentStep
-                    ? "w-8 bg-red-500"
-                    : "w-4 bg-white/20"
-                }`}
-              />
-            ))}
+          {/* Step indicator + close button in header */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              {Array.from({ length: TOTAL_STEPS }).map((_, index) => (
+                <div
+                  key={index}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    index < currentStep
+                      ? "w-6 bg-green-500"
+                      : index === currentStep
+                      ? "w-8 bg-red-500"
+                      : "w-4 bg-white/20"
+                  }`}
+                />
+              ))}
+            </div>
+            {onClose && (
+              <button 
+                onClick={onClose}
+                className="p-1 rounded hover:bg-white/10 transition-colors"
+              >
+                <X className="w-5 h-5 text-white/60 hover:text-white" />
+              </button>
+            )}
           </div>
         </div>
 
