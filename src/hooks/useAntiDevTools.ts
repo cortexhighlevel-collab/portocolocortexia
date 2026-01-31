@@ -2,7 +2,90 @@ import { useEffect } from "react";
 
 export const useAntiDevTools = () => {
   useEffect(() => {
-    // Bloquear atalhos de teclado
+    // ========== PROTEÇÃO ANTI-BOT E ANTI-IA ==========
+    
+    // Detectar se é um bot/crawler
+    const isBot = () => {
+      const botPatterns = [
+        /bot/i, /crawler/i, /spider/i, /scraper/i,
+        /GPTBot/i, /ChatGPT/i, /CCBot/i, /anthropic/i,
+        /ClaudeBot/i, /Claude-Web/i, /cohere/i, /PerplexityBot/i,
+        /Bytespider/i, /Diffbot/i, /Omgilibot/i, /Google-Extended/i,
+        /Applebot-Extended/i, /img2dataset/i, /FacebookBot/i,
+        /HeadlessChrome/i, /PhantomJS/i, /Selenium/i, /puppeteer/i,
+        /playwright/i, /webdriver/i
+      ];
+      
+      const userAgent = navigator.userAgent;
+      return botPatterns.some(pattern => pattern.test(userAgent));
+    };
+
+    // Detectar ambiente automatizado (headless browser)
+    const isAutomated = () => {
+      const checks = [
+        // WebDriver detection
+        !!(navigator as any).webdriver,
+        // Selenium detection
+        !!(window as any).__selenium_unwrapped,
+        !!(window as any).__webdriver_evaluate,
+        !!(window as any).__driver_evaluate,
+        // PhantomJS detection
+        !!(window as any).callPhantom,
+        !!(window as any)._phantom,
+        // Nightmare detection
+        !!(window as any).__nightmare,
+        // Puppeteer/Playwright detection
+        navigator.languages?.length === 0,
+        // Chrome headless detection
+        /HeadlessChrome/.test(navigator.userAgent),
+        // Missing plugins (common in headless)
+        navigator.plugins?.length === 0 && !/Mobile|Android/i.test(navigator.userAgent),
+      ];
+      
+      return checks.some(check => check === true);
+    };
+
+    // Bloquear se for bot ou automatizado
+    const blockAccess = () => {
+      document.body.innerHTML = `
+        <div style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          background: #000;
+          color: #fff;
+          font-family: system-ui;
+          text-align: center;
+          padding: 20px;
+        ">
+          <div>
+            <h1 style="color: #dc2626; font-size: 2rem; margin-bottom: 1rem;">🚫 Acesso Negado</h1>
+            <p style="font-size: 1.2rem;">Acesso automatizado detectado e bloqueado.</p>
+            <p style="margin-top: 1rem; opacity: 0.7;">Este site não permite acesso de bots ou crawlers de IA.</p>
+          </div>
+        </div>
+      `;
+    };
+
+    // Verificar se é bot/automatizado
+    if (isBot() || isAutomated()) {
+      blockAccess();
+      return;
+    }
+
+    // Ofuscar dados sensíveis no DOM
+    const obfuscateSensitiveData = () => {
+      // Adicionar atributos para confundir scrapers
+      document.querySelectorAll('script, style, link[rel="stylesheet"]').forEach(el => {
+        el.setAttribute('data-ai-ignore', 'true');
+        el.setAttribute('aria-hidden', 'true');
+      });
+    };
+
+    obfuscateSensitiveData();
+
+    // ========== BLOQUEIO DE ATALHOS DE TECLADO ==========
     const handleKeyDown = (e: KeyboardEvent) => {
       // F12
       if (e.key === "F12") {
