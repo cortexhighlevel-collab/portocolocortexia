@@ -5,9 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CORTEX OPS - Automações com IA</title>
     <meta name="description" content="Design e desenvolvimento de sites de alta conversão com automações de IA. Especialista em Framer, UI/UX e soluções digitais.">
-    <meta name="author" content="Reem Tech" />
+    <meta name="author" content="CORTEX OPS" />
 
-    <!-- Bloqueio de IAs e Crawlers -->
+    <!-- ========== SECURITY HEADERS ========== -->
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" 
+          content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://player.vimeo.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co https://www.google-analytics.com wss://*.supabase.co; frame-src https://player.vimeo.com https://www.youtube.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+    
+    <!-- Prevent MIME type sniffing -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    
+    <!-- Prevent clickjacking -->
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    
+    <!-- XSS Protection (legacy browsers) -->
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    
+    <!-- Referrer Policy -->
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    <!-- ========== BLOQUEIO DE IAs E CRAWLERS ========== -->
     <meta name="robots" content="noai, noimageai">
     <meta name="CCBot" content="nofollow">
     <meta name="GPTBot" content="nofollow">
@@ -31,12 +48,33 @@
     <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@ReemTech" />
+    <meta name="twitter:site" content="@CortexOps" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
     <meta property="og:title" content="CORTEX OPS - Automações com IA">
     <meta name="twitter:title" content="CORTEX OPS - Automações com IA">
     <meta property="og:description" content="Design e desenvolvimento de sites de alta conversão com automações de IA. Especialista em Framer, UI/UX e soluções digitais.">
     <meta name="twitter:description" content="Design e desenvolvimento de sites de alta conversão com automações de IA. Especialista em Framer, UI/UX e soluções digitais.">
+
+    <!-- ========== WATERMARK DE PROTEÇÃO ========== -->
+    <script>
+      // CORTEX OPS - Código Protegido por Direitos Autorais
+      // ID: CTX-2026-PROTECTED | Owner: portocolocortexia.lovable.app
+      // Uso não autorizado é crime. Lei 9.610/98.
+      window.__CTX_WATERMARK__ = { o: 'CORTEX OPS', t: Date.now(), v: '1.0' };
+    </script>
+
+    <!-- Oculta badge do Lovable -->
+    <style>
+      [href*="lovable.dev/projects"], 
+      [href*="lovable.app/projects"],
+      a[href*="lovable"] > svg,
+      div[data-lovable-badge] { 
+        display: none !important; 
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+    </style>
   </head>
 
   <body>
