@@ -8,6 +8,7 @@ import aiAgentsSphereImage from "@/assets/ai-agents-sphere.webp";
 import strategicAnalyticsImage from "@/assets/strategic-analytics.webp";
 import promptEngineeringImage from "@/assets/prompt-engineering.webp";
 import seoAeoSearchImage from "@/assets/seo-aeo-search.webp";
+import seoAeoMobileImage from "@/assets/seo-aeo-mobile.png";
 import { SolucoesNeuralConnections } from "@/components/SolucoesNeuralConnections";
 import { isIOSDevice } from "@/lib/platform";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -973,10 +974,10 @@ const MobileSvgCard = ({
                 camada.titulo === "Agentes Inteligentes" ? aiAgentsSphereImage :
                 camada.titulo === "Análise Estratégica" ? strategicAnalyticsImage :
                 camada.titulo === "Engenharia de Prompt" ? promptEngineeringImage :
-                seoAeoSearchImage
+                seoAeoMobileImage
               } 
               alt={camada.titulo}
-              className={`w-full h-full object-cover ${camada.titulo === "SEO + AEO" ? "object-[15%_25%] scale-[2.5]" : ""}`}
+              className="w-full h-full object-cover"
             />
           </div>
         )}
