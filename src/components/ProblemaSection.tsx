@@ -208,7 +208,7 @@ const CyberCard = ({
         {/* Background Image */}
         {problema.image && (
           <div 
-            className="absolute inset-0 z-0 opacity-40"
+            className="absolute inset-0 z-0 opacity-70"
             style={{ clipPath }}
           >
             <img 
@@ -216,7 +216,7 @@ const CyberCard = ({
               alt="" 
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
           </div>
         )}
 
