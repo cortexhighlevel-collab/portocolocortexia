@@ -4,13 +4,14 @@ import { isIOSDevice } from "@/lib/platform";
 
 import glitchErrorImage from "@/assets/glitch-error.webp";
 import codeMatrixImage from "@/assets/code-matrix.webp";
+import stealthJetImage from "@/assets/stealth-jet.webp";
 
 const problemas = [
   { id: "ERR_001", titulo: "IA usada de forma rasa", severity: "CRITICAL", image: glitchErrorImage },
   { id: "ERR_002", titulo: "Prompts fracos e genéricos", severity: "HIGH", image: codeMatrixImage },
   { id: "ERR_003", titulo: "Automação sem inteligência", severity: "CRITICAL" },
   { id: "ERR_004", titulo: "SEO tradicional está morto", severity: "CRITICAL" },
-  { id: "ERR_005", titulo: "Invisíveis para IA", severity: "HIGH" },
+  { id: "ERR_005", titulo: "Invisíveis para IA", severity: "HIGH", image: stealthJetImage },
   { id: "ERR_006", titulo: "Sem agentes treinados", severity: "MEDIUM" }
 ];
 
