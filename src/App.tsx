@@ -10,11 +10,15 @@ import TermsOfUse from "./pages/TermsOfUse";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import LoadingScreen from "./components/LoadingScreen";
 import { isIOSDevice } from "@/lib/platform";
+import { useAntiDevTools } from "@/hooks/useAntiDevTools";
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Ativar proteção anti-DevTools
+  useAntiDevTools();
 
   useEffect(() => {
     // iOS (iPhone): aplica um “modo leve” via classe global para desativar filtros/glows pesados.
