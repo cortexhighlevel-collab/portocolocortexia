@@ -1,7 +1,93 @@
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { useRef, useEffect, useState, useCallback } from "react";
 import ComoIAEntendeSVG from "./ComoIAEntendeSVG";
 
+const ANIMATION_DURATION_MS = 3500; // Duração total da animação do SVG
+
 const ComoIAEntendeSection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(triggerRef, { once: true, amount: 0.5 });
+  const [isLocked, setIsLocked] = useState(false);
+  const [animationComplete, setAnimationComplete] = useState(false);
+  const hasTriggeredRef = useRef(false);
+
+  // Função para travar o scroll
+  const lockScroll = useCallback(() => {
+    if (typeof window === "undefined") return;
+    
+    // Salvar posição atual do scroll
+    const scrollY = window.scrollY;
+    
+    // Travar scroll
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+    
+    setIsLocked(true);
+  }, []);
+
+  // Função para destravar o scroll
+  const unlockScroll = useCallback(() => {
+    if (typeof window === "undefined") return;
+    
+    // Recuperar posição do scroll
+    const scrollY = document.body.style.top;
+    
+    // Destravar scroll
+    document.body.style.overflow = "";
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.width = "";
+    
+    // Restaurar posição
+    window.scrollTo(0, parseInt(scrollY || "0") * -1);
+    
+    setIsLocked(false);
+    setAnimationComplete(true);
+  }, []);
+
+  // Efeito para controlar o scroll-lock durante a animação
+  useEffect(() => {
+    if (isInView && !hasTriggeredRef.current && !animationComplete) {
+      hasTriggeredRef.current = true;
+      
+      // Pequeno delay para garantir que a seção está centralizada
+      const scrollTimer = setTimeout(() => {
+        // Scroll suave para centralizar a seção
+        sectionRef.current?.scrollIntoView({ 
+          behavior: "smooth", 
+          block: "center" 
+        });
+        
+        // Travar após o scroll suave completar
+        setTimeout(() => {
+          lockScroll();
+          
+          // Destravar após a animação completar
+          setTimeout(() => {
+            unlockScroll();
+          }, ANIMATION_DURATION_MS);
+        }, 500);
+      }, 100);
+
+      return () => clearTimeout(scrollTimer);
+    }
+  }, [isInView, animationComplete, lockScroll, unlockScroll]);
+
+  // Cleanup ao desmontar
+  useEffect(() => {
+    return () => {
+      if (isLocked) {
+        document.body.style.overflow = "";
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+      }
+    };
+  }, [isLocked]);
+
   // Container animation with stagger for children
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -31,7 +117,18 @@ const ComoIAEntendeSection = () => {
   };
   
   return (
-    <section id="como-ia-entende" className="relative py-32 md:py-48 bg-background overflow-hidden">
+    <section 
+      ref={sectionRef}
+      id="como-ia-entende" 
+      className="relative py-32 md:py-48 bg-background overflow-hidden"
+    >
+      {/* Trigger invisível para detectar entrada na viewport */}
+      <div 
+        ref={triggerRef} 
+        className="absolute top-1/3 left-0 w-full h-px pointer-events-none"
+        aria-hidden="true"
+      />
+      
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12">
         <motion.div
           variants={containerVariants}
