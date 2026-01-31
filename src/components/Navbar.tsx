@@ -198,7 +198,7 @@ function Navbar() {
       </nav>
 
       {showMenu && (
-        <div className="fixed inset-0 z-50 lg:hidden">
+        <div className="fixed inset-0 z-[110] lg:hidden">
           <div
             className="absolute inset-0 bg-black/80 backdrop-blur-md"
             onClick={() => setShowMenu(false)}
