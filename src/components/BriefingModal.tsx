@@ -58,7 +58,7 @@ const BriefingModal = ({ open, onOpenChange }: BriefingModalProps) => {
         ? data.presencaDigitalUrl || "Possui (não informou o link)"
         : "Não possui site/Instagram";
 
-    const mensagem = `🧠 *BRIEFING CORTEX POEI*
+    const mensagem = `🧠 *BRIEFING CORTEX OPS*
 
 👤 *Nome:* ${data.nome || "Não informado"}
 🏢 *Empresa:* ${data.empresa || "Não informado"}
@@ -79,7 +79,7 @@ ${data.descricao || "Não informado"}
 ⏰ *Urgência:* ${urgenciaSelecionada}
 
 ---
-Enviado via site CORTEX POEI`;
+Enviado via site CORTEX OPS`;
 
     const whatsappUrl = `https://wa.me/554797422069?text=${encodeURIComponent(mensagem)}`;
     window.open(whatsappUrl, "_blank");

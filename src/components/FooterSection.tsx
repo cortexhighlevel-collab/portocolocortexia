@@ -41,7 +41,7 @@ const FooterSection = () => {
                 <div className="absolute inset-0 w-3 h-3 bg-red-500 rounded-full animate-ping opacity-30" />
               </div>
               <span className="text-white font-bold text-xl tracking-wider">CORTEX</span>
-              <span className="text-red-500 font-bold text-xl">POEI</span>
+              <span className="text-red-500 font-bold text-xl">OPS</span>
             </div>
             <p className="text-white/40 text-sm font-mono leading-relaxed max-w-xs">
               Inteligência aplicada para negócios que querem dominar a era da IA.
@@ -104,7 +104,7 @@ const FooterSection = () => {
               <div className="text-white/30 text-xs font-mono">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-red-500/60">//</span>
-                  contato@cortexpoei.com
+                  contato@cortexops.com
                 </div>
               </div>
             </div>
@@ -140,7 +140,7 @@ const FooterSection = () => {
           {/* Copyright */}
           <div className="text-white/20 text-xs font-mono flex items-center gap-2">
             <span className="text-red-500/40">&lt;</span>
-            © {currentYear} CORTEX POEI. All rights reserved.
+            © {currentYear} CORTEX OPS. All rights reserved.
             <span className="text-red-500/40">/&gt;</span>
           </div>
 
