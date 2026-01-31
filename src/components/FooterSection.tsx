@@ -1,41 +1,47 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-
 const FooterSection = () => {
   const currentYear = new Date().getFullYear();
-
   const handleScrollToContact = () => {
     const element = document.querySelector("#contato");
     if (element) {
       const NAV_OFFSET = 100;
       const top = element.getBoundingClientRect().top + window.scrollY - NAV_OFFSET;
-      window.scrollTo({ top, behavior: "smooth" });
+      window.scrollTo({
+        top,
+        behavior: "smooth"
+      });
     }
   };
-
-  const navLinks = [
-    { label: "PROBLEMA", href: "#problema" },
-    { label: "SOLUÇÕES", href: "#solucoes" },
-    { label: "MÉTODO", href: "#metodologia" },
-    { label: "CASOS", href: "#cases" },
-    { label: "FAQ", href: "#faq" },
-    { label: "CONTATO", href: "#contato" },
-  ];
-
-  return (
-    <>
+  const navLinks = [{
+    label: "PROBLEMA",
+    href: "#problema"
+  }, {
+    label: "SOLUÇÕES",
+    href: "#solucoes"
+  }, {
+    label: "MÉTODO",
+    href: "#metodologia"
+  }, {
+    label: "CASOS",
+    href: "#cases"
+  }, {
+    label: "FAQ",
+    href: "#faq"
+  }, {
+    label: "CONTATO",
+    href: "#contato"
+  }];
+  return <>
       <footer className="relative bg-[#030303] overflow-hidden">
         {/* Circuit pattern background */}
-        <div 
-          className="absolute inset-0 pointer-events-none opacity-[0.03]"
-          style={{
-            backgroundImage: `
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
+        backgroundImage: `
               linear-gradient(90deg, rgba(239,68,68,0.2) 1px, transparent 1px),
               linear-gradient(rgba(239,68,68,0.2) 1px, transparent 1px)
             `,
-            backgroundSize: '40px 40px',
-          }}
-        />
+        backgroundSize: '40px 40px'
+      }} />
 
         {/* Top border with gradient */}
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
@@ -73,17 +79,12 @@ const FooterSection = () => {
                   NAVIGATION
                 </h4>
                 <nav className="grid grid-cols-2 gap-3">
-                  {navLinks.map((link) => (
-                    <motion.a
-                      key={link.label}
-                      href={link.href}
-                      className="text-white/40 text-sm font-mono hover:text-red-500 transition-colors flex items-center gap-2 group"
-                      whileHover={{ x: 4 }}
-                    >
+                  {navLinks.map(link => <motion.a key={link.label} href={link.href} className="text-white/40 text-sm font-mono hover:text-red-500 transition-colors flex items-center gap-2 group" whileHover={{
+                  x: 4
+                }}>
                       <span className="w-1 h-1 bg-red-500/30 group-hover:bg-red-500 transition-colors" />
                       {link.label}
-                    </motion.a>
-                  ))}
+                    </motion.a>)}
                 </nav>
               </div>
 
@@ -94,16 +95,10 @@ const FooterSection = () => {
                   CONNECT
                 </h4>
                 <div className="space-y-4">
-                  <button 
-                    onClick={handleScrollToContact}
-                    className="group relative inline-block cursor-pointer"
-                  >
-                    <div 
-                      className="relative px-6 py-3 bg-[#0a0a0a] border border-red-500/30 hover:border-red-500/60 transition-all"
-                      style={{
-                        clipPath: "polygon(0 8px, 8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%)",
-                      }}
-                    >
+                  <button onClick={handleScrollToContact} className="group relative inline-block cursor-pointer">
+                    <div className="relative px-6 py-3 bg-[#0a0a0a] border border-red-500/30 hover:border-red-500/60 transition-all" style={{
+                    clipPath: "polygon(0 8px, 8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%)"
+                  }}>
                       <span className="text-red-500 text-sm font-mono uppercase tracking-wider">
                         INICIAR_CONEXÃO
                       </span>
@@ -115,10 +110,7 @@ const FooterSection = () => {
                   </button>
                   
                   <div className="text-white/30 text-xs font-mono">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-red-500/60">//</span>
-                      contato@cortexops.com
-                    </div>
+                    
                   </div>
                 </div>
               </div>
@@ -145,10 +137,7 @@ const FooterSection = () => {
             </div>
             
             {/* CTA Button */}
-            <button 
-              onClick={handleScrollToContact}
-              className="px-6 py-2.5 bg-red-500/10 border border-red-500/40 text-red-500 text-sm font-mono uppercase tracking-wider hover:bg-red-500/20 transition-colors cursor-pointer"
-            >
+            <button onClick={handleScrollToContact} className="px-6 py-2.5 bg-red-500/10 border border-red-500/40 text-red-500 text-sm font-mono uppercase tracking-wider hover:bg-red-500/20 transition-colors cursor-pointer">
               INICIAR_CONEXÃO
             </button>
 
@@ -196,17 +185,11 @@ const FooterSection = () => {
                 <span className="text-red-500/40">/&gt;</span>
               </div>
               <div className="flex items-center gap-4">
-                <Link 
-                  to="/termos-de-uso" 
-                  className="hover:text-red-500 transition-colors"
-                >
+                <Link to="/termos-de-uso" className="hover:text-red-500 transition-colors">
                   Termos de Uso
                 </Link>
                 <span className="text-white/10">|</span>
-                <Link 
-                  to="/politica-de-privacidade" 
-                  className="hover:text-red-500 transition-colors"
-                >
+                <Link to="/politica-de-privacidade" className="hover:text-red-500 transition-colors">
                   Política de Privacidade
                 </Link>
               </div>
@@ -241,14 +224,14 @@ const FooterSection = () => {
         </div>
 
         {/* Scan line effect */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-b from-transparent via-red-500/[0.02] to-transparent pointer-events-none"
-          animate={{ y: ["-100%", "100%"] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-        />
+        <motion.div className="absolute inset-0 bg-gradient-to-b from-transparent via-red-500/[0.02] to-transparent pointer-events-none" animate={{
+        y: ["-100%", "100%"]
+      }} transition={{
+        duration: 8,
+        repeat: Infinity,
+        ease: "linear"
+      }} />
       </footer>
-    </>
-  );
+    </>;
 };
-
 export default FooterSection;
