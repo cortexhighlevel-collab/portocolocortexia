@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
 import {
   BriefingData,
   StepDadosBasicos,
@@ -15,11 +16,12 @@ import {
 
 interface MobileBriefingProps {
   onSubmit: (data: BriefingData) => void;
+  onClose?: () => void;
 }
 
 const TOTAL_STEPS = 7;
 
-const MobileBriefing = ({ onSubmit }: MobileBriefingProps) => {
+const MobileBriefing = ({ onSubmit, onClose }: MobileBriefingProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<BriefingData>({
     nome: "",
@@ -120,25 +122,35 @@ const MobileBriefing = ({ onSubmit }: MobileBriefingProps) => {
   return (
     <div className="relative bg-[#0a0a0a]/95 rounded-lg overflow-hidden">
       {/* Terminal header */}
-      <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border-b border-white/10">
-        <div className="flex gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+      <div className="flex items-center justify-between gap-3 px-4 py-2 bg-white/5 border-b border-white/10">
+        <div className="flex items-center gap-3">
+          <div className="flex gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-red-500/60" />
+            <div className="w-2 h-2 rounded-full bg-yellow-500/60" />
+            <div className="w-2 h-2 rounded-full bg-green-500/60" />
+          </div>
+          <span className="text-white/40 font-mono text-[10px]">briefing_system.exe</span>
         </div>
-        <span className="text-white/40 font-mono text-xs">briefing_system.exe</span>
+        {onClose && (
+          <button 
+            onClick={onClose}
+            className="p-1 rounded hover:bg-white/10 transition-colors"
+          >
+            <X className="w-4 h-4 text-white/60 hover:text-white" />
+          </button>
+        )}
       </div>
 
-      <div className="p-5">
+      <div className="p-3">
         {/* Progress */}
         <ProgressIndicator currentStep={currentStep} totalSteps={TOTAL_STEPS} />
 
         {/* Step title */}
-        <div className="text-center mb-6">
-          <span className="font-mono text-xs text-red-500/60 uppercase tracking-wider">
+        <div className="text-center mb-4">
+          <span className="font-mono text-[10px] text-red-500/60 uppercase tracking-wider">
             Etapa {currentStep + 1} de {TOTAL_STEPS}
           </span>
-          <h3 className="text-lg font-bold text-white mt-1">{stepTitles[currentStep]}</h3>
+          <h3 className="text-base font-bold text-white mt-0.5">{stepTitles[currentStep]}</h3>
         </div>
 
         {/* Step content */}
