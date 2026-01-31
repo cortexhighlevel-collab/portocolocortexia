@@ -183,10 +183,14 @@
     filter: none;
   }
 
-  html.ios-mobile .cta-border-glow::before,
-  html.ios-mobile .cta-border-glow::after {
+  html.ios-mobile .cta-border-glow::before {
+    /* Mantém a animação do shine, apenas remove filtros pesados */
     filter: none;
-    animation: none;
+  }
+  
+  html.ios-mobile .cta-border-glow::after {
+    /* Remove o blur do after para performance no iOS, mas mantém animação */
+    filter: none;
   }
 
   .nav-link {
