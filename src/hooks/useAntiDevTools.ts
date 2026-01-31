@@ -2,18 +2,23 @@ import { useEffect } from "react";
 
 export const useAntiDevTools = () => {
   useEffect(() => {
+    // Só ativar proteções em produção (não no preview do Lovable)
+    const isProduction = import.meta.env.PROD;
+    
+    if (!isProduction) {
+      return; // Não aplicar proteções em desenvolvimento
+    }
+
     // ========== PROTEÇÃO ANTI-BOT E ANTI-IA ==========
     
     // Detectar se é um bot/crawler
     const isBot = () => {
       const botPatterns = [
-        /bot/i, /crawler/i, /spider/i, /scraper/i,
         /GPTBot/i, /ChatGPT/i, /CCBot/i, /anthropic/i,
         /ClaudeBot/i, /Claude-Web/i, /cohere/i, /PerplexityBot/i,
         /Bytespider/i, /Diffbot/i, /Omgilibot/i, /Google-Extended/i,
         /Applebot-Extended/i, /img2dataset/i, /FacebookBot/i,
-        /HeadlessChrome/i, /PhantomJS/i, /Selenium/i, /puppeteer/i,
-        /playwright/i, /webdriver/i
+        /HeadlessChrome/i, /PhantomJS/i, /Selenium/i
       ];
       
       const userAgent = navigator.userAgent;
@@ -34,12 +39,8 @@ export const useAntiDevTools = () => {
         !!(window as any)._phantom,
         // Nightmare detection
         !!(window as any).__nightmare,
-        // Puppeteer/Playwright detection
-        navigator.languages?.length === 0,
         // Chrome headless detection
         /HeadlessChrome/.test(navigator.userAgent),
-        // Missing plugins (common in headless)
-        navigator.plugins?.length === 0 && !/Mobile|Android/i.test(navigator.userAgent),
       ];
       
       return checks.some(check => check === true);
@@ -76,7 +77,6 @@ export const useAntiDevTools = () => {
 
     // Ofuscar dados sensíveis no DOM
     const obfuscateSensitiveData = () => {
-      // Adicionar atributos para confundir scrapers
       document.querySelectorAll('script, style, link[rel="stylesheet"]').forEach(el => {
         el.setAttribute('data-ai-ignore', 'true');
         el.setAttribute('aria-hidden', 'true');
