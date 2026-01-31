@@ -190,12 +190,12 @@ const CyberCard = ({
                   <img 
                     src={seoAeoSearchImage} 
                     alt={camada.titulo}
-                    className="w-full h-full object-cover opacity-40"
+                    className="w-full h-full object-cover"
                   />
                 </div>
               )}
               {/* Conteúdo (mantém texto original) */}
-               <div className="relative z-10 h-full w-full pl-8 pr-8 py-5 flex flex-col justify-center gap-1">
+               <div className="relative z-10 h-full w-full pl-8 pr-8 pt-12 pb-5 flex flex-col justify-end gap-1">
                  <h3 className="text-white font-bold text-base leading-tight break-words">{camada.titulo}</h3>
                  <p className="text-[#ff6b8a] text-[8px] uppercase tracking-widest font-mono leading-snug break-words">
                    {camada.funcao}
