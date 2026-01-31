@@ -5,6 +5,7 @@ import brainIcon from "@/assets/brain-icon.png";
 import automationRobotImage from "@/assets/automation-robot.webp";
 import personasNetworkImage from "@/assets/personas-network.webp";
 import aiAgentsSphereImage from "@/assets/ai-agents-sphere.webp";
+import strategicAnalyticsImage from "@/assets/strategic-analytics.webp";
 import { SolucoesNeuralConnections } from "@/components/SolucoesNeuralConnections";
 import { isIOSDevice } from "@/lib/platform";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -193,6 +194,25 @@ const CyberCard = ({
                    </p>
               </div>
             </> : <>
+               {/* Imagem dentro do círculo para cards com RightFrame */}
+               {camada.titulo === "Análise Estratégica" && (
+                 <div 
+                   className="absolute z-[5] overflow-hidden rounded-full"
+                   style={{
+                     left: '3.5%',
+                     top: '50%',
+                     transform: 'translateY(-50%)',
+                     width: '33.5%',
+                     aspectRatio: '1/1',
+                   }}
+                 >
+                   <img 
+                     src={strategicAnalyticsImage} 
+                     alt={camada.titulo}
+                     className="w-full h-full object-cover"
+                   />
+                 </div>
+               )}
                {/* Conteúdo (mantém texto original) */}
                 <div className="relative z-10 h-full w-full pl-[210px] pr-10 py-4 flex flex-col justify-center gap-1">
                   <h3 className={`text-white font-bold leading-tight break-words ${camada.position === "top-right" ? "whitespace-nowrap text-[15px]" : "text-base"}`}>
