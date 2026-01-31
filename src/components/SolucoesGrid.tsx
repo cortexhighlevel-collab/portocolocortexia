@@ -199,10 +199,10 @@ const CyberCard = ({
                  <div 
                    className="absolute z-[5] overflow-hidden rounded-full"
                     style={{
-                      left: '4%',
+                      left: '5.5%',
                       top: '50%',
                       transform: 'translateY(-50%)',
-                      width: '32%',
+                      width: '25%',
                       aspectRatio: '1/1',
                     }}
                  >
