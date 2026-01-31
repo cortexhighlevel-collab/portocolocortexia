@@ -822,46 +822,19 @@ export const useAntiDevTools = () => {
       return false;
     };
 
-    // Detectar DevTools aberto (método de detecção por timing)
-    // IMPORTANTE: Desativado no mobile devido a falsos positivos com barras do sistema
+    // Detectar DevTools aberto
+    // IMPORTANTE: A detecção por tamanho de janela (outerWidth - innerWidth) foi REMOVIDA
+    // porque causa falsos positivos em:
+    // - Mobile: barras do sistema (endereço, navegação, notch, Dynamic Island)
+    // - Desktop: sidebar do Safari, extensões que adicionam painéis, zoom do navegador
+    // A proteção agora funciona apenas por:
+    // 1. Bloqueio de teclas (F12, Ctrl+Shift+I, etc.)
+    // 2. Bloqueio de menu de contexto
+    // 3. Detecção de extensões de clonagem
+    // 4. Detecção via console.log timing (quando DevTools está realmente aberto)
     let devToolsOpen = false;
-    const detectDevTools = () => {
-      // No mobile, desativar completamente a detecção por tamanho de janela
-      // As barras do sistema (endereço, navegação, notch, Dynamic Island) causam falsos positivos
-      if (isMobileDevice()) {
-        return; // Não detectar DevTools no mobile por este método
-      }
-      
-      // Apenas desktop: threshold de 160px
-      const threshold = 160;
-      const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-      const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-      
-      if (widthThreshold || heightThreshold) {
-        if (!devToolsOpen) {
-          devToolsOpen = true;
-          // Redirecionar ou mostrar aviso
-          document.body.innerHTML = `
-            <div style="
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              height: 100vh;
-              background: #000;
-              color: #fff;
-              font-family: system-ui;
-              text-align: center;
-              padding: 20px;
-            ">
-              <div>
-                <h1 style="color: #dc2626; font-size: 2rem; margin-bottom: 1rem;">⚠️ Acesso Bloqueado</h1>
-                <p style="font-size: 1.2rem;">Seu IP foi registrado no banco de dados por tentativa de invasão.</p>
-              </div>
-            </div>
-          `;
-        }
-      }
-    };
+    
+    // REMOVIDO: detectDevTools por tamanho de janela - causa muitos falsos positivos
 
     // Método de detecção via console.log timing
     // IMPORTANTE: Desativado no mobile - causa falsos positivos
@@ -906,9 +879,8 @@ export const useAntiDevTools = () => {
     document.addEventListener("dragstart", handleDragStart);
     document.addEventListener("copy", handleCopy);
 
-    // Verificar DevTools periodicamente
+    // Verificar DevTools periodicamente (apenas via console timing, não por tamanho de janela)
     const interval = setInterval(() => {
-      detectDevTools();
       detectDevToolsConsole();
     }, 1000);
 
