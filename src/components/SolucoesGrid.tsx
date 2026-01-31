@@ -949,6 +949,50 @@ const MobileSvgCard = ({
           <g id="svg-effects-group" />
         </svg>
         
+        {/* Imagem dentro do círculo */}
+        {(camada.titulo === "Automação com IA" || 
+          camada.titulo === "Personas Treinadas" || 
+          camada.titulo === "Agentes Inteligentes" ||
+          camada.titulo === "Análise Estratégica" ||
+          camada.titulo === "Engenharia de Prompt") && (
+          <div 
+            className="absolute z-[5] overflow-hidden rounded-full"
+            style={{
+              left: '3%',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '30%',
+              aspectRatio: '1/1',
+            }}
+          >
+            <img 
+              src={
+                camada.titulo === "Automação com IA" ? automationRobotImage : 
+                camada.titulo === "Personas Treinadas" ? personasNetworkImage : 
+                camada.titulo === "Agentes Inteligentes" ? aiAgentsSphereImage :
+                camada.titulo === "Análise Estratégica" ? strategicAnalyticsImage :
+                promptEngineeringImage
+              } 
+              alt={camada.titulo}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+        
+        {/* Imagem de fundo para SEO + AEO no mobile */}
+        {camada.titulo === "SEO + AEO" && (
+          <div 
+            className="absolute inset-0 z-[1] overflow-hidden rounded-[20px]"
+            style={{ margin: '5px' }}
+          >
+            <img 
+              src={seoAeoSearchImage} 
+              alt={camada.titulo}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+        
         {/* Ícone removido do círculo */}
         
         {/* Conteúdo de texto - posicionado igual ao desktop */}
