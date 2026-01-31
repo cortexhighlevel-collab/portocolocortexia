@@ -92,10 +92,10 @@ const LoadingScreen = ({ isLoading, minDuration = 1500 }: LoadingScreenProps) =>
               className="text-center"
             >
               <h1 className="text-2xl md:text-3xl font-bold tracking-[0.3em] text-white/90 font-['Orbitron']">
-                CORTEX
+                CORTEX <span className="text-red-500">OPS</span>
               </h1>
               <p className="text-[10px] tracking-[0.5em] text-zinc-500 mt-2 font-mono">
-                PROTOCOL
+                OPERATIONS
               </p>
             </motion.div>
 

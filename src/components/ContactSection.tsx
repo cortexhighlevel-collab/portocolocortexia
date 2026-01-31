@@ -48,7 +48,7 @@ const ContactSection = () => {
         ? data.presencaDigitalUrl || "Possui (não informou o link)"
         : "Não possui site/Instagram";
 
-    const mensagem = `🧠 *BRIEFING CORTEX POEI*
+    const mensagem = `🧠 *BRIEFING CORTEX OPS*
 
 👤 *Nome:* ${data.nome || "Não informado"}
 🏢 *Empresa:* ${data.empresa || "Não informado"}
@@ -69,7 +69,7 @@ ${data.descricao || "Não informado"}
 ⏰ *Urgência:* ${urgenciaSelecionada}
 
 ---
-Enviado via site CORTEX POEI`;
+Enviado via site CORTEX OPS`;
 
     const whatsappUrl = `https://wa.me/554797422069?text=${encodeURIComponent(mensagem)}`;
     window.open(whatsappUrl, "_blank");
@@ -137,7 +137,7 @@ Enviado via site CORTEX POEI`;
           viewport={{ once: true }}
         >
           <a
-            href="mailto:contato@cortexpoei.com"
+            href="mailto:contato@cortexops.com"
             className="text-white/50 hover:text-red-400 transition-colors font-mono text-sm"
           ></a>
         </motion.div>
