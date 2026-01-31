@@ -233,8 +233,10 @@ const CyberCard = ({
                   <h3 className={`text-white font-bold leading-tight ${camada.position === "top-right" || camada.titulo === "Engenharia de Prompt" ? "whitespace-nowrap text-[17px]" : "text-lg"}`}>
                     {camada.titulo}
                   </h3>
-                 <p className="text-[#ff6b8a] text-[9px] uppercase tracking-widest font-mono leading-snug whitespace-nowrap">
-                   {camada.funcao}
+                 <p className="text-[#ff6b8a] text-[9px] uppercase tracking-widest font-mono leading-snug">
+                   {camada.titulo === "Análise Estratégica" ? <>DADOS TRANSFORMADOS<br />EM DECISÕES</> : 
+                    camada.titulo === "Engenharia de Prompt" ? <>COMANDOS PRECISOS<br />E ESTRUTURADOS</> : 
+                    camada.funcao}
                  </p>
                  <p className="text-gray-400 text-sm leading-snug max-w-[220px]">{camada.beneficio}</p>
               </div>
