@@ -11,38 +11,319 @@ export const useAntiDevTools = () => {
 
     // ========== PROTEÇÃO ANTI-BOT E ANTI-IA ==========
     
-    // ========== DETECÇÃO E BLOQUEIO DO ANTIGRAVITY ==========
-    const detectAntigravity = (): boolean => {
-      const checks = [
-        // Detectar extensão Antigravity via propriedades globais
-        !!(window as any).__ANTIGRAVITY__,
-        !!(window as any).antigravity,
-        !!(window as any).AntiGravity,
-        !!(window as any).__antigravity_injected__,
-        !!(window as any).__ag_extension__,
-        // Detectar via elementos injetados
-        !!document.querySelector('[data-antigravity]'),
-        !!document.querySelector('[class*="antigravity"]'),
-        !!document.querySelector('[id*="antigravity"]'),
-        !!document.querySelector('script[src*="antigravity"]'),
-        !!document.querySelector('link[href*="antigravity"]'),
-        // Detectar via chrome extension
-        !!(window as any).chrome?.runtime?.id?.includes?.('antigravity'),
-        // Detectar modificações no DOM típicas do Antigravity
-        !!document.querySelector('[data-ag-clone]'),
-        !!document.querySelector('[data-ag-inspect]'),
-        !!document.querySelector('.ag-overlay'),
-        !!document.querySelector('.ag-panel'),
-        // Detectar via localStorage/sessionStorage
-        !!localStorage.getItem('antigravity'),
-        !!sessionStorage.getItem('antigravity'),
-      ];
-      
-      return checks.some(check => check === true);
+    // ========== DETECÇÃO DE FERRAMENTAS DE CLONAGEM E EXTENSÕES ==========
+    
+    // Lista de ferramentas de clonagem e extensões para detectar
+    const cloningTools = {
+      // Antigravity
+      antigravity: {
+        name: 'Antigravity',
+        globals: ['__ANTIGRAVITY__', 'antigravity', 'AntiGravity', '__antigravity_injected__', '__ag_extension__'],
+        selectors: ['[data-antigravity]', '[class*="antigravity"]', '[id*="antigravity"]', 'script[src*="antigravity"]', '[data-ag-clone]', '[data-ag-inspect]', '.ag-overlay', '.ag-panel'],
+        storage: ['antigravity'],
+      },
+      // Blackbox AI
+      blackbox: {
+        name: 'Blackbox AI',
+        globals: ['__BLACKBOX__', 'blackboxai', 'BlackboxAI', '__blackbox_extension__', 'BLACKBOX_API', '__bb_injected__'],
+        selectors: ['[data-blackbox]', '[class*="blackbox"]', '[id*="blackbox"]', 'script[src*="blackbox"]', '.blackbox-overlay', '.bb-panel', '[data-bb-clone]'],
+        storage: ['blackbox', 'blackboxai'],
+      },
+      // PageCloner / Clone Tools
+      pagecloner: {
+        name: 'PageCloner',
+        globals: ['__PAGECLONER__', 'PageCloner', 'pageCloner', '__clone_extension__', 'ClonePage'],
+        selectors: ['[data-pagecloner]', '[class*="pagecloner"]', '[id*="pagecloner"]', 'script[src*="pagecloner"]', '.clone-overlay'],
+        storage: ['pagecloner', 'page-cloner'],
+      },
+      // HTTrack / Website Copier
+      httrack: {
+        name: 'HTTrack',
+        globals: ['__HTTRACK__', 'httrack', 'HTTrack'],
+        selectors: ['[data-httrack]', 'script[src*="httrack"]'],
+        storage: ['httrack'],
+      },
+      // Web Scraper
+      webscraper: {
+        name: 'Web Scraper',
+        globals: ['__WEBSCRAPER__', 'webScraper', 'WebScraper', '__scraper__'],
+        selectors: ['[data-webscraper]', '[class*="webscraper"]', '[id*="scraper"]', '.scraper-overlay'],
+        storage: ['webscraper', 'web-scraper'],
+      },
+      // Wappalyzer (Technology Detector)
+      wappalyzer: {
+        name: 'Wappalyzer',
+        globals: ['__WAPPALYZER__', 'wappalyzer', 'Wappalyzer'],
+        selectors: ['[data-wappalyzer]', '[class*="wappalyzer"]'],
+        storage: ['wappalyzer'],
+      },
+      // BuiltWith
+      builtwith: {
+        name: 'BuiltWith',
+        globals: ['__BUILTWITH__', 'builtwith', 'BuiltWith'],
+        selectors: ['[data-builtwith]', '[class*="builtwith"]'],
+        storage: ['builtwith'],
+      },
+      // React DevTools
+      reactdevtools: {
+        name: 'React DevTools',
+        globals: ['__REACT_DEVTOOLS_GLOBAL_HOOK__'],
+        selectors: [],
+        storage: [],
+      },
+      // Redux DevTools
+      reduxdevtools: {
+        name: 'Redux DevTools',
+        globals: ['__REDUX_DEVTOOLS_EXTENSION__', '__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'],
+        selectors: [],
+        storage: [],
+      },
+      // Vue DevTools
+      vuedevtools: {
+        name: 'Vue DevTools',
+        globals: ['__VUE_DEVTOOLS_GLOBAL_HOOK__'],
+        selectors: [],
+        storage: [],
+      },
+      // Firebug
+      firebug: {
+        name: 'Firebug',
+        globals: ['__firebug__', 'Firebug', 'firebug'],
+        selectors: ['[data-firebug]', '#firebug'],
+        storage: ['firebug'],
+      },
+      // ColorZilla
+      colorzilla: {
+        name: 'ColorZilla',
+        globals: ['__COLORZILLA__', 'ColorZilla', 'colorzilla'],
+        selectors: ['[data-colorzilla]', '[class*="colorzilla"]', '#colorzilla'],
+        storage: ['colorzilla'],
+      },
+      // WhatFont
+      whatfont: {
+        name: 'WhatFont',
+        globals: ['__WHATFONT__', 'WhatFont', 'whatfont', '__wf_injected__'],
+        selectors: ['[data-whatfont]', '[class*="whatfont"]', '.whatfont-overlay', '#whatfont'],
+        storage: ['whatfont'],
+      },
+      // CSS Peeper
+      csspeeper: {
+        name: 'CSS Peeper',
+        globals: ['__CSSPEEPER__', 'CSSPeeper', 'csspeeper'],
+        selectors: ['[data-csspeeper]', '[class*="csspeeper"]', '.csspeeper-overlay'],
+        storage: ['csspeeper', 'css-peeper'],
+      },
+      // VisBug
+      visbug: {
+        name: 'VisBug',
+        globals: ['__VISBUG__', 'VisBug', 'visbug', '__visbug_injected__'],
+        selectors: ['[data-visbug]', '[class*="visbug"]', 'vis-bug', '.visbug-overlay'],
+        storage: ['visbug'],
+      },
+      // Pesticide
+      pesticide: {
+        name: 'Pesticide',
+        globals: ['__PESTICIDE__', 'Pesticide', 'pesticide'],
+        selectors: ['[data-pesticide]', '.pesticide'],
+        storage: ['pesticide'],
+      },
+      // Web Developer Extension
+      webdeveloper: {
+        name: 'Web Developer',
+        globals: ['__WEBDEVELOPER__', 'WebDeveloper'],
+        selectors: ['[data-webdeveloper]', '#webdeveloper-toolbar'],
+        storage: ['webdeveloper'],
+      },
+      // Stylus/Stylish
+      stylus: {
+        name: 'Stylus/Stylish',
+        globals: ['__STYLUS__', 'stylus', 'stylish'],
+        selectors: ['[data-stylus]', '[class*="stylus"]'],
+        storage: ['stylus', 'stylish'],
+      },
+      // Tampermonkey/Greasemonkey
+      tampermonkey: {
+        name: 'Tampermonkey',
+        globals: ['GM', 'GM_info', 'GM_getValue', 'GM_setValue', 'unsafeWindow', '__tampermonkey__'],
+        selectors: [],
+        storage: ['tampermonkey'],
+      },
+      // Violentmonkey
+      violentmonkey: {
+        name: 'Violentmonkey',
+        globals: ['VM', '__violentmonkey__'],
+        selectors: [],
+        storage: ['violentmonkey'],
+      },
+      // uBlock/AdBlock
+      adblock: {
+        name: 'AdBlock',
+        globals: ['__ADBLOCK__', 'adblock', 'uBlock'],
+        selectors: ['[data-adblock]'],
+        storage: ['adblock', 'ublock'],
+      },
+      // Save Page WE
+      savepage: {
+        name: 'Save Page WE',
+        globals: ['__SAVEPAGE__', 'SavePage'],
+        selectors: ['[data-savepage]'],
+        storage: ['savepage'],
+      },
+      // SingleFile
+      singlefile: {
+        name: 'SingleFile',
+        globals: ['__SINGLEFILE__', 'singlefile', 'SingleFile'],
+        selectors: ['[data-singlefile]', '[class*="singlefile"]'],
+        storage: ['singlefile'],
+      },
+      // GoFullPage
+      gofullpage: {
+        name: 'GoFullPage',
+        globals: ['__GOFULLPAGE__', 'GoFullPage'],
+        selectors: ['[data-gofullpage]'],
+        storage: ['gofullpage'],
+      },
+      // Awesome Screenshot
+      awesomescreenshot: {
+        name: 'Awesome Screenshot',
+        globals: ['__AWESOMESCREENSHOT__', 'AwesomeScreenshot'],
+        selectors: ['[data-awesomescreenshot]', '[class*="awesome-screenshot"]'],
+        storage: ['awesomescreenshot'],
+      },
+      // Nimbus Screenshot
+      nimbus: {
+        name: 'Nimbus Screenshot',
+        globals: ['__NIMBUS__', 'NimbusScreenshot'],
+        selectors: ['[data-nimbus]', '[class*="nimbus"]'],
+        storage: ['nimbus'],
+      },
+      // Loom
+      loom: {
+        name: 'Loom',
+        globals: ['__LOOM__', 'loom', 'Loom'],
+        selectors: ['[data-loom]', '[class*="loom"]', '#loom-companion'],
+        storage: ['loom'],
+      },
+      // Figma to Code
+      figmacode: {
+        name: 'Figma to Code',
+        globals: ['__FIGMATOCODE__', 'FigmaToCode'],
+        selectors: ['[data-figmatocode]'],
+        storage: ['figmatocode'],
+      },
+      // Site Sucker
+      sitesucker: {
+        name: 'SiteSucker',
+        globals: ['__SITESUCKER__', 'SiteSucker'],
+        selectors: ['[data-sitesucker]'],
+        storage: ['sitesucker'],
+      },
+      // Cyotek WebCopy
+      webcopy: {
+        name: 'WebCopy',
+        globals: ['__WEBCOPY__', 'WebCopy', 'Cyotek'],
+        selectors: ['[data-webcopy]'],
+        storage: ['webcopy'],
+      },
+      // Octoparse
+      octoparse: {
+        name: 'Octoparse',
+        globals: ['__OCTOPARSE__', 'Octoparse', 'octoparse'],
+        selectors: ['[data-octoparse]'],
+        storage: ['octoparse'],
+      },
+      // ParseHub
+      parsehub: {
+        name: 'ParseHub',
+        globals: ['__PARSEHUB__', 'ParseHub', 'parsehub'],
+        selectors: ['[data-parsehub]'],
+        storage: ['parsehub'],
+      },
+      // Apify
+      apify: {
+        name: 'Apify',
+        globals: ['__APIFY__', 'Apify', 'apify'],
+        selectors: ['[data-apify]'],
+        storage: ['apify'],
+      },
+      // Import.io
+      importio: {
+        name: 'Import.io',
+        globals: ['__IMPORTIO__', 'ImportIO'],
+        selectors: ['[data-importio]'],
+        storage: ['importio'],
+      },
+      // Diffchecker
+      diffchecker: {
+        name: 'Diffchecker',
+        globals: ['__DIFFCHECKER__', 'Diffchecker'],
+        selectors: ['[data-diffchecker]'],
+        storage: ['diffchecker'],
+      },
     };
 
-    // Bloquear Antigravity imediatamente
-    const blockAntigravity = () => {
+    // Detectar ferramenta de clonagem
+    const detectCloningTool = (): { detected: boolean; toolName: string } => {
+      for (const [key, tool] of Object.entries(cloningTools)) {
+        // Verificar globais
+        for (const global of tool.globals) {
+          if ((window as any)[global]) {
+            return { detected: true, toolName: tool.name };
+          }
+        }
+        
+        // Verificar seletores DOM
+        for (const selector of tool.selectors) {
+          try {
+            if (document.querySelector(selector)) {
+              return { detected: true, toolName: tool.name };
+            }
+          } catch (e) {}
+        }
+        
+        // Verificar storage
+        for (const storageKey of tool.storage) {
+          try {
+            if (localStorage.getItem(storageKey) || sessionStorage.getItem(storageKey)) {
+              return { detected: true, toolName: tool.name };
+            }
+          } catch (e) {}
+        }
+      }
+      
+      // Detectar extensões genéricas via chrome.runtime
+      try {
+        if ((window as any).chrome?.runtime?.id) {
+          const extensionId = (window as any).chrome.runtime.id.toLowerCase();
+          for (const [key] of Object.entries(cloningTools)) {
+            if (extensionId.includes(key)) {
+              return { detected: true, toolName: `Extensão (${key})` };
+            }
+          }
+        }
+      } catch (e) {}
+      
+      // Detectar injeção de scripts externos suspeitos
+      const suspiciousScripts = document.querySelectorAll('script[src]');
+      const suspiciousPatterns = [
+        'clone', 'scraper', 'crawler', 'extractor', 'copier', 'downloader',
+        'inspector', 'debugger', 'devtools', 'extension', 'inject'
+      ];
+      
+      for (const script of suspiciousScripts) {
+        const src = (script as HTMLScriptElement).src.toLowerCase();
+        for (const pattern of suspiciousPatterns) {
+          if (src.includes(pattern)) {
+            return { detected: true, toolName: `Script Suspeito (${pattern})` };
+          }
+        }
+      }
+      
+      return { detected: false, toolName: '' };
+    };
+
+    // Bloquear ferramenta de clonagem detectada
+    const blockCloningTool = (toolName: string) => {
       document.documentElement.innerHTML = '';
       document.body.innerHTML = '';
       
@@ -109,7 +390,7 @@ export const useAntiDevTools = () => {
             font-weight: 700;
             margin-bottom: 16px;
             text-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
-          ">⚠️ ANTIGRAVITY DETECTADO ⚠️</p>
+          ">⚠️ ${toolName.toUpperCase()} DETECTADO ⚠️</p>
           <p style="
             color: #00ff88;
             font-family: 'Rajdhani', sans-serif;
@@ -123,8 +404,8 @@ export const useAntiDevTools = () => {
             font-size: 0.95rem;
             margin-top: 24px;
             line-height: 1.6;
-          ">Este site está protegido contra ferramentas de clonagem.<br>
-          Extensões como Antigravity são bloqueadas automaticamente.</p>
+          ">Este site está protegido contra ferramentas de clonagem,<br>
+          inspeção e extensões de navegador não autorizadas.</p>
           <div style="
             margin-top: 30px;
             padding: 15px;
@@ -136,7 +417,7 @@ export const useAntiDevTools = () => {
               color: #ff4444;
               font-size: 0.85rem;
               font-family: monospace;
-            ">🔒 IP e tentativa registrados para análise.</p>
+            ">🔒 Tentativa bloqueada: ${toolName}</p>
           </div>
         </div>
       `;
@@ -154,31 +435,34 @@ export const useAntiDevTools = () => {
       } catch (e) {}
     };
 
-    // Verificar Antigravity imediatamente
-    if (detectAntigravity()) {
-      blockAntigravity();
+    // Verificar ferramentas de clonagem imediatamente
+    const initialCheck = detectCloningTool();
+    if (initialCheck.detected) {
+      blockCloningTool(initialCheck.toolName);
       return;
     }
 
-    // Monitorar continuamente por injeção tardia do Antigravity
-    const antigravityObserver = new MutationObserver(() => {
-      if (detectAntigravity()) {
-        blockAntigravity();
+    // Monitorar continuamente por injeção tardia de ferramentas
+    const cloningToolObserver = new MutationObserver(() => {
+      const check = detectCloningTool();
+      if (check.detected) {
+        blockCloningTool(check.toolName);
       }
     });
     
-    antigravityObserver.observe(document.documentElement, {
+    cloningToolObserver.observe(document.documentElement, {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['class', 'id', 'data-antigravity', 'src', 'href']
+      attributeFilter: ['class', 'id', 'data-antigravity', 'data-blackbox', 'data-extension', 'src', 'href']
     });
 
     // Verificar periodicamente
-    const antigravityInterval = setInterval(() => {
-      if (detectAntigravity()) {
-        blockAntigravity();
-        clearInterval(antigravityInterval);
+    const cloningToolInterval = setInterval(() => {
+      const check = detectCloningTool();
+      if (check.detected) {
+        blockCloningTool(check.toolName);
+        clearInterval(cloningToolInterval);
       }
     }, 500);
 
@@ -603,8 +887,8 @@ export const useAntiDevTools = () => {
       document.removeEventListener("input", handleAutomatedInput, { capture: true });
       document.removeEventListener("change", handleAutomatedInput, { capture: true });
       clearInterval(interval);
-      clearInterval(antigravityInterval);
-      antigravityObserver.disconnect();
+      clearInterval(cloningToolInterval);
+      cloningToolObserver.disconnect();
       
       // Restaurar MutationObserver original
       (window as any).MutationObserver = originalMutationObserver;
