@@ -976,7 +976,7 @@ const MobileSvgCard = ({
                 seoAeoSearchImage
               } 
               alt={camada.titulo}
-              className={`w-full h-full object-cover ${camada.titulo === "SEO + AEO" ? "object-[0%_20%]" : ""}`}
+              className={`w-full h-full object-cover ${camada.titulo === "SEO + AEO" ? "object-[0%_0%] scale-150" : ""}`}
             />
           </div>
         )}
