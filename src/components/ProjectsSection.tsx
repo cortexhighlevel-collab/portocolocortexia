@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-mot
 import { ExternalLink } from "lucide-react";
 import n8nWorkflow from "@/assets/n8n-workflow.webp";
 import chatbotWorkflow from "@/assets/chatbot-workflow.jpg";
+import seoAeoSearch from "@/assets/seo-aeo-search.webp";
 
 const projects = [{
   id: 1,
@@ -18,7 +19,7 @@ const projects = [{
   id: 3,
   name: "Sistema AEO/SEO",
   tags: ["Análise IA", "Otimização", "Conteúdo"],
-  image: null
+  image: seoAeoSearch
 }];
 const ProjectsSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
