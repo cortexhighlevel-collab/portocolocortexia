@@ -1,17 +1,12 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-
 const PrivacyPolicy = () => {
-  return (
-    <div className="min-h-screen bg-[#030303] text-white">
+  return <div className="min-h-screen bg-[#030303] text-white">
       {/* Header */}
       <div className="relative border-b border-white/10">
         <div className="max-w-4xl mx-auto px-6 py-8">
-          <Link 
-            to="/" 
-            className="inline-flex items-center gap-2 text-white/60 hover:text-red-500 transition-colors mb-6 font-mono text-sm"
-          >
+          <Link to="/" className="inline-flex items-center gap-2 text-white/60 hover:text-red-500 transition-colors mb-6 font-mono text-sm">
             <ArrowLeft className="w-4 h-4" />
             VOLTAR
           </Link>
@@ -30,12 +25,15 @@ const PrivacyPolicy = () => {
       </div>
 
       {/* Content */}
-      <motion.div 
-        className="max-w-4xl mx-auto px-6 py-12"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+      <motion.div className="max-w-4xl mx-auto px-6 py-12" initial={{
+      opacity: 0,
+      y: 20
+    }} animate={{
+      opacity: 1,
+      y: 0
+    }} transition={{
+      duration: 0.5
+    }}>
         <div className="space-y-8 text-white/70 leading-relaxed">
           <section>
             <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
@@ -167,19 +165,7 @@ const PrivacyPolicy = () => {
             </p>
           </section>
 
-          <section>
-            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-              <span className="text-red-500 font-mono">10.</span>
-              Contato
-            </h2>
-            <p>
-              Para exercer seus direitos ou esclarecer dúvidas sobre esta Política de 
-              Privacidade, entre em contato conosco através do e-mail:{" "}
-              <a href="mailto:contato@cortexops.com" className="text-red-500 hover:underline">
-                contato@cortexops.com
-              </a>
-            </p>
-          </section>
+          
         </div>
       </motion.div>
 
@@ -191,8 +177,6 @@ const PrivacyPolicy = () => {
           </p>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default PrivacyPolicy;
