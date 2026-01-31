@@ -1,11 +1,17 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import BriefingModal from "./BriefingModal";
 
 const FooterSection = () => {
   const currentYear = new Date().getFullYear();
-  const [briefingOpen, setBriefingOpen] = useState(false);
+
+  const handleScrollToContact = () => {
+    const element = document.querySelector("#contato");
+    if (element) {
+      const NAV_OFFSET = 100;
+      const top = element.getBoundingClientRect().top + window.scrollY - NAV_OFFSET;
+      window.scrollTo({ top, behavior: "smooth" });
+    }
+  };
 
   const navLinks = [
     { label: "PROBLEMA", href: "#problema" },
@@ -89,7 +95,7 @@ const FooterSection = () => {
                 </h4>
                 <div className="space-y-4">
                   <button 
-                    onClick={() => setBriefingOpen(true)}
+                    onClick={handleScrollToContact}
                     className="group relative inline-block cursor-pointer"
                   >
                     <div 
@@ -140,7 +146,7 @@ const FooterSection = () => {
             
             {/* CTA Button */}
             <button 
-              onClick={() => setBriefingOpen(true)}
+              onClick={handleScrollToContact}
               className="px-6 py-2.5 bg-red-500/10 border border-red-500/40 text-red-500 text-sm font-mono uppercase tracking-wider hover:bg-red-500/20 transition-colors cursor-pointer"
             >
               INICIAR_CONEXÃO
@@ -241,9 +247,6 @@ const FooterSection = () => {
           transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
         />
       </footer>
-
-      {/* Briefing Modal */}
-      <BriefingModal open={briefingOpen} onOpenChange={setBriefingOpen} />
     </>
   );
 };
