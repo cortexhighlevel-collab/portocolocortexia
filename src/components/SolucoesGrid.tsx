@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Bot, BarChart3, Brain, Users, Sparkles, Search } from "lucide-react";
 import { useRef, useState, useLayoutEffect, useCallback } from "react";
 import brainIcon from "@/assets/brain-icon.png";
+import automationRobotImage from "@/assets/automation-robot.webp";
 import { SolucoesNeuralConnections } from "@/components/SolucoesNeuralConnections";
 import { isIOSDevice } from "@/lib/platform";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -205,6 +206,26 @@ const CyberCard = ({
           <div className="absolute inset-0 pointer-events-none">
             <LeftCardFrameSvg />
           </div>
+
+          {/* Imagem dentro do círculo para Automação com IA */}
+          {camada.titulo === "Automação com IA" && (
+            <div 
+              className="absolute z-[5] overflow-hidden rounded-full"
+              style={{
+                right: '2%',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '39%',
+                aspectRatio: '1/1',
+              }}
+            >
+              <img 
+                src={automationRobotImage} 
+                alt="Automação com IA"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
 
            <div className="relative z-10 h-full w-full px-6 py-4 pr-[168px] flex flex-col justify-center gap-1">
              <h3 className="text-white font-bold text-base leading-tight break-words">{camada.titulo}</h3>
