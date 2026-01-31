@@ -11,13 +11,15 @@ const ComoIAEntendeSection = () => {
   const [isLocked, setIsLocked] = useState(false);
   const [animationComplete, setAnimationComplete] = useState(false);
   const hasTriggeredRef = useRef(false);
-  const scrollPositionRef = useRef(0);
 
-  // Função para prevenir scroll em todos os eventos
-  const preventScroll = useCallback((e: Event) => {
+  // Função para prevenir scroll via wheel
+  const preventWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
-    e.stopPropagation();
-    return false;
+  }, []);
+
+  // Função para prevenir scroll via touch
+  const preventTouch = useCallback((e: TouchEvent) => {
+    e.preventDefault();
   }, []);
 
   // Função para prevenir teclas de navegação
@@ -25,99 +27,66 @@ const ComoIAEntendeSection = () => {
     const keys = [32, 33, 34, 35, 36, 37, 38, 39, 40]; // space, pageup, pagedown, end, home, arrows
     if (keys.includes(e.keyCode)) {
       e.preventDefault();
-      return false;
     }
   }, []);
 
-  // Função para travar o scroll
+  // Função para travar o scroll - apenas event listeners, sem mudar layout
   const lockScroll = useCallback(() => {
     if (typeof window === "undefined") return;
     
-    // Salvar posição atual
-    scrollPositionRef.current = window.scrollY;
+    // Bloquear eventos de scroll
+    document.addEventListener("wheel", preventWheel, { passive: false });
+    document.addEventListener("touchmove", preventTouch, { passive: false });
+    document.addEventListener("keydown", preventScrollKeys);
     
-    // Adicionar event listeners para bloquear scroll
-    window.addEventListener("wheel", preventScroll, { passive: false });
-    window.addEventListener("touchmove", preventScroll, { passive: false });
-    window.addEventListener("keydown", preventScrollKeys, { passive: false });
-    
-    // Também aplicar estilos CSS como fallback
-    document.body.style.overflow = "hidden";
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollPositionRef.current}px`;
-    document.body.style.width = "100%";
-    document.body.style.touchAction = "none";
+    // Apenas overflow hidden no HTML para bloquear scrollbar
+    document.documentElement.style.overflow = "hidden";
     
     setIsLocked(true);
-  }, [preventScroll, preventScrollKeys]);
+  }, [preventWheel, preventTouch, preventScrollKeys]);
 
   // Função para destravar o scroll
   const unlockScroll = useCallback(() => {
     if (typeof window === "undefined") return;
     
     // Remover event listeners
-    window.removeEventListener("wheel", preventScroll);
-    window.removeEventListener("touchmove", preventScroll);
-    window.removeEventListener("keydown", preventScrollKeys);
+    document.removeEventListener("wheel", preventWheel);
+    document.removeEventListener("touchmove", preventTouch);
+    document.removeEventListener("keydown", preventScrollKeys);
     
-    // Remover estilos CSS
-    document.body.style.overflow = "";
-    document.body.style.position = "";
-    document.body.style.top = "";
-    document.body.style.width = "";
-    document.body.style.touchAction = "";
-    
-    // Restaurar posição
-    window.scrollTo(0, scrollPositionRef.current);
+    // Restaurar overflow
+    document.documentElement.style.overflow = "";
     
     setIsLocked(false);
     setAnimationComplete(true);
-  }, [preventScroll, preventScrollKeys]);
+  }, [preventWheel, preventTouch, preventScrollKeys]);
 
   // Efeito para controlar o scroll-lock durante a animação
   useEffect(() => {
     if (isInView && !hasTriggeredRef.current && !animationComplete) {
       hasTriggeredRef.current = true;
       
-      // Centralizar a seção primeiro
-      if (sectionRef.current) {
-        sectionRef.current.scrollIntoView({ 
-          behavior: "smooth", 
-          block: "center" 
-        });
-      }
+      // Travar o scroll imediatamente quando a seção entra em view
+      lockScroll();
       
-      // Travar após o scroll suave completar
-      const lockTimer = setTimeout(() => {
-        lockScroll();
-        
-        // Destravar após a animação completar
-        setTimeout(() => {
-          unlockScroll();
-        }, ANIMATION_DURATION_MS);
-      }, 600);
+      // Destravar após a animação completar
+      const unlockTimer = setTimeout(() => {
+        unlockScroll();
+      }, ANIMATION_DURATION_MS);
 
-      return () => clearTimeout(lockTimer);
+      return () => clearTimeout(unlockTimer);
     }
   }, [isInView, animationComplete, lockScroll, unlockScroll]);
 
   // Cleanup ao desmontar
   useEffect(() => {
     return () => {
-      // Garantir que removemos todos os listeners
-      window.removeEventListener("wheel", preventScroll);
-      window.removeEventListener("touchmove", preventScroll);
-      window.removeEventListener("keydown", preventScrollKeys);
-      
-      if (document.body.style.position === "fixed") {
-        document.body.style.overflow = "";
-        document.body.style.position = "";
-        document.body.style.top = "";
-        document.body.style.width = "";
-        document.body.style.touchAction = "";
-      }
+      document.removeEventListener("wheel", preventWheel);
+      document.removeEventListener("touchmove", preventTouch);
+      document.removeEventListener("keydown", preventScrollKeys);
+      document.documentElement.style.overflow = "";
     };
-  }, [preventScroll, preventScrollKeys]);
+  }, [preventWheel, preventTouch, preventScrollKeys]);
 
   // Container animation with stagger for children
   const containerVariants = {
