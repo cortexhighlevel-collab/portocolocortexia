@@ -7,86 +7,117 @@ const ANIMATION_DURATION_MS = 3500; // Duração total da animação do SVG
 const ComoIAEntendeSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(triggerRef, { once: true, amount: 0.5 });
+  const isInView = useInView(triggerRef, { once: true, amount: 0.3 });
   const [isLocked, setIsLocked] = useState(false);
   const [animationComplete, setAnimationComplete] = useState(false);
   const hasTriggeredRef = useRef(false);
+  const scrollPositionRef = useRef(0);
+
+  // Função para prevenir scroll em todos os eventos
+  const preventScroll = useCallback((e: Event) => {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }, []);
+
+  // Função para prevenir teclas de navegação
+  const preventScrollKeys = useCallback((e: KeyboardEvent) => {
+    const keys = [32, 33, 34, 35, 36, 37, 38, 39, 40]; // space, pageup, pagedown, end, home, arrows
+    if (keys.includes(e.keyCode)) {
+      e.preventDefault();
+      return false;
+    }
+  }, []);
 
   // Função para travar o scroll
   const lockScroll = useCallback(() => {
     if (typeof window === "undefined") return;
     
-    // Salvar posição atual do scroll
-    const scrollY = window.scrollY;
+    // Salvar posição atual
+    scrollPositionRef.current = window.scrollY;
     
-    // Travar scroll
+    // Adicionar event listeners para bloquear scroll
+    window.addEventListener("wheel", preventScroll, { passive: false });
+    window.addEventListener("touchmove", preventScroll, { passive: false });
+    window.addEventListener("keydown", preventScrollKeys, { passive: false });
+    
+    // Também aplicar estilos CSS como fallback
     document.body.style.overflow = "hidden";
     document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollY}px`;
+    document.body.style.top = `-${scrollPositionRef.current}px`;
     document.body.style.width = "100%";
+    document.body.style.touchAction = "none";
     
     setIsLocked(true);
-  }, []);
+  }, [preventScroll, preventScrollKeys]);
 
   // Função para destravar o scroll
   const unlockScroll = useCallback(() => {
     if (typeof window === "undefined") return;
     
-    // Recuperar posição do scroll
-    const scrollY = document.body.style.top;
+    // Remover event listeners
+    window.removeEventListener("wheel", preventScroll);
+    window.removeEventListener("touchmove", preventScroll);
+    window.removeEventListener("keydown", preventScrollKeys);
     
-    // Destravar scroll
+    // Remover estilos CSS
     document.body.style.overflow = "";
     document.body.style.position = "";
     document.body.style.top = "";
     document.body.style.width = "";
+    document.body.style.touchAction = "";
     
     // Restaurar posição
-    window.scrollTo(0, parseInt(scrollY || "0") * -1);
+    window.scrollTo(0, scrollPositionRef.current);
     
     setIsLocked(false);
     setAnimationComplete(true);
-  }, []);
+  }, [preventScroll, preventScrollKeys]);
 
   // Efeito para controlar o scroll-lock durante a animação
   useEffect(() => {
     if (isInView && !hasTriggeredRef.current && !animationComplete) {
       hasTriggeredRef.current = true;
       
-      // Pequeno delay para garantir que a seção está centralizada
-      const scrollTimer = setTimeout(() => {
-        // Scroll suave para centralizar a seção
-        sectionRef.current?.scrollIntoView({ 
+      // Centralizar a seção primeiro
+      if (sectionRef.current) {
+        sectionRef.current.scrollIntoView({ 
           behavior: "smooth", 
           block: "center" 
         });
+      }
+      
+      // Travar após o scroll suave completar
+      const lockTimer = setTimeout(() => {
+        lockScroll();
         
-        // Travar após o scroll suave completar
+        // Destravar após a animação completar
         setTimeout(() => {
-          lockScroll();
-          
-          // Destravar após a animação completar
-          setTimeout(() => {
-            unlockScroll();
-          }, ANIMATION_DURATION_MS);
-        }, 500);
-      }, 100);
+          unlockScroll();
+        }, ANIMATION_DURATION_MS);
+      }, 600);
 
-      return () => clearTimeout(scrollTimer);
+      return () => clearTimeout(lockTimer);
     }
   }, [isInView, animationComplete, lockScroll, unlockScroll]);
 
   // Cleanup ao desmontar
   useEffect(() => {
     return () => {
-      if (isLocked) {
+      // Garantir que removemos todos os listeners
+      window.removeEventListener("wheel", preventScroll);
+      window.removeEventListener("touchmove", preventScroll);
+      window.removeEventListener("keydown", preventScrollKeys);
+      
+      if (document.body.style.position === "fixed") {
         document.body.style.overflow = "";
         document.body.style.position = "";
         document.body.style.top = "";
         document.body.style.width = "";
+        document.body.style.touchAction = "";
       }
     };
-  }, [isLocked]);
+  }, [preventScroll, preventScrollKeys]);
 
   // Container animation with stagger for children
   const containerVariants = {
@@ -125,7 +156,7 @@ const ComoIAEntendeSection = () => {
       {/* Trigger invisível para detectar entrada na viewport */}
       <div 
         ref={triggerRef} 
-        className="absolute top-1/3 left-0 w-full h-px pointer-events-none"
+        className="absolute top-1/4 left-0 w-full h-px pointer-events-none"
         aria-hidden="true"
       />
       
