@@ -184,8 +184,8 @@ const CyberCard = ({
               {/* Imagem de fundo para SEO + AEO */}
               {camada.titulo === "SEO + AEO" && (
                 <div 
-                  className="absolute inset-0 z-[1] overflow-hidden rounded-[39px]"
-                  style={{ margin: '4px' }}
+                  className="absolute inset-0 z-[1] overflow-hidden rounded-[35px]"
+                  style={{ margin: '5px' }}
                 >
                   <img 
                     src={seoAeoSearchImage} 
