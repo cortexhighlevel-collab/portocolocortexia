@@ -198,13 +198,13 @@ const CyberCard = ({
                {camada.titulo === "Análise Estratégica" && (
                  <div 
                    className="absolute z-[5] overflow-hidden rounded-full"
-                   style={{
-                     left: '3.5%',
-                     top: '50%',
-                     transform: 'translateY(-50%)',
-                     width: '33.5%',
-                     aspectRatio: '1/1',
-                   }}
+                    style={{
+                      left: '4%',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      width: '32%',
+                      aspectRatio: '1/1',
+                    }}
                  >
                    <img 
                      src={strategicAnalyticsImage} 
