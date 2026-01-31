@@ -6,6 +6,7 @@ import automationRobotImage from "@/assets/automation-robot.webp";
 import personasNetworkImage from "@/assets/personas-network.webp";
 import aiAgentsSphereImage from "@/assets/ai-agents-sphere.webp";
 import strategicAnalyticsImage from "@/assets/strategic-analytics.webp";
+import promptEngineeringImage from "@/assets/prompt-engineering.webp";
 import { SolucoesNeuralConnections } from "@/components/SolucoesNeuralConnections";
 import { isIOSDevice } from "@/lib/platform";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -195,7 +196,7 @@ const CyberCard = ({
               </div>
             </> : <>
                {/* Imagem dentro do círculo para cards com RightFrame */}
-               {camada.titulo === "Análise Estratégica" && (
+               {(camada.titulo === "Análise Estratégica" || camada.titulo === "Engenharia de Prompt") && (
                  <div 
                    className="absolute z-[5] overflow-hidden rounded-full"
                     style={{
@@ -207,7 +208,7 @@ const CyberCard = ({
                     }}
                  >
                    <img 
-                     src={strategicAnalyticsImage} 
+                     src={camada.titulo === "Análise Estratégica" ? strategicAnalyticsImage : promptEngineeringImage} 
                      alt={camada.titulo}
                      className="w-full h-full object-cover"
                    />
