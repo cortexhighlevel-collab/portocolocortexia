@@ -85,6 +85,155 @@ export const useAntiDevTools = () => {
 
     obfuscateSensitiveData();
 
+    // ========== PROTEÇÃO ANTI-EXTENSÃO / ANTI-GRAVIDADE ==========
+    
+    // Detectar cliques de extensões (não-humanos)
+    const isHumanClick = (e: MouseEvent): boolean => {
+      // Cliques humanos têm propriedades específicas
+      const isTrusted = e.isTrusted;
+      const hasMovement = e.movementX !== 0 || e.movementY !== 0 || e.detail > 0;
+      const hasValidButton = e.button === 0 || e.button === 2;
+      const hasValidCoords = e.clientX > 0 && e.clientY > 0;
+      
+      // Verificar se o clique parece vir de uma extensão
+      const target = e.target as HTMLElement;
+      const hasExtensionAttr = target?.hasAttribute?.('data-extension') || 
+                               target?.closest?.('[data-extension]') !== null;
+      
+      return isTrusted && hasValidCoords && hasValidButton && !hasExtensionAttr;
+    };
+
+    // Detectar interações automatizadas/extensões
+    const detectAutomatedInteraction = (e: Event): boolean => {
+      // Verificar se há sinais de automação
+      const automationSignals = [
+        // Evento não confiável
+        !e.isTrusted,
+        // Timestamp suspeito
+        e.timeStamp === 0,
+        // Event dispatch manual
+        (e as any).__dispatched_by_extension,
+      ];
+      
+      return automationSignals.some(signal => signal === true);
+    };
+
+    // Mostrar mensagem de bloqueio
+    const showBlockMessage = () => {
+      // Criar overlay de bloqueio
+      const overlay = document.createElement('div');
+      overlay.id = 'extension-block-overlay';
+      overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.95);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999999;
+        animation: fadeIn 0.3s ease;
+      `;
+      
+      overlay.innerHTML = `
+        <div style="
+          text-align: center;
+          padding: 40px;
+          background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 100%);
+          border: 2px solid #dc2626;
+          border-radius: 16px;
+          box-shadow: 0 0 50px rgba(220, 38, 38, 0.5);
+          max-width: 400px;
+        ">
+          <div style="font-size: 4rem; margin-bottom: 20px;">🚫</div>
+          <h1 style="
+            color: #dc2626;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+          ">Acesso Bloqueado</h1>
+          <p style="
+            color: #00ff88;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+          ">Não Sobra nada pro beta 😎</p>
+          <p style="
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 20px;
+          ">Extensão de navegador detectada e bloqueada.</p>
+        </div>
+      `;
+      
+      // Remover overlay anterior se existir
+      const existing = document.getElementById('extension-block-overlay');
+      if (existing) existing.remove();
+      
+      document.body.appendChild(overlay);
+      
+      // Remover após 5 segundos
+      setTimeout(() => {
+        overlay.style.opacity = '0';
+        overlay.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => overlay.remove(), 500);
+      }, 5000);
+    };
+
+    // Handler para detectar cliques de extensões
+    const handleExtensionClick = (e: MouseEvent) => {
+      if (!isHumanClick(e) || detectAutomatedInteraction(e)) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        showBlockMessage();
+        return false;
+      }
+    };
+
+    // Handler para detectar interações automatizadas em inputs
+    const handleAutomatedInput = (e: Event) => {
+      if (detectAutomatedInteraction(e)) {
+        e.preventDefault();
+        e.stopPropagation();
+        showBlockMessage();
+        return false;
+      }
+    };
+
+    // Interceptar MutationObserver para detectar extensões modificando o DOM
+    const originalMutationObserver = window.MutationObserver;
+    (window as any).MutationObserver = class extends originalMutationObserver {
+      constructor(callback: MutationCallback) {
+        const wrappedCallback: MutationCallback = (mutations, observer) => {
+          // Verificar se mutações são de extensões
+          const extensionMutation = mutations.some(m => {
+            const target = m.target as HTMLElement;
+            return target?.hasAttribute?.('data-extension') ||
+                   target?.id?.includes('extension') ||
+                   target?.className?.includes('extension');
+          });
+          
+          if (!extensionMutation) {
+            callback(mutations, observer);
+          }
+        };
+        super(wrappedCallback);
+      }
+    };
+
+    // Adicionar listeners para detectar extensões
+    document.addEventListener('click', handleExtensionClick, { capture: true, passive: false });
+    document.addEventListener('mousedown', handleExtensionClick, { capture: true, passive: false });
+    document.addEventListener('mouseup', handleExtensionClick, { capture: true, passive: false });
+    document.addEventListener('input', handleAutomatedInput, { capture: true });
+    document.addEventListener('change', handleAutomatedInput, { capture: true });
+
     // ========== BLOQUEIO DE ATALHOS DE TECLADO ==========
     const handleKeyDown = (e: KeyboardEvent) => {
       // F12
@@ -274,7 +423,15 @@ export const useAntiDevTools = () => {
       document.removeEventListener("selectstart", handleSelectStart);
       document.removeEventListener("dragstart", handleDragStart);
       document.removeEventListener("copy", handleCopy);
+      document.removeEventListener("click", handleExtensionClick, { capture: true });
+      document.removeEventListener("mousedown", handleExtensionClick, { capture: true });
+      document.removeEventListener("mouseup", handleExtensionClick, { capture: true });
+      document.removeEventListener("input", handleAutomatedInput, { capture: true });
+      document.removeEventListener("change", handleAutomatedInput, { capture: true });
       clearInterval(interval);
+      
+      // Restaurar MutationObserver original
+      (window as any).MutationObserver = originalMutationObserver;
       
       // Restaurar console em dev
       if (import.meta.env.PROD) {
