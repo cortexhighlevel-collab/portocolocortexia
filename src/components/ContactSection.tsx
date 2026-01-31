@@ -51,7 +51,7 @@ const ContactSection = () => {
     const mensagem = `🧠 *BRIEFING CORTEX POEI*
 
 👤 *Nome:* ${data.nome || "Não informado"}
-📧 *E-mail:* ${data.email || "Não informado"}
+🏢 *Empresa:* ${data.empresa || "Não informado"}
 🌐 *Presença Digital:* ${presencaDigitalInfo}
 
 📋 *Serviços de Interesse:*

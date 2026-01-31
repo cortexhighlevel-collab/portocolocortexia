@@ -11,7 +11,6 @@ import {
   StepOrcamentoUrgencia,
   ProgressIndicator,
   NavigationButtons,
-  validateEmail,
 } from "./BriefingSteps";
 
 interface MobileBriefingProps {
@@ -25,7 +24,6 @@ const MobileBriefing = ({ onSubmit }: MobileBriefingProps) => {
   const [data, setData] = useState<BriefingData>({
     nome: "",
     empresa: "",
-    email: "",
     temPresencaDigital: null,
     presencaDigitalUrl: "",
     selectedServicos: [],
@@ -44,25 +42,25 @@ const MobileBriefing = ({ onSubmit }: MobileBriefingProps) => {
 
   const canProceed = (): boolean => {
     switch (currentStep) {
-      case 0: // Dados básicos - requer nome e e-mail válido
-        return data.nome.trim().length >= 2 && validateEmail(data.email.trim());
-      case 1: // Presença Digital
+      case 0: // Dados básicos - requer nome (mínimo 2 caracteres)
+        return data.nome.trim().length >= 2;
+      case 1: // Presença Digital - precisa escolher Sim ou Não
         if (data.temPresencaDigital === null) return false;
         if (data.temPresencaDigital === true && !data.presencaDigitalUrl.trim()) return false;
         return true;
-      case 2: // Serviços
+      case 2: // Serviços - pelo menos 1 selecionado
         return data.selectedServicos.length > 0;
-      case 3: // Descrição
-        return true; // Descrição é opcional
-      case 4: // CRM
+      case 3: // Descrição - opcional
+        return true;
+      case 4: // CRM - precisa escolher Sim ou Não
         if (data.temCrm === null) return false;
         if (data.temCrm === true && !data.crmNome.trim()) return false;
         return true;
-      case 5: // Atendentes
+      case 5: // Atendentes - precisa escolher Sim ou Não
         if (data.temAtendentes === null) return false;
         if (data.temAtendentes === true && !data.quantidadeAtendentes.trim()) return false;
         return true;
-      case 6: // Orçamento e Urgência
+      case 6: // Orçamento e Urgência - ambos obrigatórios
         return data.selectedOrcamento !== "" && data.selectedUrgencia !== "";
       default:
         return false;

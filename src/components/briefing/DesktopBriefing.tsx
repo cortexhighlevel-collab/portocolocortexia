@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronRight, ChevronLeft, AlertCircle } from "lucide-react";
+import { Check, ChevronRight, ChevronLeft } from "lucide-react";
 import {
   BriefingData,
   servicos,
   orcamentos,
   urgencias,
-  ValidationErrors,
-  validateStep1,
-  validateStep2,
-  validateStep3,
+  canProceedStep1,
+  canProceedStep2,
+  canProceedStep3,
 } from "./BriefingSteps";
 
 interface DesktopBriefingProps {
@@ -20,13 +19,10 @@ const TOTAL_STEPS = 3;
 
 const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [errors, setErrors] = useState<ValidationErrors>({});
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const [data, setData] = useState<BriefingData>({
     nome: "",
     empresa: "",
-    email: "",
     temPresencaDigital: null,
     presencaDigitalUrl: "",
     selectedServicos: [],
@@ -41,17 +37,6 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
 
   const updateData = (updates: Partial<BriefingData>) => {
     setData((prev) => ({ ...prev, ...updates }));
-    // Clear errors for updated fields
-    const keys = Object.keys(updates);
-    const newErrors = { ...errors };
-    keys.forEach((key) => {
-      delete newErrors[key as keyof ValidationErrors];
-    });
-    setErrors(newErrors);
-  };
-
-  const markTouched = (field: string) => {
-    setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
   const toggleServico = (id: string) => {
@@ -61,41 +46,33 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
     updateData({ selectedServicos: newServicos });
   };
 
-  const validateCurrentStep = (): boolean => {
-    let stepErrors: ValidationErrors = {};
+  const canProceed = (): boolean => {
     switch (currentStep) {
       case 0:
-        stepErrors = validateStep1(data);
-        break;
+        return canProceedStep1(data);
       case 1:
-        stepErrors = validateStep2(data);
-        break;
+        return canProceedStep2(data);
       case 2:
-        stepErrors = validateStep3(data);
-        break;
+        return canProceedStep3(data);
+      default:
+        return false;
     }
-    setErrors(stepErrors);
-    return Object.keys(stepErrors).length === 0;
   };
 
   const handleNext = () => {
-    if (validateCurrentStep() && currentStep < TOTAL_STEPS - 1) {
+    if (canProceed() && currentStep < TOTAL_STEPS - 1) {
       setCurrentStep((prev) => prev + 1);
-      setErrors({});
-      setTouched({});
     }
   };
 
   const handlePrev = () => {
     if (currentStep > 0) {
       setCurrentStep((prev) => prev - 1);
-      setErrors({});
-      setTouched({});
     }
   };
 
   const handleSubmit = () => {
-    if (validateCurrentStep()) {
+    if (canProceed()) {
       onSubmit(data);
     }
   };
@@ -108,20 +85,6 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
     "Serviços & Equipe",
     "Orçamento & Prazo",
   ];
-
-  const ErrorMessage = ({ message }: { message?: string }) => {
-    if (!message) return null;
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: -5 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-1.5 mt-1.5 text-red-400 text-xs font-mono"
-      >
-        <AlertCircle className="w-3 h-3" />
-        {message}
-      </motion.div>
-    );
-  };
 
   // STEP 1: Dados básicos + Presença Digital
   const renderStep1 = () => (
@@ -141,46 +104,22 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
               type="text"
               value={data.nome}
               onChange={(e) => updateData({ nome: e.target.value })}
-              onBlur={() => markTouched("nome")}
               placeholder="Seu nome completo"
-              className={`w-full bg-white/5 border rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:outline-none transition-colors ${
-                errors.nome
-                  ? "border-red-500/50 focus:border-red-500"
-                  : "border-white/10 focus:border-red-500/50"
-              }`}
+              className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
             />
-            <ErrorMessage message={errors.nome} />
           </div>
           <div>
             <label className="text-white/30 text-xs font-mono block mb-2">
-              E-MAIL *
+              EMPRESA
             </label>
             <input
-              type="email"
-              value={data.email}
-              onChange={(e) => updateData({ email: e.target.value })}
-              onBlur={() => markTouched("email")}
-              placeholder="seu@email.com"
-              className={`w-full bg-white/5 border rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:outline-none transition-colors ${
-                errors.email
-                  ? "border-red-500/50 focus:border-red-500"
-                  : "border-white/10 focus:border-red-500/50"
-              }`}
+              type="text"
+              value={data.empresa}
+              onChange={(e) => updateData({ empresa: e.target.value })}
+              placeholder="Nome da empresa (opcional)"
+              className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
             />
-            <ErrorMessage message={errors.email} />
           </div>
-        </div>
-        <div>
-          <label className="text-white/30 text-xs font-mono block mb-2">
-            EMPRESA
-          </label>
-          <input
-            type="text"
-            value={data.empresa}
-            onChange={(e) => updateData({ empresa: e.target.value })}
-            placeholder="Nome da empresa (opcional)"
-            className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
-          />
         </div>
       </div>
 
@@ -188,7 +127,7 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
       <div className="space-y-4">
         <div className="font-mono text-sm text-white/40 flex items-center gap-2">
           <span className="text-red-500">$</span>
-          query --digital-presence
+          query --digital-presence *
           <span className="text-white/20 text-xs">(site ou Instagram?)</span>
         </div>
         <div className="flex gap-3">
@@ -236,13 +175,8 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
                   updateData({ presencaDigitalUrl: e.target.value })
                 }
                 placeholder="Ex: www.suaempresa.com.br ou @seuinstagram"
-                className={`w-full bg-white/5 border rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:outline-none transition-colors ${
-                  errors.presencaDigitalUrl
-                    ? "border-red-500/50 focus:border-red-500"
-                    : "border-white/10 focus:border-red-500/50"
-                }`}
+                className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
               />
-              <ErrorMessage message={errors.presencaDigitalUrl} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -273,8 +207,8 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
       <div className="space-y-4">
         <div className="font-mono text-sm text-white/40 flex items-center gap-2">
           <span className="text-red-500">$</span>
-          select --services
-          <span className="text-white/20 text-xs">(múltipla escolha) *</span>
+          select --services *
+          <span className="text-white/20 text-xs">(múltipla escolha)</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {servicos.map((servico) => (
@@ -310,14 +244,13 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
             </button>
           ))}
         </div>
-        <ErrorMessage message={errors.selectedServicos} />
       </div>
 
       {/* CRM */}
       <div className="space-y-4">
         <div className="font-mono text-sm text-white/40 flex items-center gap-2">
           <span className="text-red-500">$</span>
-          query --crm-system
+          query --crm-system *
         </div>
         <div className="flex gap-3">
           <button
@@ -357,13 +290,8 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
                 value={data.crmNome}
                 onChange={(e) => updateData({ crmNome: e.target.value })}
                 placeholder="Ex: HubSpot, Salesforce, Pipedrive..."
-                className={`w-full md:w-1/2 bg-white/5 border rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:outline-none transition-colors ${
-                  errors.crmNome
-                    ? "border-red-500/50 focus:border-red-500"
-                    : "border-white/10 focus:border-red-500/50"
-                }`}
+                className="w-full md:w-1/2 bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
               />
-              <ErrorMessage message={errors.crmNome} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -373,7 +301,7 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
       <div className="space-y-4">
         <div className="font-mono text-sm text-white/40 flex items-center gap-2">
           <span className="text-red-500">$</span>
-          query --team-support
+          query --team-support *
           <span className="text-white/20 text-xs">(possui atendentes?)</span>
         </div>
         <div className="flex gap-3">
@@ -418,13 +346,8 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
                   updateData({ quantidadeAtendentes: e.target.value })
                 }
                 placeholder="Ex: 3 atendentes"
-                className={`w-full md:w-1/2 bg-white/5 border rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:outline-none transition-colors ${
-                  errors.quantidadeAtendentes
-                    ? "border-red-500/50 focus:border-red-500"
-                    : "border-white/10 focus:border-red-500/50"
-                }`}
+                className="w-full md:w-1/2 bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
               />
-              <ErrorMessage message={errors.quantidadeAtendentes} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -456,7 +379,6 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
             </button>
           ))}
         </div>
-        <ErrorMessage message={errors.selectedOrcamento} />
       </div>
 
       {/* Urgência */}
@@ -480,7 +402,6 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
             </button>
           ))}
         </div>
-        <ErrorMessage message={errors.selectedUrgencia} />
       </div>
 
       {/* Resumo rápido */}
@@ -491,9 +412,6 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
         <div className="space-y-1 text-xs font-mono text-white/60">
           <p>
             <span className="text-white/40">Nome:</span> {data.nome || "-"}
-          </p>
-          <p>
-            <span className="text-white/40">E-mail:</span> {data.email || "-"}
           </p>
           <p>
             <span className="text-white/40">Serviços:</span>{" "}
@@ -617,7 +535,12 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
             {currentStep < TOTAL_STEPS - 1 ? (
               <button
                 onClick={handleNext}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-red-500/20 border border-red-500/50 rounded font-mono text-sm text-white hover:bg-red-500/30 transition-all"
+                disabled={!canProceed()}
+                className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded font-mono text-sm transition-all ${
+                  canProceed()
+                    ? "bg-red-500/20 border border-red-500/50 text-white hover:bg-red-500/30"
+                    : "bg-white/5 border border-white/10 text-white/30 cursor-not-allowed"
+                }`}
               >
                 Próximo
                 <ChevronRight className="w-4 h-4" />
@@ -625,14 +548,23 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
             ) : (
               <button
                 onClick={handleSubmit}
-                className="group relative flex-1"
+                disabled={!canProceed()}
+                className={`group relative flex-1 ${
+                  !canProceed() ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
                 {/* Button glow */}
-                <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 via-red-500/30 to-purple-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                {canProceed() && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 via-red-500/30 to-purple-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                )}
 
                 {/* Button */}
                 <div
-                  className="relative flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 transition-all"
+                  className={`relative flex items-center justify-center gap-3 px-8 py-4 transition-all ${
+                    canProceed()
+                      ? "bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400"
+                      : "bg-white/10"
+                  }`}
                   style={{
                     clipPath:
                       "polygon(0 8px, 8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px))",
@@ -645,7 +577,11 @@ const DesktopBriefing = ({ onSubmit }: DesktopBriefingProps) => {
                   >
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                   </svg>
-                  <span className="text-white font-bold text-sm uppercase tracking-wider">
+                  <span
+                    className={`font-bold text-sm uppercase tracking-wider ${
+                      canProceed() ? "text-white" : "text-white/30"
+                    }`}
+                  >
                     Enviar WhatsApp
                   </span>
                 </div>
