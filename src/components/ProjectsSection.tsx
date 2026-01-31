@@ -2,8 +2,6 @@ import { useRef, useState } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import n8nWorkflow from "@/assets/n8n-workflow.webp";
-import chatbotWorkflow from "@/assets/chatbot-workflow.jpg";
-import seoAeoSearch from "@/assets/seo-aeo-search.webp";
 
 const projects = [{
   id: 1,
@@ -14,12 +12,12 @@ const projects = [{
   id: 2,
   name: "Agente de Atendimento",
   tags: ["Chatbot", "GPT-4", "WhatsApp"],
-  image: chatbotWorkflow
+  image: "/images/chatbot-workflow.jpg"
 }, {
   id: 3,
   name: "Sistema AEO/SEO",
   tags: ["Análise IA", "Otimização", "Conteúdo"],
-  image: seoAeoSearch
+  image: "/images/seo-aeo-search.webp"
 }];
 const ProjectsSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
