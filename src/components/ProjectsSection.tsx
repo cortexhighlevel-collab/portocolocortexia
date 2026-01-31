@@ -1,18 +1,23 @@
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 import { ExternalLink } from "lucide-react";
+import n8nWorkflow from "@/assets/n8n-workflow.webp";
+
 const projects = [{
   id: 1,
   name: "Automação E-commerce",
-  tags: ["Automação", "n8n", "IA Generativa"]
+  tags: ["Automação", "n8n", "IA Generativa"],
+  image: n8nWorkflow
 }, {
   id: 2,
   name: "Agente de Atendimento",
-  tags: ["Chatbot", "GPT-4", "WhatsApp"]
+  tags: ["Chatbot", "GPT-4", "WhatsApp"],
+  image: null
 }, {
   id: 3,
   name: "Sistema AEO/SEO",
-  tags: ["Análise IA", "Otimização", "Conteúdo"]
+  tags: ["Análise IA", "Otimização", "Conteúdo"],
+  image: null
 }];
 const ProjectsSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -212,8 +217,16 @@ const CardContent = ({
         </div>
       </div>
 
-      {/* Background (sem vídeo) */}
-      <div className="project-card-media" aria-hidden="true" />
+      {/* Background */}
+      <div className="project-card-media" aria-hidden="true">
+        {project.image && (
+          <img 
+            src={project.image} 
+            alt={project.name}
+            className="absolute inset-0 w-full h-full object-cover object-center"
+          />
+        )}
+      </div>
 
       {/* Dark Bottom Overlay with gradient */}
       <div className="project-card-overlay" />
