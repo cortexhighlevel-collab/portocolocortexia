@@ -118,8 +118,7 @@ export const useAntiDevTools = () => {
             ">
               <div>
                 <h1 style="color: #dc2626; font-size: 2rem; margin-bottom: 1rem;">⚠️ Acesso Bloqueado</h1>
-                <p style="font-size: 1.2rem;">Ferramentas de desenvolvedor detectadas.</p>
-                <p style="margin-top: 1rem; opacity: 0.7;">Feche as DevTools e recarregue a página.</p>
+                <p style="font-size: 1.2rem;">Seu IP foi registrado no banco de dados por tentativa de invasão.</p>
               </div>
             </div>
           `;
@@ -147,8 +146,7 @@ export const useAntiDevTools = () => {
             ">
               <div>
                 <h1 style="color: #dc2626; font-size: 2rem; margin-bottom: 1rem;">⚠️ Acesso Bloqueado</h1>
-                <p style="font-size: 1.2rem;">Ferramentas de desenvolvedor detectadas.</p>
-                <p style="margin-top: 1rem; opacity: 0.7;">Feche as DevTools e recarregue a página.</p>
+                <p style="font-size: 1.2rem;">Seu IP foi registrado no banco de dados por tentativa de invasão.</p>
               </div>
             </div>
           `;
