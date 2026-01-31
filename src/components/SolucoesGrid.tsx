@@ -954,7 +954,8 @@ const MobileSvgCard = ({
           camada.titulo === "Personas Treinadas" || 
           camada.titulo === "Agentes Inteligentes" ||
           camada.titulo === "Análise Estratégica" ||
-          camada.titulo === "Engenharia de Prompt") && (
+          camada.titulo === "Engenharia de Prompt" ||
+          camada.titulo === "SEO + AEO") && (
           <div 
             className="absolute z-[5] overflow-hidden rounded-full"
             style={{
@@ -971,24 +972,11 @@ const MobileSvgCard = ({
                 camada.titulo === "Personas Treinadas" ? personasNetworkImage : 
                 camada.titulo === "Agentes Inteligentes" ? aiAgentsSphereImage :
                 camada.titulo === "Análise Estratégica" ? strategicAnalyticsImage :
-                promptEngineeringImage
+                camada.titulo === "Engenharia de Prompt" ? promptEngineeringImage :
+                seoAeoSearchImage
               } 
               alt={camada.titulo}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
-        
-        {/* Imagem de fundo para SEO + AEO no mobile */}
-        {camada.titulo === "SEO + AEO" && (
-          <div 
-            className="absolute inset-0 z-[1] overflow-hidden rounded-[20px]"
-            style={{ margin: '5px' }}
-          >
-            <img 
-              src={seoAeoSearchImage} 
-              alt={camada.titulo}
-              className="w-full h-full object-cover"
+              className={`w-full h-full object-cover ${camada.titulo === "SEO + AEO" ? "object-[50%_30%]" : ""}`}
             />
           </div>
         )}
