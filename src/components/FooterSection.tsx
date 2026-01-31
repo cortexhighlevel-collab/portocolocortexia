@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const FooterSection = () => {
   const currentYear = new Date().getFullYear();
@@ -137,11 +138,28 @@ const FooterSection = () => {
             </span>
           </div>
 
-          {/* Copyright */}
-          <div className="text-white/20 text-xs font-mono flex items-center gap-2">
-            <span className="text-red-500/40">&lt;</span>
-            © {currentYear} CORTEX OPS. All rights reserved.
-            <span className="text-red-500/40">/&gt;</span>
+          {/* Copyright & Legal Links */}
+          <div className="flex flex-col md:flex-row items-center gap-3 text-white/20 text-xs font-mono">
+            <div className="flex items-center gap-2">
+              <span className="text-red-500/40">&lt;</span>
+              © {currentYear} CORTEX OPS. All rights reserved.
+              <span className="text-red-500/40">/&gt;</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <Link 
+                to="/termos-de-uso" 
+                className="hover:text-red-500 transition-colors"
+              >
+                Termos de Uso
+              </Link>
+              <span className="text-white/10">|</span>
+              <Link 
+                to="/politica-de-privacidade" 
+                className="hover:text-red-500 transition-colors"
+              >
+                Política de Privacidade
+              </Link>
+            </div>
           </div>
 
           {/* Tech stack indicator */}
