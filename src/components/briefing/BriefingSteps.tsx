@@ -94,7 +94,7 @@ export const StepDadosBasicos = ({ data, updateData }: StepProps) => (
           value={data.nome}
           onChange={(e) => updateData({ nome: e.target.value })}
           placeholder="Seu nome completo"
-          className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
+          className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-base focus:border-red-500/50 focus:outline-none transition-colors"
         />
       </div>
       <div>
@@ -104,7 +104,7 @@ export const StepDadosBasicos = ({ data, updateData }: StepProps) => (
           value={data.empresa}
           onChange={(e) => updateData({ empresa: e.target.value })}
           placeholder="Nome da empresa (opcional)"
-          className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
+          className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-base focus:border-red-500/50 focus:outline-none transition-colors"
         />
       </div>
     </div>
@@ -156,7 +156,7 @@ export const StepPresencaDigital = ({ data, updateData }: StepProps) => (
             value={data.presencaDigitalUrl}
             onChange={(e) => updateData({ presencaDigitalUrl: e.target.value })}
             placeholder="Ex: www.suaempresa.com.br ou @seuinstagram"
-            className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
+            className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-base focus:border-red-500/50 focus:outline-none transition-colors"
           />
         </motion.div>
       )}
@@ -228,7 +228,7 @@ export const StepDescricao = ({ data, updateData }: StepProps) => (
       onChange={(e) => updateData({ descricao: e.target.value })}
       placeholder="Descreva seu projeto, objetivos, desafios atuais e o que você espera alcançar..."
       rows={5}
-      className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors resize-none"
+      className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-base focus:border-red-500/50 focus:outline-none transition-colors resize-none"
     />
   </div>
 );
@@ -278,7 +278,7 @@ export const StepCrm = ({ data, updateData }: StepProps) => (
             value={data.crmNome}
             onChange={(e) => updateData({ crmNome: e.target.value })}
             placeholder="Ex: HubSpot, Salesforce, Pipedrive..."
-            className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
+            className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-base focus:border-red-500/50 focus:outline-none transition-colors"
           />
         </motion.div>
       )}
@@ -331,7 +331,7 @@ export const StepAtendentes = ({ data, updateData }: StepProps) => (
             value={data.quantidadeAtendentes}
             onChange={(e) => updateData({ quantidadeAtendentes: e.target.value })}
             placeholder="Ex: 3 atendentes"
-            className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-sm focus:border-red-500/50 focus:outline-none transition-colors"
+            className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white placeholder:text-white/20 font-mono text-base focus:border-red-500/50 focus:outline-none transition-colors"
           />
         </motion.div>
       )}
