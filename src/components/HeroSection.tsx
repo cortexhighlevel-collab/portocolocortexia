@@ -7,8 +7,8 @@ import BriefingModal from "./BriefingModal";
 
 // ============ CONFIGURAÇÕES SEPARADAS DESKTOP / MOBILE ============
 const CTA_DESKTOP_SCALE = 0.50;
-// Mobile: 70% da largura da tela
-const CTA_MOBILE_TARGET_WIDTH_PERCENT = 0.70;
+// Mobile: 85% da largura da tela (aumentado de 70%)
+const CTA_MOBILE_TARGET_WIDTH_PERCENT = 0.85;
 
 const HeroSection = () => {
   const [briefingOpen, setBriefingOpen] = useState(false);
