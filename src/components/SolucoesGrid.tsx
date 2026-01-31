@@ -4,6 +4,7 @@ import { useRef, useState, useLayoutEffect, useCallback } from "react";
 import brainIcon from "@/assets/brain-icon.png";
 import automationRobotImage from "@/assets/automation-robot.webp";
 import personasNetworkImage from "@/assets/personas-network.webp";
+import aiAgentsSphereImage from "@/assets/ai-agents-sphere.webp";
 import { SolucoesNeuralConnections } from "@/components/SolucoesNeuralConnections";
 import { isIOSDevice } from "@/lib/platform";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -208,8 +209,8 @@ const CyberCard = ({
             <LeftCardFrameSvg />
           </div>
 
-          {/* Imagem dentro do círculo para Automação com IA e Personas Treinadas */}
-          {(camada.titulo === "Automação com IA" || camada.titulo === "Personas Treinadas") && (
+          {/* Imagem dentro do círculo para cards com LeftFrame */}
+          {(camada.titulo === "Automação com IA" || camada.titulo === "Personas Treinadas" || camada.titulo === "Agentes Inteligentes") && (
             <div 
               className="absolute z-[5] overflow-hidden rounded-full"
               style={{
@@ -221,7 +222,11 @@ const CyberCard = ({
               }}
             >
               <img 
-                src={camada.titulo === "Automação com IA" ? automationRobotImage : personasNetworkImage} 
+                src={
+                  camada.titulo === "Automação com IA" ? automationRobotImage : 
+                  camada.titulo === "Personas Treinadas" ? personasNetworkImage : 
+                  aiAgentsSphereImage
+                } 
                 alt={camada.titulo}
                 className="w-full h-full object-cover"
               />
