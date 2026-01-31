@@ -2,8 +2,10 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { isIOSDevice } from "@/lib/platform";
 
+import glitchErrorImage from "@/assets/glitch-error.webp";
+
 const problemas = [
-  { id: "ERR_001", titulo: "IA usada de forma rasa", severity: "CRITICAL" },
+  { id: "ERR_001", titulo: "IA usada de forma rasa", severity: "CRITICAL", image: glitchErrorImage },
   { id: "ERR_002", titulo: "Prompts fracos e genéricos", severity: "HIGH" },
   { id: "ERR_003", titulo: "Automação sem inteligência", severity: "CRITICAL" },
   { id: "ERR_004", titulo: "SEO tradicional está morto", severity: "CRITICAL" },
@@ -51,7 +53,7 @@ const CyberCard = ({
   isMedium = false,
   delay = 0 
 }: { 
-  problema: typeof problemas[0]; 
+  problema: { id: string; titulo: string; severity: string; image?: string }; 
   isLarge?: boolean;
   isMedium?: boolean;
   delay?: number;
@@ -197,6 +199,21 @@ const CyberCard = ({
             [{problema.severity}]
           </span>
         </div>
+
+        {/* Background Image */}
+        {problema.image && (
+          <div 
+            className="absolute inset-0 z-0 opacity-40"
+            style={{ clipPath }}
+          >
+            <img 
+              src={problema.image} 
+              alt="" 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent" />
+          </div>
+        )}
 
         {/* Content */}
         <div className={`relative z-10 p-4 lg:p-6 ${isLarge ? 'h-full flex flex-col justify-end' : 'pt-8 lg:pt-10'}`}>
