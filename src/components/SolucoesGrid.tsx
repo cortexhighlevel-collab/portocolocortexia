@@ -7,6 +7,7 @@ import personasNetworkImage from "@/assets/personas-network.webp";
 import aiAgentsSphereImage from "@/assets/ai-agents-sphere.webp";
 import strategicAnalyticsImage from "@/assets/strategic-analytics.webp";
 import promptEngineeringImage from "@/assets/prompt-engineering.webp";
+import seoAeoSearchImage from "@/assets/seo-aeo-search.webp";
 import { SolucoesNeuralConnections } from "@/components/SolucoesNeuralConnections";
 import { isIOSDevice } from "@/lib/platform";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -180,6 +181,19 @@ const CyberCard = ({
           </div>
 
           {isBottomRight ? <>
+              {/* Imagem de fundo para SEO + AEO */}
+              {camada.titulo === "SEO + AEO" && (
+                <div 
+                  className="absolute inset-0 z-[1] overflow-hidden rounded-[39px]"
+                  style={{ margin: '4px' }}
+                >
+                  <img 
+                    src={seoAeoSearchImage} 
+                    alt={camada.titulo}
+                    className="w-full h-full object-cover opacity-40"
+                  />
+                </div>
+              )}
               {/* Conteúdo (mantém texto original) */}
                <div className="relative z-10 h-full w-full pl-8 pr-8 py-5 flex flex-col justify-center gap-1">
                  <h3 className="text-white font-bold text-base leading-tight break-words">{camada.titulo}</h3>
