@@ -7,86 +7,86 @@ const ANIMATION_DURATION_MS = 3500; // Duração total da animação do SVG
 const ComoIAEntendeSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(triggerRef, { once: true, amount: 0.3 });
+  const isInView = useInView(triggerRef, { once: true, amount: 0.5 });
   const [isLocked, setIsLocked] = useState(false);
   const [animationComplete, setAnimationComplete] = useState(false);
   const hasTriggeredRef = useRef(false);
 
-  // Função para prevenir scroll via wheel
-  const preventWheel = useCallback((e: WheelEvent) => {
-    e.preventDefault();
-  }, []);
-
-  // Função para prevenir scroll via touch
-  const preventTouch = useCallback((e: TouchEvent) => {
-    e.preventDefault();
-  }, []);
-
-  // Função para prevenir teclas de navegação
-  const preventScrollKeys = useCallback((e: KeyboardEvent) => {
-    const keys = [32, 33, 34, 35, 36, 37, 38, 39, 40]; // space, pageup, pagedown, end, home, arrows
-    if (keys.includes(e.keyCode)) {
-      e.preventDefault();
-    }
-  }, []);
-
-  // Função para travar o scroll - apenas event listeners, sem mudar layout
+  // Função para travar o scroll
   const lockScroll = useCallback(() => {
     if (typeof window === "undefined") return;
     
-    // Bloquear eventos de scroll
-    document.addEventListener("wheel", preventWheel, { passive: false });
-    document.addEventListener("touchmove", preventTouch, { passive: false });
-    document.addEventListener("keydown", preventScrollKeys);
+    // Salvar posição atual do scroll
+    const scrollY = window.scrollY;
     
-    // Apenas overflow hidden no HTML para bloquear scrollbar
-    document.documentElement.style.overflow = "hidden";
+    // Travar scroll
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
     
     setIsLocked(true);
-  }, [preventWheel, preventTouch, preventScrollKeys]);
+  }, []);
 
   // Função para destravar o scroll
   const unlockScroll = useCallback(() => {
     if (typeof window === "undefined") return;
     
-    // Remover event listeners
-    document.removeEventListener("wheel", preventWheel);
-    document.removeEventListener("touchmove", preventTouch);
-    document.removeEventListener("keydown", preventScrollKeys);
+    // Recuperar posição do scroll
+    const scrollY = document.body.style.top;
     
-    // Restaurar overflow
-    document.documentElement.style.overflow = "";
+    // Destravar scroll
+    document.body.style.overflow = "";
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.width = "";
+    
+    // Restaurar posição
+    window.scrollTo(0, parseInt(scrollY || "0") * -1);
     
     setIsLocked(false);
     setAnimationComplete(true);
-  }, [preventWheel, preventTouch, preventScrollKeys]);
+  }, []);
 
   // Efeito para controlar o scroll-lock durante a animação
   useEffect(() => {
     if (isInView && !hasTriggeredRef.current && !animationComplete) {
       hasTriggeredRef.current = true;
       
-      // Travar o scroll imediatamente quando a seção entra em view
-      lockScroll();
-      
-      // Destravar após a animação completar
-      const unlockTimer = setTimeout(() => {
-        unlockScroll();
-      }, ANIMATION_DURATION_MS);
+      // Pequeno delay para garantir que a seção está centralizada
+      const scrollTimer = setTimeout(() => {
+        // Scroll suave para centralizar a seção
+        sectionRef.current?.scrollIntoView({ 
+          behavior: "smooth", 
+          block: "center" 
+        });
+        
+        // Travar após o scroll suave completar
+        setTimeout(() => {
+          lockScroll();
+          
+          // Destravar após a animação completar
+          setTimeout(() => {
+            unlockScroll();
+          }, ANIMATION_DURATION_MS);
+        }, 500);
+      }, 100);
 
-      return () => clearTimeout(unlockTimer);
+      return () => clearTimeout(scrollTimer);
     }
   }, [isInView, animationComplete, lockScroll, unlockScroll]);
 
   // Cleanup ao desmontar
   useEffect(() => {
     return () => {
-      document.removeEventListener("wheel", preventWheel);
-      document.removeEventListener("touchmove", preventTouch);
-      document.removeEventListener("keydown", preventScrollKeys);
-      document.documentElement.style.overflow = "";
+      if (isLocked) {
+        document.body.style.overflow = "";
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+      }
     };
-  }, [preventWheel, preventTouch, preventScrollKeys]);
+  }, [isLocked]);
 
   // Container animation with stagger for children
   const containerVariants = {
@@ -125,7 +125,7 @@ const ComoIAEntendeSection = () => {
       {/* Trigger invisível para detectar entrada na viewport */}
       <div 
         ref={triggerRef} 
-        className="absolute top-1/4 left-0 w-full h-px pointer-events-none"
+        className="absolute top-1/3 left-0 w-full h-px pointer-events-none"
         aria-hidden="true"
       />
       
