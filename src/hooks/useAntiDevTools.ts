@@ -11,6 +11,179 @@ export const useAntiDevTools = () => {
 
     // ========== PROTEÇÃO ANTI-BOT E ANTI-IA ==========
     
+    // ========== DETECÇÃO E BLOQUEIO DO ANTIGRAVITY ==========
+    const detectAntigravity = (): boolean => {
+      const checks = [
+        // Detectar extensão Antigravity via propriedades globais
+        !!(window as any).__ANTIGRAVITY__,
+        !!(window as any).antigravity,
+        !!(window as any).AntiGravity,
+        !!(window as any).__antigravity_injected__,
+        !!(window as any).__ag_extension__,
+        // Detectar via elementos injetados
+        !!document.querySelector('[data-antigravity]'),
+        !!document.querySelector('[class*="antigravity"]'),
+        !!document.querySelector('[id*="antigravity"]'),
+        !!document.querySelector('script[src*="antigravity"]'),
+        !!document.querySelector('link[href*="antigravity"]'),
+        // Detectar via chrome extension
+        !!(window as any).chrome?.runtime?.id?.includes?.('antigravity'),
+        // Detectar modificações no DOM típicas do Antigravity
+        !!document.querySelector('[data-ag-clone]'),
+        !!document.querySelector('[data-ag-inspect]'),
+        !!document.querySelector('.ag-overlay'),
+        !!document.querySelector('.ag-panel'),
+        // Detectar via localStorage/sessionStorage
+        !!localStorage.getItem('antigravity'),
+        !!sessionStorage.getItem('antigravity'),
+      ];
+      
+      return checks.some(check => check === true);
+    };
+
+    // Bloquear Antigravity imediatamente
+    const blockAntigravity = () => {
+      document.documentElement.innerHTML = '';
+      document.body.innerHTML = '';
+      
+      const blockPage = document.createElement('div');
+      blockPage.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(135deg, #0a0a0f 0%, #1a0a1a 50%, #0f0a15 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2147483647;
+        font-family: 'Orbitron', 'Rajdhani', system-ui, sans-serif;
+      `;
+      
+      blockPage.innerHTML = `
+        <div style="
+          text-align: center;
+          padding: 60px;
+          background: linear-gradient(145deg, rgba(20, 10, 30, 0.95), rgba(10, 5, 15, 0.98));
+          border: 3px solid #dc2626;
+          border-radius: 24px;
+          box-shadow: 
+            0 0 100px rgba(220, 38, 38, 0.4),
+            0 0 200px rgba(220, 38, 38, 0.2),
+            inset 0 0 60px rgba(220, 38, 38, 0.1);
+          max-width: 500px;
+          animation: pulse 2s ease-in-out infinite;
+        ">
+          <style>
+            @keyframes pulse {
+              0%, 100% { box-shadow: 0 0 100px rgba(220, 38, 38, 0.4), 0 0 200px rgba(220, 38, 38, 0.2); }
+              50% { box-shadow: 0 0 150px rgba(220, 38, 38, 0.6), 0 0 250px rgba(220, 38, 38, 0.3); }
+            }
+            @keyframes shake {
+              0%, 100% { transform: translateX(0); }
+              25% { transform: translateX(-5px); }
+              75% { transform: translateX(5px); }
+            }
+          </style>
+          <div style="font-size: 5rem; margin-bottom: 24px; animation: shake 0.5s ease-in-out;">🚫</div>
+          <h1 style="
+            color: #dc2626;
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(220, 38, 38, 0.8);
+          ">ACESSO NEGADO</h1>
+          <div style="
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #dc2626, transparent);
+            margin: 20px auto;
+          "></div>
+          <p style="
+            color: #ff6b6b;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+          ">⚠️ ANTIGRAVITY DETECTADO ⚠️</p>
+          <p style="
+            color: #00ff88;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+            margin-bottom: 24px;
+          ">Você não tem permissão para acessar este site.</p>
+          <p style="
+            color: #666;
+            font-size: 0.95rem;
+            margin-top: 24px;
+            line-height: 1.6;
+          ">Este site está protegido contra ferramentas de clonagem.<br>
+          Extensões como Antigravity são bloqueadas automaticamente.</p>
+          <div style="
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(220, 38, 38, 0.15);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 8px;
+          ">
+            <p style="
+              color: #ff4444;
+              font-size: 0.85rem;
+              font-family: monospace;
+            ">🔒 IP e tentativa registrados para análise.</p>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(blockPage);
+      
+      // Impedir qualquer interação
+      document.addEventListener('keydown', (e) => e.preventDefault(), { capture: true });
+      document.addEventListener('click', (e) => e.preventDefault(), { capture: true });
+      document.addEventListener('contextmenu', (e) => e.preventDefault(), { capture: true });
+      
+      // Tentar fechar a aba/janela
+      try {
+        window.close();
+      } catch (e) {}
+    };
+
+    // Verificar Antigravity imediatamente
+    if (detectAntigravity()) {
+      blockAntigravity();
+      return;
+    }
+
+    // Monitorar continuamente por injeção tardia do Antigravity
+    const antigravityObserver = new MutationObserver(() => {
+      if (detectAntigravity()) {
+        blockAntigravity();
+      }
+    });
+    
+    antigravityObserver.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'id', 'data-antigravity', 'src', 'href']
+    });
+
+    // Verificar periodicamente
+    const antigravityInterval = setInterval(() => {
+      if (detectAntigravity()) {
+        blockAntigravity();
+        clearInterval(antigravityInterval);
+      }
+    }, 500);
+
+    // ========== PROTEÇÃO ANTI-BOT E ANTI-IA ==========
+    
     // Detectar se é um bot/crawler
     const isBot = () => {
       const botPatterns = [
@@ -18,7 +191,8 @@ export const useAntiDevTools = () => {
         /ClaudeBot/i, /Claude-Web/i, /cohere/i, /PerplexityBot/i,
         /Bytespider/i, /Diffbot/i, /Omgilibot/i, /Google-Extended/i,
         /Applebot-Extended/i, /img2dataset/i, /FacebookBot/i,
-        /HeadlessChrome/i, /PhantomJS/i, /Selenium/i
+        /HeadlessChrome/i, /PhantomJS/i, /Selenium/i,
+        /Antigravity/i // Adicionar Antigravity aos padrões de bot
       ];
       
       const userAgent = navigator.userAgent;
@@ -429,6 +603,8 @@ export const useAntiDevTools = () => {
       document.removeEventListener("input", handleAutomatedInput, { capture: true });
       document.removeEventListener("change", handleAutomatedInput, { capture: true });
       clearInterval(interval);
+      clearInterval(antigravityInterval);
+      antigravityObserver.disconnect();
       
       // Restaurar MutationObserver original
       (window as any).MutationObserver = originalMutationObserver;
