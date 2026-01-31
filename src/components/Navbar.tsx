@@ -9,7 +9,7 @@ const navLinks = [
   { label: "MÉTODO", href: "#process" },
   { label: "CASOS", href: "#projects" },
   { label: "FAQ", href: "#faq" },
-  { label: "CONTATO", href: "#contact" },
+  { label: "CONTATO", href: "#contato" },
 ];
 
 export const MobileMenuContext = createContext<{
