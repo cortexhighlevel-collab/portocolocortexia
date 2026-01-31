@@ -56,31 +56,7 @@ const LoadingScreen = ({ isLoading, minDuration = 1500 }: LoadingScreenProps) =>
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
         >
-          {/* Scan lines overlay */}
-          <div 
-            className="absolute inset-0 pointer-events-none opacity-[0.03]"
-            style={{
-              backgroundImage: `repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(255,255,255,0.03) 2px,
-                rgba(255,255,255,0.03) 4px
-              )`,
-            }}
-          />
-
-          {/* Grid pattern */}
-          <div 
-            className="absolute inset-0 pointer-events-none opacity-[0.02]"
-            style={{
-              backgroundImage: `
-                linear-gradient(90deg, rgba(239,68,68,0.1) 1px, transparent 1px),
-                linear-gradient(rgba(239,68,68,0.1) 1px, transparent 1px)
-              `,
-              backgroundSize: '40px 40px',
-            }}
-          />
+          {/* Background patterns removidos para melhor FCP/LCP */}
 
           {/* Main content */}
           <div className="relative flex flex-col items-center gap-8">
@@ -137,12 +113,7 @@ const LoadingScreen = ({ isLoading, minDuration = 1500 }: LoadingScreenProps) =>
             </motion.div>
           </div>
 
-          {/* Scanning line animation */}
-          <motion.div
-            className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-red-500/20 to-transparent"
-            animate={{ top: ['0%', '100%'] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-          />
+          {/* Scanning line animation removida para melhor performance */}
         </motion.div>
       )}
     </AnimatePresence>

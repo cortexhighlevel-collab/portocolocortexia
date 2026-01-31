@@ -880,9 +880,10 @@ export const useAntiDevTools = () => {
     document.addEventListener("copy", handleCopy);
 
     // Verificar DevTools periodicamente (apenas via console timing, não por tamanho de janela)
+    // Interval reduzido para 3s para menor uso de CPU
     const interval = setInterval(() => {
       detectDevToolsConsole();
-    }, 1000);
+    }, 3000);
 
     // Desabilitar console methods
     const noop = () => {};

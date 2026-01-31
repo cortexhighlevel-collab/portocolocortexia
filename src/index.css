@@ -1,9 +1,4 @@
-@import "@fontsource/orbitron/400.css";
-@import "@fontsource/orbitron/500.css";
-@import "@fontsource/orbitron/700.css";
-@import "@fontsource/rajdhani/400.css";
-@import "@fontsource/rajdhani/500.css";
-@import "@fontsource/rajdhani/700.css";
+/* Fontes carregadas via Google Fonts no index.html com font-display: swap */
 
 @tailwind base;
 @tailwind components;
