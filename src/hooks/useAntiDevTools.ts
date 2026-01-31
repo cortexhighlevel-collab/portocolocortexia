@@ -2,7 +2,32 @@ import { useEffect } from "react";
 
 export const useAntiDevTools = () => {
   useEffect(() => {
-    // Só ativar proteções em produção (não no preview do Lovable)
+    // Detectar se estamos no preview do Lovable (desenvolvimento/teste)
+    const isLovablePreview = (): boolean => {
+      try {
+        const hostname = window.location.hostname;
+        // Domínios do Lovable preview
+        const isLovableDomain = hostname.includes('lovable') || 
+                                hostname.includes('lovableproject') ||
+                                hostname.includes('localhost');
+        // Verificar se estamos em um iframe (preview do editor)
+        const isInIframe = window !== window.top;
+        // Parâmetro usado pelo Capacitor/preview
+        const hasPreviewParam = window.location.search.includes('forceHideBadge');
+        
+        return isLovableDomain || (isInIframe && hasPreviewParam);
+      } catch {
+        // Se não conseguir acessar window.top (cross-origin), provavelmente é iframe
+        return true;
+      }
+    };
+
+    // Desativar proteções no preview do Lovable para evitar falsos positivos
+    if (isLovablePreview()) {
+      return;
+    }
+
+    // Só ativar proteções em produção real (não no preview do Lovable)
     const isProduction = import.meta.env.PROD;
     
     if (!isProduction) {
@@ -547,9 +572,16 @@ export const useAntiDevTools = () => {
     
     // Detectar cliques de extensões (não-humanos)
     const isHumanClick = (e: MouseEvent): boolean => {
+      // Touch events são sempre considerados humanos (mobile)
+      // PointerEvent inclui pointerType, MouseEvent não
+      const pointerType = (e as PointerEvent).pointerType;
+      if (pointerType === 'touch' || e.type.includes('touch')) {
+        return true;
+      }
+      
       // Cliques humanos têm propriedades específicas
       const isTrusted = e.isTrusted;
-      const hasMovement = e.movementX !== 0 || e.movementY !== 0 || e.detail > 0;
+      // No mobile, movementX/Y podem ser 0 em cliques legítimos, então só verificamos coords
       const hasValidButton = e.button === 0 || e.button === 2;
       const hasValidCoords = e.clientX > 0 && e.clientY > 0;
       
@@ -786,11 +818,20 @@ export const useAntiDevTools = () => {
     // Detectar DevTools aberto (método de detecção por timing)
     let devToolsOpen = false;
     const detectDevTools = () => {
-      const threshold = 160;
+      // No mobile, aumentar threshold devido às barras do sistema (endereço, navegação, notch)
+      // Desktop: 160px | Mobile: 300px (ou desativar)
+      const isMobile = window.innerWidth < 768;
+      const threshold = isMobile ? 300 : 160;
+      
       const widthThreshold = window.outerWidth - window.innerWidth > threshold;
       const heightThreshold = window.outerHeight - window.innerHeight > threshold;
       
-      if (widthThreshold || heightThreshold) {
+      // No mobile, só detectar se AMBOS thresholds forem excedidos (mais conservador)
+      const shouldBlock = isMobile 
+        ? (widthThreshold && heightThreshold) 
+        : (widthThreshold || heightThreshold);
+      
+      if (shouldBlock) {
         if (!devToolsOpen) {
           devToolsOpen = true;
           // Redirecionar ou mostrar aviso
