@@ -229,14 +229,14 @@ const CyberCard = ({
                  </div>
                )}
                {/* Conteúdo (mantém texto original) */}
-                <div className="relative z-10 h-full w-full pl-[210px] pr-10 py-4 flex flex-col justify-center gap-1">
-                  <h3 className={`text-white font-bold leading-tight break-words ${camada.position === "top-right" ? "whitespace-nowrap text-[15px]" : "text-base"}`}>
+                <div className="relative z-10 h-full w-full pl-[200px] pr-6 py-4 flex flex-col justify-center gap-1">
+                  <h3 className={`text-white font-bold leading-tight ${camada.position === "top-right" ? "whitespace-nowrap text-[15px]" : camada.titulo === "Engenharia de Prompt" ? "whitespace-nowrap text-[15px]" : "text-base"}`}>
                     {camada.titulo}
                   </h3>
-                 <p className="text-[#ff6b8a] text-[8px] uppercase tracking-widest font-mono leading-snug break-words">
+                 <p className="text-[#ff6b8a] text-[8px] uppercase tracking-widest font-mono leading-snug whitespace-nowrap">
                    {camada.funcao}
                  </p>
-                 <p className="text-gray-400 text-xs leading-snug break-words">{camada.beneficio}</p>
+                 <p className="text-gray-400 text-xs leading-snug max-w-[200px]">{camada.beneficio}</p>
               </div>
             </>}
         </section> : usesLeftFrame ? <section className="relative min-w-[280px] max-w-[360px] w-full aspect-[661/276]">
