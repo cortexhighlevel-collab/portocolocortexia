@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import ImageScrollSequence from "./ImageScrollSequence";
 import { useIsMobile } from "@/hooks/use-mobile";
+import BriefingModal from "./BriefingModal";
 
 // ============ CONFIGURAÇÕES SEPARADAS DESKTOP / MOBILE ============
 const CTA_DESKTOP_SCALE = 0.50;
@@ -10,6 +11,7 @@ const CTA_DESKTOP_SCALE = 0.50;
 const CTA_MOBILE_TARGET_WIDTH_PERCENT = 0.70;
 
 const HeroSection = () => {
+  const [briefingOpen, setBriefingOpen] = useState(false);
   const isMobile = useIsMobile();
   const [mobileScale, setMobileScale] = useState(CTA_DESKTOP_SCALE);
 
@@ -30,7 +32,8 @@ const HeroSection = () => {
   const CTAButton = () => (
     <div className="relative group rounded-full overflow-visible shrink-0 cta-border-glow">
       <button
-        className="relative z-10 flex items-center justify-between w-[1008px] h-[92px] px-8 gap-6 bg-gradient-to-b from-[#2a2a2a] via-[#0a0a0a] to-[#1a1a1a] text-white rounded-full border-[7px] border-[#3a3a3a] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_4px_20px_-5px_rgba(0,0,0,0.8)] transition-transform active:scale-[0.98] overflow-hidden"
+        onClick={() => setBriefingOpen(true)}
+        className="relative z-10 flex items-center justify-between w-[1008px] h-[92px] px-8 gap-6 bg-gradient-to-b from-[#2a2a2a] via-[#0a0a0a] to-[#1a1a1a] text-white rounded-full border-[7px] border-[#3a3a3a] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_4px_20px_-5px_rgba(0,0,0,0.8)] transition-transform active:scale-[0.98] overflow-hidden cursor-pointer"
       >
         <div
           className="absolute inset-0 bg-gradient-to-b from-[#333333] via-[#0a0a0a] to-[#222222] pointer-events-none opacity-80"
@@ -63,9 +66,8 @@ const HeroSection = () => {
   // Link + animação (y/opacity) separados da escala.
   // A escala fica num wrapper interno pra não conflitar com o transform do Framer Motion.
   const CTALink = ({ scale }: { scale: number }) => (
-    <motion.a
-      href="#contact"
-      className="inline-block"
+    <motion.div
+      className="inline-block cursor-pointer"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.6 }}
@@ -73,7 +75,7 @@ const HeroSection = () => {
       <div style={{ transform: `scale(${scale})`, transformOrigin: "center" }}>
         <CTAButton />
       </div>
-    </motion.a>
+    </motion.div>
   );
 
   return (
@@ -139,6 +141,9 @@ const HeroSection = () => {
           <CTALink scale={mobileScale} />
         </div>
       )}
+
+      {/* Briefing Modal */}
+      <BriefingModal open={briefingOpen} onOpenChange={setBriefingOpen} />
     </>
   );
 };
