@@ -202,7 +202,7 @@ const CyberCard = ({
                       left: '5.5%',
                       top: '50%',
                       transform: 'translateY(-50%)',
-                      width: '25%',
+                      width: '29%',
                       aspectRatio: '1/1',
                     }}
                  >
