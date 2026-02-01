@@ -40,25 +40,6 @@ const ComoIAEntendeSVG = () => {
       const svg = svgContainerRef.current.querySelector('svg');
       if (!svg) return;
 
-      // Adicionar o gradiente de shine ao SVG
-      const defs = svg.querySelector('defs') || document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-      if (!svg.querySelector('defs')) {
-        svg.insertBefore(defs, svg.firstChild);
-      }
-      
-      // Criar gradiente de shine
-      const shineGradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
-      shineGradient.setAttribute('id', 'shineGradient');
-      shineGradient.setAttribute('gradientUnits', 'userSpaceOnUse');
-      shineGradient.innerHTML = `
-        <stop offset="0%" stop-color="white" stop-opacity="0.3"/>
-        <stop offset="40%" stop-color="white" stop-opacity="0.8"/>
-        <stop offset="50%" stop-color="white" stop-opacity="1"/>
-        <stop offset="60%" stop-color="white" stop-opacity="0.8"/>
-        <stop offset="100%" stop-color="white" stop-opacity="0.3"/>
-      `;
-      defs.appendChild(shineGradient);
-
       // Animar linhas e paths (elementos com stroke)
       const lines = svg.querySelectorAll('line');
       const paths = svg.querySelectorAll('path');
@@ -77,11 +58,6 @@ const ComoIAEntendeSVG = () => {
         line.style.strokeDashoffset = `${length}`;
         line.style.animation = `drawLine 2s ease-out forwards`;
         line.style.animationDelay = `${Math.min(index * 0.03, 1.2)}s`;
-        
-        // Adicionar shine após desenho completo
-        setTimeout(() => {
-          line.classList.add('shine-active');
-        }, 2500 + index * 30);
       });
 
       // Configurar e animar paths
@@ -101,11 +77,6 @@ const ComoIAEntendeSVG = () => {
             path.style.strokeDashoffset = `${length}`;
             path.style.animation = `drawLine 2s ease-out forwards`;
             path.style.animationDelay = `${Math.min(index * 0.05, 1)}s`;
-            
-            // Adicionar shine após desenho completo
-            setTimeout(() => {
-              path.classList.add('shine-active');
-            }, 2500 + index * 50);
           } catch (e) {
             // Fallback para paths que não suportam getTotalLength
             path.style.opacity = '0';
@@ -158,25 +129,6 @@ const ComoIAEntendeSVG = () => {
           to {
             opacity: 1;
           }
-        }
-        
-        @keyframes shineFlow {
-          0% {
-            stroke-dashoffset: 100%;
-          }
-          50% {
-            stroke-dashoffset: 0%;
-          }
-          100% {
-            stroke-dashoffset: -100%;
-          }
-        }
-        
-        .svg-animated line.shine-active,
-        .svg-animated path.shine-active {
-          stroke: url(#shineGradient) !important;
-          animation: shineFlow 3s ease-in-out infinite;
-          stroke-dasharray: 20% 80%;
         }
       `}</style>
       
