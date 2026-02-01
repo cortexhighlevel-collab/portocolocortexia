@@ -7,7 +7,7 @@ import personasNetworkImage from "@/assets/personas-network.webp";
 import aiAgentsSphereImage from "@/assets/ai-agents-sphere.webp";
 import strategicAnalyticsImage from "@/assets/strategic-analytics.webp";
 import promptEngineeringImage from "@/assets/prompt-engineering.webp";
-import seoAeoSearchImage from "@/assets/seo-aeo-search.webp";
+import seoAeoSearchImage from "@/assets/seo-aeo-google-search.webp";
 import seoAeoMobileImage from "@/assets/seo-aeo-mobile.png";
 import { SolucoesNeuralConnections } from "@/components/SolucoesNeuralConnections";
 import { isIOSDevice } from "@/lib/platform";
